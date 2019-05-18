@@ -1,2 +1,0 @@
-# SIT-Competence
-Senior Proejct

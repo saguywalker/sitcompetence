@@ -1,7 +1,0 @@
-[package]
-name = "SIT-Competence"
-version = "0.1.0"
-authors = ["sky"]
-edition = "2018"
-
-[dependencies]
