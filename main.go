@@ -14,7 +14,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(jsonFile)
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	var config AccountConfig
@@ -26,30 +25,47 @@ func main() {
 	})
 	if err != nil {
 		panic(err)
-	}*/
+	}
 	listStreams := Payload{
 		Method: "liststreams",
-	}
+	}*/
+	//fmt.Println(listStreams)
 
 	url := "http://" + config.IP + ":" + config.Port
 
 	rpcClient := jsonrpc.NewRPCClient(url)
 	rpcClient.SetBasicAuth(config.Username, config.Password)
-	fmt.Println(rpcClient)
 
-	resp, err := rpcClient.Call("getinfo")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(resp)
-	fmt.Println("******************************")
-
-	resp, err = rpcClient.Call(listStreams.Method, listStreams.Params)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(resp)
-
+	//jsonData := []byte(`{"params":["competencies",{"keys":["2","2018"]}]}`)
+	//jsonData := []byte(`{"keys":["2","2018"]}`)
+	jsonData := []byte(`{"method":"liststreamqueryitems","params":["competencies",{"keys":["2","2018"]}]}`)
+	var data Payload
+	json.Unmarshal(jsonData, &data)
+	fmt.Println(string(jsonData))
+	fmt.Println(data)
+	//data := v.(map[string]interface{})
+	/*
+		for k, v := range data {
+			switch v := v.(type) {
+			case string:
+				fmt.Println(k, v, "(string)")
+			case float64:
+				fmt.Println(k, v, "(float)")
+			case []interface{}:
+				fmt.Println(k, v, "(array)")
+				for i, u := range v {
+					fmt.Println("	", i, u)
+				}
+			default:
+				fmt.Println(k, v, "(unknown)")
+			}
+		}*/
+	/*
+		resp, err := rpcClient.Call(listStreamQueryItems.Method, listStreamQueryItems.Params)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(resp)*/
 	/*
 		client := &http.Client{}
 
@@ -81,6 +97,9 @@ type AccountConfig struct {
 }
 
 type Payload struct {
-	Method string
-	Params []interface{}
+	Method string `json:"method"`
+	Params struct {
+		StreamName string                 `json:"stream"`
+		Keys       map[string]interface{} `json:"keys"`
+	} `json:"params"`
 }
