@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
+
+	"github.com/KeisukeYamashita/jsonrpc"
 )
 
 func main() {
@@ -21,35 +21,54 @@ func main() {
 	json.Unmarshal(byteValue, &config)
 	fmt.Println(config)
 
-	listStreams := Payload{
-		ID:     0,
+	/*listStreamsBytes, err := json.Marshal(Payload{
 		Method: "liststreams",
-	}
-
-	listStreamsBytes, err := json.Marshal(listStreams)
+	})
 	if err != nil {
 		panic(err)
+	}*/
+	listStreams := Payload{
+		Method: "liststreams",
 	}
 
 	url := "http://" + config.IP + ":" + config.Port
 
-	client := &http.Client{}
+	rpcClient := jsonrpc.NewRPCClient(url)
+	rpcClient.SetBasicAuth(config.Username, config.Password)
+	fmt.Println(rpcClient)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(listStreamsBytes))
+	resp, err := rpcClient.Call("getinfo")
 	if err != nil {
 		panic(err)
 	}
-	req.SetBasicAuth(config.Username, config.Password)
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println(resp)
+	fmt.Println("******************************")
 
-	body, err := ioutil.ReadAll(resp.Body)
+	resp, err = rpcClient.Call(listStreams.Method, listStreams.Params)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(body))
+	fmt.Println(resp)
+
+	/*
+		client := &http.Client{}
+
+		req, err := http.NewRequest("POST", url, bytes.NewBuffer(listStreamsBytes))
+		if err != nil {
+			panic(err)
+		}
+		req.SetBasicAuth(config.Username, config.Password)
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(body))
+	*/
 
 }
 
@@ -62,7 +81,6 @@ type AccountConfig struct {
 }
 
 type Payload struct {
-	ID     int           `json:"id"`
-	Method string        `json:"method"`
-	Params []interface{} `json:"params"`
+	Method string
+	Params []interface{}
 }
