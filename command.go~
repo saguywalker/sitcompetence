@@ -1,0 +1,11 @@
+package main
+
+import (
+	"fmt"
+	"github.com/KeisukeYamashita/jsonrpc"
+)
+
+func (client *RPCClient) GetInfo() (*RPCResponse, error) {
+	fmt.Println("test")
+	return nil, nil
+}
