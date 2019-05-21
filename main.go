@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -30,19 +31,33 @@ func main() {
 	}
 	rpcClient.SetBasicAuth(config.Username, config.Password)
 
-	//	resp, _ := rpcClient.GetInfo()
-	//	fmt.Println(resp)
-	//	fmt.Println("****************************")
-	//	resp, _ = rpcClient.ListStreams()
-	//	fmt.Println(resp)
-	//	fmt.Println("****************************")
-	//	resp, _ = rpcClient.GetBlockchainParams()
-	//	fmt.Println(resp)
-	//	fmt.Println("****************************")
-	//_, err = rpcClient.ListStreamItems("competencies")
-	_, err = rpcClient.ListStreamQueryItems("competencies", "2018")
+	a, err := rpcClient.PublishManually("competencies", []string{"59130500211", "1", "2019"}, "59130500211", "growthmindset1", "12345678")
 	if err != nil {
 		panic(err)
+	}
+	fmt.Println(a)
+	//a, err = rpcClient.PublishManually("competencies", []string{"59130500210", "2", "2019"}, "59130500210", "communicating1", "12312312")
+	//a, err = rpcClient.PublishManually("competencies", []string{"59130500218", "1", "2018"}, "59130500218", "globalmindset1", "12341234")
+
+	collectedCompetencies, err := rpcClient.ListStreamQueryItems("competencies", "2", "2018")
+	if err != nil {
+		panic(err)
+	}
+
+	for i, x := range collectedCompetencies {
+		fmt.Println(i)
+		fmt.Println("txid: ", x.Txid)
+		fmt.Print("keys:")
+		for _, k := range x.Keys {
+			fmt.Print(k, " ")
+		}
+		fmt.Print("\ndata: ")
+		for k, v := range x.Data {
+			fmt.Print("(", k, v, "), ")
+		}
+		fmt.Println("\nblocktime: ", x.Blocktime)
+		fmt.Println("publisher(s): ", x.Publishers[0])
+		fmt.Println("************************************")
 	}
 	/*var data []interface{}
 	err = resp.GetObject(&data)

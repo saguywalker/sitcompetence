@@ -32,6 +32,7 @@ func (client *Client) ListStreams() (*jsonrpc.RPCResponse, error) {
 
 func (client *Client) ListStreamQueryItems(stream string, keys ...string) ([]CollectedCompetencies, error) {
 	params := []interface{}{stream, map[string][]string{"keys": keys}}
+	fmt.Println(params)
 	listStreamQueryItemsCommand := Payload{
 		Method: "liststreamqueryitems",
 		Params: params,
@@ -56,10 +57,6 @@ func (client *Client) ListStreamQueryItems(stream string, keys ...string) ([]Col
 		}
 	}
 
-	for i, x := range output {
-		fmt.Println(i, x)
-	}
-
 	return output, err
 }
 
@@ -73,7 +70,7 @@ func (client *Client) GetBlockchainParams() (*jsonrpc.RPCResponse, error) {
 	return resp, err
 }
 
-func (client *Client) ListStreamItems(stream string) (*jsonrpc.RPCResponse, error) {
+func (client *Client) ListStreamItems(stream string) ([]CollectedCompetencies, error) {
 	params := []interface{}{stream}
 	listStreamItemsCommand := Payload{
 		Method: "liststreamitems",
@@ -81,6 +78,34 @@ func (client *Client) ListStreamItems(stream string) (*jsonrpc.RPCResponse, erro
 	}
 
 	resp, err := client.Call(listStreamItemsCommand.Method, listStreamItemsCommand.Params[0])
+
+	var data []interface{}
+	resp.GetObject(&data)
+	output := make([]CollectedCompetencies, len(data))
+
+	for i, x := range data {
+		x2 := x.(map[string]interface{})
+		output[i] = CollectedCompetencies{
+			x2["txid"].(string),
+			x2["keys"].([]interface{}),
+			x2["data"].(map[string]interface{}),
+			x2["blocktime"].(float64),
+			x2["publishers"].([]interface{}),
+		}
+	}
+
+	return output, err
+}
+
+func (client *Client) PublishManually(stream string, keys []string, studentId string, competenceId string, staffId string) (*jsonrpc.RPCResponse, error) {
+	mapData := map[string]string{"student_id": studentId, "competence_id": competenceId, "staff_id": staffId}
+	params := []interface{}{stream, keys, mapData}
+	fmt.Println(params)
+	publishCommand := Payload{
+		Method: "publish",
+		Params: params,
+	}
+	resp, err := client.Call(publishCommand.Method, publishCommand.Params)
 
 	return resp, err
 }
