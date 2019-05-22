@@ -32,7 +32,6 @@ func (client *Client) ListStreams() (*jsonrpc.RPCResponse, error) {
 
 func (client *Client) ListStreamQueryItems(stream string, keys ...string) ([]CollectedCompetencies, error) {
 	params := []interface{}{stream, map[string][]string{"keys": keys}}
-	fmt.Println(params)
 	listStreamQueryItemsCommand := Payload{
 		Method: "liststreamqueryitems",
 		Params: params,
@@ -81,17 +80,28 @@ func (client *Client) ListStreamItems(stream string) ([]CollectedCompetencies, e
 
 	var data []interface{}
 	resp.GetObject(&data)
-	output := make([]CollectedCompetencies, len(data))
+	output := make([]CollectedCompetencies, 0)
 
-	for i, x := range data {
+	for _, x := range data {
 		x2 := x.(map[string]interface{})
-		output[i] = CollectedCompetencies{
+		tmp, ok := x2["data"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+		tmp2, ok := tmp["json"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		tmpOutput := CollectedCompetencies{
 			x2["txid"].(string),
 			x2["keys"].([]interface{}),
-			x2["data"].(map[string]interface{}),
+			tmp2,
 			x2["blocktime"].(float64),
 			x2["publishers"].([]interface{}),
 		}
+
+		output = append(output, tmpOutput)
 	}
 
 	return output, err
@@ -99,13 +109,23 @@ func (client *Client) ListStreamItems(stream string) ([]CollectedCompetencies, e
 
 func (client *Client) PublishManually(stream string, keys []string, studentId string, competenceId string, staffId string) (*jsonrpc.RPCResponse, error) {
 	mapData := map[string]string{"student_id": studentId, "competence_id": competenceId, "staff_id": staffId}
-	params := []interface{}{stream, keys, mapData}
-	fmt.Println(params)
+
+	/*jsonData, err := json.Marshal(mapData)
+	if err != nil {
+		panic(err)
+	}*/
+	mapJson := map[string]interface{}{"json": mapData}
+
+	params := []interface{}{stream, keys, mapJson}
 	publishCommand := Payload{
 		Method: "publish",
 		Params: params,
 	}
-	resp, err := client.Call(publishCommand.Method, publishCommand.Params)
+	fmt.Println(publishCommand.Method, publishCommand.Params)
+	resp, err := client.Call(publishCommand.Method, publishCommand.Params[0], publishCommand.Params[1], publishCommand.Params[2])
+	if err != nil {
+		panic(err)
+	}
 
 	return resp, err
 }
