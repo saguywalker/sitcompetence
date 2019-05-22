@@ -38,25 +38,45 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(a)*/
-	collectedCompetencies, err := rpcClient.ListStreamItems("competencies")
+	/*
+		collectedCompetencies, err := rpcClient.ListStreamItems("competencies")
+		if err != nil {
+			panic(err)
+		}
+
+		for i, x := range collectedCompetencies {
+			fmt.Println(i)
+			fmt.Println("txid: ", x.Txid)
+			fmt.Print("keys:")
+			for _, k := range x.Keys {
+				fmt.Print(k, " ")
+			}
+			fmt.Print("\ndata: ")
+			for k, v := range x.Data {
+				fmt.Print("(", k, ":", v, ") ")
+			}
+			fmt.Println("\nblocktime: ", x.Blocktime)
+			fmt.Println("publisher(s): ", x.Publishers[0])
+			fmt.Println("************************************")
+		}*/
+
+	lastBlock, err := rpcClient.GetLastBlockInfo()
 	if err != nil {
 		panic(err)
 	}
+	lastBlockMap := lastBlock.(map[string]interface{})
+	for k, v := range lastBlockMap {
+		fmt.Println("key:", k, ", value:", v)
+	}
+	fmt.Println("************************************")
 
-	for i, x := range collectedCompetencies {
-		fmt.Println(i)
-		fmt.Println("txid: ", x.Txid)
-		fmt.Print("keys:")
-		for _, k := range x.Keys {
-			fmt.Print(k, " ")
-		}
-		fmt.Print("\ndata: ")
-		for k, v := range x.Data {
-			fmt.Print("(", k, ":", v, ") ")
-		}
-		fmt.Println("\nblocktime: ", x.Blocktime)
-		fmt.Println("publisher(s): ", x.Publishers[0])
-		fmt.Println("************************************")
+	block24, err := rpcClient.GetBlock(24)
+	if err != nil {
+		panic(err)
+	}
+	block24Map := block24.(map[string]interface{})
+	for k, v := range block24Map {
+		fmt.Println("key:", k, ", value:", v)
 	}
 
 }

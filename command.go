@@ -137,6 +137,34 @@ func (client *Client) PublishManually(stream string, keys []string, studentID st
 	return resp, err
 }
 
+//GetLastBlockInfo return the last block's information
+func (client *Client) GetLastBlockInfo() (interface{}, error) {
+	getInfoCommand := Payload{
+		Method: "getlastblockinfo",
+	}
+
+	resp, err := client.Call(getInfoCommand.Method)
+	var output interface{}
+	resp.GetObject(&output)
+
+	return output, err
+}
+
+//GetBlock return the corresponding block number
+func (client *Client) GetBlock(number uint32) (interface{}, error) {
+	params := []interface{}{number}
+	getInfoCommand := Payload{
+		Method: "getblock",
+		Params: params,
+	}
+
+	resp, err := client.Call(getInfoCommand.Method, getInfoCommand.Params[0])
+	var output interface{}
+	resp.GetObject(&output)
+
+	return output, err
+}
+
 //CollectedCompetencies for unmarshal json from Blockchain.
 type CollectedCompetencies struct {
 	Txid       string
