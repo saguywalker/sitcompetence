@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/KeisukeYamashita/jsonrpc"
 )
 
@@ -94,15 +92,18 @@ func (client *Client) ListStreamItems(stream string) ([]CollectedCompetencies, e
 		if !ok {
 			continue
 		}
-		tmp2, ok := tmp["json"].(map[string]interface{})
+		tmpJSON, ok := tmp["json"].(map[string]interface{})
 		if !ok {
+			continue
+		}
+		if _, ok := x2["blocktime"].(float64); !ok {
 			continue
 		}
 
 		tmpOutput := CollectedCompetencies{
 			x2["txid"].(string),
 			x2["keys"].([]interface{}),
-			tmp2,
+			tmpJSON,
 			x2["blocktime"].(float64),
 			x2["publishers"].([]interface{}),
 		}
@@ -128,7 +129,6 @@ func (client *Client) PublishManually(stream string, keys []string, studentID st
 		Method: "publish",
 		Params: params,
 	}
-	fmt.Println(publishCommand.Method, publishCommand.Params)
 	resp, err := client.Call(publishCommand.Method, publishCommand.Params[0], publishCommand.Params[1], publishCommand.Params[2])
 	if err != nil {
 		panic(err)

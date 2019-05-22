@@ -19,6 +19,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	var config AccountConfig
@@ -32,13 +33,11 @@ func main() {
 	}
 	rpcClient.SetBasicAuth(config.Username, config.Password)
 
-	/*a, err := rpcClient.PublishManually("competencies", []string{"59130500211", "1", "2019"}, "59130500211", "growthmindset1", "12345678")
+	/*a, err := rpcClient.PublishManually("competencies", []string{"59130500218", "1", "2018"}, "59130500218", "CollabMindset_1", "12344321")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(a)*/
-	fmt.Println("************************************")
-
 	collectedCompetencies, err := rpcClient.ListStreamItems("competencies")
 	if err != nil {
 		panic(err)
