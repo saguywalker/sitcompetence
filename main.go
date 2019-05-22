@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	//StreamName for testing.
 	StreamName string = "competencies"
 )
 
@@ -37,8 +38,6 @@ func main() {
 	}
 	fmt.Println(a)*/
 	fmt.Println("************************************")
-	//a, err = rpcClient.PublishManually("competencies", []string{"59130500210", "2", "2019"}, "59130500210", "communicating1", "12312312")
-	//a, err = rpcClient.PublishManually("competencies", []string{"59130500218", "1", "2018"}, "59130500218", "globalmindset1", "12341234")
 
 	collectedCompetencies, err := rpcClient.ListStreamItems("competencies")
 	if err != nil {
@@ -60,38 +59,14 @@ func main() {
 		fmt.Println("publisher(s): ", x.Publishers[0])
 		fmt.Println("************************************")
 	}
-	/*var data []interface{}
-	err = resp.GetObject(&data)
-	data2 := data[0].(map[string]interface{})
-	keys := make([]string, 0, len(data2))
-
-	for k := range data2 {
-		keys = append(keys, k)
-	}
-	fmt.Println(keys)
-	sort.Strings(keys)
-
-	for i, x := range data {
-		x2 := x.(map[string]interface{})
-		j := 0
-		for j < len(x2) {
-			fmt.Println(i, keys[j], x2[keys[j]], reflect.TypeOf(x2[keys[j]]))
-			j++
-		}
-		fmt.Println("********************************")
-	}*/
 
 }
 
+//AccountConfig uses for connect to multichain
 type AccountConfig struct {
 	Username string
 	Password string
 	IP       string
 	Port     string
 	Chain    string
-}
-
-type Payload struct {
-	Method string        `json:"method"`
-	Params []interface{} `json:"params"`
 }
