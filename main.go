@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/KeisukeYamashita/jsonrpc"
@@ -37,48 +38,61 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(a)*/
+	fmt.Println(a)
+
+	collectedCompetencies, err := rpcClient.ListStreamItems("competencies")
+	if err != nil {
+		panic(err)
+	}
+
+	for i, x := range collectedCompetencies {
+		fmt.Println(i)
+		fmt.Println("txid: ", x.Txid)
+		fmt.Print("keys:")
+		for _, k := range x.Keys {
+			fmt.Print(k, " ")
+		}
+		fmt.Print("\ndata: ")
+		for k, v := range x.Data {
+			fmt.Print("(", k, ":", v, ") ")
+		}
+		fmt.Println("\nblocktime: ", x.Blocktime)
+		fmt.Println("publisher(s): ", x.Publishers[0])
+		fmt.Println("\n**************************************************")
+	}*/
+	streams, err := rpcClient.ListStreams()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i, x := range streams {
+		fmt.Println("Stream:", i)
+		for k, v := range x {
+			fmt.Println(k, ":", v)
+		}
+		fmt.Println("\n**********************************")
+	}
+
 	/*
-		collectedCompetencies, err := rpcClient.ListStreamItems("competencies")
+		lastBlock, err := rpcClient.GetLastBlockInfo()
 		if err != nil {
 			panic(err)
 		}
+		lastBlockMap := lastBlock.(map[string]interface{})
+		for k, v := range lastBlockMap {
+			fmt.Println("key:", k, ", value:", v)
+		}
+		fmt.Println("************************************")
 
-		for i, x := range collectedCompetencies {
-			fmt.Println(i)
-			fmt.Println("txid: ", x.Txid)
-			fmt.Print("keys:")
-			for _, k := range x.Keys {
-				fmt.Print(k, " ")
-			}
-			fmt.Print("\ndata: ")
-			for k, v := range x.Data {
-				fmt.Print("(", k, ":", v, ") ")
-			}
-			fmt.Println("\nblocktime: ", x.Blocktime)
-			fmt.Println("publisher(s): ", x.Publishers[0])
-			fmt.Println("************************************")
-		}*/
-
-	lastBlock, err := rpcClient.GetLastBlockInfo()
-	if err != nil {
-		panic(err)
-	}
-	lastBlockMap := lastBlock.(map[string]interface{})
-	for k, v := range lastBlockMap {
-		fmt.Println("key:", k, ", value:", v)
-	}
-	fmt.Println("************************************")
-
-	block24, err := rpcClient.GetBlock(24)
-	if err != nil {
-		panic(err)
-	}
-	block24Map := block24.(map[string]interface{})
-	for k, v := range block24Map {
-		fmt.Println("key:", k, ", value:", v)
-	}
-
+		block24, err := rpcClient.GetBlock(24)
+		if err != nil {
+			panic(err)
+		}
+		block24Map := block24.(map[string]interface{})
+		for k, v := range block24Map {
+			fmt.Println("key:", k, ", value:", v)
+		}
+	*/
 }
 
 //AccountConfig uses for connect to multichain

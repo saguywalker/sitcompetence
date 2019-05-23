@@ -21,14 +21,21 @@ func (client *Client) GetInfo() (*jsonrpc.RPCResponse, error) {
 }
 
 //ListStreams calls liststreams command.
-func (client *Client) ListStreams() (*jsonrpc.RPCResponse, error) {
+func (client *Client) ListStreams() ([]map[string]interface{}, error) {
 	listStreamsCommand := Payload{
 		Method: "liststreams",
 	}
 
 	resp, err := client.Call(listStreamsCommand.Method)
-
-	return resp, err
+	var tmpResp interface{}
+	resp.GetObject(&tmpResp)
+	tmp := tmpResp.([]interface{})
+	output := make([]map[string]interface{}, len(tmp))
+	for i, x := range tmp {
+		x2 := x.(map[string]interface{})
+		output[i] = x2
+	}
+	return output, err
 }
 
 //ListStreamQueryItems calls liststreamqueryitems with stream name and key(s).
