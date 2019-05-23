@@ -118,10 +118,25 @@ func (client *Client) ListStreamItems(stream string) ([]CollectedCompetencies, e
 func (client *Client) PublishManually(stream string, keys []string, studentID string, competenceID string, staffID string) (*jsonrpc.RPCResponse, error) {
 	mapData := map[string]string{"student_id": studentID, "competence_id": competenceID, "staff_id": staffID}
 
-	/*jsonData, err := json.Marshal(mapData)
+	mapJSON := map[string]interface{}{"json": mapData}
+
+	params := []interface{}{stream, keys, mapJSON}
+	publishCommand := Payload{
+		Method: "publish",
+		Params: params,
+	}
+	resp, err := client.Call(publishCommand.Method, publishCommand.Params[0], publishCommand.Params[1], publishCommand.Params[2])
 	if err != nil {
 		panic(err)
-	}*/
+	}
+
+	return resp, err
+}
+
+//PublishWithActivity is used for adding competence according to an activity.
+func (client *Client) PublishWithActivity(stream string, keys []string, studentID string, competenceID string, activityID string) (*jsonrpc.RPCResponse, error) {
+	mapData := map[string]string{"student_id": studentID, "competence_id": competenceID, "staff_id": activityID}
+
 	mapJSON := map[string]interface{}{"json": mapData}
 
 	params := []interface{}{stream, keys, mapJSON}
