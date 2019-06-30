@@ -1,0 +1,31 @@
+@import "./variables.scss";
+@import "./mixins.scss";
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:focus,
+:hover {
+	outline: 0;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html {
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	font-family: $family-primary;
+	font-size: rem($base-font-size);
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	line-height: 150%;
+	color: #ddd;
+}
+
+@import "./components/sidebar.scss";
