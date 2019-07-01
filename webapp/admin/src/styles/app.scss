@@ -25,7 +25,11 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	line-height: 150%;
-	color: #ddd;
+	color: #444;
+}
+
+.test {
+	border: 1px solid #000;
 }
 
 @import "./components/sidebar.scss";

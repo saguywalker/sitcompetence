@@ -10,12 +10,18 @@ function Sidebar() {
 					<div className="sidebar-header-container">
 						<div className="sidebar-header-wrapper">
 							<div className="sidebar-header-primary-item">
-								<img className="sidebar-sitcom-logo" src={logo} alt="SIT-Competence"/>
+								<img
+									className="sidebar-sitcom-logo"
+									src={logo}
+									alt="SIT-Competence"
+								/>
 							</div>
-							<SidebarItem
-								iconName="search"
-								itemName="Search"
-							/>
+							<div className="sidebar-header-item">
+								<SidebarItem
+									iconName="search"
+									itemName="Search"
+								/>
+							</div>
 						</div>
 					</div>
 					<div className="sidebar-main-container">
