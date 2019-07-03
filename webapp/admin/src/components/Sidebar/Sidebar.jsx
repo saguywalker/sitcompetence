@@ -20,6 +20,7 @@ function Sidebar() {
 								<SidebarItem
 									iconName="search"
 									itemName="Search"
+									pathName="/"
 								/>
 							</div>
 						</div>
@@ -29,14 +30,17 @@ function Sidebar() {
 							<SidebarItem
 								iconName="hand-holding-usd"
 								itemName="Giving"
+								pathName="/give"
 							/>
 							<SidebarItem
 								iconName="cubes"
 								itemName="Activity"
+								pathName="/activity"
 							/>
 							<SidebarItem
 								iconName="certificate"
 								itemName="Badges"
+								pathName="/activity"
 							/>
 						</div>
 					</div>
@@ -44,10 +48,12 @@ function Sidebar() {
 						<SidebarItem
 							iconName="cog"
 							itemName="Setting"
+							pathName="/activity"
 						/>
 						<SidebarItem
 							iconName="sign-out-alt"
 							itemName="Logout"
+							pathName="/activity"
 						/>
 					</div>
 				</div>
