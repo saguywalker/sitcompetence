@@ -1,5 +1,5 @@
 import React from "react";
-import { useHover } from "../helpers/hooks";
+import { useHover } from "helpers/hooks";
 
 function SidebarItem({iconName, itemName}) {
 	const [hoverElementRef, isHoveringRef] = useHover();

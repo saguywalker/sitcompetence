@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Sidebar/Sidebar";
 import MainContent from "../components/MainContent";
 
 function AdminMainLayout() {

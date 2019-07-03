@@ -1,6 +1,6 @@
 import React from "react";
-import SidebarItem from "../components/SidebarItem";
-import logo from "../assets/images/sitcom_logo.png";
+import SidebarItem from "./SidebarItem";
+import logo from "assets/images/sitcom_logo.png";
 
 function Sidebar() {
 	return (
