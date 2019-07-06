@@ -1,5 +1,5 @@
 import React from "react";
-import SidebarItem from "./SidebarItem";
+import SidebarItemLink from "./SidebarItemLink";
 import logo from "assets/images/sitcom_logo.png";
 
 function Sidebar() {
@@ -17,7 +17,7 @@ function Sidebar() {
 								/>
 							</div>
 							<div className="sidebar-header-item">
-								<SidebarItem
+								<SidebarItemLink
 									iconName="search"
 									itemName="Search"
 									pathName="/"
@@ -27,17 +27,17 @@ function Sidebar() {
 					</div>
 					<div className="sidebar-main-container">
 						<div className="sidebar-main-wrapper">
-							<SidebarItem
+							<SidebarItemLink
 								iconName="hand-holding-usd"
 								itemName="Giving"
-								pathName="/give"
+								pathName="/give-badge"
 							/>
-							<SidebarItem
+							<SidebarItemLink
 								iconName="cubes"
 								itemName="Activity"
 								pathName="/activity"
 							/>
-							<SidebarItem
+							<SidebarItemLink
 								iconName="certificate"
 								itemName="Badges"
 								pathName="/activity"
@@ -45,12 +45,12 @@ function Sidebar() {
 						</div>
 					</div>
 					<div className="sidebar-footer-container">
-						<SidebarItem
+						<SidebarItemLink
 							iconName="cog"
 							itemName="Setting"
 							pathName="/activity"
 						/>
-						<SidebarItem
+						<SidebarItemLink
 							iconName="sign-out-alt"
 							itemName="Logout"
 							pathName="/activity"
