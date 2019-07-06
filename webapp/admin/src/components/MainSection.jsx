@@ -1,8 +1,5 @@
 import React from "react";
-import { Router } from "@reach/router";
-import GiveBadge from "pages/GiveBadge";
-import Activity from "pages/Activity";
-import Dashboard from "pages/Dashboard";
+import RouterAdmin from "router/RouterAdmin";
 
 function MainContent() {
 	return (
@@ -11,11 +8,7 @@ function MainContent() {
 			<div className="column test">
 				<div className="container">
 					<div className="section">
-						<Router>
-							<Dashboard path="/"/>
-							<GiveBadge path="/give"/>
-							<Activity path="/activity"/>
-						</Router>
+						<RouterAdmin/>
 					</div>
 				</div>
 			</div>
