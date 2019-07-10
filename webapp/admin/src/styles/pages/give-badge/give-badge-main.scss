@@ -1,0 +1,15 @@
+.gb-main {
+	&-search {
+		position: relative;
+	}
+
+	&-filter-tag {
+		position: absolute;
+		left: 0;
+		top: rem(48);
+
+		&-item {
+			margin-right: rem(6);
+		}
+	}
+}

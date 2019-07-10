@@ -21,9 +21,35 @@ export function useHover() {
 				element.current.removeEventListener("mouseleave", onMouseLeave);
 			}
 		};
-	},
-	[onMouseEnter, onMouseLeave]
-	);
+	}, [onMouseEnter, onMouseLeave]);
 
 	return [setElementRef, isHover];
+}
+
+export function useClickOutside() {
+	const [clickOutside, setClickOutside] = useState(true);
+	const element = useRef(null);
+
+	const setElementRef = useCallback((el) => element.current = el, []);
+
+	const onClickOutside = useCallback(() => {
+		if (element.current) {
+			setClickOutside(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (element.current !== null) {
+			element.current.addEventListener("click", onClickOutside);
+		}
+
+		return () => {
+			if (element.current !== null) {
+				element.current.removeEventListener("click", onClickOutside);
+			}
+		};
+	}, [onClickOutside]);
+
+	return [setElementRef, clickOutside];
+
 }

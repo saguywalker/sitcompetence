@@ -1,5 +1,5 @@
 import React from "react";
-import SidebarItemLink from "./SidebarItemLink";
+import SidebarItemLink from "components/SidebarItemLink";
 import logo from "assets/images/sitcom_logo.png";
 
 function Sidebar() {

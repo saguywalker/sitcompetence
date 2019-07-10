@@ -1,12 +1,12 @@
 import React from "react";
-import Sidebar from "components/Sidebar/Sidebar";
-import MainSection from "components/MainSection";
+import Sidebar from "components/Sidebar";
+import MainContent from "components/MainContent";
 
 function AdminMainLayout() {
 	return (
 		<>
 			<Sidebar/>
-			<MainSection/>
+			<MainContent/>
 		</>
 	);
 }

@@ -1,10 +1,13 @@
 import React from "react";
+import GiveBadgeSearchBar from "components/GiveBadgeBar";
+import GiveBadgeTable from "components/GiveBadgeTable";
 
 function GiveBadgeMain() {
 	return (
-		<div>
-			Main Give Badge
-		</div>
+		<>
+			<GiveBadgeSearchBar />
+			<GiveBadgeTable />
+		</>
 	);
 }
 
