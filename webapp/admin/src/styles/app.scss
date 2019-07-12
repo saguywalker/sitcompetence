@@ -33,5 +33,6 @@ body {
 }
 
 @import "./components/sidebar.scss";
-@import "./pages/give-badge/give-badge-main.scss";
-@import "./pages/give-badge/give-badge-dropdown.scss";
+@import "./components/give-badge-dropdown.scss";
+@import "./components/base-table.scss";
+@import "./pages/give-badge-main.scss";

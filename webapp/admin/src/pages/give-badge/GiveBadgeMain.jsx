@@ -1,12 +1,12 @@
 import React from "react";
 import GiveBadgeSearchBar from "components/GiveBadgeBar";
-import GiveBadgeTable from "components/GiveBadgeTable";
+import BaseTable from "components/BaseTable";
 
 function GiveBadgeMain() {
 	return (
 		<>
 			<GiveBadgeSearchBar />
-			<GiveBadgeTable />
+			<BaseTable />
 		</>
 	);
 }
