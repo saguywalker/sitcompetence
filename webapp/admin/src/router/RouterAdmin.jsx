@@ -9,17 +9,15 @@ import Dashboard from "pages/Dashboard";
 
 function RouterAdmin() {
 	return (
-		<div className="container">
-			<Router>
-				<Dashboard path="/"/>
-				<GiveBadgeLayout path="give-badge">
-					<GiveBadgeMain path="/"/>
-					<GiveBadgeSelectBadge path="select"/>
-					<GiveBadgeConfirm path="confirm"/>
-				</GiveBadgeLayout>
-				<Activity path="activity"/>
-			</Router>
-		</div>
+		<Router>
+			<Dashboard path="/"/>
+			<GiveBadgeLayout path="give-badge">
+				<GiveBadgeMain path="/"/>
+				<GiveBadgeSelectBadge path="select"/>
+				<GiveBadgeConfirm path="confirm"/>
+			</GiveBadgeLayout>
+			<Activity path="activity"/>
+		</Router>
 	);
 }
 

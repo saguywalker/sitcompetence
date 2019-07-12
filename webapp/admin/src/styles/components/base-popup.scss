@@ -1,0 +1,10 @@
+.base-popup {
+	&-wrapper {
+		position: fixed;
+		top: 93vh;
+		background-color: $sidebar-tag;
+		height: 7vh;
+		width: 100%;
+		display: flex;
+	}
+}
