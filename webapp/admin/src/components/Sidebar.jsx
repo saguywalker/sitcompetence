@@ -1,6 +1,10 @@
 import React from "react";
 import SidebarItemLink from "components/SidebarItemLink";
 import logo from "assets/images/sitcom_logo.png";
+import {
+	GIVE_BADGE_MAIN,
+	ACTIVITY_MAIN
+} from "router/routeName";
 
 function Sidebar() {
 	return (
@@ -30,17 +34,17 @@ function Sidebar() {
 							<SidebarItemLink
 								iconName="hand-holding-usd"
 								itemName="Giving"
-								pathName="/give-badge"
+								pathName={GIVE_BADGE_MAIN}
 							/>
 							<SidebarItemLink
 								iconName="cubes"
 								itemName="Activity"
-								pathName="/activity"
+								pathName={ACTIVITY_MAIN}
 							/>
 							<SidebarItemLink
 								iconName="certificate"
 								itemName="Badges"
-								pathName="/activity"
+								pathName="/badges"
 							/>
 						</div>
 					</div>

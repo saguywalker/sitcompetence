@@ -5,6 +5,7 @@ $sidebar-item: #deebfe;
 $sidebar-active: #0d3f8a;
 $sidebar-hover: #063275;
 $sidebar-tag: #032457;
+$button-bg: #0c55c6;
 $dropdown-menu-min-width: rem(24);
 
 // Setup $colors to use as bulma classes (e.g. 'is-twitter')
@@ -20,7 +21,8 @@ $colors: (
 	"danger": ($danger, $danger-invert),
 	"sb-item": ($sidebar-item, $sidebar-background),
 	"sb-tag": ($sidebar-tag, $white),
-	"my-blue": ($sidebar-background, $sidebar-item)
+	"my-blue": ($sidebar-background, $sidebar-item),
+	"button-main": ($button-bg, $white)
 );
 
 // Import Bulma and Buefy styles
