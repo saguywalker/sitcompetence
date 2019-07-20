@@ -32,9 +32,13 @@ body {
 	border: 1px solid #000;
 }
 
+@import "./layouts/admin.scss";
 @import "./components/sidebar.scss";
 @import "./components/give-badge-dropdown.scss";
-@import "./layouts/admin.scss";
+@import "./components/give-badge-student-description.scss";
+@import "./components/give-badge-selection.scss";
 @import "./components/base-table.scss";
 @import "./components/base-popup.scss";
+@import "./components/base-badge.scss";
 @import "./pages/give-badge-main.scss";
+@import "./pages/give-badge-select.scss";

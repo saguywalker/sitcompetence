@@ -3,11 +3,11 @@
 
 	&-wrapper {
 		position: fixed;
-		top: 93vh;
+		bottom: 0;
 		background-color: $sidebar-tag;
 		justify-content: space-between;
 		align-items: center;
-		height: 7vh;
+		height: rem(55);
 		width: 100vw;
 		display: flex;
 	}

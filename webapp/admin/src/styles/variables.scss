@@ -7,6 +7,9 @@ $sidebar-hover: #063275;
 $sidebar-tag: #032457;
 $button-bg: #0c55c6;
 $dropdown-menu-min-width: rem(24);
+$title: #363636;
+$subtitle: #4a4a4a;
+$box-shadow: #9d9d9d;
 
 // Setup $colors to use as bulma classes (e.g. 'is-twitter')
 $colors: (
@@ -36,7 +39,7 @@ sans-serif;
 
 // Media queries breakpoints
 $screen-desktop: 1200;
-$screen-mobile: 767;
+$screen-mobile: 969;
 
 // Components
 $grid-gutter-width: 12;
