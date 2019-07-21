@@ -6,21 +6,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var (
-	host     = "localhost"
-	port     = 5432
-	user     = ""
-	password = ""
-	dbname   = ""
-)
-
-var db MyDB
-
 type MyDB struct {
 	sql.DB
 }
 
-func (db *MyDB) CreateStudentTable() error {
+func (db *MyDB) createStudentTable() error {
 	sqlStmt := `CREATE TABLE student (
 		studentID VARCHAR(11) PRIMARY KEY,
 		studentFirstName TEXT,
@@ -31,7 +21,7 @@ func (db *MyDB) CreateStudentTable() error {
 	return err
 }
 
-func (db *MyDB) CreateStaffTable() error {
+func (db *MyDB) createStaffTable() error {
 	sqlStmt := `CREATE TABLE staff (
 		staffID VARCHAR PRIMARY KEY,
 		staffFirstName TEXT,
@@ -43,7 +33,7 @@ func (db *MyDB) CreateStaffTable() error {
 	return err
 }
 
-func (db *MyDB) CreateActivityTable() error {
+func (db *MyDB) createActivityTable() error {
 	sqlStmt := `CREATE TABLE student (
 		activityID VARCHAR PRIMARY KEY,
 		activityName TEXT,
@@ -55,7 +45,7 @@ func (db *MyDB) CreateActivityTable() error {
 	return err
 }
 
-func (db *MyDB) CreateAcquiredCompetenceTable() error {
+func (db *MyDB) createAcquiredCompetenceTable() error {
 	sqlStmt := `CREATE TABLE student (
 		activityID VARCHAR REFERENCES activity(activityID),
 		competenceID VARCHAR REFERENCES competence(competenceID)
@@ -65,7 +55,7 @@ func (db *MyDB) CreateAcquiredCompetenceTable() error {
 	return err
 }
 
-func (db *MyDB) CreateAttendedActivityTable() error {
+func (db *MyDB) createAttendedActivityTable() error {
 	sqlStmt := `CREATE TABLE student (
 		activityID VARCHAR REFERENCES activity(activityID),
 		studentID VARCHAR(11) REFERENCES student(studentID),
@@ -76,7 +66,7 @@ func (db *MyDB) CreateAttendedActivityTable() error {
 	return err
 }
 
-func (db *MyDB) CreateCompetenceTable() error {
+func (db *MyDB) createCompetenceTable() error {
 	sqlStmt := `CREATE TABLE student (
 		competenceID VARCHAR PRIMARY KEY,
 		competenceName TEXT,
@@ -90,7 +80,7 @@ func (db *MyDB) CreateCompetenceTable() error {
 	return err
 }
 
-func (db *MyDB) CreateCollectedCompetenceTable() error {
+func (db *MyDB) createCollectedCompetenceTable() error {
 	sqlStmt := `CREATE TABLE student (
 		studentID VARCHAR(11) REFERENCES student(studentID),
 		competenceID VARCHAR REFERENCES competence(competenceID)
