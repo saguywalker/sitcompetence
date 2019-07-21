@@ -11,17 +11,17 @@ import (
 
 type H map[string]interface{}
 
-func GetCompetencies(db *sql.DB) echo.HandlerFunc {
+func GetStaffs(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, models.GetCompetencies(db))
+		return c.JSON(http.StatusOK, models.GetStaffs(db))
 	}
 }
 
-func PostCompetence(db *sql.DB) echo.HandlerFunc {
+func PostStaff(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var competence models.Competence
-		c.Bind(&competence)
-		id, err := models.PostCompetence(db, competence)
+		var staff models.Staff
+		c.Bind(&staff)
+		id, err := models.PostStaff(db, staff)
 		if err != nil {
 			return err
 		} else {
@@ -32,10 +32,10 @@ func PostCompetence(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func DeleteCompetence(db *sql.DB) echo.HandlerFunc {
+func DeleteStaff(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := c.Param("id")
-		_, err := models.DeleteCompetence(db, id)
+		_, err := models.DeleteStaff(db, id)
 		if err != nil {
 			return err
 		} else {

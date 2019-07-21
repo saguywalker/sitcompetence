@@ -7,15 +7,15 @@ import (
 )
 
 type Competence struct {
-	ID                      string `json:"competence_id"`
-	Name                    string `json:"competence_name"`
+	CompetenceID            string `json:"competence_id"`
+	CompetenceName          string `json:"competence_name"`
 	Description             string `json:"description"`
 	TotalRequiredActivities uint32 `json:"totalactivities"`
 	Creator                 string `json:"staff_id"`
 }
 
 type CompetenceCollection struct {
-	Competencies []Competence `json:"items"`
+	Competencies []Competence `json:"competencies"`
 }
 
 func GetCompetencies(db *sql.DB) CompetenceCollection {
@@ -30,8 +30,8 @@ func GetCompetencies(db *sql.DB) CompetenceCollection {
 	for rows.Next() {
 		competence := Competence{}
 		err = rows.Scan(
-			&competence.ID,
-			&competence.Name,
+			&competence.CompetenceID,
+			&competence.CompetenceName,
 			&competence.Description,
 			&competence.TotalRequiredActivities,
 			&competence.Creator,
@@ -45,7 +45,7 @@ func GetCompetencies(db *sql.DB) CompetenceCollection {
 	return result
 }
 
-func PutCompetence(db *sql.DB, c Competence) (int64, error) {
+func PostCompetence(db *sql.DB, c Competence) (int64, error) {
 	sql, err := db.Prepare(`INSERT INTO student (competenceID, competenceName, description, badgeIconUrl, totalActivityRequire)
 		VALUES ($1, $2, $3, $4, $5) 
 	)`)
@@ -53,7 +53,7 @@ func PutCompetence(db *sql.DB, c Competence) (int64, error) {
 		return -1, err
 	}
 
-	result, err := sql.Exec(sql, c.ID, c.Name, c.Description, c.TotalRequiredActivities, c.Creator)
+	result, err := sql.Exec(sql, c.CompetenceID, c.CompetenceName, c.Description, c.TotalRequiredActivities, c.Creator)
 	if err != nil {
 		return -1, err
 	}
@@ -68,7 +68,7 @@ func DeleteCompetence(db *sql.DB, id string) (int64, error) {
 	}
 
 	result, err := sql.Exec(sql, id)
-	if er != nil {
+	if err != nil {
 		return -1, err
 	}
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/standard"
+	"github.com/sit-competence/handlers"
 )
 
 const (
@@ -34,17 +34,34 @@ func main() {
 
 	e := echo.New()
 
-	e.GET("/competence", func(c echo.Context) error {
-		return c.JSON(200, "GET competencies")
-	})
-	e.PUT("/competence", func(c echo.Context) error {
-		return c.JSON(200, "PUT competencies")
-	})
-	e.DELETE("/competence/:id", func(c echo.Context) error {
-		return c.JSON(200, "DELETE competence: "+c.Param("id"))
-	})
+	e.GET("/competence", handlers.GetCompetencies(db))
+	e.POST("/competence", handlers.PostCompetence(db))
+	e.DELETE("/competence/:id", handlers.DeleteCompetence(db))
 
-	e.Run(standard.New(":8000"))
+	e.GET("/staff", handlers.GetCompetencies(db))
+	e.POST("/staff", handlers.PostCompetence(db))
+	e.DELETE("/staff/:id", handlers.DeleteCompetence(db))
+
+	e.GET("/student", handlers.GetCompetencies(db))
+	e.POST("/student", handlers.PostCompetence(db))
+	e.DELETE("/student/:id", handlers.DeleteCompetence(db))
+
+	e.GET("/activity", handlers.GetCompetencies(db))
+	e.POST("/activity", handlers.PostCompetence(db))
+	e.DELETE("/activity/:id", handlers.DeleteCompetence(db))
+
+	e.GET("/competence", handlers.GetCompetencies(db))
+	e.POST("/competence", handlers.PostCompetence(db))
+	e.DELETE("/competence/:id", handlers.DeleteCompetence(db))
+
+	e.GET("/competence", handlers.GetCompetencies(db))
+	e.POST("/competence", handlers.PostCompetence(db))
+	e.DELETE("/competence/:id", handlers.DeleteCompetence(db))
+
+	e.GET("/competence", handlers.GetCompetencies(db))
+	e.POST("/competence", handlers.PostCompetence(db))
+	e.DELETE("/competence/:id", handlers.DeleteCompetence(db))
+
 }
 
 func initDB(db *sql.DB) error {
@@ -58,48 +75,48 @@ func initDB(db *sql.DB) error {
 		return err
 	}
 
-	sqlStmt := `CREATE TABLE staff (
+	sqlStmt = `CREATE TABLE staff (
 		staffID VARCHAR PRIMARY KEY,
 		staffFirstName TEXT,
 		staffLastName TEXT,
 		publicKey BYTEA
 	);`
-	_, err := db.Exec(sqlStmt)
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
 
-	sqlStmt := `CREATE TABLE activity (
+	sqlStmt = `CREATE TABLE activity (
 		activityID VARCHAR PRIMARY KEY,
 		activityName TEXT,
 		date DATE,
 		creator VARCHAR REFERENCES staff(staffID),
 	);`
-	_, err := db.Exec(sqlStmt)
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
 
-	sqlStmt := `CREATE TABLE acquired_competence (
+	sqlStmt = `CREATE TABLE acquired_competence (
 		activityID VARCHAR REFERENCES activity(activityID),
 		competenceID VARCHAR REFERENCES competence(competenceID)
 	);`
-	_, err := db.Exec(sqlStmt)
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
 
-	sqlStmt := `CREATE TABLE attended_activity (
+	sqlStmt = `CREATE TABLE attended_activity (
 		activityID VARCHAR REFERENCES activity(activityID),
 		studentID VARCHAR(11) REFERENCES student(studentID),
 		approver VARCHAR REFERENCES staff(staffID)
 	);`
-	_, err := db.Exec(sqlStmt)
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
 
-	sqlStmt := `CREATE TABLE competence (
+	sqlStmt = `CREATE TABLE competence (
 		competenceID VARCHAR PRIMARY KEY,
 		competenceName TEXT,
 		description TEXT,
@@ -107,16 +124,16 @@ func initDB(db *sql.DB) error {
 		totalActivityRequire INTEGER,
 		creator VARCHAR REFERENCES staff(staffID)
 	);`
-	_, err := db.Exec(sqlStmt)
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
 
-	sqlStmt := `CREATE TABLE student (
+	sqlStmt = `CREATE TABLE student (
 		studentID VARCHAR(11) REFERENCES student(studentID),
 		competenceID VARCHAR REFERENCES competence(competenceID)
 	);`
-	_, err := db.Exec(sqlStmt)
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
