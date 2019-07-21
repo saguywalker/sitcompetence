@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/sit-competence/models"
+	"github.com/saguywalker/sit-competence/models"
 
 	"github.com/labstack/echo"
 )
