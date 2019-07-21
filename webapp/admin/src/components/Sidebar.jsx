@@ -1,6 +1,10 @@
 import React from "react";
-import SidebarItem from "../components/SidebarItem";
-import logo from "../assets/images/sitcom_logo.png";
+import SidebarItemLink from "components/SidebarItemLink";
+import logo from "assets/images/sitcom_logo.png";
+import {
+	GIVE_BADGE_MAIN,
+	ACTIVITY_MAIN
+} from "router/routeName";
 
 function Sidebar() {
 	return (
@@ -10,38 +14,50 @@ function Sidebar() {
 					<div className="sidebar-header-container">
 						<div className="sidebar-header-wrapper">
 							<div className="sidebar-header-primary-item">
-								<img className="sidebar-sitcom-logo" src={logo} alt="SIT-Competence"/>
+								<img
+									className="sidebar-sitcom-logo"
+									src={logo}
+									alt="SIT-Competence"
+								/>
 							</div>
-							<SidebarItem
-								iconName="search"
-								itemName="Search"
-							/>
+							<div className="sidebar-header-item">
+								<SidebarItemLink
+									iconName="search"
+									itemName="Search"
+									pathName="/"
+								/>
+							</div>
 						</div>
 					</div>
 					<div className="sidebar-main-container">
 						<div className="sidebar-main-wrapper">
-							<SidebarItem
+							<SidebarItemLink
 								iconName="hand-holding-usd"
 								itemName="Giving"
+								pathName={GIVE_BADGE_MAIN}
 							/>
-							<SidebarItem
+							<SidebarItemLink
 								iconName="cubes"
 								itemName="Activity"
+								pathName={ACTIVITY_MAIN}
 							/>
-							<SidebarItem
+							<SidebarItemLink
 								iconName="certificate"
 								itemName="Badges"
+								pathName="/badges"
 							/>
 						</div>
 					</div>
 					<div className="sidebar-footer-container">
-						<SidebarItem
+						<SidebarItemLink
 							iconName="cog"
 							itemName="Setting"
+							pathName="/activity"
 						/>
-						<SidebarItem
+						<SidebarItemLink
 							iconName="sign-out-alt"
 							itemName="Logout"
+							pathName="/activity"
 						/>
 					</div>
 				</div>

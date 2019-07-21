@@ -2,11 +2,9 @@
 	@if (unitless($pixels)) {
 		$pixels: $pixels * 1px;
 	}
-
 	@if (unitless($context)) {
 		$context: $context * 1px;
 	}
-
 	@return $pixels / $context * 1rem;
 }
 
@@ -16,14 +14,8 @@
 	}
 }
 
-@mixin tablet {
-	@media (max-width: rem($screen-desktop)) {
-		@content;
-	}
-}
-
 @mixin desktop {
-	@media (min-width: $screen-desktop) {
+	@media (min-width: rem($screen-mobile)) {
 		@content;
 	}
 }

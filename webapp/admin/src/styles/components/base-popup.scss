@@ -1,0 +1,19 @@
+.base-popup {
+	position: relative;
+
+	&-wrapper {
+		position: fixed;
+		bottom: 0;
+		background-color: $sidebar-tag;
+		justify-content: space-between;
+		align-items: center;
+		height: rem(55);
+		width: 100vw;
+		display: flex;
+	}
+
+	&-next-btn {
+		position: relative;
+		left: rem(-60);
+	}
+}

@@ -1,0 +1,13 @@
+.base-table {
+	position: relative;
+
+	&-checkbox-all {
+		position: relative;
+
+		&::before {
+			content: "All";
+			position: absolute;
+			top: rem(-16);
+		}
+	}
+}

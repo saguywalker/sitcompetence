@@ -25,7 +25,20 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	line-height: 150%;
-	color: #ddd;
+	color: #444;
 }
 
+.test {
+	border: 1px solid #000;
+}
+
+@import "./layouts/admin.scss";
 @import "./components/sidebar.scss";
+@import "./components/give-badge-dropdown.scss";
+@import "./components/give-badge-student-description.scss";
+@import "./components/give-badge-selection.scss";
+@import "./components/base-table.scss";
+@import "./components/base-popup.scss";
+@import "./components/base-badge.scss";
+@import "./pages/give-badge-main.scss";
+@import "./pages/give-badge-select.scss";

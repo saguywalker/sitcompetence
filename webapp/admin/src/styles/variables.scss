@@ -5,6 +5,11 @@ $sidebar-item: #deebfe;
 $sidebar-active: #0d3f8a;
 $sidebar-hover: #063275;
 $sidebar-tag: #032457;
+$button-bg: #0c55c6;
+$dropdown-menu-min-width: rem(24);
+$title: #363636;
+$subtitle: #4a4a4a;
+$box-shadow: #9d9d9d;
 
 // Setup $colors to use as bulma classes (e.g. 'is-twitter')
 $colors: (
@@ -18,7 +23,9 @@ $colors: (
 	"warning": ($warning, $warning-invert),
 	"danger": ($danger, $danger-invert),
 	"sb-item": ($sidebar-item, $sidebar-background),
-	"sb-tag": ($sidebar-tag, $white)
+	"sb-tag": ($sidebar-tag, $white),
+	"my-blue": ($sidebar-background, $sidebar-item),
+	"button-main": ($button-bg, $white)
 );
 
 // Import Bulma and Buefy styles
@@ -32,10 +39,14 @@ sans-serif;
 
 // Media queries breakpoints
 $screen-desktop: 1200;
-$screen-mobile: 767;
+$screen-mobile: 969;
 
 // Components
 $grid-gutter-width: 12;
 $padding-base: 12;
 $padding-tablet: 24;
 $padding-mobile: 16;
+
+// Fontawesome
+@import "assets/fontawesome-free/scss/fontawesome.scss";
+@import "assets/fontawesome-free/scss/solid.scss";

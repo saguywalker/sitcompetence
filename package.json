@@ -6,5 +6,8 @@
 	"workspaces": [
 		"webapp/*"
 	],
+	"scripts": {
+		"dev:admin": "yarn workspace @p/admin run start"
+	},
 	"license": "MIT"
 }

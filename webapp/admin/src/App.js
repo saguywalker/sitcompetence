@@ -1,5 +1,5 @@
 import React from "react";
-import AdminMainLayout from "./layouts/AdminMainLayout";
+import AdminMainLayout from "layouts/AdminMainLayout";
 
 function App() {
 	return (

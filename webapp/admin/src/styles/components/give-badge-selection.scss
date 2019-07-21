@@ -1,0 +1,30 @@
+.gb-selection {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid black;
+
+	&-item {
+		margin: rem(10) 0;
+		cursor: pointer;
+	}
+
+	@include desktop {
+		&-wrapper {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: center;
+			width: rem(900);
+		}
+
+		&-item {
+			transition: box-shadow 300ms;
+			cursor: pointer;
+			margin: rem(30) rem(40);
+
+			&:hover {
+				box-shadow: 0 rem(5) rem(12) $box-shadow;
+			}
+		}
+	}
+}
