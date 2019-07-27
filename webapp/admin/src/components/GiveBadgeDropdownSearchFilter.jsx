@@ -27,46 +27,48 @@ function BaseDropdown({items, onSelect}) {
 	}
 
 	return (
-		<div className={dropdown ? "dropdown is-active" : "dropdown"}>
-			<div>
-				<div
-					className="dropdown-trigger"
-					onBlur={handleClickOutside}
-				>
-					<button
-						className="button"
-						onClick={handleDropdown}
+		<div className="gb-dropdown">
+			<div className={dropdown ? "dropdown is-active" : "dropdown"}>
+				<div>
+					<div
+						className="dropdown-trigger"
+						onBlur={handleClickOutside}
 					>
-						<span>Filter</span>
-						<span className="icon is-small">
-							<i className="fas fa-angle-down" />
-						</span>
-					</button>
-				</div>
-				<div
-					className="dropdown-menu"
-					onMouseOver={handleMouseOnItem}
-					onMouseLeave={handleMouseNotOnItem}
-					onBlur={handleClickOutside}
-				>
-					<div className="dropdown-content">
-						{
-							items.map((item, index) =>
-								<div
-									className="dropdown-item"
-									key={`${item}${index}`}
-								>
-									<label className="checkbox">
-										<input
-											type="checkbox"
-											value={item}
-											onChange={handleDropDownItemClick}
-										/>
-										{item}
-									</label>
-								</div>
-							)
-						}
+						<button
+							className="button"
+							onClick={handleDropdown}
+						>
+							<span>Filter</span>
+							<span className="icon is-small">
+								<i className="fas fa-angle-down" />
+							</span>
+						</button>
+					</div>
+					<div
+						className="dropdown-menu"
+						onMouseOver={handleMouseOnItem}
+						onMouseLeave={handleMouseNotOnItem}
+						onBlur={handleClickOutside}
+					>
+						<div className="dropdown-content">
+							{
+								items.map((item, index) =>
+									<div
+										className="dropdown-item"
+										key={`${item}${index}`}
+									>
+										<label className="checkbox">
+											<input
+												type="checkbox"
+												value={item}
+												onChange={handleDropDownItemClick}
+											/>
+											{item}
+										</label>
+									</div>
+								)
+							}
+						</div>
 					</div>
 				</div>
 			</div>

@@ -1,7 +1,7 @@
 import React from "react";
 import GiveBadgeStudentDescription from "components/GiveBadgeStudentDescription";
-import GiveBadgeSelection from "components/GiveBadgeSelection";
-import { Link } from "@reach/router";
+import GiveBadgeSelectSelection from "components/GiveBadgeSelectSelection";
+import GiveBadgePagination from "components/GiveBadgePagination";
 import {
 	GIVE_BADGE_MAIN,
 	GIVE_BADGE_CONFIRM
@@ -13,16 +13,18 @@ function GiveBadgeSelectBadge() {
 			<div className="section">
 				<h1 className="title">Select Badge</h1>
 				<GiveBadgeStudentDescription />
-				<GiveBadgeSelection />
+				<GiveBadgeSelectSelection />
+				<hr/>
+				<GiveBadgeStudentDescription />
+				<GiveBadgeSelectSelection />
+				<hr/>
 			</div>
-			<div className="gb-select-pagination-bar">
-				<Link to={GIVE_BADGE_MAIN}>
-					<button className="button is-button-main">Back</button>
-				</Link>
-				<Link to={GIVE_BADGE_CONFIRM}>
-					<button className="button is-button-main">Next</button>
-				</Link>
-			</div>
+			<GiveBadgePagination
+				nextPage={GIVE_BADGE_CONFIRM}
+				prevPage={GIVE_BADGE_MAIN}
+				nextText="Next"
+				prevText="Back"
+			/>
 		</div>
 	);
 }
