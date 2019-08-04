@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo"
-	"github.com/sit-competence/handlers"
+	"github.com/sit-competence/webapp/server/handlers"
 )
 
 const (
