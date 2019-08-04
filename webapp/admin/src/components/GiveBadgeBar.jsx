@@ -2,19 +2,22 @@ import React, { useState } from "react";
 import Dropdown from "components/GiveBadgeDropdownSearchFilter";
 
 function GiveBadgeSearchBar() {
-	const [selectedFilter, setSelectedFilter] = useState([]);
+	const [selectedFilters, setSelectedFilter] = useState([]);
 
 	function handleOnSelect(e) {
-		let tmp = selectedFilter;
-		let index;
+		const selectItem = e.target.value;
 		if (e.target.checked) {
-			// Add the value of the checkbox to array
-			tmp.push(e.target.value);
-			setSelectedFilter(tmp);
+			setSelectedFilter([
+				...selectedFilters,
+				selectItem
+			]);
 		} else {
-		// Remove the value from the unchecked checkbox from the array
-			index = tmp.indexOf(e.target.value);
-			tmp.splice(index, 1);
+			// Remove the value from the unchecked checkbox from the array
+			const index = selectedFilters.indexOf(selectItem);
+			selectedFilters.splice(index, 1);
+			setSelectedFilter([
+				...selectedFilters
+			]);
 		}
 	}
 
@@ -27,11 +30,11 @@ function GiveBadgeSearchBar() {
 					</div>
 				</div>
 				<div className="level-right">
-					<div className="gb-main-search level-item">
+					<div className="gb-bar-search level-item">
 						<div className="field has-addons">
 							<div className="control">
 								<Dropdown
-									items={["a", "b", "c"]}
+									items={["Year", "Month", "Semester"]}
 									onSelect={handleOnSelect}
 								/>
 							</div>
@@ -44,12 +47,21 @@ function GiveBadgeSearchBar() {
 								</button>
 							</div>
 						</div>
-						<div className="gb-main-filter-tag">
-							<div className="gb-main-filter-tag-item tag is-my-blue">
-								Bar
-								<button className="delete is-small" />
+						{
+							selectedFilters.length > 0 &&
+							<div className="gb-bar-filter-tag">
+								{
+									selectedFilters.map((filter, index) => (
+										<div
+											className="gb-bar-filter-tag-item tag is-my-blue"
+											key={`${filter}${index}`}
+										>
+											{filter}
+										</div>
+									))
+								}
 							</div>
-						</div>
+						}
 					</div>
 				</div>
 			</nav>

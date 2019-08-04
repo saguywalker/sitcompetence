@@ -1,7 +1,6 @@
 import React from "react";
 import GiveBadgeSearchBar from "components/GiveBadgeBar";
 import BaseTable from "components/BaseTable";
-import BasePopup from "components/BasePopup";
 
 function GiveBadgeMain() {
 	return (
@@ -10,7 +9,6 @@ function GiveBadgeMain() {
 				<GiveBadgeSearchBar />
 				<BaseTable />
 			</div>
-			<BasePopup />
 		</>
 	);
 }

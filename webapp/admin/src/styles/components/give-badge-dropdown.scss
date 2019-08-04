@@ -1,6 +1,5 @@
 .gb-dropdown {
-	&-content {
-		z-index: 10;
-		width: rem(80);
+	.dropdown-content {
+		width: rem(110);
 	}
 }
