@@ -103,7 +103,7 @@ function BaseTable() {
 	return (
 		<>
 			<section className="section">
-				<table className="table is-fullwidth">
+				<table className="table">
 					<thead>
 						<tr>
 							<th>
