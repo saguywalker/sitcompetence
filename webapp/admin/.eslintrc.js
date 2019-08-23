@@ -1,17 +1,38 @@
 module.exports = {
-  root: true,
+	root: true,
   env: {
     browser: true,
     node: true
   },
-  parserOptions: {
-    parser: 'babel-eslint'
-  },
+  parser: "vue-eslint-parser",
+    parserOptions: {
+        "parser": "@typescript-eslint/parser"
+	},
   extends: [
-    '@nuxtjs',
-    'plugin:nuxt/recommended'
-  ],
-  // add your custom rules here
-  rules: {
-  }
-}
+		"plugin:vue/recommended",
+		"plugin:vue/base",
+		"@nuxtjs/eslint-config-typescript",
+		"maqe"
+	],
+	plugins: [
+		"vue"
+	],
+	overrides: [
+		{
+			"files": "**/*.vue",
+			"rules": {
+				"quotes": ["error", "double"],
+				"vue/html-indent": [
+					"error",
+					"tab"
+				]
+			}
+		},
+		{
+			"files": "**/*",
+			"rules": {
+				"linebreak-style": "off"
+			}
+		}
+	]
+};
