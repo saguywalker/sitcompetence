@@ -4,24 +4,24 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/saguywalker/sit-competence/models"
+	"github.com/saguywalker/sit-competence/webapp/server/models"
 
 	"github.com/labstack/echo"
 )
 
 type H map[string]interface{}
 
-func GetStaffs(db *sql.DB) echo.HandlerFunc {
+func GetCompetencies(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, models.GetStaffs(db))
+		return c.JSON(http.StatusOK, models.GetCompetencies(db))
 	}
 }
 
-func PostStaff(db *sql.DB) echo.HandlerFunc {
+func PostCompetence(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var staff models.Staff
-		c.Bind(&staff)
-		id, err := models.PostStaff(db, staff)
+		var competence models.Competence
+		c.Bind(&competence)
+		id, err := models.PostCompetence(db, competence)
 		if err != nil {
 			return err
 		} else {
@@ -32,10 +32,10 @@ func PostStaff(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func DeleteStaff(db *sql.DB) echo.HandlerFunc {
+func DeleteCompetence(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := c.Param("id")
-		_, err := models.DeleteStaff(db, id)
+		_, err := models.DeleteCompetence(db, id)
 		if err != nil {
 			return err
 		} else {
