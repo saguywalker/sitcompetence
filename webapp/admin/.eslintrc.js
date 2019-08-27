@@ -31,8 +31,11 @@ module.exports = {
 		{
 			"files": "**/*",
 			"rules": {
-				"linebreak-style": "off"
+				"linebreak-style": "off",
+				"import/extensions": 0
 			}
 		}
-	]
+	],
+	settings: {
+	}
 };

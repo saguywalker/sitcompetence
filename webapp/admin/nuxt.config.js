@@ -18,7 +18,7 @@ export default {
 	/*
 	** Customize the progress-bar color
 	*/
-	loading: { color: "#fff" },
+	loading: { color: "#3273dc" },
 	/*
 	** Global CSS
 	*/
@@ -42,8 +42,16 @@ export default {
 	*/
 	modules: [
 		// Doc: https://axios.nuxtjs.org/usage
-		"@nuxtjs/axios"
+		"@nuxtjs/axios",
+		"bootstrap-vue/nuxt"
 	],
+	bootstrapVue: {
+		componentPlugins: [
+      "ToastPlugin",
+      "ModalPlugin"
+    ],
+		components: ["BContainer", "BRow", "BCol", "BFormInput", "BButton", "BTable"]
+  },
 	/*
 	** Axios module configuration
 	** See https://axios.nuxtjs.org/options

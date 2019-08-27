@@ -1,0 +1,72 @@
+// Import Bulma's core
+@import "~bulma/sass/utilities/_all";
+
+// Set your colors
+$primary: #20303e;
+$primary-hover: #06080b;
+$blue: #475fc4;
+$btn-success: #3273dc;
+$gray: #999;
+$main-bg: #f5f4f7;
+$input-gray: #dbdbdb;
+$input-label: #333;
+$main-shadow: #e5e8f6;
+$main-shadow-hover: #d5dbf2;
+$background-hover: #f8f8f8;
+$secondary: #91999e;
+$green: #38ca76;
+$blue-tag: #bee7fe;
+$blue-tag-invert: #3a9dd8;
+$green-tag: #afd8c2;
+$green-invert: #3e845b;
+$purple-tag: #d7d1fb;
+$purple-tag-invert: #7f74c4;
+$pink-tag: #fae2f3;
+$pink-tag-invert: #e49bd5;
+$thead: #f2f2f2;
+$main-orange-light: #f7d2b5;
+$main-orange: #e87722;
+
+// bulma navbar
+$navbar-breakpoint: 0;
+
+// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+$colors: (
+	"white": ($white, $black),
+	"black": ($black, $white),
+	"light": ($light, $light-invert),
+	"dark": ($dark, $white),
+	"primary": ($primary, $white),
+	"info": ($info, $info-invert),
+	"success": ($success, $success-invert),
+	"warning": ($warning, $warning-invert),
+	"danger": ($danger, $danger-invert),
+	"btn-success": ($btn-success, $white),
+	"easy-e-save": ($main-orange-light, $main-orange),
+	"easy-e-life": ($blue-tag, $blue-tag-invert),
+	"easy-e-protect": ($purple-tag, $purple-tag-invert),
+	"easy-e-care": ($pink-tag, $pink-tag-invert),
+	"blue": ($blue, $background-hover),
+	"green": ($green, $white)
+);
+
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+// Typography
+$base-font: 16;
+
+// Media queries breakpoints
+$base-font: 16;
+$desk-top-width: 1200px;
+$mobile-width: 1199px;
+
+// Components
+$grid-gutter-width: 12;
+$padding-base: 12;
+$padding-tablet: 24;
+$padding-mobile: 16;
+
+// z-index
+$sidebar-z: 1000;

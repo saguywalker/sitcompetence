@@ -1,25 +1,66 @@
 <template>
-	<div>
-		<h1 class="title">
-			{{ message }}
-		</h1>
+	<b-container>
 		<h1 class="title">
 			{{ wtf }}
 		</h1>
-	</div>
+		<event-card
+			v-for="(event, index) in events"
+			:key="`${event}${index}`"
+			:event="event"
+			:data-index="index"
+		/>
+		<b-button
+			@click="show"
+			variant="primary"
+		>
+			Show toast
+		</b-button>
+	</b-container>
 </template>
 <script lang="ts">
 import Vue from "vue";
+import EventCard from "@/components/EventCard.vue";
+import { NuxtAppOptions } from "@nuxt/types/app";
+import { mapState } from "vuex";
+
+interface ServerData {
+  data: object
+}
 
 export default Vue.extend({
+	components: {
+		EventCard
+	},
 	data() {
 		return {
-			message: "msg"
+			message: "msddg"
 		};
 	},
 	computed: {
-		wtf(): String {
+		...mapState("events", [
+			"events"
+		]),
+		wtf(): string {
 			return `${this.message} Hi`;
+		}
+	},
+	async fetch({ store, error }: NuxtAppOptions) {
+		try {
+			await store!.dispatch("events/fetchEvents");
+		} catch {
+			error({
+				statusCode: 503,
+				message: "wow fucking shit"
+			});
+		}
+	},
+	methods: {
+		show(): void {
+			(this as any).$bvToast.toast("Toast body content", {
+				title: "Variant",
+				variant: "success",
+				solid: true
+			});
 		}
 	}
 });
