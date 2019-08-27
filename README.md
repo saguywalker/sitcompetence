@@ -1,1 +1,5 @@
-This project is created by 👋
+Run admin in development mode
+
+```
+yarn dev:admin
+```
