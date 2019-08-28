@@ -23,7 +23,7 @@
 }
 
 @mixin desktop {
-	@media (min-width: $desk-top-width) {
+	@media (min-width: $desk-tablet-width) {
 		@content;
 	}
 }

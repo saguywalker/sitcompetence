@@ -1,0 +1,91 @@
+@import "../cores.scss";
+
+.main-header {
+	font-family: "arvo";
+	position: relative;
+	max-height: rem(100);
+	z-index: $navbar-z;
+
+	.logo {
+		text-decoration: none;
+		height: rem(50);
+		font-size: rem(18);
+		overflow: hidden;
+
+		.detail {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: $white;
+			background-color: $navbar-logo-bg;
+			height: 100%;
+			border-bottom: 0;
+
+			.img {
+				position: relative;
+				top: rem(-4);
+				margin-right: rem(10);
+			}
+		}
+	}
+
+	.nav-bar {
+		position: relative;
+		top: rem(-1);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		background-color: $main-blue;
+		height: rem(50);
+		color: $white;
+
+		.item {
+			height: inherit;
+			padding: 0 rem(12);
+
+			&:hover {
+				background-color: $navbar-logo-bg;
+			}
+		}
+	}
+
+	@include desktop {
+		display: flex;
+		max-height: rem(50);
+
+		.logo {
+			position: absolute;
+			left: 0;
+
+			.detail {
+				width: rem(230);
+				transition: width .3s ease-in-out;
+			}
+
+			&.sidebar-open {
+				.detail {
+					width: rem(50) !important;
+
+					.img {
+						left: rem(4);
+					}
+
+					p {
+						display: none;
+					}
+				}
+			}
+		}
+
+		.nav-bar {
+			margin-left: rem(230);
+			width: 100%;
+			top: 0;
+			transition: margin-left .3s ease-in-out;
+
+			&.sidebar-open {
+				margin-left: rem(50) !important;
+			}
+		}
+	}
+}

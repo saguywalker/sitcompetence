@@ -18,11 +18,12 @@ export default {
 	/*
 	** Customize the progress-bar color
 	*/
-	loading: { color: "#3273dc" },
+	loading: "~/components/loading.vue",
 	/*
 	** Global CSS
 	*/
 	css: [
+		{ src: "~/styles/global.scss", lang: "scss", rel: "preload" }
 	],
 	/*
 	** Plugins to load before mounting the App
@@ -46,11 +47,13 @@ export default {
 		"bootstrap-vue/nuxt"
 	],
 	bootstrapVue: {
+		bootstrapCSS: false, // Or `css: false`
+    bootstrapVueCSS: false, // Or `bvCSS: false`
 		componentPlugins: [
       "ToastPlugin",
       "ModalPlugin"
     ],
-		components: ["BContainer", "BRow", "BCol", "BFormInput", "BButton", "BTable"]
+		components: ["BContainer", "BRow", "BCol", "BFormInput", "BButton", "BTable", "BSpinner"]
   },
 	/*
 	** Axios module configuration

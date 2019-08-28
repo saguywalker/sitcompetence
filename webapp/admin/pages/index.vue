@@ -15,6 +15,12 @@
 		>
 			Show toast
 		</b-button>
+		<b-button @click="modalShow = !modalShow">
+			Open Modal
+		</b-button>
+		<b-modal v-model="modalShow">
+			Hello From Modal!
+		</b-modal>
 	</b-container>
 </template>
 <script lang="ts">
@@ -33,7 +39,8 @@ export default Vue.extend({
 	},
 	data() {
 		return {
-			message: "msddg"
+			message: "msddg",
+			modalShow: false
 		};
 	},
 	computed: {
