@@ -10,8 +10,8 @@
 			:data-index="index"
 		/>
 		<b-button
-			@click="show"
 			variant="primary"
+			@click="show"
 		>
 			Show toast
 		</b-button>
@@ -23,15 +23,10 @@
 		</b-modal>
 	</b-container>
 </template>
-<script lang="ts">
+<script>
 import Vue from "vue";
 import EventCard from "@/components/EventCard.vue";
-import { NuxtAppOptions } from "@nuxt/types/app";
 import { mapState } from "vuex";
-
-interface ServerData {
-  data: object
-}
 
 export default Vue.extend({
 	components: {
@@ -47,13 +42,13 @@ export default Vue.extend({
 		...mapState("events", [
 			"events"
 		]),
-		wtf(): string {
+		wtf() {
 			return `${this.message} Hi`;
 		}
 	},
-	async fetch({ store, error }: NuxtAppOptions) {
+	async fetch({ store, error }) {
 		try {
-			await store!.dispatch("events/fetchEvents");
+			await store.dispatch("events/fetchEvents");
 		} catch {
 			error({
 				statusCode: 503,
@@ -62,8 +57,8 @@ export default Vue.extend({
 		}
 	},
 	methods: {
-		show(): void {
-			(this as any).$bvToast.toast("Toast body content", {
+		show() {
+			this.$bvToast.toast("Toast body content", {
 				title: "Variant",
 				variant: "success",
 				solid: true

@@ -10,13 +10,8 @@
 		</p>
 	</div>
 </template>
-<script lang="ts">
-import Vue, { PropOptions } from "vue";
-
-interface Error {
-	statusCode: number,
-	message: string
-}
+<script>
+import Vue from "vue";
 
 export default Vue.extend({
 	name: "NuxtError",
@@ -24,18 +19,18 @@ export default Vue.extend({
 		error: {
 			type: Object,
 			default: null
-		} as PropOptions<Error>
+		}
 	},
-	head(): { title: string } {
+	head() {
 		return {
 			title: this.message
 		};
 	},
 	computed: {
-		statusCode(): number { // <--- Get the status code
+		statusCode() { // <--- Get the status code
 			return (this.error && this.error.statusCode) || 500;
 		},
-		message(): string { // <--- Print the error
+		message() { // <--- Print the error
 			return this.error.message;
 		}
 	}

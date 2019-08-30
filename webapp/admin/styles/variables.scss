@@ -1,15 +1,23 @@
 // Set your colors
 $bg-color: #ecf0f5;
+$border-gray: #ededed;
+$gray-1: #f9f9f9;
+$gray-2: #f4f4f4;
+$gray-3: #666;
+$gray-4: #d3d3d3;
 $sidebar-bg: #222d37;
 $sidebar-item: #b7c6cd;
 $sidebar-header-bg: #1a2226;
-$sidebar-header: #3f525b;
+$sidebar-header: #4b646f;
 $sidebar-item-bg-active: #1e282c;
 $main-blue: #408eba;
+$blue-1: #66a5c8;
+$blue-2: #d9eef1;
+$red-1:#ff4136;
 $navbar-logo-bg: #3a80a7;
 $loading-bg: #5555553f;
 $theme-colors: (
-  "primary": $main-blue,
+	"primary": $main-blue,
 	"danger": #ff4136,
 	"success": $sidebar-header
 );

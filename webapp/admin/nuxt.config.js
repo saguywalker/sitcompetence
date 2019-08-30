@@ -1,4 +1,3 @@
-
 export default {
 	mode: "universal",
 	/*
@@ -35,8 +34,7 @@ export default {
 	*/
 	buildModules: [
 		// Doc: https://github.com/nuxt-community/eslint-module
-		"@nuxtjs/eslint-module",
-		"@nuxt/typescript-build"
+		"@nuxtjs/eslint-module"
 	],
 	/*
 	** Nuxt.js modules
@@ -50,12 +48,12 @@ export default {
 		bootstrapCSS: false, // Or `css: false`
     bootstrapVueCSS: false, // Or `bvCSS: false`
 		componentPlugins: [
-      "ToastPlugin",
-      "ModalPlugin"
-    ],
+			"ToastPlugin",
+			"ModalPlugin"
+		],
 		components: ["BContainer", "BRow", "BCol", "BFormInput", "BButton", "BTable", "BSpinner"]
-  },
-	/*
+	},
+		/*
 	** Axios module configuration
 	** See https://axios.nuxtjs.org/options
 	*/

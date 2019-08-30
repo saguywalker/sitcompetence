@@ -4,14 +4,12 @@ module.exports = {
     browser: true,
     node: true
   },
-  parser: "vue-eslint-parser",
-    parserOptions: {
-        "parser": "@typescript-eslint/parser"
+	parserOptions: {
+		parser: "babel-eslint"
 	},
   extends: [
 		"plugin:vue/recommended",
 		"plugin:vue/base",
-		"@nuxtjs/eslint-config-typescript",
 		"maqe"
 	],
 	plugins: [

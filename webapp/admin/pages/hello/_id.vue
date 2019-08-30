@@ -8,18 +8,17 @@
 <style lang="scss" scoped>
 
 </style>
-<script lang="ts">
+<script>
 import Vue from "vue";
-import { NuxtAppOptions } from "@nuxt/types/app";
 import { mapState } from "vuex";
 
 export default Vue.extend({
 	computed: {
 		...mapState("events", ["event"])
 	},
-	async fetch({ store, error, params }: NuxtAppOptions) {
+	async fetch({ store, error, params }) {
 		try {
-			await store!.dispatch("events/fetchEvent", params.id);
+			await store.dispatch("events/fetchEvent", params.id);
 		} catch {
 			error({
 				statusCode: 503,

@@ -24,27 +24,66 @@
 			]"
 		>
 			<button
-				@click="toggleSidebar"
 				class="item"
+				@click="toggleSidebar"
 			>
 				<icon-hamburger size="15" />
 			</button>
-			<button class="item">
-				<base-profile-image
-					size="30"
-				/>
-			</button>
+			<client-only>
+				<button
+					ref="dropdown-button"
+					class="item profile"
+					@click="toggleProfile"
+				>
+					<base-profile-image size="30" />
+					<h4 class="profile-name">
+						Tindanai Wongpipattanopas
+					</h4>
+				</button>
+				<div
+					v-click-outside="{
+						exclude: ['dropdown-button'],
+						handler: 'handleClickOutside'
+					}"
+					:class="[
+						'profile-dropdown',
+						isProfileOpen ? 'is-open' : ''
+					]"
+				>
+					<div class="profile-dropdown-detail">
+						<base-profile-image
+							class="img"
+							size="83"
+						/>
+						<h4 class="name">
+							Tindanai Wongpipattanopas
+						</h4>
+						<p class="role">
+							Staff
+						</p>
+					</div>
+					<div class="profile-dropdown-footer">
+						<b-button size="sm">
+							Setting
+						</b-button>
+						<b-button size="sm">
+							Sign out
+						</b-button>
+					</div>
+				</div>
+			</client-only>
 		</nav>
 	</header>
 </template>
 <style lang="scss" scoped>
 @import "@/styles/components/navbar.scss";
 </style>
-<script lang="ts">
+<script>
 import Vue from "vue";
 import BaseLogo from "@/components/BaseLogo.vue";
 import BaseProfileImage from "@/components/BaseProfileImage.vue";
 import IconHamburger from "@/components/icons/IconHamburger.vue";
+import { clickOutside } from "@/helpers/directives/clickOutside";
 
 export default Vue.extend({
 	components: {
@@ -52,15 +91,25 @@ export default Vue.extend({
 		BaseProfileImage,
 		IconHamburger
 	},
+	directives: {
+		clickOutside
+	},
 	data() {
 		return {
-			isSidebarOpen: false
+			isSidebarOpen: false,
+			isProfileOpen: false
 		};
 	},
 	methods: {
 		toggleSidebar() {
 			this.isSidebarOpen = !this.isSidebarOpen;
 			this.$emit("is-toggle", this.isSidebarOpen);
+		},
+		toggleProfile() {
+			this.isProfileOpen = !this.isProfileOpen;
+		},
+		handleClickOutside() {
+			this.isProfileOpen = false;
 		}
 	}
 });

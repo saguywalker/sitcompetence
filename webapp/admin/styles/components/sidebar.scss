@@ -8,9 +8,46 @@
 	height: 100%;
 	color: $white;
 	background-color: $sidebar-bg;
-	padding-top: rem(100);
+	padding-top: rem(95);
 	transition: transform .3s ease-in-out;
 	transform: translate(rem(-230), 0);
+
+	.sidebar {
+		padding-bottom: rem(10);
+
+		.user-panel {
+			display: flex;
+			align-items: center;
+			padding: rem(12) rem(8);
+
+			&-info {
+				margin-left: rem(16);
+				padding: rem(10) 0;
+
+				.name {
+					font-size: rem(13);
+					font-weight: 600;
+					margin-bottom: rem(5);
+				}
+
+				.role {
+					font-size: rem(11)
+				}
+			}
+		}
+
+		&-menu {
+			overflow: visible;
+
+			.header {
+				background-color: $sidebar-header-bg;
+				color: $sidebar-header;
+				padding: rem(8) rem(15);
+				font-size: rem(11);
+				text-transform: uppercase;
+			}
+		}
+	}
 
 	@include desktop {
 		transform: translate(0, 0);

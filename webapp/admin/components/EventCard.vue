@@ -11,25 +11,20 @@
 		</div>
 	</nuxt-link>
 </template>
-<script lang="ts">
-import Vue, { PropOptions } from "vue";
+<script>
+import Vue from "vue";
 
-interface Event {
-	time: string
-	date: string
-	title: string
-}
 
 export default Vue.extend({
 	props: {
 		event: {
 			type: Object,
 			default: null
-		} as PropOptions<Event>
+		}
 	},
 	computed: {
-		parsedDate(): string {
-			const eventDate: Date = new Date(this.event.date);
+		parsedDate() {
+			const eventDate = new Date(this.event.date);
 			return eventDate.toDateString();
 		}
 	}

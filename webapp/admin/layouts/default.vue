@@ -13,7 +13,7 @@
 <style lang="scss" scoped>
 @import "@/styles/layouts/default.scss";
 </style>
-<script lang="ts">
+<script>
 import Vue from "vue";
 import SideBar from "@/components/SideBar.vue";
 import NavBar from "@/components/NavBar.vue";
@@ -34,7 +34,7 @@ export default Vue.extend({
 		};
 	},
 	methods: {
-		handleSidebar(e: boolean): void {
+		handleSidebar(e) {
 			this.isSidebarOpen = e;
 		}
 	}

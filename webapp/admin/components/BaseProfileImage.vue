@@ -15,7 +15,7 @@
 <style lang="scss" scoped>
 @import "@/styles/components/base-profile-image.scss";
 </style>
-<script lang="ts">
+<script>
 import Vue from "vue";
 
 export default Vue.extend({
@@ -30,7 +30,7 @@ export default Vue.extend({
 		}
 	},
 	computed: {
-		imageSrc(): string {
+		imageSrc() {
 			return this.src || `https://via.placeholder.com/${this.size}`;
 		}
 	}

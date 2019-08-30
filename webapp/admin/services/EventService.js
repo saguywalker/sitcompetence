@@ -1,6 +1,6 @@
-import axios, { AxiosResponse, AxiosInstance } from "axios";
+import axios from "axios";
 
-const apiClient: AxiosInstance = axios.create({
+const apiClient = axios.create({
 	baseURL: "http://my-json-server.typicode.com/Code-Pop/real-world-nuxt/",
 	withCredentials: false,
 	headers: {
@@ -9,17 +9,11 @@ const apiClient: AxiosInstance = axios.create({
 	}
 });
 
-interface Event {
-	time: string
-	date: string
-	title: string
-}
-
 export default {
-	getEvents(): Promise<AxiosResponse<Event[]>> {
+	getEvents() {
 		return apiClient.get("/events");
 	},
-	getEvent(id: number): Promise<AxiosResponse<Event>> {
+	getEvent(id) {
 		return apiClient.get(`/events/${id}`);
 	}
-}
+};

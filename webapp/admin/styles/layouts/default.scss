@@ -1,6 +1,7 @@
 @import "../cores.scss";
 
 .default {
+	min-height: 100vh;
 	&.sidebar-open {
 		.content-wrapper {
 			transform: translate(rem(230), 0);

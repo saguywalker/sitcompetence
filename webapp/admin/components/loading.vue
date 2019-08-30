@@ -13,7 +13,7 @@
 <style lang="scss" scoped>
 @import "@/styles/components/loading.scss";
 </style>
-<script lang="ts">
+<script>
 import Vue from "vue";
 
 export default Vue.extend({
@@ -23,15 +23,15 @@ export default Vue.extend({
 		};
 	},
 	methods: {
-		start(): void {
+		start() {
 			this.loading = true;
 		},
-		finish(): void {
+		finish() {
 			this.loading = false;
 		},
-		fail(): void {
+		fail() {
 			this.loading = false;
-			(this as any).$bvToast.toast("Toast body content", {
+			this.$bvToast.toast("Toast body content", {
 				title: "Something Error",
 				variant: "danger",
 				solid: true
