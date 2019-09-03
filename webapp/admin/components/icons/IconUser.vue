@@ -10,14 +10,12 @@
 	</svg>
 </template>
 <script>
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
 	props: {
 		size: {
 			type: String,
 			default: "20"
 		}
 	}
-});
+};
 </script>

@@ -1,0 +1,35 @@
+@function rem($size) {
+	$rem-size: $size / $base-font;
+	//Default font size on html element is 100%, equivalent to 16px;
+	@return #{$rem-size}rem;
+}
+
+@mixin placeholder {
+	&::-webkit-input-placeholder {
+		@content;
+	}
+
+	&:-moz-placeholder {
+		@content;
+	}
+
+	&::-moz-placeholder {
+		@content;
+	}
+
+	&:-ms-input-placeholder {
+		@content;
+	}
+}
+
+@mixin desktop {
+	@media (min-width: $desktop-width) {
+		@content;
+	}
+}
+
+@mixin mobile {
+	@media (max-width: $mobile-width) {
+		@content;
+	}
+}

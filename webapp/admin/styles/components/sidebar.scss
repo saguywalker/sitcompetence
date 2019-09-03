@@ -11,6 +11,7 @@
 	padding-top: rem(95);
 	transition: transform .3s ease-in-out;
 	transform: translate(rem(-230), 0);
+	font-size: rem(14);
 
 	.sidebar {
 		padding-bottom: rem(10);
@@ -37,6 +38,9 @@
 		}
 
 		&-menu {
+			margin: 0;
+			padding: 0;
+			list-style: none;
 			overflow: visible;
 
 			.header {
@@ -46,12 +50,38 @@
 				font-size: rem(11);
 				text-transform: uppercase;
 			}
+
+			.item {
+				display: flex;
+				align-items: center;
+				border-left: rem(3) solid transparent;
+				padding: rem(12) rem(5) rem(12) rem(15);
+				text-decoration: none;
+				color: $sidebar-item;
+				fill: $sidebar-item;
+
+				.name {
+					margin-left: rem(10);
+				}
+
+				&.nuxt-link-exact-active {
+					border-left: rem(3) solid $main-blue;
+					background-color: $sidebar-item-bg-active;
+					color: $white;
+					fill: $white;
+				}
+
+				&:hover {
+					background-color: $sidebar-item-bg-active;
+				}
+			}
 		}
 	}
 
 	@include desktop {
 		transform: translate(0, 0);
 		width: rem(230) !important;
+		padding-top: rem(50);
 		transition: width .3s ease-in-out;
 	}
 }

@@ -1,0 +1,165 @@
+@import "../cores.scss";
+
+.main-header {
+	position: relative;
+	max-height: rem(100);
+	z-index: $navbar-z;
+
+	.logo {
+		font-family: "arvo";
+		text-decoration: none;
+		height: rem(50);
+		font-size: rem(18);
+		overflow: hidden;
+
+		.detail {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: $white;
+			background-color: $navbar-logo-bg;
+			height: 100%;
+			border-bottom: 0;
+
+			.img {
+				position: relative;
+				top: rem(-4);
+				margin-right: rem(10);
+			}
+		}
+	}
+
+	.nav-bar {
+		position: relative;
+		top: rem(-1);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		background-color: $main-blue;
+		height: rem(50);
+		color: $white;
+
+		.item {
+			height: inherit;
+			padding: 0 rem(12);
+
+			&.profile {
+				position: relative;
+				display: flex;
+				align-items: center;
+
+				.profile-name {
+					display: none;
+					font-size: rem(14);
+					margin-left: rem(5);
+				}
+			}
+
+			&:hover {
+				background-color: $navbar-logo-bg;
+			}
+		}
+
+		.profile-dropdown {
+			display: none;
+			position: absolute;
+			top: rem(50);
+			right: 0;
+			width: rem(280);
+			height: auto;
+			border: rem(1) solid $border-gray;
+			z-index: $sidebar-z;
+
+			&-detail {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: rem(15) 0;
+				height: rem(180);
+				color: $blue-2;
+				background-color: $main-blue;
+
+				.img {
+					border-radius: 50%;
+					border: rem(3) solid $blue-1;
+				}
+
+				.name {
+					font-size: rem(16);
+					margin-top: rem(16);
+				}
+
+				.role {
+					font-size: rem(12);
+					margin-top: rem(12);
+				}
+			}
+
+			&-footer {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: rem(12) rem(10);
+				background-color: $gray-1;
+
+				.btn {
+					color: $gray-3;
+					background-color: $gray-2;
+					border-color: $gray-4;
+				}
+			}
+
+			&.is-open {
+				display: block;
+			}
+		}
+	}
+
+	@include desktop {
+		display: flex;
+		max-height: rem(50);
+
+		.logo {
+			position: absolute;
+			left: 0;
+
+			.detail {
+				width: rem(230);
+				transition: width .3s ease-in-out;
+			}
+
+			&.sidebar-open {
+				.detail {
+					width: rem(50) !important;
+
+					.img {
+						left: rem(4);
+					}
+
+					p {
+						display: none;
+					}
+				}
+			}
+		}
+
+		.nav-bar {
+			margin-left: rem(230);
+			width: 100%;
+			top: 0;
+			transition: margin-left .3s ease-in-out;
+
+			.item {
+				&.profile {
+					.profile-name {
+						display: block;
+					}
+				}
+			}
+
+			&.sidebar-open {
+				margin-left: rem(50) !important;
+			}
+		}
+	}
+}

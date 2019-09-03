@@ -24,11 +24,10 @@
 	</b-container>
 </template>
 <script>
-import Vue from "vue";
 import EventCard from "@/components/EventCard.vue";
 import { mapState } from "vuex";
 
-export default Vue.extend({
+export default {
 	components: {
 		EventCard
 	},
@@ -65,5 +64,5 @@ export default Vue.extend({
 			});
 		}
 	}
-});
+};
 </script>

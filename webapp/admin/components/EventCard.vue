@@ -12,10 +12,7 @@
 	</nuxt-link>
 </template>
 <script>
-import Vue from "vue";
-
-
-export default Vue.extend({
+export default {
 	props: {
 		event: {
 			type: Object,
@@ -28,7 +25,7 @@ export default Vue.extend({
 			return eventDate.toDateString();
 		}
 	}
-});
+};
 </script>
 <style scoped>
 div {

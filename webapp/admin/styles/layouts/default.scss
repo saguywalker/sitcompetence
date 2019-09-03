@@ -17,6 +17,12 @@
 
 			@include desktop {
 				width: rem(50) !important;
+
+				.sidebar {
+					.user-panel {
+						background-color: aqua;
+					}
+				}
 			}
 		}
 	}

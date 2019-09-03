@@ -1,0 +1,25 @@
+@import "../cores.scss";
+
+.give-badge {
+	.header {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: rem(10);
+
+		.title {
+			font-size: rem(24);
+			font-weight: 500;
+		}
+
+		@include desktop {
+			flex-direction: row;
+			align-items: baseline;
+			justify-content: space-between;
+
+			.breadcrumb {
+				width: auto;
+				background-color: transparent;
+			}
+		}
+	}
+}

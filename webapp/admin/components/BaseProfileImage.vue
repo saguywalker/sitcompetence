@@ -16,9 +16,7 @@
 @import "@/styles/components/base-profile-image.scss";
 </style>
 <script>
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
 	props: {
 		src: {
 			type: String,
@@ -34,5 +32,5 @@ export default Vue.extend({
 			return this.src || `https://via.placeholder.com/${this.size}`;
 		}
 	}
-});
+};
 </script>

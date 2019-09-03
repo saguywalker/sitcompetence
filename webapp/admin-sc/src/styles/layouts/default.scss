@@ -1,0 +1,36 @@
+@import "../cores.scss";
+
+.default {
+	position: relative;
+	min-height: 100vh;
+
+	&.sidebar-open {
+		.content-wrapper {
+			transform: translate(rem(230), 0);
+
+			@include desktop {
+				transform: translate(0, 0);;
+				margin-left: rem(50) !important;
+			}
+		}
+
+		.main-sidebar {
+			transform: translate(0, 0);
+
+			@include desktop {
+				width: rem(50) !important;
+			}
+		}
+	}
+
+	.content-wrapper {
+		transition: transform .3s ease-in-out;
+		padding: rem(16) rem(10);
+
+		@include desktop {
+			padding: rem(10);
+			margin-left: rem(230);
+			transition: margin-left .3s ease-in-out;
+		}
+	}
+}

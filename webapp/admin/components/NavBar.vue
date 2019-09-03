@@ -79,13 +79,12 @@
 @import "@/styles/components/navbar.scss";
 </style>
 <script>
-import Vue from "vue";
 import BaseLogo from "@/components/BaseLogo.vue";
 import BaseProfileImage from "@/components/BaseProfileImage.vue";
 import IconHamburger from "@/components/icons/IconHamburger.vue";
 import { clickOutside } from "@/helpers/directives/clickOutside";
 
-export default Vue.extend({
+export default {
 	components: {
 		BaseLogo,
 		BaseProfileImage,
@@ -112,5 +111,5 @@ export default Vue.extend({
 			this.isProfileOpen = false;
 		}
 	}
-});
+};
 </script>

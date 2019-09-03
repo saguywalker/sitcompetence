@@ -9,10 +9,9 @@
 
 </style>
 <script>
-import Vue from "vue";
 import { mapState } from "vuex";
 
-export default Vue.extend({
+export default {
 	computed: {
 		...mapState("events", ["event"])
 	},
@@ -26,5 +25,5 @@ export default Vue.extend({
 			});
 		}
 	}
-});
+};
 </script>

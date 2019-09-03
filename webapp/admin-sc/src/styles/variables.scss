@@ -1,0 +1,39 @@
+// Set your colors
+$bg-color: #ecf0f5;
+$border-gray: #ededed;
+$gray-1: #f9f9f9;
+$gray-2: #f4f4f4;
+$gray-3: #666;
+$gray-4: #d3d3d3;
+$gray-5: #97a0b3;
+$gray-6: #d2d6de;
+$sidebar-bg: #222d37;
+$sidebar-item: #b8c7ce;
+$sidebar-header-bg: #1a2226;
+$sidebar-header: #4b646f;
+$sidebar-item-bg-active: #1e282c;
+$main-blue: #408eba;
+$blue-1: #66a5c8;
+$blue-2: #d9eef1;
+$red-1:#ff4136;
+$navbar-logo-bg: #3a80a7;
+$loading-bg: #5555553f;
+$box-header: #444;
+$theme-colors: (
+	"primary": $main-blue,
+	"danger": #ff4136,
+	"success": $sidebar-header
+);
+
+$white: #fff;
+// Typography
+$base-font: 16;
+
+// Media queries breakpoints
+$desktop-width: 992px;
+$mobile-width: 767px;
+
+// z-index
+$sidebar-z: 1000;
+$navbar-z: 1030;
+$loading-z: 2000;
