@@ -7,7 +7,6 @@
 		"webapp/*"
 	],
 	"scripts": {
-		"dev:server": "yarn workspace @p/server run dev",
 		"dev:admin": "yarn workspace @p/admin run dev",
 		"api-doc": "redoc-cli serve swagger.yaml"
 	},
