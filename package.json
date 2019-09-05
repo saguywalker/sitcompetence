@@ -7,7 +7,7 @@
 		"webapp/*"
 	],
 	"scripts": {
-		"dev:admin": "yarn workspace @p/admin run dev",
+		"dev:admin": "yarn workspace @p/admin-sc run serve",
 		"api-doc": "redoc-cli serve swagger.yaml"
 	},
 	"license": "MIT",
