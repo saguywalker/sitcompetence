@@ -43,7 +43,7 @@
 									variant="outline-primary"
 									size="sm"
 								>
-									Semester
+									Semesterr
 								</b-button>
 							</b-button-group>
 						</div>
