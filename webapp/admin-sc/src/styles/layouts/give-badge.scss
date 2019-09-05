@@ -10,8 +10,14 @@
 			font-size: rem(24);
 			font-weight: 500;
 		}
+	}
 
-		@include desktop {
+	.section {
+		padding: rem(16) rem(10);
+	}
+
+	@include desktop {
+		.header {
 			flex-direction: row;
 			align-items: baseline;
 			justify-content: space-between;
@@ -20,6 +26,10 @@
 				width: auto;
 				background-color: transparent;
 			}
+		}
+
+		.section {
+			padding: rem(10);
 		}
 	}
 }

@@ -64,7 +64,7 @@
 		</section>
 	</aside>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/components/sidebar.scss";
 </style>
 <script>

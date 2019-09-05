@@ -73,7 +73,7 @@
 		</nav>
 	</header>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/components/navbar.scss";
 </style>
 <script>

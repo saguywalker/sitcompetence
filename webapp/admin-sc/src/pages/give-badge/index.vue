@@ -2,10 +2,15 @@
 	<div class="give-badge-main">
 		<b-row>
 			<b-col lg="8">
-				<div class="box">
-					<div class="box-header">
+				<div
+					:class="[
+						'box',
+						error.selectedItems ? 'error' : ''
+					]"
+				>
+					<h2 class="box-header">
 						Student list
-					</div>
+					</h2>
 					<div class="table">
 						<div class="header">
 							<b-button-group class="search">
@@ -135,9 +140,9 @@
 			</b-col>
 			<b-col lg="4">
 				<div class="box">
-					<div class="box-header">
+					<h2 class="box-header">
 						Selected student
-					</div>
+					</h2>
 					<ul class="selected">
 						<li
 							v-for="(item, index) in selectedItems"
@@ -156,24 +161,27 @@
 				</div>
 			</b-col>
 		</b-row>
-		<router-link :to="{ name: 'give-badge-selection'}">
-			<b-button>
-				Next
-			</b-button>
-		</router-link>
+		<base-page-step
+			ref="stepRef"
+			:step="step"
+			@next="submit"
+		/>
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/pages/give-badge-main.scss";
 </style>
 <script>
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
+import BasePageStep from "@/components/BasePageStep.vue";
+import { mapState } from "vuex";
 
 export default {
 	components: {
 		IconCheck,
-		IconCrossCircle
+		IconCrossCircle,
+		BasePageStep
 	},
 	data() {
 		return {
@@ -186,8 +194,40 @@ export default {
 				{ student_id: 59130522033, first_name: "Jami", last_name: "Carney" }
 			],
 			selectMode: "multi",
-			selectedItems: []
+			selectedItems: [],
+			error: {
+				selectedItems: false
+			}
 		};
+	},
+	computed: {
+		...mapState("giveBadge", {
+			selectedStudents: "selectedStudents"
+		}),
+		hasSelectedItem() {
+			if (this.selectedItems.length > 0) {
+				return true;
+			}
+
+			return false;
+		},
+		step() {
+			return this.$route.meta.step;
+		}
+	},
+	watch: {
+		selectedItems() {
+			this.error.selectedItems = false;
+		}
+	},
+	created() {
+		this.selectedItems = this.selectedStudents;
+	},
+	mounted() {
+		this.selectedItems.forEach((item) => {
+			const index = this.items.findIndex((i) => i.student_id === item.student_id);
+			this.$refs.selectableTable.selectRow(index);
+		});
 	},
 	methods: {
 		onRowSelected(items) {
@@ -202,6 +242,19 @@ export default {
 		deleteSelectedRow(id) {
 			const index = this.items.findIndex((item) => item.student_id === id);
 			this.$refs.selectableTable.unselectRow(index);
+		},
+		submit() {
+			if (this.hasSelectedItem) {
+				this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
+				this.$router.push({ name: "give-badge-selection" });
+			} else {
+				this.error.selectedItems = true;
+				this.$bvToast.toast("Please select at least one student to give", {
+					title: "No student error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			}
 		}
 	}
 };

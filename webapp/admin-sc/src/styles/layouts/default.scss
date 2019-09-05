@@ -25,10 +25,8 @@
 
 	.content-wrapper {
 		transition: transform .3s ease-in-out;
-		padding: rem(16) rem(10);
 
 		@include desktop {
-			padding: rem(10);
 			margin-left: rem(230);
 			transition: margin-left .3s ease-in-out;
 		}

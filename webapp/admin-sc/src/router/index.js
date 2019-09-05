@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import { GIVE_BADGE_BREADCRUMB } from "@/constants/breadcrumb";
+import { GIVE_BADGE_STEP } from "@/constants/step";
 
 Vue.use(Router);
 
@@ -40,7 +41,8 @@ const router = new Router({
 							path: "/",
 							component: () => import("@/pages/give-badge"),
 							meta: {
-								breadcrumb: GIVE_BADGE_BREADCRUMB.main
+								breadcrumb: GIVE_BADGE_BREADCRUMB.main,
+								step: GIVE_BADGE_STEP.main
 							}
 						},
 						{
@@ -48,7 +50,8 @@ const router = new Router({
 							path: "selection",
 							component: () => import("@/pages/give-badge/selection.vue"),
 							meta: {
-								breadcrumb: GIVE_BADGE_BREADCRUMB.selection
+								breadcrumb: GIVE_BADGE_BREADCRUMB.selection,
+								step: GIVE_BADGE_STEP.selection
 							}
 						},
 						{
@@ -56,7 +59,8 @@ const router = new Router({
 							path: "confirmation",
 							component: () => import("@/pages/give-badge/confirmation.vue"),
 							meta: {
-								breadcrumb: GIVE_BADGE_BREADCRUMB.confirmation
+								breadcrumb: GIVE_BADGE_BREADCRUMB.confirmation,
+								step: GIVE_BADGE_STEP.confirmation
 							}
 						},
 						{

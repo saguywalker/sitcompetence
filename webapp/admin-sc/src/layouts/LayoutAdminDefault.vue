@@ -10,7 +10,7 @@
 		<router-view class="content-wrapper" />
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/layouts/default.scss";
 </style>
 <script>

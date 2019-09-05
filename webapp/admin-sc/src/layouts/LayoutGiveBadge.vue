@@ -1,18 +1,20 @@
 <template>
 	<div class="give-badge">
-		<div class="header">
-			<h1 class="title">
-				Give badge
-			</h1>
-			<base-breadcrumb
-				:items="breadcrumbList"
-				class="breadcrumb"
-			/>
-		</div>
-		<router-view />
+		<section class="section">
+			<div class="header">
+				<h1 class="title">
+					{{ currentPage }}
+				</h1>
+				<base-breadcrumb
+					:items="breadcrumbList"
+					class="breadcrumb"
+				/>
+			</div>
+			<router-view />
+		</section>
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/layouts/give-badge.scss";
 </style>
 <script>
@@ -24,8 +26,15 @@ export default {
 	},
 	data() {
 		return {
-			breadcrumbList: []
+			breadcrumbList: [],
+			step: {},
+			isHideStep: false
 		};
+	},
+	computed: {
+		currentPage() {
+			return this.breadcrumbList[this.breadcrumbList.length - 1];
+		}
 	},
 	watch: {
 		$route() {

@@ -10,7 +10,7 @@
 		/>
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/components/loading.scss";
 </style>
 <script>

@@ -8,7 +8,7 @@
 		</li>
 	</ol>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/components/base-breadcrumb.scss";
 </style>
 <script>

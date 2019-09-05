@@ -11,7 +11,7 @@
 		>
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/styles/components/base-profile-image.scss";
 </style>
 <script>
