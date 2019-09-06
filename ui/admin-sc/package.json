@@ -26,6 +26,7 @@
     "chai": "^4.1.2",
     "eslint": "^5.16.0",
     "eslint-config-maqe": "^3.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.0",
@@ -51,14 +52,21 @@
       {
         "files": "**/*.vue",
         "rules": {
-          "quotes": ["error", "double"],
+          "quotes": [
+            "error",
+            "double"
+          ],
           "vue/html-indent": [
             "error",
             "tab"
           ],
-          "import/extensions": ["error", "never", {
-            "vue": "always"
-          }]
+          "import/extensions": [
+            "error",
+            "never",
+            {
+              "vue": "always"
+            }
+          ]
         }
       },
       {
@@ -66,8 +74,14 @@
         "rules": {
           "linebreak-style": "off",
           "import/extensions": 0,
-          "quotes": ["error", "double"],
-          "indent": ["error", "tab"]
+          "quotes": [
+            "error",
+            "double"
+          ],
+          "indent": [
+            "error",
+            "tab"
+          ]
         }
       },
       {
