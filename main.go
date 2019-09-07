@@ -1,6 +1,6 @@
 package main
 
-import "github.com/saguywalker/go-microservices/cmd"
+import "github.com/saguywalker/sitcompetence/cmd"
 
 func main() {
 	cmd.Execute()
