@@ -7,7 +7,7 @@
 			]"
 		>
 			<div class="user-panel">
-				<base-profile-image
+				<base-image
 					class="image"
 					size="50"
 				/>
@@ -68,7 +68,7 @@
 @import "@/styles/components/sidebar.scss";
 </style>
 <script>
-import BaseProfileImage from "@/components/BaseProfileImage.vue";
+import BaseImage from "@/components/BaseImage.vue";
 import IconDashboard from "@/components/icons/IconDashboard.vue";
 import IconGiveBadge from "@/components/icons/IconGiveBadge.vue";
 import IconActivity from "@/components/icons/IconActivity.vue";
@@ -76,7 +76,7 @@ import IconBadgeSetting from "@/components/icons/IconBadgeSetting.vue";
 
 export default {
 	components: {
-		BaseProfileImage,
+		BaseImage,
 		IconDashboard,
 		IconGiveBadge,
 		IconActivity,

@@ -1,0 +1,12 @@
+.slide-down {
+	&-enter-active,
+	&-leave-active {
+		transform-origin: top;
+		transition: transform .3s ease;
+	}
+
+	&-enter,
+	&-leave-to {
+		transform: scaleY(0);
+	}
+}

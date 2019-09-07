@@ -20,10 +20,11 @@ $navbar-logo-bg: #3a80a7;
 $loading-bg: #5555553f;
 $box-header: #444;
 $black: #212529;
+$green: #00a65a;
 $theme-colors: (
 	"primary": $main-blue,
-	"danger": #ff4136,
-	"success": $sidebar-header
+	"danger": $red-1,
+	"success": $green
 );
 
 $white: #fff;

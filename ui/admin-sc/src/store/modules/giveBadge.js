@@ -23,7 +23,15 @@ const mutations = {
 
 const actions = {
 	updateSelectedStudents({ commit }, data) {
-		commit(SET_SELECT_STUDENTS, data);
+		const payloadWithBadge = data.map((item) => {
+			return {
+				...item,
+				badges: [],
+				show: true
+			};
+		});
+
+		commit(SET_SELECT_STUDENTS, payloadWithBadge);
 	},
 	updateStep({ commit }, data) {
 		commit(SET_GIVE_BADGE_STEP, data);

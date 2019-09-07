@@ -58,51 +58,6 @@
 							@row-selected="onRowSelected"
 						>
 							<template
-								slot="[more_details]"
-								slot-scope="row"
-							>
-								<b-button
-									size="sm"
-									class="mr-2"
-									@click="row.toggleDetails"
-								>
-									{{ row.detailsShowing ? 'Hide' : 'Show' }}
-								</b-button>
-							</template>
-							<template
-								slot="row-details"
-								slot-scope="row"
-							>
-								<b-card>
-									<b-row class="mb-2">
-										<b-col
-											sm="3"
-											class="text-sm-right"
-										>
-											<b>Id:</b>
-										</b-col>
-										<b-col>{{ row.item.student_id }}</b-col>
-									</b-row>
-
-									<b-row class="mb-2">
-										<b-col
-											sm="3"
-											class="text-sm-right"
-										>
-											<b>Name:</b>
-										</b-col>
-										<b-col>{{ row.item.first_name }}</b-col>
-									</b-row>
-
-									<b-button
-										size="sm"
-										@click="row.toggleDetails"
-									>
-										Hide
-									</b-button>
-								</b-card>
-							</template>
-							<template
 								slot="[selected]"
 								slot-scope="{ rowSelected }"
 							>
@@ -139,25 +94,27 @@
 				</div>
 			</b-col>
 			<b-col lg="4">
-				<div class="box">
+				<div class="box scrollable">
 					<h2 class="box-header">
 						Selected student
 					</h2>
-					<ul class="selected">
-						<li
-							v-for="(item, index) in selectedItems"
-							:key="`${item}${index}`"
-							class="item"
-						>
-							{{ item.student_id }}
-							<button
-								class="delete"
-								@click="deleteSelectedRow(item.student_id)"
+					<div class="box-content scrollable">
+						<ul class="selected">
+							<li
+								v-for="(item, index) in selectedItems"
+								:key="`${item}${index}`"
+								class="item"
 							>
-								<icon-cross-circle />
-							</button>
-						</li>
-					</ul>
+								{{ item.studentId }}
+								<button
+									class="delete"
+									@click="deleteSelectedRow(item.studentId)"
+								>
+									<icon-cross-circle />
+								</button>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</b-col>
 		</b-row>
@@ -186,12 +143,12 @@ export default {
 	data() {
 		return {
 			search: "",
-			fields: ["selected", "student_id", "first_name", "last_name", "more_details"],
+			fields: ["selected", "studentId", "fullName"],
 			items: [
-				{ student_id: 59130500210, first_name: "Dickerson", last_name: "Macdonald" },
-				{ student_id: 59130500445, first_name: "Larsen", last_name: "Shaw" },
-				{ student_id: 59130500222, first_name: "Geneva", last_name: "Wilson" },
-				{ student_id: 59130522033, first_name: "Jami", last_name: "Carney" }
+				{ studentId: 59130500210, fullName: "Dickerson Macdonald" },
+				{ studentId: 59130500445, fullName: "Larsen Shaw" },
+				{ studentId: 59130500222, fullName: "Geneva Wilson" },
+				{ studentId: 59130522033, fullName: "Jami Carney" }
 			],
 			selectMode: "multi",
 			selectedItems: [],
@@ -225,7 +182,7 @@ export default {
 	},
 	mounted() {
 		this.selectedItems.forEach((item) => {
-			const index = this.items.findIndex((i) => i.student_id === item.student_id);
+			const index = this.items.findIndex((i) => i.studentId === item.studentId);
 			this.$refs.selectableTable.selectRow(index);
 		});
 	},
@@ -240,7 +197,7 @@ export default {
 			this.$refs.selectableTable.clearSelected();
 		},
 		deleteSelectedRow(id) {
-			const index = this.items.findIndex((item) => item.student_id === id);
+			const index = this.items.findIndex((item) => item.studentId === id);
 			this.$refs.selectableTable.unselectRow(index);
 		},
 		submit() {

@@ -34,7 +34,7 @@
 				class="item profile"
 				@click="toggleProfile"
 			>
-				<base-profile-image size="30" />
+				<base-image size="30" />
 				<h4 class="profile-name">
 					Tindanai Wongpipattanopas
 				</h4>
@@ -50,7 +50,7 @@
 				]"
 			>
 				<div class="profile-dropdown-detail">
-					<base-profile-image
+					<base-image
 						class="img"
 						size="83"
 					/>
@@ -78,14 +78,14 @@
 </style>
 <script>
 import BaseLogo from "@/components/BaseLogo.vue";
-import BaseProfileImage from "@/components/BaseProfileImage.vue";
+import BaseImage from "@/components/BaseImage.vue";
 import IconHamburger from "@/components/icons/IconHamburger.vue";
 import { clickOutside } from "@/helpers/directives/clickOutside";
 
 export default {
 	components: {
 		BaseLogo,
-		BaseProfileImage,
+		BaseImage,
 		IconHamburger
 	},
 	directives: {
