@@ -20,5 +20,6 @@ func InitConfig() (*Config, error) {
 	if len(config.SecretKey) == 0 {
 		return nil, fmt.Errorf("SecretKey must be set")
 	}
+
 	return config, nil
 }

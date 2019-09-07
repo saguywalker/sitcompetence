@@ -27,8 +27,9 @@ func (r *statusCodeRecorder) WriteHeader(statusCode int) {
 
 // API struct
 type API struct {
-	App    *app.App
-	Config *Config
+	App              *app.App
+	Config           *Config
+	CurrentPeerIndex int
 }
 
 // New returns API struct
@@ -47,8 +48,8 @@ func (a *API) Init(r *mux.Router) {
 	//r.Handle("/users/", a.handler(a.CreateUser)).Methods("POST")
 
 	apiRouter := r.PathPrefix("/api").Subrouter()
-	apiRouter.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
-	apiRouter.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
+	apiRouter.Handle("/giveBadge", a.handler(a.BroadcastTX)).Methods("POST")
+	apiRouter.Handle("/approveActivity", a.handler(a.BroadcastTX)).Methods("POST")
 	apiRouter.Handle("/competences", a.handler(a.GetCompetences)).Methods("GET")
 	apiRouter.Handle("/competence/{id:[0-9]+}/", a.handler(a.GetCompetenceByID)).Methods("GET")
 	apiRouter.Handle("/competence", a.handler(a.CreateCompetence)).Methods("POST")
