@@ -158,9 +158,10 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("giveBadge", {
-			selectedStudents: "selectedStudents"
-		}),
+		...mapState("giveBadge", [
+			"selectedStudents",
+			"steps"
+		]),
 		hasSelectedItem() {
 			if (this.selectedItems.length > 0) {
 				return true;
@@ -179,6 +180,9 @@ export default {
 	},
 	created() {
 		this.selectedItems = this.selectedStudents;
+		if (this.steps.includes("selection")) {
+			this.setUpItems();
+		}
 	},
 	mounted() {
 		this.selectedItems.forEach((item) => {
@@ -187,6 +191,15 @@ export default {
 		});
 	},
 	methods: {
+		setUpItems() {
+			this.items.forEach((item, index) => {
+				this.selectedStudents.forEach((student) => {
+					if (item.studentId === student.studentId) {
+						this.items[index] = student;
+					}
+				});
+			});
+		},
 		onRowSelected(items) {
 			this.selectedItems = items;
 		},
@@ -200,9 +213,10 @@ export default {
 			const index = this.items.findIndex((item) => item.studentId === id);
 			this.$refs.selectableTable.unselectRow(index);
 		},
-		submit() {
+		async submit() {
 			if (this.hasSelectedItem) {
-				this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
+				await this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
+				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-selection" });
 			} else {
 				this.error.selectedItems = true;

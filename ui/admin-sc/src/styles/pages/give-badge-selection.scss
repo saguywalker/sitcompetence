@@ -1,11 +1,30 @@
 @import "../cores.scss";
 
 .give-badge-selection {
-	.selected {
+	.selected-student {
 		display: flex;
 		flex-direction: column;
 		list-style: none;
 		margin: 0;
+
+		.error {
+			.dropdown {
+				background-color: $red-3;
+				border-top: rem(2) solid $red-1;
+
+				&.active {
+					background-color: $red-3;
+				}
+
+				&:hover {
+					background-color: $red-1;
+				}
+			}
+
+			.badge-form {
+				background-color: $red-2;
+			}
+		}
 
 		.dropdown {
 			position: relative;
@@ -14,6 +33,7 @@
 			font-size: rem(14);
 			justify-content: space-between;
 			background-color: $white;
+			border-top: rem(1) solid $gray-2;
 			cursor: pointer;
 
 			&.active {
@@ -39,13 +59,36 @@
 
 			.badge-wrapper {
 				text-align: center;
-				margin-bottom: rem(16);
 				font-size: rem(12);
 			}
 
 			.badge-checkbox {
+				position: relative;
+				padding: rem(5);
+				cursor: pointer;
+
+				&.is-select {
+					&::after {
+						content: "SELECTED";
+						position: absolute;
+						left: 0;
+						bottom: 47%;
+						padding: rem(5) 0;
+						text-align: center;
+						background-color: $main-blue;
+						color: $white;
+						font-weight: bold;
+						font-size: rem(12);
+						width: 100%;
+					}
+				}
+
 				input[type="checkbox"] {
 					display: none;
+				}
+
+				.text {
+					margin-top: rem(10);
 				}
 			}
 		}

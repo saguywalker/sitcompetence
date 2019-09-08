@@ -1,6 +1,6 @@
 import {
-	SET_SELECT_STUDENTS,
-	SET_GIVE_BADGE_STEP
+	UPDATE_SELECT_STUDENT,
+	UPDATE_GIVE_BADGE_STEP
 } from "../mutationTypes";
 
 const state = {
@@ -9,12 +9,12 @@ const state = {
 };
 
 const mutations = {
-	[SET_SELECT_STUDENTS](stateData, data) {
+	[UPDATE_SELECT_STUDENT](stateData, data) {
 		stateData.selectedStudents = [
 			...data
 		];
 	},
-	[SET_GIVE_BADGE_STEP](stateData, data) {
+	[UPDATE_GIVE_BADGE_STEP](stateData, data) {
 		stateData.steps = [
 			...data
 		];
@@ -24,6 +24,12 @@ const mutations = {
 const actions = {
 	updateSelectedStudents({ commit }, data) {
 		const payloadWithBadge = data.map((item) => {
+			if (item.badges) {
+				return {
+					...item
+				};
+			}
+
 			return {
 				...item,
 				badges: [],
@@ -31,10 +37,26 @@ const actions = {
 			};
 		});
 
-		commit(SET_SELECT_STUDENTS, payloadWithBadge);
+		commit(UPDATE_SELECT_STUDENT, payloadWithBadge);
 	},
-	updateStep({ commit }, data) {
-		commit(SET_GIVE_BADGE_STEP, data);
+	updateSelectedBadge({ commit }, data) {
+		commit(UPDATE_SELECT_STUDENT, data);
+	},
+	addStep({ commit, state: stateData }, data) {
+		if (stateData.steps.includes(data)) {
+			return;
+		}
+
+		const payload = [
+			...stateData.steps,
+			data
+		];
+
+		commit(UPDATE_GIVE_BADGE_STEP, payload);
+	},
+	deleteStep({ commit, state: stateData }, data) {
+		const payload = stateData.steps.filter((step) => step !== data);
+		commit(UPDATE_GIVE_BADGE_STEP, payload);
 	}
 };
 

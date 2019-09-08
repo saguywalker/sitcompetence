@@ -5,6 +5,7 @@ import store from "@/store";
 import BootstrapVue from "bootstrap-vue";
 import "@/styles/global.scss";
 
+
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
