@@ -46,28 +46,23 @@ func New(a *app.App) (api *API, err error) {
 func (a *API) Init(r *mux.Router) {
 	// user methods
 	//r.Handle("/users/", a.handler(a.CreateUser)).Methods("POST")
-	r.Handle("/", a.handler(a.HelloHandler)).Methods("GET")
-	apiRouter := r.PathPrefix("/api").Subrouter()
-	apiRouter.Handle("/", a.handler(a.HelloHandler)).Methods("GET")
-	apiRouter.Handle("/giveBadge/", a.handler(a.BroadcastTX)).Methods("GET")
-	apiRouter.Handle("/approveActivity/", a.handler(a.BroadcastTX)).Methods("GET")
-	apiRouter.Handle("/competences/", a.handler(a.GetCompetences)).Methods("GET")
-	apiRouter.Handle("/competence/{id:[0-9]+}/", a.handler(a.GetCompetenceByID)).Methods("GET")
-	apiRouter.Handle("/competence/", a.handler(a.CreateCompetence)).Methods("POST")
-	apiRouter.Handle("/activities/", a.handler(a.GetActivities)).Methods("GET")
-	apiRouter.Handle("/activity/{id:[0-9]+}/", a.handler(a.GetActivityByID)).Methods("GET")
-	apiRouter.Handle("/activity/", a.handler(a.CreateActivity)).Methods("POST")
-	apiRouter.Handle("/students/", a.handler(a.GetStudents)).Methods("GET")
-	apiRouter.Handle("/student/{id:[0-9]+}/", a.handler(a.GetStudentByID)).Methods("GET")
-	apiRouter.Handle("/student/", a.handler(a.CreateStudent)).Methods("POST")
-	apiRouter.Handle("/staffs/", a.handler(a.GetStaffs)).Methods("GET")
-	apiRouter.Handle("/staff/{id:[0-9]+}/", a.handler(a.GetStaffByID)).Methods("GET")
-	apiRouter.Handle("/staff/", a.handler(a.CreateStaff)).Methods("POST")
-	//apiRouter.Handle("/", a.handler(a.GetTodos)).Methods("GET")
-	//apiRouter.Handle("/", a.handler(a.CreateTodo)).Methods("POST")
-	//apiRouter.Handle("/{id:[0-9]+}/", a.handler(a.GetTodoById)).Methods("GET")
-	//apiRouter.Handle("/{id:[0-9]+}/", a.handler(a.UpdateTodoById)).Methods("PATCH")
-	//apiRouter.Handle("/{id:[0-9]+}/", a.handler(a.DeleteTodoById)).Methods("DELETE")
+	//r.Handle("/", a.handler(a.HelloHandler)).Methods("GET")
+	r.Handle("/home/", a.handler(a.HelloHandler)).Methods("GET")
+	r.Handle("/giveBadge", a.handler(a.BroadcastTX)).Methods("GET")
+	r.Handle("/approveActivity", a.handler(a.BroadcastTX)).Methods("GET")
+	r.Handle("/competences/", a.handler(a.GetCompetences)).Methods("GET")
+	r.Handle("/competence/{id:[0-9]+}/", a.handler(a.GetCompetenceByID)).Methods("GET")
+	r.Handle("/competence/", a.handler(a.CreateCompetence)).Methods("POST")
+	r.Handle("/activities/", a.handler(a.GetActivities)).Methods("GET")
+	r.Handle("/activity/{id:[0-9]+}/", a.handler(a.GetActivityByID)).Methods("GET")
+	r.Handle("/activity/", a.handler(a.CreateActivity)).Methods("POST")
+	r.Handle("/students/", a.handler(a.GetStudents)).Methods("GET")
+	r.Handle("/student/{id:[0-9]+}/", a.handler(a.GetStudentByID)).Methods("GET")
+	r.Handle("/student/", a.handler(a.CreateStudent)).Methods("POST")
+	r.Handle("/staffs/", a.handler(a.GetStaffs)).Methods("GET")
+	r.Handle("/staff/{id:[0-9]+}/", a.handler(a.GetStaffByID)).Methods("GET")
+	r.Handle("/staff/", a.handler(a.CreateStaff)).Methods("POST")
+
 }
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {
@@ -176,9 +171,13 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 }
 
 func (a *API) HelloHandler(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	for k, v := range mux.Vars(r) {
-		logrus.Println(k, v)
+	var err error
+	vals := r.URL.Query()
+	name, ok := vals["name"]
+	if ok {
+		_, err = w.Write([]byte(fmt.Sprintf("Hello from %s \n", name)))
+	} else {
+		_, err = w.Write([]byte("Hello handler\n"))
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("Hello from %s \n", mux.Vars(r)["tx"])))
 	return err
 }
