@@ -32,6 +32,10 @@ func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=%s", a.Config.Peers[a.CurrentPeerIndex], tx[0])
+
+	// Move to the next peer in round-robin fashion
+	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
+
 	response, err := http.Get(url)
 	if err != nil {
 		return err
