@@ -8,11 +8,14 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/app"
 )
 
 func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	logrus.Infoln("In BroadcastTX function.")
+
 	tx := mux.Vars(r)["tx"]
 
 	if !strings.HasPrefix(tx, "val:") || len(bytes.Split([]byte(tx), []byte("="))) != 2 {

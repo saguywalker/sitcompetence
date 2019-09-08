@@ -9,7 +9,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "sitcom",
+	Use:   "sitcompetence",
 	Short: "SIT-Competence Web Application",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
