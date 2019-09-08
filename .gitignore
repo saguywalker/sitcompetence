@@ -1,5 +1,14 @@
 /node_modules
 
+#for configuration
+config.yaml
+
+#Executable file
+sitcom
+sitcom.exe
+sitcompetence
+sitcompetence.exe
+
 #Logs
 logs
 .log
