@@ -24,17 +24,37 @@ const mutations = {
 };
 
 const actions = {
-	async fetchEvents({ commit }) {
-		const { data } = await EventService.getEvents();
-		commit(SET_EVENTS, data);
+	async fetchEvents({ commit, dispatch }) {
+		let response;
 
-		return data;
+		try {
+			response = await EventService.getEvents();
+			commit(SET_EVENTS, response.data);
+		} catch (err) {
+			const notification = {
+				title: "Fetch Event",
+				message: `There was a problem fetching events: ${err.message}`,
+				variant: "danger"
+			};
+
+			dispatch("notification/add", notification, { root: true });
+		}
 	},
-	async fetchEvent({ commit }, id) {
-		const { data } = await EventService.getEvent(id);
-		commit(SET_EVENT, data);
+	async fetchEvent({ commit, dispatch }, id) {
+		let response;
 
-		return data;
+		try {
+			response = await EventService.getEvent(id);
+			commit(SET_EVENT, response.data);
+		} catch (err) {
+			const notification = {
+				title: "Fetch Event",
+				message: `There was a problem fetching events: ${err.message}`,
+				variant: "danger"
+			};
+
+			dispatch("notification/add", notification, { root: true });
+		}
 	}
 };
 

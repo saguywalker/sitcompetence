@@ -8,6 +8,7 @@
 		<nav-bar @is-toggle="handleSidebar" />
 		<side-bar :toggle="isSidebarOpen" />
 		<router-view class="content-wrapper" />
+		<notification />
 	</div>
 </template>
 <style lang="scss">
@@ -16,11 +17,13 @@
 <script>
 import SideBar from "@/components/SideBar.vue";
 import NavBar from "@/components/NavBar.vue";
+import Notification from "@/components/Notification.vue";
 
 export default {
 	components: {
 		NavBar,
-		SideBar
+		SideBar,
+		Notification
 	},
 	data() {
 		return {
