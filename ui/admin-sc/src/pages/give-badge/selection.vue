@@ -71,15 +71,11 @@
 @import "@/styles/pages/give-badge-selection.scss";
 </style>
 <script>
-import BasePageStep from "@/components/BasePageStep.vue";
-import BaseImage from "@/components/BaseImage.vue";
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { mapState } from "vuex";
 
 export default {
 	components: {
-		BasePageStep,
-		BaseImage,
 		IconArrowDropdown
 	},
 	data() {
@@ -132,6 +128,11 @@ export default {
 			this.validateSubmit();
 
 			if (this.hasError) {
+				this.$bvToast.toast("Please select the badge to student", {
+					title: "No badge error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
 				return;
 			}
 

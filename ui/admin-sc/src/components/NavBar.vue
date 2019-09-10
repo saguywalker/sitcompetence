@@ -78,14 +78,12 @@
 </style>
 <script>
 import BaseLogo from "@/components/BaseLogo.vue";
-import BaseImage from "@/components/BaseImage.vue";
 import IconHamburger from "@/components/icons/IconHamburger.vue";
 import { clickOutside } from "@/helpers/directives/clickOutside";
 
 export default {
 	components: {
 		BaseLogo,
-		BaseImage,
 		IconHamburger
 	},
 	directives: {

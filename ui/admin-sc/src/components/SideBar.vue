@@ -68,7 +68,6 @@
 @import "@/styles/components/sidebar.scss";
 </style>
 <script>
-import BaseImage from "@/components/BaseImage.vue";
 import IconDashboard from "@/components/icons/IconDashboard.vue";
 import IconGiveBadge from "@/components/icons/IconGiveBadge.vue";
 import IconActivity from "@/components/icons/IconActivity.vue";
@@ -76,7 +75,6 @@ import IconBadgeSetting from "@/components/icons/IconBadgeSetting.vue";
 
 export default {
 	components: {
-		BaseImage,
 		IconDashboard,
 		IconGiveBadge,
 		IconActivity,

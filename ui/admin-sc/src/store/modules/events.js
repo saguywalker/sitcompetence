@@ -39,9 +39,17 @@ const actions = {
 
 			dispatch("notification/add", notification, { root: true });
 		}
+
+		return response;
 	},
-	async fetchEvent({ commit, dispatch }, id) {
+	async fetchEvent({ commit, dispatch, getters }, id) {
 		let response;
+		const event = getters.getEventById(id);
+
+		if (event) {
+			commit(SET_EVENT, event);
+			return event;
+		}
 
 		try {
 			response = await EventService.getEvent(id);
@@ -55,12 +63,21 @@ const actions = {
 
 			dispatch("notification/add", notification, { root: true });
 		}
+
+		return response.data;
 	}
+};
+
+const getters = {
+	getEventById: (stateData) => (id) => (
+		stateData.events.find((event) => event.id === parseInt(id, 10))
+	)
 };
 
 export default {
 	namespaced: true,
 	state,
 	mutations,
-	actions
+	actions,
+	getters
 };

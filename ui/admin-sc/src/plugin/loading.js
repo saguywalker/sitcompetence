@@ -1,4 +1,4 @@
-const appHey = document.getElementById("app");
+const appHey = document.body;
 const node = document.createElement("div");
 node.setAttribute("class", "app-loader");
 node.setAttribute("id", "spin-loader");

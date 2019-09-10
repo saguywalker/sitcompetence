@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="toast">
 		<b-toast
 			v-for="(notification, index) in notifications"
 			id="my-toast"

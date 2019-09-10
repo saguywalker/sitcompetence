@@ -15,7 +15,7 @@ const router = new Router({
 				{
 					name: "admin",
 					path: "/",
-					component: () => import("@/pages/index.vue")
+					redirect: { name: "dashboard" }
 				},
 				{
 					name: "dashboard",
@@ -70,17 +70,6 @@ const router = new Router({
 							meta: {
 								breadcrumb: GIVE_BADGE_BREADCRUMB.success
 							}
-						}
-					]
-				},
-				{
-					path: "hello",
-					component: () => import("@/pages/hello"),
-					children: [
-						{
-							name: "hello_id",
-							path: "/:id",
-							component: () => import("@/pages/hello/_id.vue")
 						}
 					]
 				}

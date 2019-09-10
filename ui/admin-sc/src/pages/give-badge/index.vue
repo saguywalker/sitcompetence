@@ -131,14 +131,12 @@
 <script>
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
-import BasePageStep from "@/components/BasePageStep.vue";
 import { mapState } from "vuex";
 
 export default {
 	components: {
 		IconCheck,
-		IconCrossCircle,
-		BasePageStep
+		IconCrossCircle
 	},
 	data() {
 		return {
@@ -214,18 +212,19 @@ export default {
 			this.$refs.selectableTable.unselectRow(index);
 		},
 		async submit() {
-			if (this.hasSelectedItem) {
-				await this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
-				await this.$store.dispatch("giveBadge/addStep", this.step.step);
-				this.$router.push({ name: "give-badge-selection" });
-			} else {
+			if (!this.hasSelectedItem) {
 				this.error.selectedItems = true;
 				this.$bvToast.toast("Please select at least one student to give", {
 					title: "No student error",
 					variant: "danger",
 					autoHideDelay: 1500
 				});
+				return;
 			}
+
+			await this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
+			await this.$store.dispatch("giveBadge/addStep", this.step.step);
+			this.$router.push({ name: "give-badge-selection" });
 		}
 	}
 };
