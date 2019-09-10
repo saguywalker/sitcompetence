@@ -2,6 +2,7 @@
 
 #for configuration
 config.yaml
+postgres.sql
 
 #Executable file
 sitcom
