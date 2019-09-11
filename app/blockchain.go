@@ -2,14 +2,14 @@ package app
 
 import (
 	"errors"
-
-	"github.com/saguywalker/sitcompetence/model"
 )
 
-func (ctx *Context) GiveBadge(badge *model.GiveBadge) error {
+// GiveBadge function
+func (ctx *Context) GiveBadge(transactionID, merkleRoot []byte, transactionSet [][]byte) error {
 	return errors.New("unimplemented")
 }
 
-func (ctx *Context) ApproveActivity(approve *model.ApproveActivity) error {
+// ApproveActivity function
+func (ctx *Context) ApproveActivity(transactionID, merkleRoot []byte, transactionSet [][]byte) error {
 	return errors.New("unimplemented")
 }
