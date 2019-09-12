@@ -7,7 +7,7 @@
 			<div class="box-content">
 				<ul class="selected-student">
 					<li
-						v-for="(item, index) in selectedStudents"
+						v-for="(item, index) in selectStudent"
 						:key="`${item}${index}`"
 						:class="{'error': errors[index]}"
 					>
@@ -29,28 +29,27 @@
 								<b-row>
 									<b-col
 										v-for="(option, id) in options"
-										:key="`${option.value}${item.studentId}${id}`"
+										:key="`${item.studentId}${id}`"
 										lg="3"
 										cols="6"
 										class="badge-wrapper"
 									>
 										<label
-											:for="`${option.value}${item.studentId}${id}`"
+											:for="`${item.studentId}${id}`"
 											:class="[
 												'badge-checkbox',
-												item.badges.includes(option.value) ? 'is-select' : ''
+												hasSelected(item.badges, option.id) ? 'is-select' : ''
 											]"
 										>
 											<base-image size="90" />
 											<input
-												:id="`${option.value}${item.studentId}${id}`"
+												:id="`${item.studentId}${id}`"
 												v-model="item.badges"
-												:value="`${option.value}`"
+												:value="option"
 												type="checkbox"
-												name="hi"
 												@input="removeError(index)"
 											>
-											<p class="text">{{ option.text }}</p>
+											<p class="text">{{ option.name }}</p>
 										</label>
 									</b-col>
 								</b-row>
@@ -81,13 +80,25 @@ export default {
 	data() {
 		return {
 			selectStudent: [],
+			errors: [],
 			options: [
-				{ text: "Team working", value: "teamWorking" },
-				{ text: "Flexible", value: "flexible" },
-				{ text: "Leadership", value: "leadership" },
-				{ text: "Communication", value: "communication" }
-			],
-			errors: []
+				{
+					id: "002",
+					name: "Team working"
+				},
+				{
+					id: "003",
+					name: "Communication"
+				},
+				{
+					id: "004",
+					name: "Leadership"
+				},
+				{
+					id: "005",
+					name: "Flexible"
+				}
+			]
 		};
 	},
 	computed: {
@@ -145,6 +156,9 @@ export default {
 		},
 		removeError(index) {
 			this.errors[index] = false;
+		},
+		hasSelected(badges, id) {
+			return badges.some((badge) => badge.id === id);
 		}
 	}
 };

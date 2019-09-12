@@ -1,3 +1,5 @@
+@import "./cores.scss";
+
 .slide-down {
 	&-enter-active,
 	&-leave-active {
@@ -11,8 +13,8 @@
 	}
 }
 
-@keyframes spin{
-  0%{
+@keyframes spin {
+  0% {
     -webkit-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
     -o-transform: rotate(0deg);

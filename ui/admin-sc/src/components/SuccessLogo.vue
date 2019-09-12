@@ -1,0 +1,24 @@
+<template>
+	<div class="success-logo">
+		<div class="circle">
+			<div class="content">
+				<icon-check-circle />
+				<h2 class="text">
+					Submit<br>Successful
+				</h2>
+			</div>
+		</div>
+	</div>
+</template>
+<style lang="scss">
+@import "@/styles/components/success-logo.scss";
+</style>
+<script>
+import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
+
+export default {
+	components: {
+		IconCheckCircle
+	}
+};
+</script>

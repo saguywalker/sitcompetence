@@ -9,7 +9,7 @@
 	background-color: $gray-6;
 	list-style: none;
 	border-radius: rem(4);
-	font-size: rem(12);
+	font-size: rem(10);
 	color: $gray-3;
 
 	li {
@@ -24,5 +24,9 @@
 			color: $gray-5;
 			padding: 0 rem(5);
 		}
+	}
+
+	@include desktop {
+		font-size: rem(12);
 	}
 }

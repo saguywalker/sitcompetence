@@ -1,6 +1,9 @@
 import {
-	UPDATE_SELECT_STUDENT,
-	UPDATE_GIVE_BADGE_STEP
+	GIVE_BADGE_SELECT_STUDENT,
+	GIVE_BADGE_STEP,
+	GIVE_BADGE_CONFIRM_BADGE,
+	GIVE_BADGE_SELECT_BADGE,
+	GIVE_BADGE_SUCCESS
 } from "../mutationTypes";
 
 const state = {
@@ -9,12 +12,25 @@ const state = {
 };
 
 const mutations = {
-	[UPDATE_SELECT_STUDENT](stateData, data) {
+	[GIVE_BADGE_SELECT_STUDENT](stateData, data) {
 		stateData.selectedStudents = [
 			...data
 		];
 	},
-	[UPDATE_GIVE_BADGE_STEP](stateData, data) {
+	[GIVE_BADGE_SELECT_BADGE](stateData, data) {
+		stateData.selectedStudents = [
+			...data
+		];
+	},
+	[GIVE_BADGE_CONFIRM_BADGE](stateData, data) {
+		stateData.selectedStudents = [
+			...data
+		];
+	},
+	[GIVE_BADGE_SUCCESS](stateData) {
+		stateData.selectedStudents = [];
+	},
+	[GIVE_BADGE_STEP](stateData, data) {
 		stateData.steps = [
 			...data
 		];
@@ -37,10 +53,23 @@ const actions = {
 			};
 		});
 
-		commit(UPDATE_SELECT_STUDENT, payloadWithBadge);
+		commit(GIVE_BADGE_SELECT_STUDENT, payloadWithBadge);
 	},
 	updateSelectedBadge({ commit }, data) {
-		commit(UPDATE_SELECT_STUDENT, data);
+		commit(GIVE_BADGE_SELECT_BADGE, data);
+	},
+	confirmGiveBadge({ commit, state: stateData }, data) {
+		const payload = stateData.selectedStudents.map((student) => {
+			return {
+				...student,
+				giver: data
+			};
+		});
+
+		commit(GIVE_BADGE_CONFIRM_BADGE, payload);
+	},
+	giveBadgeSuccess({ commit }) {
+		commit(GIVE_BADGE_SUCCESS);
 	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {
@@ -52,11 +81,14 @@ const actions = {
 			data
 		];
 
-		commit(UPDATE_GIVE_BADGE_STEP, payload);
+		commit(GIVE_BADGE_STEP, payload);
 	},
 	deleteStep({ commit, state: stateData }, data) {
 		const payload = stateData.steps.filter((step) => step !== data);
-		commit(UPDATE_GIVE_BADGE_STEP, payload);
+		commit(GIVE_BADGE_STEP, payload);
+	},
+	clearStep({ commit }) {
+		commit(GIVE_BADGE_STEP, []);
 	}
 };
 

@@ -1,5 +1,54 @@
 <template>
-	<div>
+	<div class="give-badge-selection">
+		<div class="box dropdown">
+			<h2 class="box-header">
+				Confirmation Summary
+			</h2>
+			<div class="box-content">
+				<ul class="selected-student">
+					<li
+						v-for="(item, index) in selectedStudents"
+						:key="`${item}${index}`"
+					>
+						<a
+							:class="[
+								'dropdown',
+								item.show ? 'active' : ''
+							]"
+							@click="item.show = !item.show"
+						>
+							<p>{{ item.studentId }} {{ item.fullName }}</p>
+							<icon-arrow-dropdown class="icon" />
+						</a>
+						<transition name="slide-down">
+							<div
+								v-if="item.show"
+								class="badge-form"
+							>
+								<b-row>
+									<b-col
+										v-for="(badge, id) in item.badges"
+										:key="`${badge}${item.studentId}${id}`"
+										lg="3"
+										cols="6"
+										class="badge-wrapper"
+									>
+										<label
+											:class="[
+												'badge-checkbox'
+											]"
+										>
+											<base-image size="90" />
+											<p class="text">{{ badge.name }}</p>
+										</label>
+									</b-col>
+								</b-row>
+							</div>
+						</transition>
+					</li>
+				</ul>
+			</div>
+		</div>
 		<base-page-step
 			:step="step"
 			@next="submit"
@@ -8,19 +57,42 @@
 	</div>
 </template>
 <script>
-import BasePageStep from "@/components/BasePageStep.vue";
+import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
+import { mapState } from "vuex";
 
 export default {
 	components: {
-		BasePageStep
+		IconArrowDropdown
+	},
+	data() {
+		return {
+			selectStudent: []
+		};
 	},
 	computed: {
+		...mapState("giveBadge", [
+			"selectedStudents",
+			"steps"
+		]),
 		step() {
 			return this.$route.meta.step;
 		}
 	},
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (!vm.steps.includes("selection")) {
+				vm.$router.replace({ name: "give-badge" });
+			}
+		});
+	},
+	created() {
+		this.selectStudent = this.selectedStudents;
+	},
 	methods: {
-		submit() {
+		async submit() {
+			// TODO: Set giver by login user
+			await this.$store.dispatch("giveBadge/confirmGiveBadge", "tiny");
+			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-success" });
 		},
 		goBack() {

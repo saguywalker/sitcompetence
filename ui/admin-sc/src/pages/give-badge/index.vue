@@ -73,22 +73,34 @@
 								</template>
 							</template>
 						</b-table>
-						<div class="text-center">
-							<b-button
-								class="mr-2"
-								variant="primary"
-								size="sm"
-								@click="selectAllRows"
-							>
-								Select all
-							</b-button>
-							<b-button
-								variant="outline-primary"
-								size="sm"
-								@click="clearSelected"
-							>
-								Clear selected
-							</b-button>
+						<div class="footer">
+							<div class="text-center">
+								<b-button
+									class="mr-2"
+									variant="primary"
+									size="sm"
+									@click="selectAllRows"
+								>
+									Select all
+								</b-button>
+								<b-button
+									variant="outline-primary"
+									size="sm"
+									@click="clearSelected"
+								>
+									Clear selected
+								</b-button>
+							</div>
+							<div class="mt-3">
+								<b-pagination
+									v-model="currentPage"
+									:total-rows="rows"
+									:per-page="perPage"
+									aria-controls="my-table"
+									align="center"
+									size="sm"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -140,6 +152,8 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
+			perPage: 3,
 			search: "",
 			fields: ["selected", "studentId", "fullName"],
 			items: [
@@ -169,6 +183,9 @@ export default {
 		},
 		step() {
 			return this.$route.meta.step;
+		},
+		rows() {
+			return this.items.length;
 		}
 	},
 	watch: {
@@ -177,9 +194,10 @@ export default {
 		}
 	},
 	created() {
+		// TODO: Get items from server
 		this.selectedItems = this.selectedStudents;
 		if (this.steps.includes("selection")) {
-			this.setUpItems();
+			this.setUpSelectedItems();
 		}
 	},
 	mounted() {
@@ -189,7 +207,7 @@ export default {
 		});
 	},
 	methods: {
-		setUpItems() {
+		setUpSelectedItems() {
 			this.items.forEach((item, index) => {
 				this.selectedStudents.forEach((student) => {
 					if (item.studentId === student.studentId) {
