@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/app"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
 type statusCodeRecorder struct {
@@ -47,9 +49,9 @@ func (a *API) Init(r *mux.Router) {
 	// user methods
 	//r.Handle("/users/", a.handler(a.CreateUser)).Methods("POST")
 	//r.Handle("/", a.handler(a.HelloHandler)).Methods("GET")
-	r.Handle("/home", a.handler(a.HelloHandler)).Methods("GET")
-	r.Handle("/giveBadge", a.handler(a.BroadcastTX)).Methods("GET")
-	r.Handle("/approveActivity", a.handler(a.BroadcastTX)).Methods("GET")
+	r.Handle("/home", a.handler(a.Home)).Methods("GET")
+	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("GET")
+	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("GET")
 	r.Handle("/competences", a.handler(a.GetCompetences)).Methods("GET")
 	r.Handle("/competence/{id:[0-9]+}", a.handler(a.GetCompetenceByID)).Methods("GET")
 	r.Handle("/competence", a.handler(a.CreateCompetence)).Methods("POST")
@@ -121,7 +123,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			}
 		}()
 
-		w.Header().Set("Content-Type", "application/json")
+		//w.Header().Set("Content-Type", "application/json")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {
@@ -154,6 +156,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	})
 }
 
+// IPAddressForRequest returns ip address from request
 func (a *API) IPAddressForRequest(r *http.Request) string {
 	addr := r.RemoteAddr
 	if a.Config.ProxyCount > 0 {
@@ -170,14 +173,26 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 	return strings.Split(strings.TrimSpace(addr), ":")[0]
 }
 
-func (a *API) HelloHandler(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	var err error
+// Home is for testing purpose only
+func (a *API) Home(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	vals := r.URL.Query()
-	name, ok := vals["name"]
-	if ok {
-		_, err = w.Write([]byte(fmt.Sprintf("Hello from %s \n", name)))
-	} else {
-		_, err = w.Write([]byte("Hello handler\n"))
+	params, ok := vals["data"]
+	if !ok {
+		return fmt.Errorf("missing")
 	}
-	return err
+
+	dec, _ := base64.StdEncoding.DecodeString(params[0])
+	logrus.Infoln(string(dec))
+
+	var x model.BadgeList
+
+	err := json.Unmarshal(dec, &x)
+	if err != nil {
+		return err
+	}
+
+	logrus.Infoln("Marshal")
+	logrus.Infof("%+v", x)
+
+	return nil
 }
