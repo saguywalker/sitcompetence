@@ -1,19 +1,20 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres" // postgres driver
+	"database/sql"
+
+	_ "github.com/lib/pq" // postgres driver
 	"github.com/pkg/errors"
 )
 
 // Database struct
 type Database struct {
-	*gorm.DB
+	*sql.DB
 }
 
 // New returns reference to database struct
 func New(config *Config) (*Database, error) {
-	db, err := gorm.Open("postgres", config.DatabaseURI)
+	db, err := sql.Open("postgres", config.DatabaseURI)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to connect to database")
 	}

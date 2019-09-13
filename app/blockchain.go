@@ -6,6 +6,7 @@ import (
 
 // GiveBadge function
 func (ctx *Context) GiveBadge(transactionID, merkleRoot []byte, transactionSet [][]byte) error {
+
 	return errors.New("unimplemented")
 }
 

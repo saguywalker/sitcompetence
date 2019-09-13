@@ -107,11 +107,9 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 }
 
 // BroadcastTX broadcast transaction to blockchain node
+// Note: Need to check wheater calling's node is reachable or not
 func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) ([]byte, error) {
 	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[a.CurrentPeerIndex], hash)
-
-	// Move to the next peer in round-robin fashion
-	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -142,6 +140,9 @@ func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) 
 	}
 
 	_, err = w.Write([]byte(fmt.Sprintf("%x", transactionBytes)))
+
+	// Move to the next peer in round-robin fashion
+	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
 
 	return transactionBytes, err
 }

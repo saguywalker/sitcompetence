@@ -1,12 +1,6 @@
 package db
 
-import (
-	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
-
-	"github.com/saguywalker/sitcompetence/model"
-)
-
+/*
 func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 	var student model.Student
 
@@ -30,3 +24,4 @@ func (db *Database) GetStudents() ([]*model.Student, error) {
 func (db *Database) CreateStudent(student *model.Student) error {
 	return errors.Wrap(db.Create(student).Error, "unable to create a student")
 }
+*/

@@ -1,12 +1,6 @@
 package db
 
-import (
-	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
-
-	"github.com/saguywalker/sitcompetence/model"
-)
-
+/*
 func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 	var activity model.Activity
 
@@ -30,3 +24,4 @@ func (db *Database) GetActivities() ([]*model.Activity, error) {
 func (db *Database) CreateActivity(activity *model.Activity) error {
 	return errors.Wrap(db.Create(activity).Error, "unable to create an activity")
 }
+*/
