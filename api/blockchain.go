@@ -12,6 +12,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GiveBadge takes a giving badge request and response with transactionID
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	vals := r.URL.Query()
 	params, ok := vals["data"]
@@ -49,7 +50,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		hashes[i] = leaf.Hash
 	}
 
-	transactionID, err := a.BroadcastTX(ctx, w, merkleRootHash)
+	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
 	if err != nil {
 		return nil
 	}
@@ -59,6 +60,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	return err
 }
 
+// ApproveActivity takes an approving activity request and response with transactionID
 func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	vals := r.URL.Query()
 	params, ok := vals["data"]
@@ -96,7 +98,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		hashes[i] = leaf.Hash
 	}
 
-	transactionID, err := a.BroadcastTX(ctx, w, merkleRootHash)
+	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
 	if err != nil {
 		return nil
 	}
@@ -108,7 +110,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 
 // BroadcastTX broadcast transaction to blockchain node
 // Note: Need to check wheater calling's node is reachable or not
-func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) ([]byte, error) {
+func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) ([]byte, error) {
 	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[a.CurrentPeerIndex], hash)
 
 	response, err := http.Get(url)
@@ -146,31 +148,3 @@ func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) 
 
 	return transactionBytes, err
 }
-
-/*
-func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	var input model.ApproveActivity
-
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(body, &input); err != nil {
-		return err
-	}
-
-	if err := ctx.GiveBadge(body); err != nil {
-		return err
-	}
-
-	data, err := json.Marshal(&CreateActivityResponse{ActivityID: input.ActivityID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
-	return err
-}
-*/

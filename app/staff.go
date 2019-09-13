@@ -13,7 +13,7 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 }
 
 // GetStaffs returns all of activities
-func (ctx *Context) GetStaffs() ([]*model.Staff, error) {
+func (ctx *Context) GetStaffs() (*[]model.Staff, error) {
 	staffs, err := ctx.Database.GetStaffs()
 	if err != nil {
 		return nil, err

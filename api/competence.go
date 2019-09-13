@@ -12,6 +12,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GetCompetences response with all of competences
 func (a *API) GetCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	competences, err := ctx.GetCompetences()
 	if err != nil {
@@ -27,10 +28,12 @@ func (a *API) GetCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	return err
 }
 
+// CreateCompetenceResponse defines competenceID for response back
 type CreateCompetenceResponse struct {
 	CompetenceID uint16 `json:"competence_id"`
 }
 
+// CreateCompetence create new competence from request
 func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	var input model.Competence
 
@@ -57,6 +60,7 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 	return err
 }
 
+// GetCompetenceByID response an activity from requested competenceID
 func (a *API) GetCompetenceByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getCompetenceIDFromRequest(r)
 	competence, err := ctx.GetCompetenceByID(id)
@@ -84,63 +88,3 @@ func getCompetenceIDFromRequest(r *http.Request) uint16 {
 
 	return uint16(intID)
 }
-
-/*
-type UpdateTodoInput struct {
-	Name *string `json:"name"`
-	Done *bool   `json:"done"`
-}
-
-func (a *API) UpdateTodoById(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest(r)
-
-	var input UpdateTodoInput
-
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(body, &input); err != nil {
-		return err
-	}
-
-	existingTodo, err := ctx.GetTodoById(id)
-	if err != nil || existingTodo == nil {
-		return err
-	}
-
-	if input.Name != nil {
-		existingTodo.Name = *input.Name
-	}
-	if input.Done != nil {
-		existingTodo.Done = *input.Done
-	}
-
-	err = ctx.UpdateTodo(existingTodo)
-	if err != nil {
-		return err
-	}
-
-	data, err := json.Marshal(existingTodo)
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
-	return err
-}
-
-
-func (a *API) DeleteTodoById(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest(r)
-	err := ctx.DeleteTodoById(id)
-
-	if err != nil {
-		return err
-	}
-
-	return &app.UserError{StatusCode: http.StatusOK, Message: "removed"}
-}
-*/

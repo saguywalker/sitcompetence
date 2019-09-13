@@ -18,7 +18,7 @@ func (db *Database) CreateTransaction(transaction *model.TransactionLink) error 
 }
 
 // GetTransactions returns all transactions from transaction table
-func (db *Database) GetTransactions() ([]model.TransactionLink, error) {
+func (db *Database) GetTransactions() (*[]model.TransactionLink, error) {
 	rows, err := db.Query("SELECT * FROM transaction")
 	if err != nil {
 		return nil, err
@@ -36,26 +36,26 @@ func (db *Database) GetTransactions() ([]model.TransactionLink, error) {
 		transactionSet = append(transactionSet, transaction)
 	}
 
-	return transactionSet, nil
+	return &transactionSet, nil
 }
 
 // GetTransactionByID returns a transaction from transactionID
-func (db *Database) GetTransactionByID(transactionID []byte) (model.TransactionLink, error) {
-	var transaction model.TransactionLink
-
+func (db *Database) GetTransactionByID(transactionID []byte) (*model.TransactionLink, error) {
 	row, err := db.Query("SELECT * FROM transaction WHERE transactionID = ?", transactionID)
 	if err != nil {
-		return transaction, err
+		return nil, err
 	}
+
+	var transaction model.TransactionLink
 
 	for row.Next() {
 		err := row.Scan(&transaction.TransactionID, &transaction.MerkleRootHash)
 		if err != nil {
-			return transaction, err
+			return nil, err
 		}
 	}
 
-	return transaction, nil
+	return &transaction, nil
 }
 
 // DeleteTransaction deletes a transaction from transactionID
