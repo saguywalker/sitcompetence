@@ -4,6 +4,6 @@ WORKDIR /app
 RUN yarn install && yarn build
 
 FROM nginx
-RUN mkdir /app
-COPY /ui/admin-sc/dist /app
+RUN mkdir /admin
+COPY /ui/admin-sc/dist/ /admin
 COPY nginx.conf /etc/nginx/nginx.conf
