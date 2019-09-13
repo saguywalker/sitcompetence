@@ -6,7 +6,7 @@ import (
 
 // GetStaffByID returns an staff from staffID
 func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
-	row, err := db.Query("SELECT * FROM staff WHERE staffID = ?", id)
+	row, err := db.Query("SELECT * FROM staff WHERE staffId = ?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (db *Database) GetStaffs() (*[]model.Staff, error) {
 
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(staff *model.Staff) error {
-	stmt, err := db.Prepare("INSERT INTO staff(staffID, firstName, lastName) VALUES(?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO staff(staffId, firstName, lastName) VALUES(?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (db *Database) CreateStaff(staff *model.Staff) error {
 
 // DeleteStaff deletes a staff from staffID
 func (db *Database) DeleteStaff(staffID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM staff WHERE staffID = ?")
+	stmt, err := db.Prepare("DELETE FROM staff WHERE staffId = ?")
 	if err != nil {
 		return err
 	}

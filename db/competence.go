@@ -14,7 +14,7 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.Description, &competence.TotalActivitiesRequired, &competence.BadgeIconURL)
+		err := row.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.TotalActivitiesRequired, &competence.BadgeIconURL)
 		if err != nil {
 			return nil, err
 		}
@@ -34,7 +34,7 @@ func (db *Database) GetCompetences() (*[]model.Competence, error) {
 
 	for rows.Next() {
 		var competence model.Competence
-		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.Description, &competence.TotalActivitiesRequired, &competence.BadgeIconURL)
+		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.TotalActivitiesRequired, &competence.BadgeIconURL)
 		if err != nil {
 			return nil, err
 		}
@@ -46,12 +46,12 @@ func (db *Database) GetCompetences() (*[]model.Competence, error) {
 
 // CreateCompetence inserts a new competence
 func (db *Database) CreateCompetence(competence *model.Competence) error {
-	stmt, err := db.Prepare("INSERT INTO competence(competenceID, competenceName, totalActivitiesRequired, badgeIconURL) VALUES(?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO competence(competenceId, competenceName, totalActivitiesRequired, badgeIconURL) VALUES(?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(competence.CompetenceID, competence.CompetenceName, competence.Description, competence.TotalActivitiesRequired, competence.BadgeIconURL)
+	_, err = stmt.Exec(competence.CompetenceID, competence.CompetenceName, competence.TotalActivitiesRequired, competence.BadgeIconURL)
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (db *Database) CreateCompetence(competence *model.Competence) error {
 
 // DeleteCompetence deletes a competence from competenceID
 func (db *Database) DeleteCompetence(competenceID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM competence WHERE competenceID = ?")
+	stmt, err := db.Prepare("DELETE FROM competence WHERE competenceId = ?")
 	if err != nil {
 		return err
 	}

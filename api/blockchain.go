@@ -55,7 +55,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return nil
 	}
 
-	err = ctx.GiveBadge(transactionID, merkleRootHash, hashes)
+	err = ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, hashes)
 
 	return err
 }
@@ -103,7 +103,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return nil
 	}
 
-	err = ctx.ApproveActivity(transactionID, merkleRootHash, hashes)
+	err = ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, hashes)
 
 	return err
 }

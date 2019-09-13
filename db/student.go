@@ -46,7 +46,7 @@ func (db *Database) GetStudents() (*[]model.Student, error) {
 
 // CreateStudent inserts a new student
 func (db *Database) CreateStudent(student *model.Student) error {
-	stmt, err := db.Prepare("INSERT INTO student(studentID, firstName, lastName, department) VALUES(?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO student(studentId, firstName, lastName, department) VALUES(?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (db *Database) CreateStudent(student *model.Student) error {
 
 // DeleteStudent deletes a student from studentID
 func (db *Database) DeleteStudent(studentID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM student WHERE studentID = ?")
+	stmt, err := db.Prepare("DELETE FROM student WHERE studentId = ?")
 	if err != nil {
 		return err
 	}

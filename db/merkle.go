@@ -9,7 +9,7 @@ func (db *Database) CreateMerkle(merkle *model.Merkle) error {
 		return err
 	}
 
-	_, err = stmt.Exec(merkle.MerkleRootHash, merkle.ItemHash)
+	_, err = stmt.Exec(merkle.MerkleRoot, merkle.ItemHash)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (db *Database) GetMerkles() (*[]model.Merkle, error) {
 
 	for rows.Next() {
 		var merkle model.Merkle
-		err = rows.Scan(&merkle.MerkleRootHash, &merkle.ItemHash)
+		err = rows.Scan(&merkle.MerkleRoot, &merkle.ItemHash)
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +41,7 @@ func (db *Database) GetMerkles() (*[]model.Merkle, error) {
 
 // GetMerkleByID returns all transaction in corresponding merkle root
 func (db *Database) GetMerkleByID(merkleRoot []byte) (*model.Merkle, error) {
-	row, err := db.Query("SELECT * FROM merkle WHERE merkleRootHash = ?", merkleRoot)
+	row, err := db.Query("SELECT * FROM merkle WHERE merkleRoot = ?", merkleRoot)
 	if err != nil {
 		return nil, err
 	}
@@ -59,14 +59,14 @@ func (db *Database) GetMerkleByID(merkleRoot []byte) (*model.Merkle, error) {
 		merkle.ItemHash = append(merkle.ItemHash, item)
 	}
 
-	merkle.MerkleRootHash = merkleRoot
+	merkle.MerkleRoot = merkleRoot
 
 	return &merkle, nil
 }
 
 // DeleteMerkle deletes all merkle root and its transactions
 func (db *Database) DeleteMerkle(merkleRoot []byte) error {
-	stmt, err := db.Prepare("DELETE FROM merkle WHERE merkleRootHash = ?")
+	stmt, err := db.Prepare("DELETE FROM merkle WHERE merkleRoot = ?")
 	if err != nil {
 		return err
 	}
