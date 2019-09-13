@@ -17,6 +17,7 @@
 }
 
 html, body {
+	color: $black;
 	font-size: rem($base-font);
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	background-color: $bg-color;
@@ -71,7 +72,7 @@ button {
 	&-header {
 		display: flex;
 		align-items: center;
-		color: $box-header;
+		color: $black;
 		padding: rem(10);
 		font-size: rem(18);
 		font-weight: 500;
@@ -115,6 +116,10 @@ button {
 			overflow-y: auto;
 		}
 	}
+}
+
+.section {
+	padding: rem(16) rem(10);
 }
 
 .app-loader{

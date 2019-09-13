@@ -7,13 +7,10 @@
 		margin-bottom: rem(10);
 
 		.title {
+			color: $black-2;
 			font-size: rem(24);
 			font-weight: 500;
 		}
-	}
-
-	.section {
-		padding: rem(16) rem(10);
 	}
 
 	@include desktop {

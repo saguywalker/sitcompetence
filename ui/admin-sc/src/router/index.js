@@ -72,6 +72,11 @@ const router = new Router({
 							}
 						}
 					]
+				},
+				{
+					name: "verify",
+					path: "verify",
+					component: () => import("@/pages/verify")
 				}
 			]
 		}

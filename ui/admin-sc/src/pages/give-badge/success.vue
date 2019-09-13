@@ -5,12 +5,13 @@
 				<success-logo />
 				<div class="form-group">
 					<label class="label">Hash:</label>
-					<a
+					<router-link
+						:to="{ name: 'verify' }"
 						class="hash"
 						href="#"
 					>
 						{{ data.hash }}
-					</a>
+					</router-link>
 					<p class="description">
 						Click the hash to verify
 					</p>
