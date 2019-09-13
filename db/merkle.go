@@ -60,3 +60,17 @@ func (db *Database) GetMerkleByID(merkleRoot []byte) (model.Merkle, error) {
 
 	return merkle, nil
 }
+
+func (db *Database) DeleteMerkle(merkleRoot []byte) error {
+	stmt, err := db.Prepare("DELETE FROM merkle WHERE merkleRootHash = ?")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(merkleRoot)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -54,3 +54,17 @@ func (db *Database) GetTransactionByID(transactionID []byte) (model.TransactionL
 
 	return transaction, nil
 }
+
+func (db *Database) DeleteTransaction(transactionID []byte) error {
+	stmt, err := db.Prepare("DELETE FROM transaction WHERE transactionID = ?")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(transactionID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
