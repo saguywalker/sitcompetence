@@ -1,12 +1,6 @@
 package db
 
-import (
-	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
-
-	"github.com/saguywalker/sitcompetence/model"
-)
-
+/*
 func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	var competence model.Competence
 
@@ -30,3 +24,4 @@ func (db *Database) GetCompetences() ([]*model.Competence, error) {
 func (db *Database) CreateCompetence(competence *model.Competence) error {
 	return errors.Wrap(db.Create(competence).Error, "unable to create competence")
 }
+*/

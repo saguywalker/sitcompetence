@@ -1,12 +1,6 @@
 package db
 
-import (
-	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
-
-	"github.com/saguywalker/sitcompetence/model"
-)
-
+/*
 func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
 	var staff model.Staff
 
@@ -30,3 +24,4 @@ func (db *Database) GetStaffs() ([]*model.Staff, error) {
 func (db *Database) CreateStaff(staff *model.Staff) error {
 	return errors.Wrap(db.Create(staff).Error, "unable to create a staff")
 }
+*/
