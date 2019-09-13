@@ -9,6 +9,10 @@ const router = new Router({
 	mode: "history",
 	routes: [
 		{
+			path: "/",
+			redirect: { name: "admin" }
+		},
+		{
 			path: "/admin",
 			component: () => import("@/layouts/LayoutAdminDefault.vue"),
 			children: [
