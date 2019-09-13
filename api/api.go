@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,7 +12,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/app"
-	"github.com/saguywalker/sitcompetence/model"
 )
 
 type statusCodeRecorder struct {
@@ -176,23 +174,15 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 // Home is for testing purpose only
 func (a *API) Home(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	vals := r.URL.Query()
-	params, ok := vals["data"]
+	params, ok := vals["name"]
 	if !ok {
-		return fmt.Errorf("missing")
+		return fmt.Errorf("missing data parameter")
 	}
 
-	dec, _ := base64.StdEncoding.DecodeString(params[0])
-	logrus.Infoln(string(dec))
-
-	var x model.BadgeList
-
-	err := json.Unmarshal(dec, &x)
+	_, err := w.Write([]byte(fmt.Sprintf("Hello %s", params[0])))
 	if err != nil {
 		return err
 	}
-
-	logrus.Infoln("Marshal")
-	logrus.Infof("%+v", x)
 
 	return nil
 }

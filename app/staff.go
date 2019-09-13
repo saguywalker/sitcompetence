@@ -6,6 +6,7 @@ import "github.com/saguywalker/sitcompetence/model"
 func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 	staff, err := ctx.Database.GetStaffByID(id)
 	if err != nil {
+		//ctx.Logger.Errorln(err.Error())
 		return nil, err
 	}
 
@@ -16,6 +17,7 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 func (ctx *Context) GetStaffs() (*[]model.Staff, error) {
 	staffs, err := ctx.Database.GetStaffs()
 	if err != nil {
+		//ctx.Logger.Errorln(err.Error())
 		return nil, err
 	}
 
@@ -24,5 +26,10 @@ func (ctx *Context) GetStaffs() (*[]model.Staff, error) {
 
 // CreateStaff creates new staff
 func (ctx *Context) CreateStaff(staff *model.Staff) error {
-	return ctx.Database.CreateStaff(staff)
+	if err := ctx.Database.CreateStaff(staff); err != nil {
+		//ctx.Logger.Errorln(err.Error())
+		return err
+	}
+
+	return nil
 }

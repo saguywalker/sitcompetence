@@ -6,6 +6,7 @@ import "github.com/saguywalker/sitcompetence/model"
 func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
 	student, err := ctx.Database.GetStudentByID(id)
 	if err != nil {
+		//ctx.Logger.Errorln(err.Error())
 		return student, err
 	}
 
@@ -16,6 +17,7 @@ func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
 func (ctx *Context) GetStudents() (*[]model.Student, error) {
 	students, err := ctx.Database.GetStudents()
 	if err != nil {
+		//ctx.Logger.Errorln(err.Error())
 		return nil, err
 	}
 
@@ -24,5 +26,10 @@ func (ctx *Context) GetStudents() (*[]model.Student, error) {
 
 // CreateStudent create new student
 func (ctx *Context) CreateStudent(student *model.Student) error {
-	return ctx.Database.CreateStudent(student)
+	if err := ctx.Database.CreateStudent(student); err != nil {
+		//ctx.Logger.Errorln(err.Error())
+		return err
+	}
+
+	return nil
 }
