@@ -2,7 +2,7 @@
 	<div class="success-logo">
 		<div class="circle">
 			<div class="content">
-				<icon-check-circle />
+				<icon-check-circle fill="white" />
 				<h2 class="text">
 					Submit<br>Successful
 				</h2>

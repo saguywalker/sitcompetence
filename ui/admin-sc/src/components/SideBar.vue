@@ -60,6 +60,18 @@
 						<span class="name">Badge setting</span>
 					</router-link>
 				</li>
+				<li>
+					<router-link
+						:to="{ name: 'verify' }"
+						class="item"
+					>
+						<icon-check-circle
+							class="icon"
+							size="14"
+						/>
+						<span class="name">Verify</span>
+					</router-link>
+				</li>
 			</ul>
 		</section>
 	</aside>
@@ -72,13 +84,15 @@ import IconDashboard from "@/components/icons/IconDashboard.vue";
 import IconGiveBadge from "@/components/icons/IconGiveBadge.vue";
 import IconActivity from "@/components/icons/IconActivity.vue";
 import IconBadgeSetting from "@/components/icons/IconBadgeSetting.vue";
+import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 
 export default {
 	components: {
 		IconDashboard,
 		IconGiveBadge,
 		IconActivity,
-		IconBadgeSetting
+		IconBadgeSetting,
+		IconCheckCircle
 	},
 	filters: {
 		longSurname(value) {
