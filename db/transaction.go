@@ -2,6 +2,7 @@ package db
 
 import "github.com/saguywalker/sitcompetence/model"
 
+// CreateTransaction insert new transaction into transaction table
 func (db *Database) CreateTransaction(transaction *model.TransactionLink) error {
 	stmt, err := db.Prepare("INSERT INTO transaction(transactionID, merkleRootHash) VALUES(?, ?)")
 	if err != nil {
@@ -16,6 +17,7 @@ func (db *Database) CreateTransaction(transaction *model.TransactionLink) error 
 	return nil
 }
 
+// GetTransactions returns all transactions from transaction table
 func (db *Database) GetTransactions() ([]model.TransactionLink, error) {
 	rows, err := db.Query("SELECT * FROM transaction")
 	if err != nil {
@@ -37,6 +39,7 @@ func (db *Database) GetTransactions() ([]model.TransactionLink, error) {
 	return transactionSet, nil
 }
 
+// GetTransactionByID returns a transaction from transactionID
 func (db *Database) GetTransactionByID(transactionID []byte) (model.TransactionLink, error) {
 	var transaction model.TransactionLink
 
@@ -55,6 +58,7 @@ func (db *Database) GetTransactionByID(transactionID []byte) (model.TransactionL
 	return transaction, nil
 }
 
+// DeleteTransaction deletes a transaction from transactionID
 func (db *Database) DeleteTransaction(transactionID []byte) error {
 	stmt, err := db.Prepare("DELETE FROM transaction WHERE transactionID = ?")
 	if err != nil {

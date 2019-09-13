@@ -2,6 +2,7 @@ package db
 
 import "github.com/saguywalker/sitcompetence/model"
 
+// CreateMerkle insert new merkle into merkle table
 func (db *Database) CreateMerkle(merkle *model.Merkle) error {
 	stmt, err := db.Prepare("INSERT INTO merkle(merkleRoot, itemHash) VALUES(?, ?)")
 	if err != nil {
@@ -16,6 +17,7 @@ func (db *Database) CreateMerkle(merkle *model.Merkle) error {
 	return nil
 }
 
+// GetMerkles returns all merkles in table
 func (db *Database) GetMerkles() ([]model.Merkle, error) {
 	rows, err := db.Query("SELECT * FROM merkle")
 	if err != nil {
@@ -37,6 +39,7 @@ func (db *Database) GetMerkles() ([]model.Merkle, error) {
 	return merkles, nil
 }
 
+// GetMerkleByID returns all transaction in corresponding merkle root
 func (db *Database) GetMerkleByID(merkleRoot []byte) (model.Merkle, error) {
 	var merkle model.Merkle
 
@@ -61,6 +64,7 @@ func (db *Database) GetMerkleByID(merkleRoot []byte) (model.Merkle, error) {
 	return merkle, nil
 }
 
+// DeleteMerkle deletes all merkle root and its transactions
 func (db *Database) DeleteMerkle(merkleRoot []byte) error {
 	stmt, err := db.Prepare("DELETE FROM merkle WHERE merkleRootHash = ?")
 	if err != nil {
