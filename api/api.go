@@ -4,12 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"runtime/debug"
 	"strings"
-	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/app"
 )
@@ -69,7 +66,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
 
-		beginTime := time.Now()
+		//beginTime := time.Now()
 
 		hijacker, _ := w.(http.Hijacker)
 		w = &statusCodeRecorder{
@@ -80,48 +77,48 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
 		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 		/*
-			if username, password, ok := r.BasicAuth(); ok {
-				user, err := a.App.GetUserByEmail(username)
+				if username, password, ok := r.BasicAuth(); ok {
+					user, err := a.App.GetUserByEmail(username)
 
-				if user == nil || err != nil {
-					if err != nil {
-						ctx.Logger.WithError(err).Error("unable to get user")
+					if user == nil || err != nil {
+						if err != nil {
+							ctx.Logger.WithError(err).Error("unable to get user")
+						}
+						http.Error(w, "invalid credentials", http.StatusForbidden)
+						return
 					}
-					http.Error(w, "invalid credentials", http.StatusForbidden)
-					return
+
+					if ok := user.CheckPassword(password); !ok {
+						http.Error(w, "invalid credentials", http.StatusForbidden)
+						return
+					}
+
+					ctx = ctx.WithUser(user)
 				}
 
-				if ok := user.CheckPassword(password); !ok {
-					http.Error(w, "invalid credentials", http.StatusForbidden)
-					return
+			defer func() {
+				statusCode := w.(*statusCodeRecorder).StatusCode
+				if statusCode == 0 {
+					statusCode = 200
 				}
+				duration := time.Since(beginTime)
 
-				ctx = ctx.WithUser(user)
-			}
+				logger := ctx.Logger.WithFields(logrus.Fields{
+					"duration":    duration,
+					"status_code": statusCode,
+					"remote":      ctx.RemoteAddress,
+				})
+				logger.Info(r.Method + " " + r.URL.RequestURI())
+			}()
+
+			defer func() {
+				if r := recover(); r != nil {
+					ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
+					http.Error(w, "internal server error", http.StatusInternalServerError)
+				}
+			}()
 		*/
-		defer func() {
-			statusCode := w.(*statusCodeRecorder).StatusCode
-			if statusCode == 0 {
-				statusCode = 200
-			}
-			duration := time.Since(beginTime)
-
-			logger := ctx.Logger.WithFields(logrus.Fields{
-				"duration":    duration,
-				"status_code": statusCode,
-				"remote":      ctx.RemoteAddress,
-			})
-			logger.Info(r.Method + " " + r.URL.RequestURI())
-		}()
-
-		defer func() {
-			if r := recover(); r != nil {
-				ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
-				http.Error(w, "internal server error", http.StatusInternalServerError)
-			}
-		}()
-
-		//w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {
@@ -151,6 +148,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
 		}
+
 	})
 }
 

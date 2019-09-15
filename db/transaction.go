@@ -4,7 +4,7 @@ import "github.com/saguywalker/sitcompetence/model"
 
 // CreateTransaction insert new transaction into transaction table
 func (db *Database) CreateTransaction(transaction *model.TransactionLink) error {
-	stmt, err := db.Prepare("INSERT INTO transaction(transactionID, merkleRoot) VALUES(?, ?)")
+	stmt, err := db.Prepare("INSERT INTO transactionLink(transactionId, merkleRoot) VALUES($1, $2)")
 	if err != nil {
 		return err
 	}
@@ -19,7 +19,7 @@ func (db *Database) CreateTransaction(transaction *model.TransactionLink) error 
 
 // GetTransactions returns all transactions from transaction table
 func (db *Database) GetTransactions() (*[]model.TransactionLink, error) {
-	rows, err := db.Query("SELECT * FROM transaction_set")
+	rows, err := db.Query("SELECT * FROM transactionLink")
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +40,8 @@ func (db *Database) GetTransactions() (*[]model.TransactionLink, error) {
 }
 
 // GetTransactionByID returns a transaction from transactionID
-func (db *Database) GetTransactionByID(transactionID []byte) (*model.TransactionLink, error) {
-	row, err := db.Query("SELECT * FROM transaction_set WHERE transactionId = ?", transactionID)
+func (db *Database) GetTransactionByID(transactionID string) (*model.TransactionLink, error) {
+	row, err := db.Query("SELECT * FROM transactionLink WHERE transactionId = $1", transactionID)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +59,8 @@ func (db *Database) GetTransactionByID(transactionID []byte) (*model.Transaction
 }
 
 // DeleteTransaction deletes a transaction from transactionID
-func (db *Database) DeleteTransaction(transactionID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM transaction_set WHERE transactionId = ?")
+func (db *Database) DeleteTransaction(transactionID string) error {
+	stmt, err := db.Prepare("DELETE FROM transactionLink WHERE transactionId = $1")
 	if err != nil {
 		return err
 	}

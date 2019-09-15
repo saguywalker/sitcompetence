@@ -8,7 +8,7 @@ import (
 func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 	var activity model.Activity
 
-	row, err := db.Query("SELECT * FROM activity WHERE activityId = ?", id)
+	row, err := db.Query("SELECT * FROM activity WHERE activityId = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (db *Database) GetActivities() (*[]model.Activity, error) {
 
 // CreateActivity inserts a new activity
 func (db *Database) CreateActivity(activity *model.Activity) error {
-	stmt, err := db.Prepare("INSERT INTO activity(activityId, activityName, date, creator) VALUES(?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO activity(activityId, activityName, date, creator) VALUES($1, $2, $3, $4)")
 	if err != nil {
 		return err
 	}
@@ -60,8 +60,8 @@ func (db *Database) CreateActivity(activity *model.Activity) error {
 }
 
 // DeleteActivity deletes a activity from activityID
-func (db *Database) DeleteActivity(activityID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM activity WHERE activityId = ?")
+func (db *Database) DeleteActivity(activityID uint32) error {
+	stmt, err := db.Prepare("DELETE FROM activity WHERE activityId = $1")
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	var competence model.Competence
 
-	row, err := db.Query("SELECT * FROM competence")
+	row, err := db.Query("SELECT * FROM competence WHERE competenceId = $1")
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (db *Database) GetCompetences() (*[]model.Competence, error) {
 
 // CreateCompetence inserts a new competence
 func (db *Database) CreateCompetence(competence *model.Competence) error {
-	stmt, err := db.Prepare("INSERT INTO competence(competenceId, competenceName, totalActivitiesRequired, badgeIconURL) VALUES(?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO competence(competenceId, competenceName, totalActivitiesRequired, badgeIconURL) VALUES($1, $2, $3, $4)")
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (db *Database) CreateCompetence(competence *model.Competence) error {
 
 // DeleteCompetence deletes a competence from competenceID
 func (db *Database) DeleteCompetence(competenceID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM competence WHERE competenceId = ?")
+	stmt, err := db.Prepare("DELETE FROM competence WHERE competenceId = $1")
 	if err != nil {
 		return err
 	}

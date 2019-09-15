@@ -3,6 +3,7 @@
 #for configuration
 config.yaml
 postgres.sql
+initdb.py
 
 #Executable file
 sitcom

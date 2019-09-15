@@ -6,7 +6,7 @@ import (
 
 // GetStudentByID returns an student from studentID
 func (db *Database) GetStudentByID(id string) (*model.Student, error) {
-	row, err := db.Query("SELECT * FROM student WHERE studentID = ?", id)
+	row, err := db.Query("SELECT * FROM student WHERE studentID = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (db *Database) GetStudents() (*[]model.Student, error) {
 
 // CreateStudent inserts a new student
 func (db *Database) CreateStudent(student *model.Student) error {
-	stmt, err := db.Prepare("INSERT INTO student(studentId, firstName, lastName, department) VALUES(?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO student(studentId, firstName, lastName, department) VALUES($1, $2, $3, $4)")
 	if err != nil {
 		return err
 	}
@@ -60,8 +60,8 @@ func (db *Database) CreateStudent(student *model.Student) error {
 }
 
 // DeleteStudent deletes a student from studentID
-func (db *Database) DeleteStudent(studentID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM student WHERE studentId = ?")
+func (db *Database) DeleteStudent(studentID string) error {
+	stmt, err := db.Prepare("DELETE FROM student WHERE studentId = $1")
 	if err != nil {
 		return err
 	}
