@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"math"
 	"net/http"
+	"strings"
 
 	"github.com/cbergoon/merkletree"
 	"github.com/saguywalker/sitcompetence/app"
@@ -25,37 +26,44 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return err
 	}
-	ctx.Logger.Infof("Decoded value\n%s\n", string(decoded))
+	ctx.Logger.Infof("decoded value\n%s\n", string(decoded))
 
+	// Struct of objects
 	var listOfBadges []*model.GiveBadge
 	if err := json.Unmarshal(decoded, &listOfBadges); err != nil {
 		return err
 	}
 
-	listOfContents := make([]merkletree.Content, len(listOfBadges))
+	// Hash of each object will be used to make a merkle tree
+	listOfHashes := make([]merkletree.Content, len(listOfBadges))
 	for i, x := range listOfBadges {
-		listOfContents[i] = x
+		hash, err := x.CalculateHash()
+		if err != nil {
+			return err
+		}
+
+		listOfHashes[i] = model.MyHash(fmt.Sprintf("%x", hash))
 	}
 
-	tree, err := merkletree.NewTree(listOfContents)
+	tree, err := merkletree.NewTree(listOfHashes)
 	if err != nil {
 		return err
 	}
 
 	merkleRootHash := fmt.Sprintf("%x", tree.MerkleRoot())
 	ctx.Logger.Infof("Merkle Root Hash: %s", merkleRootHash)
-
-	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfContents))/2.0)))
-	for i, leaf := range tree.Leafs {
-		hashes[i] = fmt.Sprintf("%x", leaf.Hash)
-	}
-
+	/*
+		hashes := make([]string, uint(2*math.Ceil(float64(len(listOfHashes))/2.0)))
+		for i, leaf := range tree.Leafs {
+			hashes[i] = fmt.Sprintf("%x", leaf.Hash)
+		}
+	*/
 	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
 	if err != nil {
 		return err
 	}
 
-	if err := ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, hashes); err != nil {
+	if err := ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, listOfHashes); err != nil {
 		return err
 	}
 
@@ -84,22 +92,27 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	listOfContents := make([]merkletree.Content, len(listOfActivities))
+	listOfHashes := make([]merkletree.Content, len(listOfActivities))
 	for i, x := range listOfActivities {
-		listOfContents[i] = x
+		hash, err := x.CalculateHash()
+		if err != nil {
+			return err
+		}
+
+		listOfHashes[i] = model.MyHash(fmt.Sprintf("%x", hash))
 	}
 
 	// Free listOfActivities
 	listOfActivities = nil
 
-	tree, err := merkletree.NewTree(listOfContents)
+	tree, err := merkletree.NewTree(listOfHashes)
 	if err != nil {
 		return err
 	}
 
 	merkleRootHash := fmt.Sprintf("%x", tree.MerkleRoot())
 
-	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfContents))/2.0)))
+	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfHashes))/2.0)))
 	for i, leaf := range tree.Leafs {
 		hashes[i] = fmt.Sprintf("%x", leaf.Hash)
 	}
@@ -109,7 +122,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return nil
 	}
 
-	err = ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, hashes)
+	err = ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, listOfHashes)
 
 	return err
 }
@@ -121,6 +134,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	if !ok {
 		return fmt.Errorf("missing transaction id parameter (tx)")
 	}
+	ctx.Logger.Infof("TxID: %s\n", string(txid[0]))
 
 	data, ok := vals["data"]
 	if !ok {
@@ -131,7 +145,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		return err
 	}
-	ctx.Logger.Infof("Decoded value\n%s\n", string(decoded))
+	ctx.Logger.Infof("decoded value\n%s\n", string(decoded))
 
 	return nil
 }
@@ -165,7 +179,7 @@ func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash string) 
 	}
 
 	txIDInterface := resultData["hash"]
-	transactionID := fmt.Sprintf("%v", txIDInterface)
+	transactionID := strings.ToLower(fmt.Sprintf("%v", txIDInterface))
 	ctx.Logger.Infof("TransactionID: %s\n", transactionID)
 
 	//w.WriteHeader(http.StatusOK)

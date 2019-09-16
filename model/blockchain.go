@@ -109,3 +109,27 @@ func (a ApproveActivity) Equals(other merkletree.Content) (bool, error) {
 
 	return bytes.Equal(h1, h2), nil
 }
+
+// MyHash is used for making merkle tree
+type MyHash string
+
+// CalculateHash return hash of calling struct
+func (h MyHash) CalculateHash() ([]byte, error) {
+	hash := sha256.Sum256([]byte(h))
+	return hash[:], nil
+}
+
+// Equals check hash of 2 structs
+func (h MyHash) Equals(other merkletree.Content) (bool, error) {
+	h1, err := h.CalculateHash()
+	if err != nil {
+		return false, err
+	}
+
+	h2, err := other.CalculateHash()
+	if err != nil {
+		return false, err
+	}
+
+	return bytes.Equal(h1, h2), nil
+}

@@ -1,13 +1,22 @@
 package app
 
 import (
+	"fmt"
+
+	"github.com/cbergoon/merkletree"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
 // UpdateMerkleTransaction insert a new transactionID and merkleRootHash into transaction table
 // It also add a merkleRoot and all of its transaction into merkle table
-func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot string, transactionSet []string) error {
-	merkle := model.NewMerkle(merkleRoot, transactionSet)
+func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot string, transactionSet []merkletree.Content) error {
+	hexDigests := make([]string, len(transactionSet))
+	for i, item := range transactionSet {
+		hexDigests[i] = fmt.Sprintf("%s", item)
+	}
+
+	merkle := model.NewMerkle(merkleRoot, hexDigests)
 	if err := ctx.Database.CreateMerkle(merkle); err != nil {
 		return err
 	}
