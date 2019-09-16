@@ -114,6 +114,28 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	return err
 }
 
+// VerifyTX verifies whethear a corresponding
+func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	vals := r.URL.Query()
+	txid, ok := vals["tx"]
+	if !ok {
+		return fmt.Errorf("missing transaction id parameter (tx)")
+	}
+
+	data, ok := vals["data"]
+	if !ok {
+		return fmt.Errorf("missing json data parameter (data)")
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(data[0])
+	if err != nil {
+		return err
+	}
+	ctx.Logger.Infof("Decoded value\n%s\n", string(decoded))
+
+	return nil
+}
+
 // BroadcastTX broadcast transaction to blockchain node
 // Note: Need to check wheater calling's node is reachable or not
 func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash string) (string, error) {
