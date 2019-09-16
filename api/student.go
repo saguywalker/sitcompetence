@@ -11,6 +11,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GetStudents responses with all of students
 func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	students, err := ctx.GetStudents()
 	if err != nil {
@@ -26,10 +27,12 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	return err
 }
 
+// CreateStudentResponse defines a response with studentID
 type CreateStudentResponse struct {
 	StudentID string `json:"student_id"`
 }
 
+// CreateStudent creates a student from a request
 func (a *API) CreateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	var input model.Student
 
@@ -56,6 +59,7 @@ func (a *API) CreateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 	return err
 }
 
+// GetStudentByID responses a student from a requested studentID
 func (a *API) GetStudentByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := mux.Vars(r)["id"]
 	student, err := ctx.GetStudentByID(id)

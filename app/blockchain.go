@@ -1,16 +1,32 @@
 package app
 
 import (
-	"errors"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
-// GiveBadge function
-func (ctx *Context) GiveBadge(transactionID, merkleRoot []byte, transactionSet [][]byte) error {
+// UpdateMerkleTransaction insert a new transactionID and merkleRootHash into transaction table
+// It also add a merkleRoot and all of its transaction into merkle table
+func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot string, transactionSet []string) error {
+	merkle := model.NewMerkle(merkleRoot, transactionSet)
+	if err := ctx.Database.CreateMerkle(merkle); err != nil {
+		return err
+	}
 
-	return errors.New("unimplemented")
+	transaction := model.NewTransactionLink(transactionID, merkleRoot)
+	if err := ctx.Database.CreateTransaction(transaction); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// ApproveActivity function
-func (ctx *Context) ApproveActivity(transactionID, merkleRoot []byte, transactionSet [][]byte) error {
-	return errors.New("unimplemented")
+// UpdateCollectedCompetence update new competence and its transactionID to a corresponding studentID
+func (ctx *Context) UpdateCollectedCompetence(badges []*model.GiveBadge, txID string) error {
+	for _, badge := range badges {
+		tmp := model.NewCollectedCompetence(badge.StudentID, badge.CompetenceID, txID)
+		if err := ctx.Database.CreateCollectedCompetence(tmp); err != nil {
+			return err
+		}
+	}
+	return nil
 }

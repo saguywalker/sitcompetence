@@ -6,14 +6,14 @@ import "github.com/saguywalker/sitcompetence/model"
 func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 	activity, err := ctx.Database.GetActivityByID(id)
 	if err != nil {
-		return nil, err
+		return activity, err
 	}
 
 	return activity, nil
 }
 
 // GetActivities returns all of activities
-func (ctx *Context) GetActivities() ([]*model.Activity, error) {
+func (ctx *Context) GetActivities() (*[]model.Activity, error) {
 	activities, err := ctx.Database.GetActivities()
 	if err != nil {
 		return nil, err

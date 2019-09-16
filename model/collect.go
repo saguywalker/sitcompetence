@@ -1,15 +1,15 @@
 package model
 
-// CollectedBadges defines collected badges for corresponding student
-type CollectedBadges struct {
+// CollectedCompetence defines collected badges for corresponding student
+type CollectedCompetence struct {
 	StudentID    string `json:"student_id"`
 	CompetenceID uint16 `json:"competence_id"`
-	TxID         []byte `json:"tx_id"`
+	TxID         string `json:"tx_id"`
 }
 
-// NewCollectedBadges return new CollectedBadges struct
-func NewCollectedBadges(studentID string, competenceID uint16, txid []byte) *CollectedBadges {
-	return &CollectedBadges{
+// NewCollectedCompetence return new CollectedBadges struct
+func NewCollectedCompetence(studentID string, competenceID uint16, txid string) *CollectedCompetence {
+	return &CollectedCompetence{
 		StudentID:    studentID,
 		CompetenceID: competenceID,
 		TxID:         txid,

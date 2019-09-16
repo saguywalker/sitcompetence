@@ -4,12 +4,12 @@ import "github.com/saguywalker/sitcompetence/model"
 
 // CreateTransaction insert new transaction into transaction table
 func (db *Database) CreateTransaction(transaction *model.TransactionLink) error {
-	stmt, err := db.Prepare("INSERT INTO transaction(transactionID, merkleRootHash) VALUES(?, ?)")
+	stmt, err := db.Prepare("INSERT INTO transactionLink(transactionId, merkleRoot) VALUES($1, $2)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(transaction.TransactionID, transaction.MerkleRootHash)
+	_, err = stmt.Exec(transaction.TransactionID, transaction.MerkleRoot)
 	if err != nil {
 		return err
 	}
@@ -18,8 +18,8 @@ func (db *Database) CreateTransaction(transaction *model.TransactionLink) error 
 }
 
 // GetTransactions returns all transactions from transaction table
-func (db *Database) GetTransactions() ([]model.TransactionLink, error) {
-	rows, err := db.Query("SELECT * FROM transaction")
+func (db *Database) GetTransactions() (*[]model.TransactionLink, error) {
+	rows, err := db.Query("SELECT * FROM transactionLink")
 	if err != nil {
 		return nil, err
 	}
@@ -29,38 +29,38 @@ func (db *Database) GetTransactions() ([]model.TransactionLink, error) {
 
 	for rows.Next() {
 		var transaction model.TransactionLink
-		err = rows.Scan(&transaction.TransactionID, &transaction.MerkleRootHash)
+		err = rows.Scan(&transaction.TransactionID, &transaction.MerkleRoot)
 		if err != nil {
 			return nil, err
 		}
 		transactionSet = append(transactionSet, transaction)
 	}
 
-	return transactionSet, nil
+	return &transactionSet, nil
 }
 
 // GetTransactionByID returns a transaction from transactionID
-func (db *Database) GetTransactionByID(transactionID []byte) (model.TransactionLink, error) {
-	var transaction model.TransactionLink
-
-	row, err := db.Query("SELECT * FROM transaction WHERE transactionID = ?", transactionID)
+func (db *Database) GetTransactionByID(transactionID string) (*model.TransactionLink, error) {
+	row, err := db.Query("SELECT * FROM transactionLink WHERE transactionId = $1", transactionID)
 	if err != nil {
-		return transaction, err
+		return nil, err
 	}
 
+	var transaction model.TransactionLink
+
 	for row.Next() {
-		err := row.Scan(&transaction.TransactionID, &transaction.MerkleRootHash)
+		err := row.Scan(&transaction.TransactionID, &transaction.MerkleRoot)
 		if err != nil {
-			return transaction, err
+			return nil, err
 		}
 	}
 
-	return transaction, nil
+	return &transaction, nil
 }
 
 // DeleteTransaction deletes a transaction from transactionID
-func (db *Database) DeleteTransaction(transactionID []byte) error {
-	stmt, err := db.Prepare("DELETE FROM transaction WHERE transactionID = ?")
+func (db *Database) DeleteTransaction(transactionID string) error {
+	stmt, err := db.Prepare("DELETE FROM transactionLink WHERE transactionId = $1")
 	if err != nil {
 		return err
 	}

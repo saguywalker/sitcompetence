@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net/http"
 
 	"github.com/cbergoon/merkletree"
@@ -12,6 +13,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GiveBadge takes a giving badge request and response with transactionID
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	vals := r.URL.Query()
 	params, ok := vals["data"]
@@ -23,8 +25,9 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return err
 	}
+	ctx.Logger.Infof("Decoded value\n%s\n", string(decoded))
 
-	var listOfBadges []model.GiveBadge
+	var listOfBadges []*model.GiveBadge
 	if err := json.Unmarshal(decoded, &listOfBadges); err != nil {
 		return err
 	}
@@ -34,31 +37,36 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		listOfContents[i] = x
 	}
 
-	// Free listOfBadges
-	listOfBadges = nil
-
 	tree, err := merkletree.NewTree(listOfContents)
 	if err != nil {
 		return err
 	}
 
-	merkleRootHash := tree.MerkleRoot()
+	merkleRootHash := fmt.Sprintf("%x", tree.MerkleRoot())
+	ctx.Logger.Infof("Merkle Root Hash: %s", merkleRootHash)
 
-	hashes := make([][]byte, len(listOfContents))
+	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfContents))/2.0)))
 	for i, leaf := range tree.Leafs {
-		hashes[i] = leaf.Hash
+		hashes[i] = fmt.Sprintf("%x", leaf.Hash)
 	}
 
-	transactionID, err := a.BroadcastTX(ctx, w, merkleRootHash)
+	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
 	if err != nil {
-		return nil
+		return err
 	}
 
-	err = ctx.GiveBadge(transactionID, merkleRootHash, hashes)
+	if err := ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, hashes); err != nil {
+		return err
+	}
 
-	return err
+	if err := ctx.UpdateCollectedCompetence(listOfBadges, transactionID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
+// ApproveActivity takes an approving activity request and response with transactionID
 func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	vals := r.URL.Query()
 	params, ok := vals["data"]
@@ -89,88 +97,67 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	merkleRootHash := tree.MerkleRoot()
+	merkleRootHash := fmt.Sprintf("%x", tree.MerkleRoot())
 
-	hashes := make([][]byte, len(listOfContents))
+	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfContents))/2.0)))
 	for i, leaf := range tree.Leafs {
-		hashes[i] = leaf.Hash
+		hashes[i] = fmt.Sprintf("%x", leaf.Hash)
 	}
 
-	transactionID, err := a.BroadcastTX(ctx, w, merkleRootHash)
+	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
 	if err != nil {
 		return nil
 	}
 
-	err = ctx.ApproveActivity(transactionID, merkleRootHash, hashes)
+	err = ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, hashes)
 
 	return err
 }
 
 // BroadcastTX broadcast transaction to blockchain node
 // Note: Need to check wheater calling's node is reachable or not
-func (a *API) BroadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) ([]byte, error) {
-	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[a.CurrentPeerIndex], hash)
+func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash string) (string, error) {
+	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=\"%x\"", a.Config.Peers[a.CurrentPeerIndex], hash)
+	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer response.Body.Close()
 
 	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	var fullData map[string]interface{}
 	err = json.Unmarshal(data, &fullData)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
+	ctx.Logger.Infof("Response from tendermint\n%+v\n", fullData)
 
 	resultData, ok := fullData["result"].(map[string]interface{})
 	if !ok {
-		return nil, fmt.Errorf("error when asserting type from data[\"result\"]")
+		return "", fmt.Errorf("error when asserting type from data[\"result\"]")
 	}
 
-	transactionID := resultData["hash"]
-	transactionBytes, ok := transactionID.([]byte)
-	if !ok {
-		return nil, fmt.Errorf("error when asserting type from transactionID")
+	txIDInterface := resultData["hash"]
+	txID, err := json.Marshal(txIDInterface)
+	if err != nil {
+		return "", err
 	}
+	transactionID := fmt.Sprintf("%x", txID)
+	ctx.Logger.Infof("TransactionID: %v\n", txID)
+	ctx.Logger.Infof("TransactionID: %x\n", txID)
+	ctx.Logger.Infof("TransactionID: %s\n", transactionID)
 
-	_, err = w.Write([]byte(fmt.Sprintf("%x", transactionBytes)))
+	//w.WriteHeader(http.StatusOK)
+	_, err = w.Write(data)
 
 	// Move to the next peer in round-robin fashion
 	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
 
-	return transactionBytes, err
+	return transactionID, err
 }
-
-/*
-func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	var input model.ApproveActivity
-
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(body, &input); err != nil {
-		return err
-	}
-
-	if err := ctx.GiveBadge(body); err != nil {
-		return err
-	}
-
-	data, err := json.Marshal(&CreateActivityResponse{ActivityID: input.ActivityID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
-	return err
-}
-*/

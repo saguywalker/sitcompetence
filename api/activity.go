@@ -12,6 +12,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GetActivities response with all of activities
 func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	activities, err := ctx.GetActivities()
 	if err != nil {
@@ -27,10 +28,12 @@ func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Req
 	return err
 }
 
+// CreateActivityResponse defines activityID for response back
 type CreateActivityResponse struct {
 	ActivityID uint32 `json:"activity_id"`
 }
 
+// CreateActivity create new activity from request
 func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	var input model.Activity
 
@@ -57,6 +60,7 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	return err
 }
 
+// GetActivityByID response an activity from requested activityID
 func (a *API) GetActivityByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getActivityIDFromRequest(r)
 	activity, err := ctx.GetActivityByID(id)

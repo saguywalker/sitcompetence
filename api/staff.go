@@ -11,6 +11,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GetStaffs responses with all of staffs
 func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	staffs, err := ctx.GetStaffs()
 	if err != nil {
@@ -26,10 +27,12 @@ func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	return err
 }
 
+// CreateStaffResponse defines a response with staffID
 type CreateStaffResponse struct {
 	StaffID string `json:"staff_id"`
 }
 
+// CreateStaff creates a staff from a request
 func (a *API) CreateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	var input model.Staff
 
@@ -56,6 +59,7 @@ func (a *API) CreateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	return err
 }
 
+// GetStaffByID responses a staff from a requested staffID
 func (a *API) GetStaffByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := mux.Vars(r)["id"]
 	competence, err := ctx.GetStaffByID(id)
