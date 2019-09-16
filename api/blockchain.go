@@ -136,7 +136,6 @@ func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash string) 
 	if err != nil {
 		return "", err
 	}
-	ctx.Logger.Infof("Response from tendermint\n%+v\n", fullData)
 
 	resultData, ok := fullData["result"].(map[string]interface{})
 	if !ok {
@@ -144,13 +143,7 @@ func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash string) 
 	}
 
 	txIDInterface := resultData["hash"]
-	txID, err := json.Marshal(txIDInterface)
-	if err != nil {
-		return "", err
-	}
-	transactionID := fmt.Sprintf("%x", txID)
-	ctx.Logger.Infof("TransactionID: %v\n", txID)
-	ctx.Logger.Infof("TransactionID: %x\n", txID)
+	transactionID := fmt.Sprintf("%v", txIDInterface)
 	ctx.Logger.Infof("TransactionID: %s\n", transactionID)
 
 	//w.WriteHeader(http.StatusOK)
