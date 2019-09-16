@@ -132,6 +132,40 @@ button {
   z-index: $loading-z;
 }
 
+.my-row {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	@include desktop {
+		flex-flow: row wrap;
+	}
+}
+
+.page-header {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: rem(16);
+
+	.title {
+		color: $black-2;
+		font-size: rem(24);
+		font-weight: 500;
+		margin-bottom: rem(5);
+	}
+
+	@include desktop {
+		flex-direction: row;
+		align-items: baseline;
+		justify-content: space-between;
+
+		.breadcrumb {
+			width: auto;
+			background-color: transparent;
+		}
+	}
+}
+
 /* LOADER 1 */
 
 #spin-loader:before, #spin-loader:after{

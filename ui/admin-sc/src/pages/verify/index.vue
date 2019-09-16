@@ -34,11 +34,25 @@
 @import "@/styles/pages/verify.scss";
 </style>
 <script>
+import { mapState } from "vuex";
+
 export default {
 	data() {
 		return {
 			hash: ""
 		};
+	},
+	computed: {
+		...mapState("verify", [
+			"hashId"
+		])
+	},
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (from.name === "give-badge-success") {
+				vm.hash = vm.hashId;
+			}
+		});
 	}
 };
 </script>

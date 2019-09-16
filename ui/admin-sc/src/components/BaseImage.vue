@@ -1,13 +1,16 @@
 <template>
 	<div
 		:style="{
-			width: `${size}px`
+			width: imageWidth
 		}"
 		class="base-image"
 	>
 		<img
 			:style="{
-				borderRadius: imageRounded
+				height: activityCard ? '140px' : 'auto',
+				borderRadius: imageRounded,
+				borderTopLeftRadius: activityCard ? '5px' : 'none',
+				borderTopRightRadius: activityCard ? '5px' : 'none'
 			}"
 			:src="imageSrc"
 			alt="Image"
@@ -31,6 +34,10 @@ export default {
 		round: {
 			type: Boolean,
 			default: true
+		},
+		activityCard: {
+			type: Boolean,
+			default: false
 		}
 	},
 	computed: {
@@ -39,6 +46,13 @@ export default {
 		},
 		imageRounded() {
 			return this.round ? "50%" : "0";
+		},
+		imageWidth() {
+			if (this.size === "auto") {
+				return "auto";
+			}
+
+			return `${this.size}px`;
 		}
 	}
 };

@@ -25,7 +25,7 @@
 								v-if="item.show"
 								class="badge-form"
 							>
-								<b-row>
+								<div class="my-row">
 									<b-col
 										v-for="(badge, id) in item.badges"
 										:key="`${badge}${item.studentId}${id}`"
@@ -42,7 +42,7 @@
 											<p class="text">{{ badge.name }}</p>
 										</label>
 									</b-col>
-								</b-row>
+								</div>
 							</div>
 						</transition>
 					</li>

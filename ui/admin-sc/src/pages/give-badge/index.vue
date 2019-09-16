@@ -131,7 +131,6 @@
 			</b-col>
 		</b-row>
 		<base-page-step
-			ref="stepRef"
 			:step="step"
 			@next="submit"
 		/>

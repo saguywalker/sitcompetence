@@ -26,7 +26,7 @@
 								v-if="item.show"
 								class="badge-form"
 							>
-								<b-row>
+								<div class="my-row">
 									<b-col
 										v-for="(option, id) in options"
 										:key="`${item.studentId}${id}`"
@@ -52,7 +52,7 @@
 											<p class="text">{{ option.name }}</p>
 										</label>
 									</b-col>
-								</b-row>
+								</div>
 							</div>
 						</transition>
 					</li>
@@ -81,7 +81,7 @@ export default {
 		return {
 			selectStudent: [],
 			errors: [],
-			options: [
+			options: [ // TODO: Get all badge options from backend
 				{
 					id: "002",
 					name: "Team working"

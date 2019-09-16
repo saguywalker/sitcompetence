@@ -5,13 +5,13 @@
 				<success-logo />
 				<div class="form-group">
 					<label class="label">Hash:</label>
-					<router-link
-						:to="{ name: 'verify' }"
+					<a
 						class="hash"
 						href="#"
+						@click="verifyHash"
 					>
 						{{ data.hash }}
-					</router-link>
+					</a>
 					<p class="description">
 						Click the hash to verify
 					</p>
@@ -63,6 +63,12 @@ export default {
 	},
 	computed: {
 		...mapState("giveBadge", ["selectedStudents", "steps"])
+	},
+	methods: {
+		verifyHash() {
+			this.$store.dispatch("verify/updateHashId", this.hash);
+			this.$router.push({ name: "verify" });
+		}
 	}
 };
 </script>

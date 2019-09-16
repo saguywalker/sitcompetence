@@ -1,17 +1,19 @@
 import Vue from "vue";
 import Router from "vue-router";
-import { GIVE_BADGE_BREADCRUMB } from "@/constants/breadcrumb";
-import { GIVE_BADGE_STEP } from "@/constants/step";
+import {
+	GIVE_BADGE_BREADCRUMB,
+	CREATE_ACTIVITY_BREADCRUMB
+} from "@/constants/breadcrumb";
+import {
+	GIVE_BADGE_STEP,
+	CREATE_ACTIVITY_STEP
+} from "@/constants/step";
 
 Vue.use(Router);
 
 const router = new Router({
 	mode: "history",
 	routes: [
-		{
-			path: "/",
-			redirect: { name: "admin" }
-		},
 		{
 			path: "/admin",
 			component: () => import("@/layouts/LayoutAdminDefault.vue"),
@@ -30,6 +32,53 @@ const router = new Router({
 					name: "activity",
 					path: "activity",
 					component: () => import("@/pages/activity")
+				},
+				{
+					name: "activity_id",
+					path: "activity/d/:id",
+					component: () => import("@/pages/activity/activity_id.vue")
+				},
+				{
+					path: "activity/create",
+					component: () => import("@/layouts/LayoutCreateActivity.vue"),
+					children: [
+						{
+							name: "create-activity",
+							path: "/",
+							component: () => import("@/pages/activity/create"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.detail,
+								step: CREATE_ACTIVITY_STEP.detail
+							}
+						},
+						{
+							name: "create-activity-select-competence",
+							path: "select-competence",
+							component: () => import("@/pages/activity/create/select-competence.vue"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.select_competence,
+								step: CREATE_ACTIVITY_STEP.select_competence
+							}
+						},
+						{
+							name: "create-activity-confirmation",
+							path: "confirmation",
+							component: () => import("@/pages/activity/create/confirmation.vue"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.confirmation,
+								step: CREATE_ACTIVITY_STEP.confirmation
+							}
+						},
+						{
+							name: "create-activity-success",
+							path: "success",
+							component: () => import("@/pages/activity/create/success.vue"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.success,
+								step: CREATE_ACTIVITY_STEP.success
+							}
+						}
+					]
 				},
 				{
 					name: "badge-setting",
@@ -83,6 +132,11 @@ const router = new Router({
 					component: () => import("@/pages/verify")
 				}
 			]
+		},
+		{
+			path: "*",
+			name: "error404",
+			component: () => import("@/pages/error/error404")
 		}
 	]
 });

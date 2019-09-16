@@ -4,6 +4,13 @@
 	@return #{$rem-size}rem;
 }
 
+@mixin ellipsisOneline($width) {
+	width: rem($width);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 @mixin placeholder {
 	&::-webkit-input-placeholder {
 		@content;

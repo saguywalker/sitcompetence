@@ -1,15 +1,17 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import events from "./modules/events";
 import giveBadge from "./modules/giveBadge";
 import notification from "./modules/notification";
+import verify from "./modules/verify";
+import createActivity from "./modules/createActivity";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
 	modules: {
-		events,
 		giveBadge,
-		notification
+		notification,
+		verify,
+		createActivity
 	}
 });
