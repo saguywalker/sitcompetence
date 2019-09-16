@@ -1,12 +1,32 @@
 import {
-	CREATE_ACTIVITY_STEP
+	CREATE_ACTIVITY_STEP,
+	CREATE_ACTIVITY_DETAIL
 } from "../mutationTypes";
 
 const state = {
+	detailInput: {
+		name: "",
+		description: "",
+		img: null,
+		openRegistDate: "",
+		openRegistTime: "",
+		closeRegistDate: "",
+		closeRegistTime: "",
+		actStartDate: "",
+		actStartTime: "",
+		actEndDate: "",
+		actEndTime: ""
+	},
 	steps: []
 };
 
 const mutations = {
+	[CREATE_ACTIVITY_DETAIL](stateData, data) {
+		stateData.detailInput = {
+			...stateData.detailInput,
+			...data
+		};
+	},
 	[CREATE_ACTIVITY_STEP](stateData, data) {
 		stateData.steps = [
 			...data
@@ -15,6 +35,9 @@ const mutations = {
 };
 
 const actions = {
+	setDetailInput({ commit }, data) {
+		commit(CREATE_ACTIVITY_DETAIL, data);
+	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {
 			return;
