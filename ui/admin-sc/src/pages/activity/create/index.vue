@@ -1,32 +1,189 @@
 <template>
-	<div>
+	<div class="create-activity-detail">
 		<div class="box">
 			<h1 class="box-header">
 				Insert the activity detail
 			</h1>
+			<form @submit.prevent="submit">
+				<fieldset class="container">
+					<b-row
+						v-for="(type, index) in fields"
+						:key="`${type.label}${index}`"
+						class="my-3"
+					>
+						<b-col lg="3">
+							<label
+								:for="`type-${type.type}`"
+								class="label"
+							>
+								{{ type.label }}:
+							</label>
+						</b-col>
+						<b-col :lg="type.type2 ? '5' : '9'">
+							<b-form-input
+								v-if="type.type !== 'textarea' && type.type !== 'file'"
+								:id="`type-${type.type}`"
+								v-model="input[type.model]"
+								:state="error[type.model]"
+								:type="type.type"
+								size="sm"
+								@input="error[type.model] = null"
+							/>
+							<b-form-textarea
+								v-else-if="type.type === 'textarea'"
+								:id="`type-${type.type}`"
+								v-model="input[type.model]"
+								class="t-area"
+							/>
+							<div
+								v-else
+								class="input-file"
+							>
+								<b-form-file
+									:id="`type-${type.type}`"
+									v-model="input[type.model]"
+									:state="error[type.model]"
+									size="sm"
+									accept=".jpg,.jpeg,.png"
+									@input="handleUpload"
+								/>
+								<button
+									v-if="input[type.model]"
+									class="preview-btn"
+									@click.prevent="showPreview"
+								>
+									<icon-photo />
+								</button>
+							</div>
+						</b-col>
+						<b-col
+							v-if="type.type2"
+							class="time"
+							lg="4"
+						>
+							<b-form-input
+								:id="`type-${type.type}`"
+								v-model="input[type.model2]"
+								:state="error[type.model2]"
+								:type="type.type2"
+								size="sm"
+								@input="error[type.model2] = null"
+							/>
+						</b-col>
+					</b-row>
+				</fieldset>
+			</form>
 		</div>
+		<b-modal
+			id="preview-modal"
+			content-class="preview-image-modal"
+			centered
+			hide-header
+			hide-footer
+		>
+			<img
+				:src="previewImageSrc"
+				class="preview-image"
+			>
+		</b-modal>
 		<base-page-step
 			:step="step"
 			@next="submit"
 		/>
 	</div>
 </template>
+<style lang="scss">
+@import "@/styles/pages/create-activity-detail.scss";
+</style>
 <script>
+import IconPhoto from "@/components/icons/IconPhoto.vue";
+import { CREATE_ACTIVITY_FORM } from "@/constants/form";
 import { mapState } from "vuex";
 
 export default {
+	components: {
+		IconPhoto
+	},
+	data() {
+		return {
+			fields: CREATE_ACTIVITY_FORM,
+			previewImageSrc: "",
+			input: {
+				name: "",
+				description: "",
+				img: null,
+				openRegistDate: "",
+				openRegistTime: "",
+				closeRegistDate: "",
+				closeRegistTime: "",
+				actStartDate: "",
+				actStartTime: "",
+				actEndDate: "",
+				actEndTime: ""
+			},
+			error: {
+				name: null,
+				img: null,
+				openRegistDate: null,
+				openRegistTime: null,
+				closeRegistDate: null,
+				closeRegistTime: null,
+				actStartDate: null,
+				actStartTime: null,
+				actEndDate: null,
+				actEndTime: null
+			}
+		};
+	},
 	computed: {
 		...mapState("createActivity", [
+			"detailInput",
 			"steps"
 		]),
 		step() {
 			return this.$route.meta.step;
+		},
+		hasError() {
+			return Object.values(this.error).some((err) => err !== null);
 		}
 	},
+	created() {
+		this.input = this.detailInput;
+	},
 	methods: {
+		validateSubmit() {
+			Object.keys(this.input).forEach((key) => {
+				if (!this.input[key]) {
+					this.error[key] = false;
+				}
+			});
+
+			this.error.description = null;
+		},
 		async submit() {
+			this.validateSubmit();
+
+			if (this.hasError) {
+				this.$bvToast.toast("Please fill all the error field", {
+					title: "No input error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+				return;
+			}
+
+			await this.$store.dispatch("createActivity/setDetailInput", this.input);
 			await this.$store.dispatch("createActivity/addStep", this.step.step);
-			this.$router.push({ name: "create-activity-select-competence" });
+			this.$router.push({ name: "create-activity-competence" });
+		},
+		showPreview() {
+			this.$bvModal.show("preview-modal");
+		},
+		handleUpload(e) {
+			if (e) {
+				this.error.img = null;
+				this.previewImageSrc = URL.createObjectURL(e);
+			}
 		}
 	}
 };

@@ -52,12 +52,12 @@ const router = new Router({
 							}
 						},
 						{
-							name: "create-activity-select-competence",
-							path: "select-competence",
-							component: () => import("@/pages/activity/create/select-competence.vue"),
+							name: "create-activity-competence",
+							path: "competence",
+							component: () => import("@/pages/activity/create/competence.vue"),
 							meta: {
-								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.select_competence,
-								step: CREATE_ACTIVITY_STEP.select_competence
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.competence,
+								step: CREATE_ACTIVITY_STEP.competence
 							}
 						},
 						{
