@@ -43,29 +43,26 @@ func (db *Database) GetMerkles() ([]*model.Merkle, error) {
 	return merkles, nil
 }
 
-// GetMerkleByID returns all transaction in corresponding merkle root
-func (db *Database) GetMerkleByID(merkleRoot string) (*model.Merkle, error) {
-	row, err := db.Query("SELECT * FROM merkle WHERE merkleRoot = $1", merkleRoot)
+// GetItemsByMerkleRoot returns all transaction in corresponding merkle root
+func (db *Database) GetItemsByMerkleRoot(merkleRoot []byte) ([][]byte, error) {
+	row, err := db.Query("SELECT itemhash FROM merkle WHERE merkleRoot = $1", merkleRoot)
 	if err != nil {
 		return nil, err
 	}
 
-	var merkle model.Merkle
+	var items [][]byte
 
 	for row.Next() {
-		var root string
-		var item string
-		err := row.Scan(&root, &item)
+		var item []byte
+		err := row.Scan(&item)
 		if err != nil {
 			return nil, err
 		}
 
-		merkle.ItemHash = append(merkle.ItemHash, item)
+		items = append(items, item)
 	}
 
-	merkle.MerkleRoot = merkleRoot
-
-	return &merkle, nil
+	return items, nil
 }
 
 // DeleteMerkle deletes all merkle root and its transactions

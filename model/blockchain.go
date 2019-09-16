@@ -111,11 +111,11 @@ func (a ApproveActivity) Equals(other merkletree.Content) (bool, error) {
 }
 
 // MyHash is used for making merkle tree
-type MyHash string
+type MyHash []byte
 
 // CalculateHash return hash of calling struct
 func (h MyHash) CalculateHash() ([]byte, error) {
-	hash := sha256.Sum256([]byte(h))
+	hash := sha256.Sum256(h)
 	return hash[:], nil
 }
 

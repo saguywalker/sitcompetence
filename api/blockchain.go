@@ -2,12 +2,12 @@ package api
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math"
 	"net/http"
-	"strings"
 
 	"github.com/cbergoon/merkletree"
 	"github.com/saguywalker/sitcompetence/app"
@@ -42,7 +42,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 			return err
 		}
 
-		listOfHashes[i] = model.MyHash(fmt.Sprintf("%x", hash))
+		listOfHashes[i] = model.MyHash(hash)
 	}
 
 	tree, err := merkletree.NewTree(listOfHashes)
@@ -50,20 +50,19 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	merkleRootHash := fmt.Sprintf("%x", tree.MerkleRoot())
-	ctx.Logger.Infof("Merkle Root Hash: %s", merkleRootHash)
+	ctx.Logger.Infof("Merkle Root Hash: %x", tree.MerkleRoot())
 	/*
 		hashes := make([]string, uint(2*math.Ceil(float64(len(listOfHashes))/2.0)))
 		for i, leaf := range tree.Leafs {
 			hashes[i] = fmt.Sprintf("%x", leaf.Hash)
 		}
 	*/
-	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
+	transactionID, err := a.broadcastTX(ctx, w, tree.MerkleRoot())
 	if err != nil {
 		return err
 	}
 
-	if err := ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, listOfHashes); err != nil {
+	if err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes); err != nil {
 		return err
 	}
 
@@ -99,7 +98,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 			return err
 		}
 
-		listOfHashes[i] = model.MyHash(fmt.Sprintf("%x", hash))
+		listOfHashes[i] = model.MyHash(hash)
 	}
 
 	// Free listOfActivities
@@ -110,19 +109,17 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	merkleRootHash := fmt.Sprintf("%x", tree.MerkleRoot())
-
 	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfHashes))/2.0)))
 	for i, leaf := range tree.Leafs {
 		hashes[i] = fmt.Sprintf("%x", leaf.Hash)
 	}
 
-	transactionID, err := a.broadcastTX(ctx, w, merkleRootHash)
+	transactionID, err := a.broadcastTX(ctx, w, tree.MerkleRoot())
 	if err != nil {
 		return nil
 	}
 
-	err = ctx.UpdateMerkleTransaction(transactionID, merkleRootHash, listOfHashes)
+	err = ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
 
 	return err
 }
@@ -134,7 +131,70 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	if !ok {
 		return fmt.Errorf("missing transaction id parameter (tx)")
 	}
-	ctx.Logger.Infof("TxID: %s\n", string(txid[0]))
+
+	url := fmt.Sprintf("http://%s/tx?hash=0x%s", a.Config.Peers[a.CurrentPeerIndex], txid[0])
+	ctx.Logger.Infoln(url)
+
+	response, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	respData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	var fullData map[string]interface{}
+	err = json.Unmarshal(respData, &fullData)
+	if err != nil {
+		return err
+	}
+
+	respResult, ok := fullData["result"].(map[string]interface{})
+	if !ok {
+		ctx.Logger.Errorln(fullData)
+		return fmt.Errorf("error when asserting type from data[\"result\"]")
+	}
+
+	txResult, ok := respResult["tx_result"].(map[string]interface{})
+	if !ok {
+		ctx.Logger.Errorln(respResult)
+		return fmt.Errorf("error when asserting type from data[\"tx_result\"]")
+	}
+
+	events, ok := txResult["events"].([]interface{})
+	if !ok {
+		ctx.Logger.Errorln(txResult)
+		return fmt.Errorf("error when asserting type from data[\"events\"]")
+	}
+
+	firstEvent, ok := events[0].(map[string]interface{})
+	if !ok {
+		ctx.Logger.Errorln(events)
+		return fmt.Errorf("error when asserting type from data[\"events[0]\"]")
+	}
+
+	attributes, ok := firstEvent["attributes"].([]interface{})
+	if !ok {
+		ctx.Logger.Errorln(firstEvent)
+		return fmt.Errorf("error when asserting type from data[\"attributes\"]")
+	}
+
+	firstAttribute, ok := attributes[0].(map[string]interface{})
+	if !ok {
+		ctx.Logger.Errorln(attributes)
+		return fmt.Errorf("error when asserting type from data[\"attributes[0]\"]")
+	}
+
+	encodedValue := firstAttribute["value"]
+	merkleRoot, err := base64.StdEncoding.DecodeString(encodedValue.(string))
+	if err != nil {
+		ctx.Logger.Errorf("%v", encodedValue)
+		return err
+	}
+	ctx.Logger.Infof("merkle root: %x", merkleRoot)
 
 	data, ok := vals["data"]
 	if !ok {
@@ -145,42 +205,54 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		return err
 	}
-	ctx.Logger.Infof("decoded value\n%s\n", string(decoded))
+	ctx.Logger.Infof("decoded data\n%s\n", string(decoded))
+
+	result, err := ctx.VerifyTX(merkleRoot, decoded)
+	if err != nil {
+		return err
+	}
+	ctx.Logger.Infoln(result)
+
+	w.Write([]byte(fmt.Sprintf("%v\n", result)))
 
 	return nil
 }
 
 // BroadcastTX broadcast transaction to blockchain node
 // Note: Need to check wheater calling's node is reachable or not
-func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash string) (string, error) {
-	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=\"%x\"", a.Config.Peers[a.CurrentPeerIndex], hash)
+func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) ([]byte, error) {
+	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[a.CurrentPeerIndex], hash)
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var fullData map[string]interface{}
 	err = json.Unmarshal(data, &fullData)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	resultData, ok := fullData["result"].(map[string]interface{})
 	if !ok {
-		return "", fmt.Errorf("error when asserting type from data[\"result\"]")
+		ctx.Logger.Errorf("%+v\n", fullData)
+		return nil, fmt.Errorf("error when asserting type from data[\"result\"]")
 	}
 
 	txIDInterface := resultData["hash"]
-	transactionID := strings.ToLower(fmt.Sprintf("%v", txIDInterface))
-	ctx.Logger.Infof("TransactionID: %s\n", transactionID)
+	transactionID, err := hex.DecodeString(txIDInterface.(string))
+	if err != nil {
+		return nil, err
+	}
+	ctx.Logger.Infof("TransactionID: %x\n", transactionID)
 
 	//w.WriteHeader(http.StatusOK)
 	_, err = w.Write(data)

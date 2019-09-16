@@ -40,7 +40,7 @@ func (db *Database) GetTransactions() (*[]model.TransactionLink, error) {
 }
 
 // GetTransactionByID returns a transaction from transactionID
-func (db *Database) GetTransactionByID(transactionID string) (*model.TransactionLink, error) {
+func (db *Database) GetTransactionByID(transactionID []byte) (*model.TransactionLink, error) {
 	row, err := db.Query("SELECT * FROM transactionLink WHERE transactionId = $1", transactionID)
 	if err != nil {
 		return nil, err
@@ -58,8 +58,27 @@ func (db *Database) GetTransactionByID(transactionID string) (*model.Transaction
 	return &transaction, nil
 }
 
+// GetTransactionByID returns a transaction from transactionID
+func (db *Database) GetMerkleRoot(transactionID []byte) (string, error) {
+	row, err := db.Query("SELECT merkleroot FROM transactionLink WHERE transactionId = $1", transactionID)
+	if err != nil {
+		return "", err
+	}
+
+	var merkleRoot string
+
+	for row.Next() {
+		err := row.Scan(&merkleRoot)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return merkleRoot, nil
+}
+
 // DeleteTransaction deletes a transaction from transactionID
-func (db *Database) DeleteTransaction(transactionID string) error {
+func (db *Database) DeleteTransaction(transactionID []byte) error {
 	stmt, err := db.Prepare("DELETE FROM transactionLink WHERE transactionId = $1")
 	if err != nil {
 		return err
