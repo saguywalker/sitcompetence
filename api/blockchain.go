@@ -138,13 +138,14 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	if err := json.Unmarshal(body, &bodyMap); err != nil {
 		return nil
 	}
-
-	transactionID, err := hex.DecodeString(bodyMap["transaction_id"].(string))
-	if err != nil {
-		return nil
-	}
-
-	url := fmt.Sprintf("http://%s/tx?hash=0x%s", a.Config.Peers[a.CurrentPeerIndex], transactionID)
+	/*
+		transactionID, err := hex.DecodeString(bodyMap["transaction_id"].(string))
+		if err != nil {
+			return nil
+		}
+	*/
+	//url := fmt.Sprintf("http://%s/tx?hash=0v%s", a.Config.Peers[a.CurrentPeerIndex], transactionID)
+	url := fmt.Sprintf("http://%s/tx?hash=0x%v", a.Config.Peers[a.CurrentPeerIndex], bodyMap["transaction_id"])
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
@@ -208,7 +209,10 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infof("merkle root: %x", merkleRoot)
 
-	rawData, err := hex.DecodeString(bodyMap["data"].(string))
+	rawData, err := json.Marshal(bodyMap["data"])
+	if err != nil {
+		return err
+	}
 	ctx.Logger.Infof("json data\n%s\n", rawData)
 
 	result, err := ctx.VerifyTX(merkleRoot, rawData)

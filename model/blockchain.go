@@ -36,6 +36,11 @@ func (g GiveBadge) CalculateHash() ([]byte, error) {
 		return nil, err
 	}
 
+	var sortedValue map[string]interface{}
+	if err := json.Unmarshal(value, &sortedValue); err != nil {
+		return nil, err
+	}
+
 	h := sha256.New()
 	if _, err := h.Write(value); err != nil {
 		return nil, err
@@ -84,6 +89,11 @@ func NewApproveActivity(studentID string, activityID uint32, approver string, se
 func (a ApproveActivity) CalculateHash() ([]byte, error) {
 	value, err := json.Marshal(a)
 	if err != nil {
+		return nil, err
+	}
+
+	var sortedValue map[string]interface{}
+	if err := json.Unmarshal(value, &sortedValue); err != nil {
 		return nil, err
 	}
 

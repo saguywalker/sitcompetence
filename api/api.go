@@ -47,7 +47,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/home", a.handler(a.Home)).Methods("GET")
 	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
 	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
-	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("GET")
+	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("POST")
 	r.Handle("/competences", a.handler(a.GetCompetences)).Methods("GET")
 	r.Handle("/competence/{id:[0-9]+}", a.handler(a.GetCompetenceByID)).Methods("GET")
 	r.Handle("/competence", a.handler(a.CreateCompetence)).Methods("POST")
