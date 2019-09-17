@@ -12,7 +12,7 @@ import (
 type GiveBadge struct {
 	StudentID    string `json:"student_id"`
 	CompetenceID uint16 `json:"competence_id"`
-	By           string `json:"by"`
+	Giver        string `json:"giver"`
 	Semester     uint16 `json:"semester"`
 }
 
@@ -20,11 +20,11 @@ type GiveBadge struct {
 type BadgeList []GiveBadge
 
 // NewGiveBadge creates new GiveBadge
-func NewGiveBadge(studentID string, competenceID uint16, by string, semester uint16) *GiveBadge {
+func NewGiveBadge(studentID string, competenceID uint16, giver string, semester uint16) *GiveBadge {
 	return &GiveBadge{
 		StudentID:    studentID,
 		CompetenceID: competenceID,
-		By:           by,
+		Giver:        giver,
 		Semester:     semester,
 	}
 }
@@ -36,13 +36,23 @@ func (g GiveBadge) CalculateHash() ([]byte, error) {
 		return nil, err
 	}
 
+	var trimData bytes.Buffer
+	if err := json.Compact(&trimData, value); err != nil {
+		return nil, err
+	}
+
 	var sortedValue map[string]interface{}
-	if err := json.Unmarshal(value, &sortedValue); err != nil {
+	if err := json.Unmarshal(trimData.Bytes(), &sortedValue); err != nil {
+		return nil, err
+	}
+
+	jsonBytes, err := json.Marshal(sortedValue)
+	if err != nil {
 		return nil, err
 	}
 
 	h := sha256.New()
-	if _, err := h.Write(value); err != nil {
+	if _, err := h.Write(jsonBytes); err != nil {
 		return nil, err
 	}
 
@@ -92,13 +102,23 @@ func (a ApproveActivity) CalculateHash() ([]byte, error) {
 		return nil, err
 	}
 
+	var trimData bytes.Buffer
+	if err := json.Compact(&trimData, value); err != nil {
+		return nil, err
+	}
+
 	var sortedValue map[string]interface{}
-	if err := json.Unmarshal(value, &sortedValue); err != nil {
+	if err := json.Unmarshal(trimData.Bytes(), &sortedValue); err != nil {
+		return nil, err
+	}
+
+	jsonBytes, err := json.Marshal(sortedValue)
+	if err != nil {
 		return nil, err
 	}
 
 	h := sha256.New()
-	if _, err := h.Write(value); err != nil {
+	if _, err := h.Write(jsonBytes); err != nil {
 		return nil, err
 	}
 

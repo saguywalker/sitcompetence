@@ -144,7 +144,6 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 			return nil
 		}
 	*/
-	//url := fmt.Sprintf("http://%s/tx?hash=0v%s", a.Config.Peers[a.CurrentPeerIndex], transactionID)
 	url := fmt.Sprintf("http://%s/tx?hash=0x%v", a.Config.Peers[a.CurrentPeerIndex], bodyMap["transaction_id"])
 	ctx.Logger.Infoln(url)
 
