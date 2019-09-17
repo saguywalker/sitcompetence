@@ -27,6 +27,9 @@ func serveAPI(ctx context.Context, api *api.API) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
+	router.PathPrefix("/").HandlerFunc(IndexHandler("student/dist/index.html"))
+	router.PathPrefix("/admin/").HandlerFunc(IndexHandler("admin-c/dist/index.html"))
+
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Config.Port),
 		Handler:     cors(router),
@@ -47,6 +50,14 @@ func serveAPI(ctx context.Context, api *api.API) {
 		logrus.Error(err)
 	}
 	<-done
+}
+
+// IndexHandler serves index files
+func IndexHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, entrypoint)
+	}
+	return http.HandlerFunc(fn)
 }
 
 var serveCmd = &cobra.Command{
