@@ -16,21 +16,28 @@ import (
 
 // GiveBadge takes a giving badge request and response with transactionID
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	vals := r.URL.Query()
-	params, ok := vals["data"]
-	if !ok {
-		return fmt.Errorf("missing data in parameter")
-	}
+	/*
+		vals := r.URL.Query()
+		params, ok := vals["data"]
+		if !ok {
+			return fmt.Errorf("missing data in parameter")
+		}
 
-	decoded, err := base64.StdEncoding.DecodeString(params[0])
+		decoded, err := base64.StdEncoding.DecodeString(params[0])
+		if err != nil {
+			return err
+		}
+		ctx.Logger.Infof("decoded value\n%s\n", string(decoded))
+	*/
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
-	ctx.Logger.Infof("decoded value\n%s\n", string(decoded))
+	defer r.Body.Close()
 
 	// Struct of objects
 	var listOfBadges []*model.GiveBadge
-	if err := json.Unmarshal(decoded, &listOfBadges); err != nil {
+	if err := json.Unmarshal(body, &listOfBadges); err != nil {
 		return err
 	}
 
@@ -75,19 +82,14 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 // ApproveActivity takes an approving activity request and response with transactionID
 func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	vals := r.URL.Query()
-	params, ok := vals["data"]
-	if !ok {
-		return fmt.Errorf("missing data in parameter")
-	}
-
-	decoded, err := base64.StdEncoding.DecodeString(params[0])
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
+	defer r.Body.Close()
 
 	var listOfActivities []model.ApproveActivity
-	if err := json.Unmarshal(decoded, &listOfActivities); err != nil {
+	if err := json.Unmarshal(body, &listOfActivities); err != nil {
 		return err
 	}
 
@@ -126,13 +128,13 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 
 // VerifyTX verifies whethear a corresponding
 func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	vals := r.URL.Query()
-	txid, ok := vals["tx"]
-	if !ok {
-		return fmt.Errorf("missing transaction id parameter (tx)")
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
 	}
+	defer r.Body.Close()
 
-	url := fmt.Sprintf("http://%s/tx?hash=0x%s", a.Config.Peers[a.CurrentPeerIndex], txid[0])
+	url := fmt.Sprintf("http://%s/tx?hash=0x%s", a.Config.Peers[a.CurrentPeerIndex], body)
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
