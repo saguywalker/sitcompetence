@@ -134,7 +134,17 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	defer r.Body.Close()
 
-	url := fmt.Sprintf("http://%s/tx?hash=0x%s", a.Config.Peers[a.CurrentPeerIndex], body)
+	var bodyMap map[string]interface{}
+	if err := json.Unmarshal(body, &bodyMap); err != nil {
+		return nil
+	}
+
+	transactionID, err := hex.DecodeString(bodyMap["transaction_id"].(string))
+	if err != nil {
+		return nil
+	}
+
+	url := fmt.Sprintf("http://%s/tx?hash=0x%s", a.Config.Peers[a.CurrentPeerIndex], transactionID)
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
@@ -198,18 +208,10 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infof("merkle root: %x", merkleRoot)
 
-	data, ok := vals["data"]
-	if !ok {
-		return fmt.Errorf("missing json data parameter (data)")
-	}
+	rawData, err := hex.DecodeString(bodyMap["data"].(string))
+	ctx.Logger.Infof("json data\n%s\n", rawData)
 
-	decoded, err := base64.StdEncoding.DecodeString(data[0])
-	if err != nil {
-		return err
-	}
-	ctx.Logger.Infof("decoded data\n%s\n", string(decoded))
-
-	result, err := ctx.VerifyTX(merkleRoot, decoded)
+	result, err := ctx.VerifyTX(merkleRoot, rawData)
 	if err != nil {
 		return err
 	}
