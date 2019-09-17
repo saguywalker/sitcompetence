@@ -28,7 +28,9 @@ func serveAPI(ctx context.Context, api *api.API) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/")))
+	router.PathPrefix("/admin/js").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/js")))
+	router.PathPrefix("/admin/css").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/css")))
+	router.PathPrefix("/admin/font").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/font")))
 	router.PathPrefix("/admin").HandlerFunc(IndexHandler("ui/admin-sc/dist/index.html"))
 
 	s := &http.Server{
