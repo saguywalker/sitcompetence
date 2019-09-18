@@ -1,5 +1,8 @@
-Run admin in development mode
+Build UI for Production
 
 ```
-yarn dev:admin
+yarn ui/ && yarn build
 ```
+
+Admin serve `/admin`
+Student serve `/`
