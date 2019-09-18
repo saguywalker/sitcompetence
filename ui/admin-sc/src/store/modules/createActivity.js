@@ -1,6 +1,7 @@
 import {
 	CREATE_ACTIVITY_STEP,
-	CREATE_ACTIVITY_DETAIL
+	CREATE_ACTIVITY_DETAIL,
+	CREATE_ACTIVITY_COMPETENCE
 } from "../mutationTypes";
 
 const state = {
@@ -17,6 +18,7 @@ const state = {
 		actEndDate: "",
 		actEndTime: ""
 	},
+	competences: [],
 	steps: []
 };
 
@@ -26,6 +28,11 @@ const mutations = {
 			...stateData.detailInput,
 			...data
 		};
+	},
+	[CREATE_ACTIVITY_COMPETENCE](stateData, data) {
+		stateData.competences = [
+			...data
+		];
 	},
 	[CREATE_ACTIVITY_STEP](stateData, data) {
 		stateData.steps = [
@@ -37,6 +44,9 @@ const mutations = {
 const actions = {
 	setDetailInput({ commit }, data) {
 		commit(CREATE_ACTIVITY_DETAIL, data);
+	},
+	setCompetenceInput({ commit }, data) {
+		commit(CREATE_ACTIVITY_COMPETENCE, data);
 	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {

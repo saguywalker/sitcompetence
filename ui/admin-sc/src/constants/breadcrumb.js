@@ -8,6 +8,6 @@ export const GIVE_BADGE_BREADCRUMB = Object.freeze({
 export const CREATE_ACTIVITY_BREADCRUMB = Object.freeze({
 	detail: ["Activity detail"],
 	competence: ["Activity detail", "Select competence"],
-	confirmation: ["Activity detail", "Select competence", "Confirmation"],
-	success: ["Activity detail", "Select competence", "Confirmation", "Success"]
+	summary: ["Activity detail", "Select competence", "Summary"],
+	success: ["Activity detail", "Select competence", "Summary", "Success"]
 });

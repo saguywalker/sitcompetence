@@ -44,7 +44,7 @@ export const CREATE_ACTIVITY_STEP = Object.freeze({
 	competence: Object.freeze({
 		next: Object.freeze({
 			name: "Confirmation",
-			link: "create-activity-confirmation"
+			link: "create-activity-summary"
 		}),
 		back: Object.freeze({
 			name: "Activity detail",
@@ -52,7 +52,7 @@ export const CREATE_ACTIVITY_STEP = Object.freeze({
 		}),
 		step: "select"
 	}),
-	confirmation: Object.freeze({
+	summary: Object.freeze({
 		next: Object.freeze({
 			name: "Submit",
 			link: "create-activity-success"
@@ -61,7 +61,7 @@ export const CREATE_ACTIVITY_STEP = Object.freeze({
 			name: "Select Competence",
 			link: "create-activity-competence"
 		}),
-		step: "confirmation"
+		step: "summary"
 	}),
 	success: Object.freeze({
 		step: "success"

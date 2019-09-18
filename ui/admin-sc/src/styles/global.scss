@@ -34,6 +34,10 @@ h1, h2, h3, h4, h5, h6, p {
 	font-size: inherit;
 }
 
+label {
+	margin: 0;
+}
+
 button {
 	border: none;
 	margin: 0;
@@ -162,6 +166,27 @@ button {
 		.breadcrumb {
 			width: auto;
 			background-color: transparent;
+		}
+	}
+}
+
+.preview-image-modal {
+	text-align: center;
+	border: 0;
+	background-color: transparent;
+
+	.modal-body {
+		padding: 0;
+	}
+
+	.preview-image {
+		max-width: rem(280);
+		height: auto;
+	}
+
+	@include desktop {
+		.preview-image {
+			max-width: rem(450);
 		}
 	}
 }

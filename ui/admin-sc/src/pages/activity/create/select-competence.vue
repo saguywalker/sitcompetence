@@ -4,33 +4,31 @@
 			<h2 class="box-header">
 				Select badge to give
 			</h2>
-			<div class="box-content">
-				<div class="my-row">
-					<b-col
-						v-for="(option, id) in options"
-						:key="`${id}`"
-						lg="3"
-						cols="6"
-						class="badge-wrapper"
+			<div class="my-row">
+				<b-col
+					v-for="(option, id) in options"
+					:key="`${id}`"
+					lg="3"
+					cols="6"
+					class="badge-wrapper"
+				>
+					<label
+						:for="`${option.name}${id}`"
+						:class="[
+							'badge-checkbox',
+							hasSelected(option.id) ? 'is-select' : ''
+						]"
 					>
-						<label
-							:for="`${id}`"
-							:class="[
-								'badge-checkbox',
-								'is-select'
-							]"
+						<base-image size="90" />
+						<input
+							:id="`${option.name}${id}`"
+							v-model="selects"
+							:value="option"
+							type="checkbox"
 						>
-							<base-image size="90" />
-							<input
-								:id="`${id}`"
-								:value="option"
-								type="checkbox"
-								@input="removeError(index)"
-							>
-							<p class="text">{{ option.name }}</p>
-						</label>
-					</b-col>
-				</div>
+						<p class="text">{{ option.name }}</p>
+					</label>
+				</b-col>
 			</div>
 		</div>
 		<base-page-step
@@ -47,13 +45,6 @@
 import { mapState } from "vuex";
 
 export default {
-	beforeRouteEnter(to, from, next) {
-		next((vm) => {
-			if (!vm.steps.includes("detail")) {
-				vm.$router.replace({ name: "create-activity" });
-			}
-		});
-	},
 	data() {
 		return {
 			errors: [],
@@ -74,21 +65,37 @@ export default {
 					id: "005",
 					name: "Flexible"
 				}
-			]
+			],
+			selects: []
 		};
 	},
 	computed: {
 		...mapState("createActivity", [
+			"competences",
 			"steps"
 		]),
 		step() {
 			return this.$route.meta.step;
 		}
 	},
+	// beforeRouteEnter(to, from, next) {
+	// 	next((vm) => {
+	// 		if (!vm.steps.includes("detail")) {
+	// 			vm.$router.replace({ name: "create-activity" });
+	// 		}
+	// 	});
+	// },
+	created() {
+		this.selects = this.competences;
+	},
 	methods: {
+		hasSelected(id) {
+			return this.selects.some((select) => select.id === id);
+		},
 		async submit() {
+			await this.$store.dispatch("createActivity/setCompetenceInput", this.selects);
 			await this.$store.dispatch("createActivity/addStep", this.step.step);
-			this.$router.push({ name: "create-activity-confirmation" });
+			this.$router.push({ name: "create-activity-summary" });
 		},
 		goBack() {
 			this.$router.push({ name: "create-activity" });

@@ -1,97 +1,43 @@
 @import "../cores.scss";
 
 .create-activity-competence {
-	.selected-student {
-		display: flex;
-		flex-direction: column;
-		list-style: none;
-		margin: 0;
+	.my-row {
+		margin-top: rem(10);
+	}
 
-		.error {
-			.dropdown {
-				background-color: $red-3;
-				border-top: rem(2) solid $red-1;
+	.badge-wrapper {
+		text-align: center;
+		font-size: rem(12);
+	}
 
-				&.active {
-					background-color: $red-3;
-				}
+	.badge-checkbox {
+		position: relative;
+		padding: rem(5);
+		cursor: pointer;
 
-				&:hover {
-					background-color: $red-1;
-				}
-			}
-
-			.badge-form {
-				background-color: $red-2;
-			}
-		}
-
-		.dropdown {
-			position: relative;
-			display: flex;
-			padding: rem(10);
-			font-size: rem(14);
-			justify-content: space-between;
-			background-color: $white;
-			border-top: rem(1) solid $gray-2;
-			cursor: pointer;
-
-			&.active {
-				background-color: $gray-1;
-
-				.icon {
-					transform: rotate(180deg);
-				}
-			}
-
-			.icon {
-				fill: $black;
-			}
-
-			&:hover {
-				background-color: $gray-2;
-			}
-		}
-
-		.badge-form {
-			background-color: $white;
-			padding: rem(20) 0;
-
-			.badge-wrapper {
+		&.is-select {
+			&::after {
+				content: "SELECTED";
+				position: absolute;
+				left: 0;
+				bottom: 47%;
+				padding: rem(5) 0;
 				text-align: center;
+				background-color: $main-blue;
+				color: $white;
+				font-weight: bold;
 				font-size: rem(12);
+				width: 100%;
 			}
+		}
 
-			.badge-checkbox {
-				position: relative;
-				padding: rem(5);
-				cursor: pointer;
+		input[type="checkbox"] {
+			display: none;
+		}
 
-				&.is-select {
-					&::after {
-						content: "SELECTED";
-						position: absolute;
-						left: 0;
-						bottom: 47%;
-						padding: rem(5) 0;
-						text-align: center;
-						background-color: $main-blue;
-						color: $white;
-						font-weight: bold;
-						font-size: rem(12);
-						width: 100%;
-					}
-				}
-
-				input[type="checkbox"] {
-					display: none;
-				}
-
-				.text {
-					text-transform: capitalize;
-					margin-top: rem(10);
-				}
-			}
+		.text {
+			text-transform: capitalize;
+			margin-top: rem(10);
 		}
 	}
 }

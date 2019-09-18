@@ -53,20 +53,20 @@ const router = new Router({
 						},
 						{
 							name: "create-activity-competence",
-							path: "competence",
-							component: () => import("@/pages/activity/create/competence.vue"),
+							path: "select-competence",
+							component: () => import("@/pages/activity/create/select-competence.vue"),
 							meta: {
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.competence,
 								step: CREATE_ACTIVITY_STEP.competence
 							}
 						},
 						{
-							name: "create-activity-confirmation",
-							path: "confirmation",
-							component: () => import("@/pages/activity/create/confirmation.vue"),
+							name: "create-activity-summary",
+							path: "summary",
+							component: () => import("@/pages/activity/create/summary.vue"),
 							meta: {
-								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.confirmation,
-								step: CREATE_ACTIVITY_STEP.confirmation
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.summary,
+								step: CREATE_ACTIVITY_STEP.summary
 							}
 						},
 						{

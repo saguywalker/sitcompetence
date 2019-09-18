@@ -1,13 +1,14 @@
 <template>
 	<div
 		:style="{
-			width: imageWidth
+			width: imageWidth,
+			height: height === '' ? 'auto' : `${height}px`
 		}"
 		class="base-image"
 	>
 		<img
 			:style="{
-				height: activityCard ? '140px' : 'auto',
+				height: activityCard ? '140px' : '100%',
 				borderRadius: imageRounded,
 				borderTopLeftRadius: activityCard ? '5px' : 'none',
 				borderTopRightRadius: activityCard ? '5px' : 'none'
@@ -30,6 +31,10 @@ export default {
 		size: {
 			type: String,
 			default: "150"
+		},
+		height: {
+			type: String,
+			default: ""
 		},
 		round: {
 			type: Boolean,

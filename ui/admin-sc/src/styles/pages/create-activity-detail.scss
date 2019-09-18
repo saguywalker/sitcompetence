@@ -30,24 +30,3 @@
 		}
 	}
 }
-
-.preview-image-modal {
-	text-align: center;
-	border: 0;
-	background-color: transparent;
-
-	.modal-body {
-		padding: 0;
-	}
-
-	.preview-image {
-		max-width: rem(280);
-		height: auto;
-	}
-
-	@include desktop {
-		.preview-image {
-			max-width: rem(450);
-		}
-	}
-}
