@@ -1,14 +1,16 @@
+import { GiveBadge } from "@/services";
 import {
 	GIVE_BADGE_SELECT_STUDENT,
 	GIVE_BADGE_STEP,
-	GIVE_BADGE_CONFIRM_BADGE,
+	GIVE_BADGE_SUBMIT,
 	GIVE_BADGE_SELECT_BADGE,
 	GIVE_BADGE_SUCCESS
 } from "../mutationTypes";
 
 const state = {
 	steps: [],
-	selectedStudents: []
+	selectedStudents: [],
+	success: {}
 };
 
 const mutations = {
@@ -22,13 +24,18 @@ const mutations = {
 			...data
 		];
 	},
-	[GIVE_BADGE_CONFIRM_BADGE](stateData, data) {
+	[GIVE_BADGE_SUBMIT](stateData, data) {
 		stateData.selectedStudents = [
 			...data
 		];
 	},
-	[GIVE_BADGE_SUCCESS](stateData) {
+	[GIVE_BADGE_SUBMIT](stateData) {
 		stateData.selectedStudents = [];
+	},
+	[GIVE_BADGE_SUCCESS](stateData, data) {
+		stateData.success = {
+			...data
+		};
 	},
 	[GIVE_BADGE_STEP](stateData, data) {
 		stateData.steps = [
@@ -58,18 +65,25 @@ const actions = {
 	updateSelectedBadge({ commit }, data) {
 		commit(GIVE_BADGE_SELECT_BADGE, data);
 	},
-	confirmGiveBadge({ commit, state: stateData }, data) {
+	async submitGiveBadge({ commit, state: stateData, dispatch }, data) {
 		const payload = stateData.selectedStudents.map((student) => {
+			delete student.show;
+
 			return {
 				...student,
 				giver: data
 			};
 		});
 
-		commit(GIVE_BADGE_CONFIRM_BADGE, payload);
+
+		const	response = await GiveBadge.postGiveBadge(payload);
+		if (response.status === 200) {
+			dispatch("giveBadgeSuccess", response.data);
+			commit(GIVE_BADGE_SUBMIT);
+		}
 	},
-	giveBadgeSuccess({ commit }) {
-		commit(GIVE_BADGE_SUCCESS);
+	giveBadgeSuccess({ commit }, data) {
+		commit(GIVE_BADGE_SUCCESS, data);
 	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {

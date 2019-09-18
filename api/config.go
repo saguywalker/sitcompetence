@@ -26,7 +26,7 @@ func InitConfig() (*Config, error) {
 		Peers:      viper.GetStringSlice("Peers"),
 	}
 	if config.Port == 0 {
-		config.Port = 9092
+		config.Port = 3000
 	}
 
 	if len(config.Peers) == 0 {

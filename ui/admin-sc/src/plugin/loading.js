@@ -7,6 +7,6 @@ const loadme = {};
 
 loadme.start = () => appHey.appendChild(node);
 
-loadme.done = () => appHey.removeChild(node);
+loadme.stop = () => appHey.removeChild(node);
 
 export default loadme;

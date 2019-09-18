@@ -24,6 +24,11 @@ const actions = {
 		];
 
 		commit(UPDATE_NOTIFICATION, payload);
+	},
+	remove({ commit, state: stateData }, index) {
+		const payload = stateData.notifications.filter((noti, i) => i !== index);
+
+		commit(UPDATE_NOTIFICATION, payload);
 	}
 };
 

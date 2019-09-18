@@ -7,7 +7,7 @@
 			:variant="notification.variant"
 			solid
 			visible
-			no-auto-hide
+			@hide="onClose(index)"
 		>
 			<template v-slot:toast-title>
 				<strong>{{ notification.title }}</strong>
@@ -20,6 +20,11 @@
 import { mapState } from "vuex";
 
 export default {
-	computed: mapState("notification", ["notifications"])
+	computed: mapState("notification", ["notifications"]),
+	methods: {
+		onClose(index) {
+			this.$store.dispatch("notification/remove", index);
+		}
+	}
 };
 </script>

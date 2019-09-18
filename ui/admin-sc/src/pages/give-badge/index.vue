@@ -169,6 +169,9 @@ export default {
 		};
 	},
 	computed: {
+		...mapState("base", [
+			"students"
+		]),
 		...mapState("giveBadge", [
 			"selectedStudents",
 			"steps"
@@ -191,6 +194,13 @@ export default {
 		selectedItems() {
 			this.error.selectedItems = false;
 		}
+	},
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (vm.students.length === 0) {
+				vm.$store.dispatch("base/loadStudentData");
+			}
+		});
 	},
 	created() {
 		// TODO: Get items from server

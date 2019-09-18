@@ -58,6 +58,7 @@
 </template>
 <script>
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
+import loading from "@/plugin/loading";
 import { mapState } from "vuex";
 
 export default {
@@ -91,9 +92,23 @@ export default {
 	methods: {
 		async submit() {
 			// TODO: Set giver by login user
-			await this.$store.dispatch("giveBadge/confirmGiveBadge", "tiny");
-			await this.$store.dispatch("giveBadge/addStep", this.step.step);
-			this.$router.push({ name: "give-badge-success" });
+			loading.start();
+
+			try {
+				await this.$store.dispatch("giveBadge/submitGiveBadge", "tiny");
+				await this.$store.dispatch("giveBadge/addStep", this.step.step);
+				this.$router.push({ name: "give-badge-success" });
+			} catch (err) {
+				const notification = {
+					title: "Submit give badge",
+					message: `There was a problem submitting data: ${err.message}`,
+					variant: "danger"
+				};
+
+				this.$store.dispatch("notification/add", notification);
+			} finally {
+				loading.stop();
+			}
 		},
 		goBack() {
 			this.$router.push({ name: "give-badge-selection" });

@@ -44,10 +44,7 @@ export default {
 			// TODO: GET the success data and show in the form
 			if (!vm.steps.includes("confirmation")) {
 				vm.$router.replace({ name: "give-badge" });
-				return;
 			}
-
-			vm.$store.dispatch("giveBadge/giveBadgeSuccess");
 		});
 	},
 	beforeRouteLeave(to, from, next) {
