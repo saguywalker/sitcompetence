@@ -64,7 +64,7 @@ export default {
 			"selectedStudents"
 		]),
 		hexTransactionId() {
-			return base64ToHex(this.success.transactionid);
+			return base64ToHex(this.success.transaction_id);
 		},
 		hexMerkle() {
 			return base64ToHex(this.success.merkleroot);
@@ -77,7 +77,7 @@ export default {
 			try {
 				await this.$store.dispatch("verify/verifyTransaction", {
 					data: this.selectedStudents,
-					transaction_id: this.success.transactionid
+					transaction_id: this.success.transaction_id
 				});
 
 				this.$router.push({ name: "verify-result" });
