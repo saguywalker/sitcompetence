@@ -69,11 +69,22 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	if err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes); err != nil {
+	result, err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
+	if err != nil {
 		return err
 	}
 
 	if err := ctx.UpdateCollectedCompetence(listOfBadges, transactionID); err != nil {
+		return err
+	}
+
+	resultBytes, err := json.Marshal(result)
+	if err != nil {
+		return err
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(resultBytes); err != nil {
 		return err
 	}
 
@@ -121,7 +132,24 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return nil
 	}
 
-	err = ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
+	result, err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
+	if err != nil {
+		return err
+	}
+	/*
+		if err := ctx.UpdateAttendedActivity(listOfBadges, transactionID); err != nil {
+			return err
+		}
+	*/
+	resultBytes, err := json.Marshal(result)
+	if err != nil {
+		return err
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(resultBytes); err != nil {
+		return err
+	}
 
 	return err
 }
@@ -220,7 +248,15 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infoln(result)
 
-	w.Write([]byte(fmt.Sprintf("%v\n", result)))
+	w.WriteHeader(http.StatusOK)
+	var returnResult string
+	if result {
+		returnResult = fmt.Sprintf("Data was recorded in blockchain at TransactionID: %v :)", bodyMap["transaction_id"])
+	} else {
+		returnResult = fmt.Sprintf("Data was not recorded in the blockchain :(.")
+	}
+
+	w.Write([]byte(returnResult))
 
 	return nil
 }
@@ -262,7 +298,7 @@ func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) 
 	ctx.Logger.Infof("TransactionID: %x\n", transactionID)
 
 	//w.WriteHeader(http.StatusOK)
-	_, err = w.Write(data)
+	//_, err = w.Write(data)
 
 	// Move to the next peer in round-robin fashion
 	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
