@@ -16,19 +16,6 @@ import (
 
 // GiveBadge takes a giving badge request and response with transactionID
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	/*
-		vals := r.URL.Query()
-		params, ok := vals["data"]
-		if !ok {
-			return fmt.Errorf("missing data in parameter")
-		}
-
-		decoded, err := base64.StdEncoding.DecodeString(params[0])
-		if err != nil {
-			return err
-		}
-		ctx.Logger.Infof("decoded value\n%s\n", string(decoded))
-	*/
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
@@ -69,7 +56,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	result, err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
+	_, err = ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
 	if err != nil {
 		return err
 	}
@@ -78,15 +65,15 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	resultBytes, err := json.Marshal(result)
-	if err != nil {
-		return err
-	}
+	// resultBytes, err := json.Marshal(result)
+	// if err != nil {
+	// return err
+	// }
 
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(resultBytes); err != nil {
-		return err
-	}
+	// w.WriteHeader(http.StatusOK)
+	// if _, err := w.Write(resultBytes); err != nil {
+	// return err
+	// }
 
 	return nil
 }
@@ -132,26 +119,26 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return nil
 	}
 
-	result, err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
+	_, err = ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
 	if err != nil {
 		return err
 	}
 	/*
-		if err := ctx.UpdateAttendedActivity(listOfBadges, transactionID); err != nil {
+			if err := ctx.UpdateAttendedActivity(listOfBadges, transactionID); err != nil {
+				return err
+			}
+
+		resultBytes, err := json.Marshal(result)
+		if err != nil {
+			return err
+		}
+
+		w.WriteHeader(http.StatusOK)
+		if _, err := w.Write(resultBytes); err != nil {
 			return err
 		}
 	*/
-	resultBytes, err := json.Marshal(result)
-	if err != nil {
-		return err
-	}
-
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(resultBytes); err != nil {
-		return err
-	}
-
-	return err
+	return nil
 }
 
 // VerifyTX verifies whethear a corresponding
@@ -166,12 +153,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	if err := json.Unmarshal(body, &bodyMap); err != nil {
 		return nil
 	}
-	/*
-		transactionID, err := hex.DecodeString(bodyMap["transaction_id"].(string))
-		if err != nil {
-			return nil
-		}
-	*/
+
 	decodedTxid, err := base64.StdEncoding.DecodeString(bodyMap["transaction_id"].(string))
 	if err != nil {
 		return err
@@ -179,6 +161,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	ctx.Logger.Infof("decoded transaction id: %x", decodedTxid)
 
 	url := fmt.Sprintf("http://%s/tx?hash=0x%x", a.Config.Peers[a.CurrentPeerIndex], decodedTxid)
+	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
@@ -303,8 +286,10 @@ func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) 
 	}
 	ctx.Logger.Infof("TransactionID: %x\n", transactionID)
 
-	//w.WriteHeader(http.StatusOK)
-	//_, err = w.Write(data)
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(data); err != nil {
+		panic(err)
+	}
 
 	// Move to the next peer in round-robin fashion
 	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)

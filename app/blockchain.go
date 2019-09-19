@@ -13,7 +13,7 @@ import (
 
 // UpdateMerkleTransaction insert a new transactionID and merkleRootHash into transaction table
 // It also add a merkleRoot and all of its transaction into merkle table
-func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot []byte, transactionSet []merkletree.Content) (*model.Merkle, error) {
+func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot []byte, transactionSet []merkletree.Content) (*model.TransactionLink, error) {
 	/*hexDigests := make([][]byte, len(transactionSet))
 	for i, item := range transactionSet {
 		hexDigests[i] = []byte(item)
@@ -29,7 +29,7 @@ func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot []byte, tr
 		return nil, err
 	}
 
-	return merkle, nil
+	return transaction, nil
 }
 
 // UpdateCollectedCompetence update new competence and its transactionID to a corresponding studentID
