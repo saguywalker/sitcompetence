@@ -130,6 +130,11 @@ const router = new Router({
 					name: "verify",
 					path: "verify",
 					component: () => import("@/pages/verify")
+				},
+				{
+					name: "verify-result",
+					path: "verify/result",
+					component: () => import("@/pages/verify/result.vue")
 				}
 			]
 		},

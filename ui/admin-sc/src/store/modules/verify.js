@@ -1,20 +1,38 @@
+import { Verify } from "@/services";
 import {
-	UPDATE_VERIFY_HASH
+	UPDATE_VERIFY_HASH,
+	UPDATE_VERIFY_DATA
 } from "../mutationTypes";
 
 const state = {
-	hashId: ""
+	hashId: "",
+	verifyData: {}
 };
 
 const mutations = {
 	[UPDATE_VERIFY_HASH](stateData, data) {
 		stateData.hashId = data;
+	},
+	[UPDATE_VERIFY_DATA](stateData, data) {
+		stateData.verifyData = {
+			...data
+		};
 	}
 };
 
 const actions = {
 	updateHashId({ commit }, data) {
 		commit(UPDATE_VERIFY_HASH, data);
+	},
+	async verifyTransaction({ commit }, data) {
+		const	response = await Verify.postVerifyTransaction(data);
+
+		if (response.status === 200) {
+			commit(UPDATE_VERIFY_DATA, response.data);
+			console.log(response.data);
+		} else {
+			console.log("Error I Sus");
+		}
 	}
 };
 

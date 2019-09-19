@@ -65,7 +65,7 @@ const actions = {
 	updateSelectedBadge({ commit }, data) {
 		commit(GIVE_BADGE_SELECT_BADGE, data);
 	},
-	async submitGiveBadge({ commit, state: stateData, dispatch }, data) {
+	async submitGiveBadge({ commit, state: stateData }, data) {
 		const filterData = stateData.selectedStudents.map((st) => {
 			const idBadges = st.badges.map((badge) => badge.id);
 
@@ -91,12 +91,8 @@ const actions = {
 
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {
-			dispatch("giveBadgeSuccess", response.data);
-			commit(GIVE_BADGE_SUBMIT);
+			commit(GIVE_BADGE_SUCCESS, response.data);
 		}
-	},
-	giveBadgeSuccess({ commit }, data) {
-		commit(GIVE_BADGE_SUCCESS, data);
 	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {

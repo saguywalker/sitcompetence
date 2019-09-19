@@ -24,7 +24,14 @@ const Base = {
 	}
 };
 
+const Verify = {
+	postVerifyTransaction(data) {
+		return apiClient.post("/verify", data);
+	}
+};
+
 export {
 	Base,
-	GiveBadge
+	GiveBadge,
+	Verify
 };

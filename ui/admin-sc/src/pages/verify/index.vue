@@ -22,6 +22,7 @@
 					<b-button
 						variant="primary"
 						size="sm"
+						@click="verifyTransaction"
 					>
 						Search
 					</b-button>
@@ -53,6 +54,11 @@ export default {
 				vm.hash = vm.hashId;
 			}
 		});
+	},
+	methods: {
+		verifyTransaction() {
+			this.$store.dispatch("verify/verifyTransaction", this.hash);
+		}
 	}
 };
 </script>
