@@ -83,19 +83,19 @@ export default {
 			errors: [],
 			options: [ // TODO: Get all badge options from backend
 				{
-					id: "002",
+					id: "3001",
 					name: "Team working"
 				},
 				{
-					id: "003",
+					id: "3002",
 					name: "Communication"
 				},
 				{
-					id: "004",
+					id: "3003",
 					name: "Leadership"
 				},
 				{
-					id: "005",
+					id: "3004",
 					name: "Flexible"
 				}
 			]
@@ -151,7 +151,8 @@ export default {
 			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-confirmation" });
 		},
-		goBack() {
+		async goBack() {
+			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
 			this.$router.push({ name: "give-badge" });
 		},
 		removeError(index) {

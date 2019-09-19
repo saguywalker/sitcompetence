@@ -19,7 +19,7 @@
 								{{ type.label }}:
 							</label>
 						</b-col>
-						<b-col :lg="type.type2 ? '5' : '9'">
+						<b-col lg="9">
 							<b-form-input
 								v-if="type.type !== 'textarea' && type.type !== 'file'"
 								:id="`type-${type.type}`"
@@ -55,20 +55,6 @@
 									<icon-photo />
 								</button>
 							</div>
-						</b-col>
-						<b-col
-							v-if="type.type2"
-							class="time"
-							lg="4"
-						>
-							<b-form-input
-								:id="`type-${type.type}`"
-								v-model="input[type.model2]"
-								:state="error[type.model2]"
-								:type="type.type2"
-								size="sm"
-								@input="error[type.model2] = null"
-							/>
 						</b-col>
 					</b-row>
 				</fieldset>
@@ -112,26 +98,12 @@ export default {
 				name: "",
 				description: "",
 				img: null,
-				openRegistDate: "",
-				openRegistTime: "",
-				closeRegistDate: "",
-				closeRegistTime: "",
-				actStartDate: "",
-				actStartTime: "",
-				actEndDate: "",
-				actEndTime: ""
+				activityDate: ""
 			},
 			error: {
 				name: null,
 				img: null,
-				openRegistDate: null,
-				openRegistTime: null,
-				closeRegistDate: null,
-				closeRegistTime: null,
-				actStartDate: null,
-				actStartTime: null,
-				actEndDate: null,
-				actEndTime: null
+				activityDate: null
 			}
 		};
 	},

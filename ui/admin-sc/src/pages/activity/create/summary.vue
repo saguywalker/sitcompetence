@@ -10,6 +10,12 @@
 						Comfirm activity details
 					</h4>
 				</div>
+				<router-link
+					:to="{ name: 'create-activity' }"
+					class="edit"
+				>
+					<icon-pen /> Edit
+				</router-link>
 				<div class="detail-wrapper">
 					<div class="detail-row">
 						<label class="label">
@@ -34,34 +40,10 @@
 					</div>
 					<div class="detail-row">
 						<label class="label">
-							Registration time:
-						</label>
-						<p class="data">
-							{{ summary.openRegistTime }} - {{ summary.closeRegistTime }}
-						</p>
-					</div>
-					<div class="detail-row">
-						<label class="label">
-							Registration date:
-						</label>
-						<p class="data">
-							{{ summary.openRegistDate }}<br> to {{ summary.closeRegistDate }}
-						</p>
-					</div>
-					<div class="detail-row">
-						<label class="label">
-							Activity time:
-						</label>
-						<p class="data">
-							{{ summary.actStartTime }} - {{ summary.actEndTime }}
-						</p>
-					</div>
-					<div class="detail-row">
-						<label class="label">
 							Activity date:
 						</label>
 						<p class="data">
-							{{ summary.actStartDate }}
+							{{ summary.activityDate }}
 						</p>
 					</div>
 					<div class="detail-row description">
@@ -72,6 +54,22 @@
 							{{ summary.description | noValue }}
 						</p>
 					</div>
+				</div>
+				<div class="question">
+					<b-form-checkbox
+						id="checkbox-1"
+						v-model="status"
+						name="checkbox-1"
+						value="accepted"
+						unchecked-value="not_accepted"
+					>
+						Post to student website
+					</b-form-checkbox>
+					<p class="descript">
+						If you not select this activity, it still be shown in activity page.
+						<br>
+						You can post to student web later.
+					</p>
 				</div>
 			</div>
 		</div>
@@ -99,18 +97,20 @@
 </style>
 <script>
 import IconPhoto from "@/components/icons/IconPhoto.vue";
+import IconPen from "@/components/icons/IconPen.vue";
 import { mapState } from "vuex";
 
 export default {
-	// beforeRouteEnter(to, from, next) {
-	// 	next((vm) => {
-	// 		if (!vm.steps.includes("select")) {
-	// 			vm.$router.replace({ name: "create-activity" });
-	// 		}
-	// 	});
-	// },
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (!vm.steps.includes("select")) {
+				vm.$router.replace({ name: "create-activity" });
+			}
+		});
+	},
 	components: {
-		IconPhoto
+		IconPhoto,
+		IconPen
 	},
 	filters: {
 		noValue(value) {
@@ -123,6 +123,7 @@ export default {
 	},
 	data() {
 		return {
+			status: "",
 			summary: {}
 		};
 	},
@@ -146,7 +147,8 @@ export default {
 			await this.$store.dispatch("createActivity/addStep", this.step.step);
 			this.$router.push({ name: "create-activity-success" });
 		},
-		goBack() {
+		async goBack() {
+			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
 			this.$router.push({ name: "create-activity-competence" });
 		},
 		showPreview() {

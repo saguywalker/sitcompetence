@@ -78,13 +78,13 @@ export default {
 			return this.$route.meta.step;
 		}
 	},
-	// beforeRouteEnter(to, from, next) {
-	// 	next((vm) => {
-	// 		if (!vm.steps.includes("detail")) {
-	// 			vm.$router.replace({ name: "create-activity" });
-	// 		}
-	// 	});
-	// },
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (!vm.steps.includes("detail")) {
+				vm.$router.replace({ name: "create-activity" });
+			}
+		});
+	},
 	created() {
 		this.selects = this.competences;
 	},
@@ -97,7 +97,8 @@ export default {
 			await this.$store.dispatch("createActivity/addStep", this.step.step);
 			this.$router.push({ name: "create-activity-summary" });
 		},
-		goBack() {
+		async goBack() {
+			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
 			this.$router.push({ name: "create-activity" });
 		}
 	}

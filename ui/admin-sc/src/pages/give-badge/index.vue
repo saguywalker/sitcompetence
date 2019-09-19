@@ -156,10 +156,10 @@ export default {
 			search: "",
 			fields: ["selected", "studentId", "fullName"],
 			items: [
-				{ studentId: 59130500210, fullName: "Dickerson Macdonald" },
-				{ studentId: 59130500445, fullName: "Larsen Shaw" },
-				{ studentId: 59130500222, fullName: "Geneva Wilson" },
-				{ studentId: 59130522033, fullName: "Jami Carney" }
+				{ studentId: "59130500210", fullName: "Dickerson Macdonald" },
+				{ studentId: "59130500445", fullName: "Larsen Shaw" },
+				{ studentId: "59130500222", fullName: "Geneva Wilson" },
+				{ studentId: "59130522033", fullName: "Jami Carney" }
 			],
 			selectMode: "multi",
 			selectedItems: [],

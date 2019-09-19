@@ -4,7 +4,9 @@
 			<div class="content">
 				<icon-check-circle fill="white" />
 				<h2 class="text">
-					Submit<br>Successful
+					{{ text }}
+					<br>
+					Successfully
 				</h2>
 			</div>
 		</div>
@@ -19,6 +21,12 @@ import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 export default {
 	components: {
 		IconCheckCircle
+	},
+	props: {
+		text: {
+			type: String,
+			default: "Submit"
+		}
 	}
 };
 </script>

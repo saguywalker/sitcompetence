@@ -68,13 +68,13 @@ const actions = {
 	async submitGiveBadge({ commit, state: stateData, dispatch }, data) {
 		const payload = stateData.selectedStudents.map((student) => {
 			delete student.show;
+			delete student.fullName;
 
 			return {
 				...student,
 				giver: data
 			};
 		});
-
 
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {

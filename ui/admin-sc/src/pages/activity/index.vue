@@ -30,7 +30,7 @@
 				</h1>
 				<div class="my-row">
 					<router-link
-						v-for="(activity, index) in activities"
+						v-for="(activity, index) in postActivities"
 						:key="`${activity.id}${index}`"
 						:to="{
 							name: 'activity_id',
@@ -52,10 +52,22 @@
 					Saved Activity
 				</h1>
 				<div class="my-row">
-					<activity-card
-						title="Hello"
-						description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia vero debitis accusantium fuga maxime quisquam ullam ratione eum quidem velit officiis, unde exercitationem nobis ipsam quam eaque sunt iste sequi."
-					/>
+					<router-link
+						v-for="(activity, index) in saveActivities"
+						:key="`${activity.id}${index}`"
+						:to="{
+							name: 'activity_id',
+							params: {
+								id: activity.id
+							}
+						}"
+						class="activity-card-link"
+					>
+						<activity-card
+							:title="activity.title"
+							:description="activity.description"
+						/>
+					</router-link>
 				</div>
 			</div>
 		</section>
@@ -66,48 +78,18 @@
 </style>
 <script>
 import ActivityCard from "@/components/ActivityCard.vue";
-
+import { mapState } from "vuex";
 // TODO: GET list of activities
 // Saved Act, Posted Act
 export default {
 	components: {
 		ActivityCard
 	},
-	data() {
-		return {
-			activities: [
-				{
-					id: "2093",
-					title: "Run",
-					description: "Bab P' Toon"
-				},
-				{
-					id: "321",
-					title: "Forrest Gump",
-					description: ""
-				},
-				{
-					id: "8632",
-					title: "Pokemon",
-					description: "The best Pokemon Trainer in the world is Sasuke wtf..."
-				},
-				{
-					id: "4433",
-					title: "Jeab",
-					description: ""
-				},
-				{
-					id: "4321",
-					title: "Prep",
-					description: "Cheapest Flight"
-				},
-				{
-					id: "6332",
-					title: "Potato Corner",
-					description: "French Fries"
-				}
-			]
-		};
+	computed: {
+		...mapState("activity", [
+			"postActivities",
+			"saveActivities"
+		])
 	}
 };
 </script>

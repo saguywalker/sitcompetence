@@ -9,14 +9,7 @@ const state = {
 		name: "",
 		description: "",
 		img: null,
-		openRegistDate: "",
-		openRegistTime: "",
-		closeRegistDate: "",
-		closeRegistTime: "",
-		actStartDate: "",
-		actStartTime: "",
-		actEndDate: "",
-		actEndTime: ""
+		activityDate: ""
 	},
 	competences: [],
 	steps: []

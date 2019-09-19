@@ -110,7 +110,8 @@ export default {
 				loading.stop();
 			}
 		},
-		goBack() {
+		async goBack() {
+			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
 			this.$router.push({ name: "give-badge-selection" });
 		}
 	}

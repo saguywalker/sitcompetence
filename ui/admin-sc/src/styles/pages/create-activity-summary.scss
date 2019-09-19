@@ -24,6 +24,13 @@
 		}
 	}
 
+	.edit {
+		text-decoration: underline;
+		font-size: rem(14);
+		color: $black-2;
+		align-self: flex-end;
+	}
+
 	.detail-wrapper {
 		width: 100%;
 		padding: rem(16);
@@ -44,6 +51,7 @@
 
 		.data {
 			color: $black-2;
+			font-weight: 500;
 			text-align: right;
 			flex: 1;
 
@@ -59,11 +67,23 @@
 
 			.data {
 				text-align: left;
+				font-weight: 500;
+				margin-top: rem(10);
 			}
 		}
 
 		&:last-child {
 			margin-bottom: 0;
+		}
+	}
+
+	.question {
+		text-align: center;
+		margin-top: rem(20);
+
+		.descript {
+			font-size: rem(12);
+			color: $gray-5;
 		}
 	}
 
