@@ -18,7 +18,7 @@
 							]"
 							@click="item.show = !item.show"
 						>
-							<p>{{ item.studentId }} {{ item.fullName }}</p>
+							<p>{{ item.student_id }} {{ item.fullName }}</p>
 							<icon-arrow-dropdown class="icon" />
 						</a>
 						<transition name="slide-down">
@@ -29,13 +29,13 @@
 								<div class="my-row">
 									<b-col
 										v-for="(option, id) in options"
-										:key="`${item.studentId}${id}`"
+										:key="`${item.student_id}${id}`"
 										lg="3"
 										cols="6"
 										class="badge-wrapper"
 									>
 										<label
-											:for="`${item.studentId}${id}`"
+											:for="`${item.student_id}${id}`"
 											:class="[
 												'badge-checkbox',
 												hasSelected(item.badges, option.id) ? 'is-select' : ''
@@ -43,7 +43,7 @@
 										>
 											<base-image size="90" />
 											<input
-												:id="`${item.studentId}${id}`"
+												:id="`${item.student_id}${id}`"
 												v-model="item.badges"
 												:value="option"
 												type="checkbox"
@@ -83,19 +83,19 @@ export default {
 			errors: [],
 			options: [ // TODO: Get all badge options from backend
 				{
-					id: "3001",
+					id: 3001,
 					name: "Team working"
 				},
 				{
-					id: "3002",
+					id: 3002,
 					name: "Communication"
 				},
 				{
-					id: "3003",
+					id: 3003,
 					name: "Leadership"
 				},
 				{
-					id: "3004",
+					id: 3004,
 					name: "Flexible"
 				}
 			]

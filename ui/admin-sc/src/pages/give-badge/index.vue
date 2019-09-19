@@ -117,10 +117,10 @@
 								:key="`${item}${index}`"
 								class="item"
 							>
-								{{ item.studentId }}
+								{{ item.student_id }}
 								<button
 									class="delete"
-									@click="deleteSelectedRow(item.studentId)"
+									@click="deleteSelectedRow(item.student_id)"
 								>
 									<icon-cross-circle />
 								</button>
@@ -154,12 +154,12 @@ export default {
 			currentPage: 1,
 			perPage: 3,
 			search: "",
-			fields: ["selected", "studentId", "fullName"],
+			fields: ["selected", "student_id", "fullName"],
 			items: [
-				{ studentId: "59130500210", fullName: "Dickerson Macdonald" },
-				{ studentId: "59130500445", fullName: "Larsen Shaw" },
-				{ studentId: "59130500222", fullName: "Geneva Wilson" },
-				{ studentId: "59130522033", fullName: "Jami Carney" }
+				{ student_id: "59130500210", fullName: "Dickerson Macdonald" },
+				{ student_id: "59130500445", fullName: "Larsen Shaw" },
+				{ student_id: "59130500222", fullName: "Geneva Wilson" },
+				{ student_id: "59130522033", fullName: "Jami Carney" }
 			],
 			selectMode: "multi",
 			selectedItems: [],
@@ -211,7 +211,7 @@ export default {
 	},
 	mounted() {
 		this.selectedItems.forEach((item) => {
-			const index = this.items.findIndex((i) => i.studentId === item.studentId);
+			const index = this.items.findIndex((i) => i.student_id === item.student_id);
 			this.$refs.selectableTable.selectRow(index);
 		});
 	},
@@ -219,7 +219,7 @@ export default {
 		setUpSelectedItems() {
 			this.items.forEach((item, index) => {
 				this.selectedStudents.forEach((student) => {
-					if (item.studentId === student.studentId) {
+					if (item.student_id === student.student_id) {
 						this.items[index] = student;
 					}
 				});
@@ -235,7 +235,7 @@ export default {
 			this.$refs.selectableTable.clearSelected();
 		},
 		deleteSelectedRow(id) {
-			const index = this.items.findIndex((item) => item.studentId === id);
+			const index = this.items.findIndex((item) => item.student_id === id);
 			this.$refs.selectableTable.unselectRow(index);
 		},
 		async submit() {

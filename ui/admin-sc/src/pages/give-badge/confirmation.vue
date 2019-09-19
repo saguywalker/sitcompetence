@@ -17,7 +17,7 @@
 							]"
 							@click="item.show = !item.show"
 						>
-							<p>{{ item.studentId }} {{ item.fullName }}</p>
+							<p>{{ item.student_id }} {{ item.fullName }}</p>
 							<icon-arrow-dropdown class="icon" />
 						</a>
 						<transition name="slide-down">
@@ -28,7 +28,7 @@
 								<div class="my-row">
 									<b-col
 										v-for="(badge, id) in item.badges"
-										:key="`${badge}${item.studentId}${id}`"
+										:key="`${badge}${item.student_id}${id}`"
 										lg="3"
 										cols="6"
 										class="badge-wrapper"
@@ -95,7 +95,10 @@ export default {
 			loading.start();
 
 			try {
-				await this.$store.dispatch("giveBadge/submitGiveBadge", "tiny");
+				await this.$store.dispatch("giveBadge/submitGiveBadge", {
+					giver: "tiny",
+					semester: 22019
+				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });
 			} catch (err) {

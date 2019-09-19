@@ -66,14 +66,27 @@ const actions = {
 		commit(GIVE_BADGE_SELECT_BADGE, data);
 	},
 	async submitGiveBadge({ commit, state: stateData, dispatch }, data) {
-		const payload = stateData.selectedStudents.map((student) => {
-			delete student.show;
-			delete student.fullName;
+		const filterData = stateData.selectedStudents.map((st) => {
+			const idBadges = st.badges.map((badge) => badge.id);
 
-			return {
-				...student,
-				giver: data
-			};
+			const separateBadge = idBadges.map((id) => {
+				return {
+					student_id: st.student_id,
+					competence_id: id,
+					giver: data.giver,
+					semester: data.semester
+				};
+			});
+
+			return separateBadge;
+		});
+
+		const payload = [];
+
+		filterData.forEach((student) => {
+			student.forEach((x) => {
+				payload.push(x);
+			});
 		});
 
 		const	response = await GiveBadge.postGiveBadge(payload);
