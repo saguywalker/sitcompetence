@@ -25,14 +25,14 @@ func serveAPI(ctx context.Context, api *api.API) {
 		handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS"}),
 	)
 
+	var entry = "ui/admin-sc/dist/admin/index.html"
+	var static = "ui/admin-sc/dist/"
+
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
-	router.PathPrefix("/admin/js").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/js")))
-	router.PathPrefix("/admin/css").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/css")))
-	router.PathPrefix("/admin/font").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/font")))
-	router.PathPrefix("/admin/favicon.ico").Handler(http.FileServer(http.Dir("ui/admin-sc/dist/favicon.ico")))
-	router.PathPrefix("/admin").HandlerFunc(IndexHandler("ui/admin-sc/dist/index.html"))
+	router.PathPrefix("/admin/").Handler(http.FileServer(http.Dir(static)))
+	router.PathPrefix("/admin").HandlerFunc(IndexHandler(entry))
 
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Config.Port),
@@ -60,6 +60,7 @@ func IndexHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, entrypoint)
 	}
+
 	return http.HandlerFunc(fn)
 }
 
