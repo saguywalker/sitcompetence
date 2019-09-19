@@ -172,10 +172,11 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 			return nil
 		}
 	*/
-	decodedTxid := make([]byte, 0)
-	if _, err := base64.StdEncoding.Decode(decodedTxid, []byte(bodyMap["transaction_id"].(string))); err != nil {
+	decodedTxid, err := base64.StdEncoding.DecodeString(bodyMap["transaction_id"].(string))
+	if err != nil {
 		return err
 	}
+	ctx.Logger.Infof("decoded transaction id: %x", decodedTxid)
 
 	url := fmt.Sprintf("http://%s/tx?hash=0x%x", a.Config.Peers[a.CurrentPeerIndex], decodedTxid)
 	ctx.Logger.Infoln(url)
