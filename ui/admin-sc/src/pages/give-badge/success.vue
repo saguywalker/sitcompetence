@@ -60,8 +60,7 @@ export default {
 	computed: {
 		...mapState("giveBadge", [
 			"success",
-			"steps",
-			"selectedStudents"
+			"steps"
 		]),
 		hexTransactionId() {
 			return base64ToHex(this.success.transaction_id);
@@ -73,6 +72,8 @@ export default {
 	methods: {
 		async verifyHash() {
 			loading.start();
+			console.log(this.success.data);
+			console.log(this.success.data[0]);
 
 			try {
 				await this.$store.dispatch("verify/verifyTransaction", {

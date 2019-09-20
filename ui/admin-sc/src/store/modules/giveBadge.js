@@ -89,6 +89,8 @@ const actions = {
 			});
 		});
 
+		console.log(payload[0]);
+
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {
 			commit(GIVE_BADGE_SUCCESS, {
