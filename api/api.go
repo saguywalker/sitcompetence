@@ -120,6 +120,8 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			}()
 		*/
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
+		w.Header().Set("Pragma", "no-cache")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {
@@ -142,12 +144,16 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 
 				if err != nil {
 					ctx.Logger.Error(err)
+					w.WriteHeader(http.StatusInternalServerError)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 				}
 			} else {
 				ctx.Logger.Error(err)
+				w.WriteHeader(http.StatusInternalServerError)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
+		} else {
+			w.WriteHeader(http.StatusOK)
 		}
 
 	})
