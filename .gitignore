@@ -6,6 +6,7 @@ config.yaml
 postgres.sql
 initdb.py
 querydb.py
+config2.yaml
 
 #Executable file
 sitcom
