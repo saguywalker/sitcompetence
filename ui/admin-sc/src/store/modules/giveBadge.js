@@ -91,7 +91,11 @@ const actions = {
 
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {
-			commit(GIVE_BADGE_SUCCESS, response.data);
+			commit(GIVE_BADGE_SUCCESS, {
+				transaction_id: response.data.transaction_id,
+				merkleroot: response.data.merkleroot,
+				data: payload
+			});
 		}
 	},
 	addStep({ commit, state: stateData }, data) {

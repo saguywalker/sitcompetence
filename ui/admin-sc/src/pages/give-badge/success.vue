@@ -76,7 +76,7 @@ export default {
 
 			try {
 				await this.$store.dispatch("verify/verifyTransaction", {
-					data: this.selectedStudents,
+					data: this.success.data,
 					transaction_id: this.success.transaction_id
 				});
 
