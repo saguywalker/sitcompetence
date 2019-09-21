@@ -1,0 +1,30 @@
+@import "../cores.scss";
+
+.login {
+	display: flex;
+	min-height: 100vh;
+
+	.detail {
+		flex: 2;
+		color: $white;
+		font-weight: bold;
+		text-align: right;
+		background-color: $blue-1;
+		height: 100vh;
+		clip-path: polygon(0 0, 100% 0%, rem(480) 100%, 0% 100%);
+	}
+
+	.login-input {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 0 rem(10);
+		flex: 1;
+
+		.title {
+			font-size: rem(42);
+			font-weight: 800;
+			margin-bottom: rem(16);
+		}
+	}
+}

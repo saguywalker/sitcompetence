@@ -1,0 +1,105 @@
+@import "../cores";
+
+.input-text {
+	display: block;
+	position: relative;
+	margin-bottom: 0;
+	width: 100%;
+
+	label {
+		width: 100%;
+		margin-bottom: rem(8);
+	}
+
+	&-input {
+		-webkit-appearance: none;
+		border: rem(1) solid $gray-1;
+		border-radius: rem(4);
+		padding: rem(21) rem(15) rem(9);
+		margin-bottom: 0;
+		color: $black;
+		width: 100%;
+		font-size: rem(14);
+		line-height: 1;
+		height: rem(36);
+	}
+
+	&-label {
+		position: absolute;
+		transition: all 0.3s ease;
+		left: rem(16);
+		top: rem(9);
+		color: $gray-2;
+		font-size: rem(16);
+		white-space: nowrap;
+	}
+
+	&.focused {
+		.input-text-label {
+			top: rem(4);
+			font-size: rem(10);
+		}
+	}
+
+	&-error {
+		color: $error-red;
+		font-size: rem(12);
+	}
+
+	&.error {
+		.input-text-input {
+			border-color: $error-red;
+		}
+	}
+
+	&.lg {
+		label {
+			width: 100%;
+			margin-bottom: rem(8);
+		}
+
+		.input-text-input {
+			-webkit-appearance: none;
+			border: rem(1) solid $gray-1;
+			border-radius: rem(4);
+			margin-bottom: 0;
+			color: $black;
+			width: 100%;
+			font-size: rem(25);
+			line-height: 0.96;
+			height: auto;
+		}
+
+		.input-text-label {
+			position: absolute;
+			transition: all 0.3s ease;
+			left: rem(16);
+			top: rem(13);
+			font-size: rem(25);
+		}
+
+		&.focused {
+			.input-text-label {
+				top: rem(4);
+				font-size: rem(16);
+			}
+		}
+
+		.input-text-error {
+			color: $error-red;
+			font-size: rem(18);
+		}
+
+		&.error {
+			.input-text-input {
+				border-color: $error-red;
+			}
+		}
+	}
+
+	@include desktop {
+		label {
+			margin-bottom: rem(16);
+		}
+	}
+}

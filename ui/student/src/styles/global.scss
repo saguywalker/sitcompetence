@@ -1,0 +1,65 @@
+@import "fonts.scss";
+@import "cores.scss";
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-vue/src/index.scss";
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:focus,
+:hover {
+	outline: 0;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+	color: $blue-1;
+	font-size: rem($base-font);
+	font-family: "proxima-nova";
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-font-smoothing: antialiased;
+	touch-action: manipulation;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+	margin-top: 0;
+	margin-bottom: 0;
+	line-height: inherit;
+	font-size: inherit;
+}
+
+label {
+	margin: 0;
+}
+
+button {
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: auto;
+	overflow: visible;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	line-height: normal;
+	-webkit-font-smoothing: inherit;
+	-moz-osx-font-smoothing: inherit;
+	-webkit-appearance: none;
+	text-align: inherit;
+	outline: none;
+
+	&::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+
+	&:active,
+	&:hover,
+	&:focus {
+		outline: none;
+	}
+}
