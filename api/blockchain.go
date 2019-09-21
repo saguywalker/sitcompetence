@@ -80,7 +80,6 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(b64Json); err != nil {
 		return err
 	}
@@ -162,7 +161,6 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(b64Json); err != nil {
 		return err
 	}
@@ -266,7 +264,6 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infoln(result)
 
-	w.WriteHeader(http.StatusOK)
 	var returnResult string
 	if result {
 		returnResult = fmt.Sprintf("Data was recorded in blockchain at TransactionID: %v :)", bodyMap["transaction_id"])

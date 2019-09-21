@@ -17,11 +17,12 @@ type statusCodeRecorder struct {
 	StatusCode int
 }
 
+/*
 func (r *statusCodeRecorder) WriteHeader(statusCode int) {
 	r.StatusCode = statusCode
 	r.ResponseWriter.WriteHeader(statusCode)
 }
-
+*/
 // API struct
 type API struct {
 	App              *app.App
@@ -152,8 +153,6 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 				w.WriteHeader(http.StatusInternalServerError)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
-		} else {
-			w.WriteHeader(http.StatusOK)
 		}
 
 	})
