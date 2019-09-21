@@ -1,0 +1,5 @@
+
+SecretKey: 123
+DatabaseURI: host=localhost port=5432 user=sky dbname=sitcomdb password=saguywalker sslmode=disable
+Peers:
+  - localhost:26657
