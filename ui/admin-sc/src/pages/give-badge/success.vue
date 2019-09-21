@@ -72,8 +72,6 @@ export default {
 	methods: {
 		async verifyHash() {
 			loading.start();
-			console.log(this.success.data);
-			console.log(this.success.data[0]);
 
 			try {
 				await this.$store.dispatch("verify/verifyTransaction", {
