@@ -123,6 +123,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {
