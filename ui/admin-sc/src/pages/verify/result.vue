@@ -1,7 +1,8 @@
 <template>
 	<div class="box">
-		<h1>I don't know what you will response</h1>
-		<h1>But the verify is complete if you see this page.</h1>
+		<h1>If you see this page verify data is success</h1>
+		<h2>Response Data:</h2>
+		<br>
 		{{ verifyData }}
 	</div>
 </template>

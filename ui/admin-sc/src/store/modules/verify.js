@@ -14,9 +14,7 @@ const mutations = {
 		stateData.hashId = data;
 	},
 	[UPDATE_VERIFY_DATA](stateData, data) {
-		stateData.verifyData = {
-			...data
-		};
+		stateData.verifyData = data
 	}
 };
 
