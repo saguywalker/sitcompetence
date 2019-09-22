@@ -7,11 +7,21 @@ $blue-2: #2362d1;
 $blue-3: #236be5;
 $blue-4: #367bf4;
 $blue-5: #4c72af;
+$blue-btn: #3578ed;
 
 $gray-1: #e8e9ee;
 $gray-2: #878787;
 
-$error-red: #b30909;
+$error-red: #eb2e2e;
+
+$green: #47ce54;
+
+// bootsrap
+$theme-colors: (
+	"primary": $blue-btn,
+	"danger": $error-red,
+	"success": $green
+);
 
 $base-font: 16;
 
