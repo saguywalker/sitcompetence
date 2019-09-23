@@ -14,7 +14,7 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.TotalActivitiesRequired, &competence.BadgeIconURL)
+		err := row.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
 		if err != nil {
 			return nil, err
 		}
@@ -34,7 +34,7 @@ func (db *Database) GetCompetences() (*[]model.Competence, error) {
 
 	for rows.Next() {
 		var competence model.Competence
-		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.TotalActivitiesRequired, &competence.BadgeIconURL)
+		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
 		if err != nil {
 			return nil, err
 		}
@@ -46,12 +46,12 @@ func (db *Database) GetCompetences() (*[]model.Competence, error) {
 
 // CreateCompetence inserts a new competence
 func (db *Database) CreateCompetence(competence *model.Competence) error {
-	stmt, err := db.Prepare("INSERT INTO competence(competenceId, competenceName, totalActivitiesRequired, badgeIconURL) VALUES($1, $2, $3, $4)")
+	stmt, err := db.Prepare("INSERT INTO competence(competenceId, competenceName, badgeIconURL, totalActivitiesRequired) VALUES($1, $2, $3, $4)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(competence.CompetenceID, competence.CompetenceName, competence.TotalActivitiesRequired, competence.BadgeIconURL)
+	_, err = stmt.Exec(competence.CompetenceID, competence.CompetenceName, competence.BadgeIconURL, competence.TotalActivitiesRequired)
 	if err != nil {
 		return err
 	}
