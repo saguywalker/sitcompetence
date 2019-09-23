@@ -69,34 +69,56 @@ func (db *Database) GetActivitiesByStaff(id uint32) (*[]model.Activity, error) {
 }
 
 // GetActivitiesByStudent returns all activities in a table
-func (db *Database) GetActivitiesByStudent(id string) (*[]model.Activity, error) {
+func (db *Database) GetActivitiesByStudent(id string) ([]model.Activity, error) {
 	var activities []model.Activity
 
-	rows, err := db.Query("SELECT activity.activityId, activity.activityName, activity.date, activity.creator, activity.studentSite FROM activity, attendedActivity WHERE activity.activityId = attendedActivity.activityId AND activity.activityId = $1", id)
+	rows, err := db.Query("SELECT activity.activityId, activity.activityName, activity.description, activity.date, activity.creator, activity.studentSite FROM activity, attendedActivity WHERE activity.activityId = attendedActivity.activityId AND activity.activityId = $1", id)
 	if err != nil {
 		return nil, err
 	}
 
 	for rows.Next() {
 		var activity model.Activity
-		err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
+		err := rows.Scan(&activity)
+		//err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
 		if err != nil {
 			return nil, err
 		}
 		activities = append(activities, activity)
 	}
 
-	return &activities, nil
+	return activities, nil
+}
+
+func (db *Database) GetCompetencesByActivityID(id uint32) ([]model.Competence, error) {
+	var competences []model.Competence
+
+	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired FROM competence as c, competenceReward as r WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var competence model.Competence
+		err := rows.Scan(&competence)
+		if err != nil {
+			return nil, err
+		}
+		competences = append(competences, competence)
+	}
+
+	return competences, nil
+
 }
 
 // CreateActivity inserts a new activity
 func (db *Database) CreateActivity(activity *model.Activity) error {
-	stmt, err := db.Prepare("INSERT INTO activity(activityId, activityName, date, creator) VALUES($1, $2, $3, $4)")
+	stmt, err := db.Prepare("INSERT INTO activity(activityId, activityName, description, date, creator, studentSite) VALUES($1, $2, $3, $4, $5, $6)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(activity.ActivityID, activity.ActivityName, activity.Date, activity.Creator)
+	_, err = stmt.Exec(activity.ActivityID, activity.ActivityName, activity.Description, activity.Date, activity.Creator, activity.StudentSite)
 	if err != nil {
 		return err
 	}

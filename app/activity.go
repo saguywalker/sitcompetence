@@ -6,8 +6,15 @@ import "github.com/saguywalker/sitcompetence/model"
 func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 	activity, err := ctx.Database.GetActivityByID(id)
 	if err != nil {
-		return activity, err
+		return nil, err
 	}
+
+	competences, err := ctx.Database.GetCompetencesByActivityID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	activity.Competences = competences
 
 	return activity, nil
 }
@@ -19,7 +26,16 @@ func (ctx *Context) GetActivities() (*[]model.Activity, error) {
 		return nil, err
 	}
 
-	return activities, nil
+	for i := 0; i < len(activites); i++ {
+		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID)
+		if err != nil {
+			return nil, err
+		}
+
+		activites[i].Competences = competences
+	}
+
+	return activites, erra
 }
 
 func (ctx *Context) GetActivitiesByStaff(id string) (*[]model.Activity, error) {
@@ -28,13 +44,31 @@ func (ctx *Context) GetActivitiesByStaff(id string) (*[]model.Activity, error) {
 		return nil, err
 	}
 
-	return activities, err
+	for i := 0; i < len(activites); i++ {
+		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID)
+		if err != nil {
+			return nil, err
+		}
+
+		activites[i].Competences = competences
+	}
+
+	return activites, err
 }
 
 func (ctx *Context) GetActivitiesByStudent(id string) (*[]model.Activity, error) {
 	activites, err := ctx.Database.GetActivitiesByStudent(id)
 	if err != nil {
 		return nil, err
+	}
+
+	for i := 0; i < len(activites); i++ {
+		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID)
+		if err != nil {
+			return nil, err
+		}
+
+		activites[i].Competences = competences
 	}
 
 	return activites, err
