@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -75,16 +72,4 @@ func (a *API) GetCompetenceByID(ctx *app.Context, w http.ResponseWriter, r *http
 
 	_, err = w.Write(data)
 	return err
-}
-
-func getCompetenceIDFromRequest(param string, r *http.Request) uint16 {
-	vars := mux.Vars(r)
-	id := vars[param]
-
-	intID, err := strconv.ParseUint(id, 10, 0)
-	if err != nil {
-		return 0
-	}
-
-	return uint16(intID)
 }

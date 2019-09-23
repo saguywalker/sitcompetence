@@ -20,43 +20,43 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all of activities
-func (ctx *Context) GetActivities() (*[]model.Activity, error) {
+func (ctx *Context) GetActivities() ([]*model.Activity, error) {
 	activities, err := ctx.Database.GetActivities()
 	if err != nil {
 		return nil, err
 	}
 
-	for i := 0; i < len(activites); i++ {
-		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID)
+	for i := 0; i < len(activities); i++ {
+		competences, err := ctx.Database.GetCompetencesByActivityID(activities[i].ActivityID)
 		if err != nil {
 			return nil, err
 		}
 
-		activites[i].Competences = competences
+		activities[i].Competences = competences
 	}
 
-	return activites, erra
+	return activities, err
 }
 
-func (ctx *Context) GetActivitiesByStaff(id string) (*[]model.Activity, error) {
+func (ctx *Context) GetActivitiesByStaff(id string) ([]*model.Activity, error) {
 	activities, err := ctx.Database.GetActivitiesByStaff(id)
 	if err != nil {
 		return nil, err
 	}
 
-	for i := 0; i < len(activites); i++ {
-		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID)
+	for i := 0; i < len(activities); i++ {
+		competences, err := ctx.Database.GetCompetencesByActivityID(activities[i].ActivityID)
 		if err != nil {
 			return nil, err
 		}
 
-		activites[i].Competences = competences
+		activities[i].Competences = competences
 	}
 
-	return activites, err
+	return activities, err
 }
 
-func (ctx *Context) GetActivitiesByStudent(id string) (*[]model.Activity, error) {
+func (ctx *Context) GetActivitiesByStudent(id string) ([]*model.Activity, error) {
 	activites, err := ctx.Database.GetActivitiesByStudent(id)
 	if err != nil {
 		return nil, err

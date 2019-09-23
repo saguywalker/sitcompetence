@@ -2,19 +2,17 @@ package api
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 
 	"github.com/saguywalker/sitcompetence/app"
-	"github.com/saguywalker/sitcompetence/model"
 )
 
 // GetCollectedCompetences response with all of competences
 func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	collected, err := ctx.GetCollectedCompetences
+	collected, err := ctx.GetCollectedCompetences()
 	if err != nil {
 		return err
 	}
@@ -25,27 +23,6 @@ func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r
 	}
 
 	_, err = w.Write(data)
-	return err
-}
-
-// CreateCollectedCompetence create new competence from request
-func (a *API) CreateCollectedCompetence(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	var input model.CollectedCompetence
-
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(body, &input); err != nil {
-		return err
-	}
-
-	if err := ctx.CreateCollectedCompetence(&input); err != nil {
-		return err
-	}
-
 	return err
 }
 

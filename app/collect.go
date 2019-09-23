@@ -1,30 +1,33 @@
 package app
 
-import "github.com/saguywalker/sitcompetence/model"
+import (
+	"fmt"
 
-// GetCompetenceByID returns competence struct from competence id
-func (ctx *Context) GetCompetenceByID(id uint16) (*model.Competence, error) {
-	competence, err := ctx.Database.GetCompetenceByID(id)
+	"github.com/saguywalker/sitcompetence/model"
+)
+
+func (ctx *Context) GetCollectedCompetences() ([]*model.Competence, error) {
+	return nil, fmt.Errorf("unimplemented")
+}
+
+// GetCollectedByCompetenceID returns competence struct from competence id
+func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]*model.Student, error) {
+	competence, err := ctx.Database.GetCollectedByCompetenceID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return competence, nil
+	return competence, fmt.Errorf("unimplemented")
 }
 
-// GetCompetences returns all of activities
-func (ctx *Context) GetCompetences() (*[]model.Competence, error) {
-	competences, err := ctx.Database.GetCompetences()
+// GetCollectedByStudentID returns all of activities
+func (ctx *Context) GetCollectedByStudentID(id string) ([]*model.Competence, error) {
+	competences, err := ctx.Database.GetCollectedByStudentID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return competences, nil
-}
-
-// CreateCompetence creates new competence
-func (ctx *Context) CreateCompetence(competence *model.Competence) error {
-	return ctx.Database.CreateCompetence(competence)
+	return competences, fmt.Errorf("unimplemented")
 }
 
 // CreateCollectedCompetence update new competence and its transactionID to a corresponding studentID

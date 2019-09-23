@@ -25,8 +25,8 @@ func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all activities in a table
-func (db *Database) GetActivities() (*[]model.Activity, error) {
-	var activities []model.Activity
+func (db *Database) GetActivities() ([]*model.Activity, error) {
+	var activities []*model.Activity
 
 	rows, err := db.Query("SELECT * FROM activity")
 	if err != nil {
@@ -40,15 +40,15 @@ func (db *Database) GetActivities() (*[]model.Activity, error) {
 		if err != nil {
 			return nil, err
 		}
-		activities = append(activities, activity)
+		activities = append(activities, &activity)
 	}
 
-	return &activities, nil
+	return activities, nil
 }
 
 // GetActivitiesByStaff returns all activities in a table
-func (db *Database) GetActivitiesByStaff(id uint32) (*[]model.Activity, error) {
-	var activities []model.Activity
+func (db *Database) GetActivitiesByStaff(id string) ([]*model.Activity, error) {
+	var activities []*model.Activity
 
 	rows, err := db.Query("SELECT * FROM activity WHERE creator = $1", id)
 	if err != nil {
@@ -62,15 +62,15 @@ func (db *Database) GetActivitiesByStaff(id uint32) (*[]model.Activity, error) {
 		if err != nil {
 			return nil, err
 		}
-		activities = append(activities, activity)
+		activities = append(activities, &activity)
 	}
 
-	return &activities, nil
+	return activities, nil
 }
 
 // GetActivitiesByStudent returns all activities in a table
-func (db *Database) GetActivitiesByStudent(id string) ([]model.Activity, error) {
-	var activities []model.Activity
+func (db *Database) GetActivitiesByStudent(id string) ([]*model.Activity, error) {
+	var activities []*model.Activity
 
 	rows, err := db.Query("SELECT activity.activityId, activity.activityName, activity.description, activity.date, activity.creator, activity.studentSite FROM activity, attendedActivity WHERE activity.activityId = attendedActivity.activityId AND activity.activityId = $1", id)
 	if err != nil {
@@ -84,7 +84,7 @@ func (db *Database) GetActivitiesByStudent(id string) ([]model.Activity, error) 
 		if err != nil {
 			return nil, err
 		}
-		activities = append(activities, activity)
+		activities = append(activities, &activity)
 	}
 
 	return activities, nil

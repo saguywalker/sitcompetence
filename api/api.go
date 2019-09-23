@@ -58,11 +58,11 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
-	searchRoute.Handle("/competence", a.handler(a.GetCompetence)).Methods("GET")
+	searchRoute.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
 	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
-	searchRoute.Handle("/student", a.handler(a.GetStudent)).Methods("GET")
-	searchRoute.Handle("/staff", a.handler(a.GetStaff)).Methods("GET")
-	searchRoute.Handle("/merkleitem", a.handler(a.GetMerkle)).Methods("GET")
+	searchRoute.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
+	searchRoute.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
+	//searchRoute.Handle("/merkleitem", a.handler(a.GetMerkles)).Methods("GET")
 }
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {

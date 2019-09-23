@@ -116,7 +116,13 @@ func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 // DeleteActivityByID delete an existing activity activity
 func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getIdFromRequest("id", r)
-	if err := ctx.DeleteActivity(); err != nil {
+
+	intID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return err
+	}
+
+	if err := ctx.DeleteActivity(uint32(intID)); err != nil {
 		return err
 	}
 

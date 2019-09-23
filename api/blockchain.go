@@ -56,7 +56,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	if err := ctx.UpdateCollectedCompetence(listOfBadges, transactionID); err != nil {
+	if err := ctx.CreateCollectedCompetence(listOfBadges, transactionID); err != nil {
 		return err
 
 	}
