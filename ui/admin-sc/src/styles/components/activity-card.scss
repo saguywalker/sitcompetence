@@ -2,7 +2,8 @@
 
 .activity-card {
 	width: rem(250);
-	min-height: rem(200);
+	height: rem(100);
+	max-height: rem(100);
 	border: rem(1) solid $gray-6;
 	border-radius: rem(5);
 	margin: rem(10) 0;
@@ -20,8 +21,8 @@
 
 		.title {
 			color: $main-blue;
-			font-size: rem(14);
-			font-weight: 600;
+			font-size: rem(24);
+			font-weight: bold;
 		}
 
 		.description {
@@ -29,10 +30,15 @@
 			color: $gray-3;
 			@include ellipsisOneline(180);
 		}
+
+		.date {
+			font-size: rem(12);
+			color: $gray-3;
+		}
 	}
 
 	&:hover {
-		box-shadow: 0 rem(14) rem(20) $gray-6;
+		box-shadow: 0 rem(8) rem(20) $gray-6;
 	}
 
 	&:active {

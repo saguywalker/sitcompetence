@@ -1,5 +1,9 @@
 <template>
 	<b-container>
-		<h1>Dashboard</h1>
+		<code>
+			{
+			data: clearfdsfsdfs
+			}
+		</code>
 	</b-container>
 </template>

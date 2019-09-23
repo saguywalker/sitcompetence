@@ -1,11 +1,5 @@
 <template>
 	<article class="activity-card">
-		<base-image
-			class="card-img"
-			size="250"
-			:round="false"
-			:activity-card="true"
-		/>
 		<div class="card-body">
 			<h4 class="title">
 				{{ title }}
@@ -14,7 +8,13 @@
 				v-if="description"
 				class="description"
 			>
-				{{ description }}
+				Description: {{ description }}
+			</p>
+			<p
+				v-if="date"
+				class="date"
+			>
+				Start on: {{ date }}
 			</p>
 		</div>
 	</article>
@@ -30,6 +30,10 @@ export default {
 			required: true
 		},
 		description: {
+			type: String,
+			default: ""
+		},
+		date: {
 			type: String,
 			default: ""
 		}

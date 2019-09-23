@@ -1,7 +1,7 @@
 <template>
 	<div class="give-badge-main">
 		<b-row>
-			<b-col lg="8">
+			<b-col lg="9">
 				<div
 					:class="[
 						'box',
@@ -24,26 +24,6 @@
 									size="sm"
 								>
 									Search
-								</b-button>
-							</b-button-group>
-							<b-button-group>
-								<b-button
-									variant="outline-primary"
-									size="sm"
-								>
-									Month
-								</b-button>
-								<b-button
-									variant="outline-primary"
-									size="sm"
-								>
-									Year
-								</b-button>
-								<b-button
-									variant="outline-primary"
-									size="sm"
-								>
-									Semesterr
 								</b-button>
 							</b-button-group>
 						</div>
@@ -105,7 +85,7 @@
 					</div>
 				</div>
 			</b-col>
-			<b-col lg="4">
+			<b-col lg="3">
 				<div class="box scrollable">
 					<h2 class="box-header">
 						Selected student
@@ -154,14 +134,8 @@ export default {
 			currentPage: 1,
 			perPage: 3,
 			search: "",
-			fields: ["selected", "student_id", "fullName"],
-			items: [
-				{ student_id: "59130500210", fullName: "Dickerson Macdonald" },
-				{ student_id: "59130500445", fullName: "Larsen Shaw" },
-				{ student_id: "59130500222", fullName: "Geneva Wilson" },
-				{ student_id: "59130522033", fullName: "Jami Carney" }
-			],
-			selectMode: "multi",
+			fields: ["selected", "student_id", "first_name", "last_name", "department"],
+			items: [],
 			selectedItems: [],
 			error: {
 				selectedItems: false
@@ -195,15 +169,12 @@ export default {
 			this.error.selectedItems = false;
 		}
 	},
-	beforeRouteEnter(to, from, next) {
-		next((vm) => {
-			if (vm.students.length === 0) {
-				vm.$store.dispatch("base/loadStudentData");
-			}
-		});
-	},
-	created() {
-		// TODO: Get items from server
+	async created() {
+		if (this.students.length === 0) {
+			await this.$store.dispatch("base/loadStudentData");
+		}
+
+		this.items = this.students;
 		this.selectedItems = this.selectedStudents;
 		if (this.steps.includes("selection")) {
 			this.setUpSelectedItems();

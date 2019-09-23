@@ -15,13 +15,6 @@
 							Create Activity
 						</b-button>
 					</router-link>
-					<b-button
-						class="item"
-						size="sm"
-						variant="primary"
-					>
-						Approve Attendance
-					</b-button>
 				</div>
 			</div>
 			<div class="box">
@@ -66,6 +59,7 @@
 						<activity-card
 							:title="activity.title"
 							:description="activity.description"
+							date="19-08-2019"
 						/>
 					</router-link>
 				</div>

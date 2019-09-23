@@ -1,14 +1,15 @@
+import { Activity } from "@/services";
 import {
 	CREATE_ACTIVITY_STEP,
 	CREATE_ACTIVITY_DETAIL,
-	CREATE_ACTIVITY_COMPETENCE
+	CREATE_ACTIVITY_COMPETENCE,
+	CREATE_ACTIVITY_SUBMIT
 } from "../mutationTypes";
 
 const state = {
 	detailInput: {
 		name: "",
 		description: "",
-		img: null,
 		activityDate: ""
 	},
 	competences: [],
@@ -18,7 +19,6 @@ const state = {
 const mutations = {
 	[CREATE_ACTIVITY_DETAIL](stateData, data) {
 		stateData.detailInput = {
-			...stateData.detailInput,
 			...data
 		};
 	},
@@ -31,6 +31,11 @@ const mutations = {
 		stateData.steps = [
 			...data
 		];
+	},
+	[CREATE_ACTIVITY_SUBMIT](stateData) {
+		stateData.steps = [];
+		stateData.competences = [];
+		stateData.detailInput = {};
 	}
 };
 
@@ -40,6 +45,23 @@ const actions = {
 	},
 	setCompetenceInput({ commit }, data) {
 		commit(CREATE_ACTIVITY_COMPETENCE, data);
+	},
+	async submitCreateActivity({ commit, state: stateData }, data) {
+		const payload = {
+			activity_name: data.name,
+			description: data.description,
+			activity_date: data.activityDate,
+			student_site: data.student_site,
+			creator: data.creator,
+			competences: stateData.competences
+		};
+
+		const	response = await Activity.postCreateActivity(payload);
+		if (response.status === 200) {
+			commit(CREATE_ACTIVITY_SUBMIT);
+		}
+
+		return response;
 	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {

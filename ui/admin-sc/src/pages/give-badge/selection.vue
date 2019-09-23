@@ -18,7 +18,7 @@
 							]"
 							@click="item.show = !item.show"
 						>
-							<p>{{ item.student_id }} {{ item.fullName }}</p>
+							<p>{{ item.student_id }} {{ item.first_name }} {{ item.last_name }}</p>
 							<icon-arrow-dropdown class="icon" />
 						</a>
 						<transition name="slide-down">
@@ -38,7 +38,7 @@
 											:for="`${item.student_id}${id}`"
 											:class="[
 												'badge-checkbox',
-												hasSelected(item.badges, option.id) ? 'is-select' : ''
+												hasSelected(item.badges, option.competence_id) ? 'is-select' : ''
 											]"
 										>
 											<base-image size="90" />
@@ -49,7 +49,7 @@
 												type="checkbox"
 												@input="removeError(index)"
 											>
-											<p class="text">{{ option.name }}</p>
+											<p class="text">{{ option.competence_name }}</p>
 										</label>
 									</b-col>
 								</div>
@@ -81,27 +81,13 @@ export default {
 		return {
 			selectStudent: [],
 			errors: [],
-			options: [ // TODO: Get all badge options from backend
-				{
-					id: 3001,
-					name: "Team working"
-				},
-				{
-					id: 3002,
-					name: "Communication"
-				},
-				{
-					id: 3003,
-					name: "Leadership"
-				},
-				{
-					id: 3004,
-					name: "Flexible"
-				}
-			]
+			options: []
 		};
 	},
 	computed: {
+		...mapState("base", [
+			"badges"
+		]),
 		...mapState("giveBadge", [
 			"selectedStudents",
 			"steps"
@@ -120,7 +106,12 @@ export default {
 			}
 		});
 	},
-	created() {
+	async created() {
+		if (this.badges.length === 0) {
+			await this.$store.dispatch("base/loadBadgeData");
+		}
+
+		this.options = this.badges;
 		this.selectStudent = this.selectedStudents;
 	},
 	methods: {
@@ -159,7 +150,7 @@ export default {
 			this.errors[index] = false;
 		},
 		hasSelected(badges, id) {
-			return badges.some((badge) => badge.id === id);
+			return badges.some((badge) => badge.competence_id === id);
 		}
 	}
 };

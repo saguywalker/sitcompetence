@@ -24,6 +24,7 @@
 			]"
 		>
 			<button
+				ref="toggleBtn"
 				class="item"
 				@click="toggleSidebar"
 			>
@@ -34,10 +35,10 @@
 				class="item profile"
 				@click="toggleProfile"
 			>
-				<base-image size="30" />
-				<h4 class="profile-name">
+				<icon-user-cog />
+				<p class="profile-name">
 					Tindanai Wongpipattanopas
-				</h4>
+				</p>
 			</button>
 			<div
 				v-click-outside="{
@@ -50,10 +51,6 @@
 				]"
 			>
 				<div class="profile-dropdown-detail">
-					<base-image
-						class="img"
-						size="83"
-					/>
 					<h4 class="name">
 						Tindanai Wongpipattanopas
 					</h4>
@@ -79,12 +76,14 @@
 <script>
 import BaseLogo from "@/components/BaseLogo.vue";
 import IconHamburger from "@/components/icons/IconHamburger.vue";
+import IconUserCog from "@/components/icons/IconUserCog.vue";
 import { clickOutside } from "@/helpers/directives/clickOutside";
 
 export default {
 	components: {
 		BaseLogo,
-		IconHamburger
+		IconHamburger,
+		IconUserCog
 	},
 	directives: {
 		clickOutside

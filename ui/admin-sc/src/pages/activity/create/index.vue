@@ -21,7 +21,7 @@
 						</b-col>
 						<b-col lg="9">
 							<b-form-input
-								v-if="type.type !== 'textarea' && type.type !== 'file'"
+								v-if="type.type !== 'textarea'"
 								:id="`type-${type.type}`"
 								v-model="input[type.model]"
 								:state="error[type.model]"
@@ -30,48 +30,16 @@
 								@input="error[type.model] = null"
 							/>
 							<b-form-textarea
-								v-else-if="type.type === 'textarea'"
+								v-else
 								:id="`type-${type.type}`"
 								v-model="input[type.model]"
 								class="t-area"
 							/>
-							<div
-								v-else
-								class="input-file"
-							>
-								<b-form-file
-									:id="`type-${type.type}`"
-									v-model="input[type.model]"
-									:state="error[type.model]"
-									size="sm"
-									accept=".jpg,.jpeg,.png"
-									@input="handleUpload"
-								/>
-								<button
-									v-if="input[type.model]"
-									class="preview-btn"
-									@click.prevent="showPreview"
-								>
-									<icon-photo />
-								</button>
-							</div>
 						</b-col>
 					</b-row>
 				</fieldset>
 			</form>
 		</div>
-		<b-modal
-			id="preview-modal"
-			content-class="preview-image-modal"
-			centered
-			hide-header
-			hide-footer
-		>
-			<img
-				:src="previewImageSrc"
-				class="preview-image"
-			>
-		</b-modal>
 		<base-page-step
 			:step="step"
 			@next="submit"
@@ -82,27 +50,20 @@
 @import "@/styles/pages/create-activity-detail.scss";
 </style>
 <script>
-import IconPhoto from "@/components/icons/IconPhoto.vue";
 import { CREATE_ACTIVITY_FORM } from "@/constants/form";
 import { mapState } from "vuex";
 
 export default {
-	components: {
-		IconPhoto
-	},
 	data() {
 		return {
 			fields: CREATE_ACTIVITY_FORM,
-			previewImageSrc: "",
 			input: {
 				name: "",
 				description: "",
-				img: null,
 				activityDate: ""
 			},
 			error: {
 				name: null,
-				img: null,
 				activityDate: null
 			}
 		};
@@ -120,7 +81,9 @@ export default {
 		}
 	},
 	created() {
-		this.input = this.detailInput;
+		if (this.detailInput.name) {
+			this.input = this.detailInput;
+		}
 	},
 	methods: {
 		validateSubmit() {
@@ -147,15 +110,6 @@ export default {
 			await this.$store.dispatch("createActivity/setDetailInput", this.input);
 			await this.$store.dispatch("createActivity/addStep", this.step.step);
 			this.$router.push({ name: "create-activity-competence" });
-		},
-		showPreview() {
-			this.$bvModal.show("preview-modal");
-		},
-		handleUpload(e) {
-			if (e) {
-				this.error.img = null;
-				this.previewImageSrc = URL.createObjectURL(e);
-			}
 		}
 	}
 };

@@ -39,7 +39,7 @@
 											]"
 										>
 											<base-image size="90" />
-											<p class="text">{{ badge.name }}</p>
+											<p class="text">{{ badge.competence_name }}</p>
 										</label>
 									</b-col>
 								</div>
@@ -59,6 +59,7 @@
 <script>
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import loading from "@/plugin/loading";
+import { getSemester } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -97,7 +98,7 @@ export default {
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
 					giver: "tiny",
-					semester: 22019
+					semester: getSemester()
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });
@@ -112,6 +113,9 @@ export default {
 			} finally {
 				loading.stop();
 			}
+		},
+		sm() {
+			fetch("GET", "");
 		},
 		async goBack() {
 			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);

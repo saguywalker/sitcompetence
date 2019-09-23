@@ -14,7 +14,7 @@ const mutations = {
 		stateData.hashId = data;
 	},
 	[UPDATE_VERIFY_DATA](stateData, data) {
-		stateData.verifyData = data
+		stateData.verifyData = data;
 	}
 };
 
@@ -27,9 +27,6 @@ const actions = {
 
 		if (response.status === 200) {
 			commit(UPDATE_VERIFY_DATA, response.data);
-			console.log(response.data);
-		} else {
-			console.log("Error I Sus");
 		}
 	}
 };

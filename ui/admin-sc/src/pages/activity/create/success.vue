@@ -3,7 +3,10 @@
 		<div class="box">
 			<div class="form">
 				<success-logo text="Create" />
-				<router-link :to="{ name: 'create-activity' }">
+				<router-link
+					:to="{ name: 'create-activity' }"
+					class="mt-3"
+				>
 					<b-button
 						variant="primary"
 						size="sm"
@@ -38,8 +41,6 @@ export default {
 		this.$store.dispatch("createActivity/clearStep");
 		next();
 	},
-	computed: {
-		...mapState("createActivity", ["steps"])
-	}
+	computed: mapState("createActivity", ["steps"])
 };
 </script>

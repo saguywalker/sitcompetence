@@ -1,6 +1,8 @@
+import { Activity } from "@/services";
 import {
 	LOAD_POST_ACTIVITIES,
-	LOAD_SAVE_ACTIVITIES
+	LOAD_SAVE_ACTIVITIES,
+	LOAD_ACTIVITY
 } from "../mutationTypes";
 
 const state = {
@@ -50,7 +52,8 @@ const state = {
 		id: "5555",
 		title: "Miyabi",
 		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima cupiditate laudantium ipsa est maxime quasi minus soluta laborum. Unde soluta natus itaque qui! Quod asperiores aliquid odio nihil, veniam in."
-	}]
+	}],
+	activities: []
 };
 
 const mutations = {
@@ -63,6 +66,11 @@ const mutations = {
 		stateData.saveActivities = [
 			...data
 		];
+	},
+	[LOAD_ACTIVITY](stateData, data) {
+		stateData.activities = [
+			...data
+		];
 	}
 };
 
@@ -72,6 +80,25 @@ const actions = {
 	},
 	loadSaveActivities({ commit }, data) {
 		commit(LOAD_SAVE_ACTIVITIES, data);
+	},
+	async loadActivity({ commit }) {
+		const response = await Activity.getActivities();
+
+		if (response.status === 200) {
+			commit(LOAD_ACTIVITY, response.data);
+		}
+	}
+};
+
+const getters = {
+	postedActivities: (stateData) => {
+		return stateData.activities.filter((activity) => activity.student_site);
+	},
+	savedActivities: (stateData) => {
+		return stateData.activities.filter((activity) => !activity.student_site);
+	},
+	getActivityById: (stateData) => (id) => {
+		return stateData.activities.find((activity) => activity.activity_id === id);
 	}
 };
 
@@ -79,5 +106,6 @@ export default {
 	namespaced: true,
 	state,
 	mutations,
-	actions
+	actions,
+	getters
 };

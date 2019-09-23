@@ -2,10 +2,9 @@ import axios from "axios";
 
 const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api",
-	withCredentials: false,
+	withCredentials: true,
 	headers: {
-		Accept: "application/json",
-		"Content-Type": "application/json"
+		"Access-Control-Allow-Origin": "http://localhost:3000"
 	}
 });
 
@@ -24,6 +23,15 @@ const Base = {
 	}
 };
 
+const Activity = {
+	postCreateActivity(data) {
+		return apiClient.post("/activity", data);
+	},
+	getActivities() {
+		return apiClient.get("/activity");
+	}
+};
+
 const Verify = {
 	postVerifyTransaction(data) {
 		return apiClient.post("/verify", data);
@@ -33,5 +41,6 @@ const Verify = {
 export {
 	Base,
 	GiveBadge,
+	Activity,
 	Verify
 };

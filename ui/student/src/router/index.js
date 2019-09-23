@@ -12,9 +12,22 @@ export default new Router({
 			component: () => import(/* webpackChunkName: "login" */ "@/pages/Login.vue")
 		},
 		{
-			path: "/main",
-			name: "main",
-			component: () => import(/* webpackChunkName: "main" */ "@/pages/Main.vue")
+			path: "/",
+			component: () => import(/* webpackChunkName: "studentLayout" */"@/layouts/StudentLayout.vue"),
+			children: [
+				{
+					name: "dashboard",
+					path: "/",
+					component: () => import(/* webpackChunkName: "studentLayout" */"@/pages/Dashboard.vue")
+				}
+			]
+		},
+		{
+			name: "admin",
+			path: "/admin",
+			beforeEnter() {
+				location.href = "http://github.com";
+			}
 		}
 	]
 });

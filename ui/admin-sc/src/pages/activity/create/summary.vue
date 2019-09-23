@@ -7,7 +7,7 @@
 						Activity summary
 					</h2>
 					<h4 class="subtitle">
-						Comfirm activity details
+						Confirm activity details
 					</h4>
 				</div>
 				<router-link
@@ -23,19 +23,6 @@
 						</label>
 						<p class="data">
 							{{ summary.name }}
-						</p>
-					</div>
-					<div class="detail-row">
-						<label class="label">
-							Image:
-						</label>
-						<p class="data">
-							<b-button
-								class="preview-btn"
-								@click.prevent="showPreview"
-							>
-								<icon-photo />
-							</b-button>
 						</p>
 					</div>
 					<div class="detail-row">
@@ -58,10 +45,8 @@
 				<div class="question">
 					<b-form-checkbox
 						id="checkbox-1"
-						v-model="status"
+						v-model="student_site"
 						name="checkbox-1"
-						value="accepted"
-						unchecked-value="not_accepted"
 					>
 						Post to student website
 					</b-form-checkbox>
@@ -73,18 +58,6 @@
 				</div>
 			</div>
 		</div>
-		<b-modal
-			id="preview-modal"
-			content-class="preview-image-modal"
-			centered
-			hide-header
-			hide-footer
-		>
-			<img
-				:src="previewImageSrc"
-				class="preview-image"
-			>
-		</b-modal>
 		<base-page-step
 			:step="step"
 			@next="submit"
@@ -96,8 +69,8 @@
 @import "@/styles/pages/create-activity-summary.scss";
 </style>
 <script>
-import IconPhoto from "@/components/icons/IconPhoto.vue";
 import IconPen from "@/components/icons/IconPen.vue";
+import loading from "@/plugin/loading";
 import { mapState } from "vuex";
 
 export default {
@@ -109,7 +82,6 @@ export default {
 		});
 	},
 	components: {
-		IconPhoto,
 		IconPen
 	},
 	filters: {
@@ -123,7 +95,7 @@ export default {
 	},
 	data() {
 		return {
-			status: "",
+			student_site: false,
 			summary: {}
 		};
 	},
@@ -132,9 +104,6 @@ export default {
 			"detailInput",
 			"steps"
 		]),
-		previewImageSrc() {
-			return URL.createObjectURL(this.summary.img);
-		},
 		step() {
 			return this.$route.meta.step;
 		}
@@ -144,15 +113,30 @@ export default {
 	},
 	methods: {
 		async submit() {
-			await this.$store.dispatch("createActivity/addStep", this.step.step);
-			this.$router.push({ name: "create-activity-success" });
+			loading.start();
+			try {
+				await this.$store.dispatch("createActivity/submitCreateActivity", {
+					...this.summary,
+					creator: "st01", // TODO: Get from login user
+					student_site: this.student_site
+				});
+				await this.$store.dispatch("createActivity/addStep", this.step.step);
+				this.$router.push({ name: "create-activity-success" });
+			} catch (err) {
+				const notification = {
+					title: "Submit create activity",
+					message: `There was a problem submitting data: ${err.message}`,
+					variant: "danger"
+				};
+
+				this.$store.dispatch("notification/add", notification);
+			} finally {
+				loading.stop();
+			}
 		},
 		async goBack() {
 			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
 			this.$router.push({ name: "create-activity-competence" });
-		},
-		showPreview() {
-			this.$bvModal.show("preview-modal");
 		}
 	}
 };

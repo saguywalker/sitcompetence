@@ -17,15 +17,30 @@ export const clickOutside = {
 	bind(el, binding, vnode) {
 		handleClickOutside = (event) => {
 			event.stopPropagation();
-			const { handler, exclude } = binding.value;
+			const { handler, exclude, sidebar } = binding.value;
 			let clickOnExcludeEl = false;
 
-			exclude.forEach((refName) => {
-				if (!clickOnExcludeEl) {
-					const excludeEl = vnode.context.$refs[refName];
-					clickOnExcludeEl = excludeEl.contains(event.target);
-				}
-			});
+			if (sidebar) {
+				exclude.forEach((refName) => {
+					if (!clickOnExcludeEl) {
+						const excludeEl = vnode.context.$refs[refName];
+						clickOnExcludeEl = excludeEl.contains(event.target);
+					}
+				});
+				sidebar.forEach((refName) => {
+					if (!clickOnExcludeEl) {
+						const sidebarBtnToggle = vnode.context.$parent.$refs.navbar.$refs[refName];
+						clickOnExcludeEl = sidebarBtnToggle.contains(event.target);
+					}
+				});
+			} else {
+				exclude.forEach((refName) => {
+					if (!clickOnExcludeEl) {
+						const excludeEl = vnode.context.$refs[refName];
+						clickOnExcludeEl = excludeEl.contains(event.target);
+					}
+				});
+			}
 
 			if (!el.contains(event.target) && !clickOnExcludeEl) {
 				vnode.context[handler]();

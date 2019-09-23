@@ -1,6 +1,11 @@
 <template>
 	<div class="create-activity-competence">
-		<div class="box">
+		<div
+			:class="[
+				'box',
+				hasError ? 'error' : ''
+			]"
+		>
 			<h2 class="box-header">
 				Select badge to give
 			</h2>
@@ -25,6 +30,7 @@
 							v-model="selects"
 							:value="option"
 							type="checkbox"
+							@input="hasError = false"
 						>
 						<p class="text">{{ option.name }}</p>
 					</label>
@@ -47,7 +53,7 @@ import { mapState } from "vuex";
 export default {
 	data() {
 		return {
-			errors: [],
+			hasError: false,
 			options: [ // TODO: Get all badge options from backend
 				{
 					id: "002",
@@ -93,6 +99,17 @@ export default {
 			return this.selects.some((select) => select.id === id);
 		},
 		async submit() {
+			this.validateSubmit();
+
+			if (this.hasError) {
+				this.$bvToast.toast("Please select the badge for the activity", {
+					title: "No badge error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+				return;
+			}
+
 			await this.$store.dispatch("createActivity/setCompetenceInput", this.selects);
 			await this.$store.dispatch("createActivity/addStep", this.step.step);
 			this.$router.push({ name: "create-activity-summary" });
@@ -100,6 +117,9 @@ export default {
 		async goBack() {
 			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
 			this.$router.push({ name: "create-activity" });
+		},
+		validateSubmit() {
+			this.hasError = this.selects.length === 0;
 		}
 	}
 };

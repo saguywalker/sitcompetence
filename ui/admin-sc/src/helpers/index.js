@@ -27,3 +27,17 @@ export const base64ToHex = (str) => {
 export const hexToBase64 = (str) => {
 	return btoa(String.fromCharCode.apply(null, str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
 };
+
+export const getSemester = () => {
+	const today = new Date();
+	const month = parseInt(today.getDate(), 10);
+	const year = parseInt(today.getFullYear(), 10);
+
+	if (month >= 8 && month <= 12) {
+		return 10000 + year;
+	}	else if (month === 1) {
+		return 10000 + (year + 1);
+	}
+
+	return 20000 + year;
+};

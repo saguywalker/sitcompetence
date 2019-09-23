@@ -1,16 +1,20 @@
 <template>
-	<aside class="main-sidebar">
+	<aside
+		ref="sidebar"
+		class="main-sidebar"
+	>
 		<section
+			v-click-outside="{
+				exclude: ['sidebar'],
+				sidebar: ['toggleBtn'],
+				handler: 'handleClickOutside'
+			}"
 			:class="[
 				'sidebar',
 				toggle ? 'desktop-hide' : ''
 			]"
 		>
 			<div class="user-panel">
-				<base-image
-					class="image"
-					size="50"
-				/>
 				<div class="user-panel-info">
 					<p class="name">
 						Tindanai <span>{{ "Wongpipattanopas" | longSurname }}</span>
@@ -23,15 +27,6 @@
 			<ul class="sidebar-menu">
 				<li class="header">
 					Admin
-				</li>
-				<li>
-					<router-link
-						:to="{ name: 'dashboard' }"
-						class="item"
-					>
-						<icon-dashboard class="icon" />
-						<span class="name">Dashboard</span>
-					</router-link>
 				</li>
 				<li>
 					<router-link
@@ -49,15 +44,6 @@
 					>
 						<icon-activity class="icon" />
 						<span class="name">Activity</span>
-					</router-link>
-				</li>
-				<li>
-					<router-link
-						:to="{ name: 'badge-setting' }"
-						class="item"
-					>
-						<icon-badge-setting class="icon" />
-						<span class="name">Badge setting</span>
 					</router-link>
 				</li>
 				<li>
@@ -80,19 +66,20 @@
 @import "@/styles/components/sidebar.scss";
 </style>
 <script>
-import IconDashboard from "@/components/icons/IconDashboard.vue";
 import IconGiveBadge from "@/components/icons/IconGiveBadge.vue";
 import IconActivity from "@/components/icons/IconActivity.vue";
-import IconBadgeSetting from "@/components/icons/IconBadgeSetting.vue";
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
+import { widthSize } from "@/helpers/mixins";
+import { clickOutside } from "@/helpers/directives/clickOutside";
 
 export default {
 	components: {
-		IconDashboard,
 		IconGiveBadge,
 		IconActivity,
-		IconBadgeSetting,
 		IconCheckCircle
+	},
+	directives: {
+		clickOutside
 	},
 	filters: {
 		longSurname(value) {
@@ -102,10 +89,23 @@ export default {
 			return value;
 		}
 	},
+	mixins: [widthSize],
 	props: {
 		toggle: {
 			type: Boolean,
 			required: true
+		}
+	},
+	data() {
+		return {
+			windowWidth: 0
+		};
+	},
+	methods: {
+		handleClickOutside() {
+			if (this.windowWidth < 992) {
+				this.$emit("hide-mobile", false);
+			}
 		}
 	}
 };

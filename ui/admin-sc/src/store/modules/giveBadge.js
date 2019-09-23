@@ -67,7 +67,7 @@ const actions = {
 	},
 	async submitGiveBadge({ commit, state: stateData }, data) {
 		const filterData = stateData.selectedStudents.map((st) => {
-			const idBadges = st.badges.map((badge) => badge.id);
+			const idBadges = st.badges.map((badge) => badge.competence_id);
 
 			const separateBadge = idBadges.map((id) => {
 				return {
@@ -97,6 +97,8 @@ const actions = {
 				data: payload
 			});
 		}
+
+		return response;
 	},
 	addStep({ commit, state: stateData }, data) {
 		if (stateData.steps.includes(data)) {

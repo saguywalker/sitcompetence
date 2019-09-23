@@ -111,7 +111,7 @@ export default {
 			this.validateSubmit();
 
 			if (!this.isError) {
-				this.$router.push({ name: "main" });
+				this.$router.push({ name: "admin" });
 			}
 		},
 		handleShowDetailMobile() {
