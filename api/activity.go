@@ -12,11 +12,28 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
-// GetActivities response with all of activities
-func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	activities, err := ctx.GetActivities()
-	if err != nil {
-		return err
+// GetActivity response with all of activities
+func (a *API) GetActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	params := r.URL.Query()
+
+	var activities []*model.Activity
+
+	if params.Get("activity_id") != "" {
+		activity, err := ctx.GetActivityByID(params.Get("activity_id"))
+		if err != nil {
+			return err
+		}
+		activities = append(activities, activity)
+	} else if params.Get("staff_id") != "" {
+		activities, err := ctx.GetActivitiesByStaff(params.Get("staff_id"))
+		if err != nil {
+			return err
+		}
+	} else {
+		activities, err := ctx.GetActivities()
+		if err != nil {
+			return err
+		}
 	}
 
 	data, err := json.Marshal(activities)

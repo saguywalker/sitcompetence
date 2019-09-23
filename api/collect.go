@@ -12,14 +12,14 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
-// GetCompetences response with all of competences
-func (a *API) GetCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	competences, err := ctx.GetCompetences()
+// GetCollectedCompetences response with all of competences
+func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	collected, err := ctx.GetCollectedCompetences
 	if err != nil {
 		return err
 	}
 
-	data, err := json.Marshal(competences)
+	data, err := json.Marshal(collected)
 	if err != nil {
 		return err
 	}
@@ -28,14 +28,9 @@ func (a *API) GetCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	return err
 }
 
-// CreateCompetenceResponse defines competenceID for response back
-type CreateCompetenceResponse struct {
-	CompetenceID uint16 `json:"competence_id"`
-}
-
-// CreateCompetence create new competence from request
-func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	var input model.Competence
+// CreateCollectedCompetence create new competence from request
+func (a *API) CreateCollectedCompetence(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	var input model.CollectedCompetence
 
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
@@ -47,21 +42,15 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 		return err
 	}
 
-	if err := ctx.CreateCompetence(&input); err != nil {
+	if err := ctx.CreateCollectedCompetence(&input); err != nil {
 		return err
 	}
 
-	data, err := json.Marshal(&CreateCompetenceResponse{CompetenceID: input.CompetenceID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
 	return err
 }
 
 // GetCompetenceByID response a competence from requested competenceID
-func (a *API) GetCompetenceByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+func (a *API) GetCollectedByStudentID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getCompetenceIDFromRequest("id", r)
 	competence, err := ctx.GetCompetenceByID(id)
 	if err != nil {
