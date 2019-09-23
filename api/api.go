@@ -48,18 +48,18 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
 	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
 	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("POST")
-	// r.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
+	r.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
 	r.Handle("/competence", a.handler(a.CreateCompetence)).Methods("POST")
-	// r.Handle("/activity", a.handler(a.GetActivities)).Methods("GET")
+	r.Handle("/activity", a.handler(a.GetActivities)).Methods("GET")
 	r.Handle("/activity", a.handler(a.CreateActivity)).Methods("POST")
-	// r.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
+	r.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
 	r.Handle("/student", a.handler(a.CreateStudent)).Methods("POST")
-	// r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
+	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.GetCompetence)).Methods("GET")
-	searchRoute.Handle("/activity", a.handler(a.GetActivity)).Methods("GET")
+	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
 	searchRoute.Handle("/student", a.handler(a.GetStudent)).Methods("GET")
 	searchRoute.Handle("/staff", a.handler(a.GetStaff)).Methods("GET")
 	searchRoute.Handle("/merkleitem", a.handler(a.GetMerkle)).Methods("GET")
@@ -175,6 +175,13 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 		}
 	}
 	return strings.Split(strings.TrimSpace(addr), ":")[0]
+}
+
+func getIdFromRequest(param string, r *http.Request) string {
+	vars := mux.Vars(r)
+	id := vars[param]
+
+	return id
 }
 
 // Home is for testing purpose only

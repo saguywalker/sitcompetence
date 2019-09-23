@@ -14,9 +14,10 @@ func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Creator, &activity.Date)
+		err := row.Scan(&activity)
+		//err := row.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
 		if err != nil {
-			return nil, nil
+			return nil, err
 		}
 	}
 
@@ -34,7 +35,51 @@ func (db *Database) GetActivities() (*[]model.Activity, error) {
 
 	for rows.Next() {
 		var activity model.Activity
-		err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Creator, &activity.Date)
+		err := rows.Scan(&activity)
+		//err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
+		if err != nil {
+			return nil, err
+		}
+		activities = append(activities, activity)
+	}
+
+	return &activities, nil
+}
+
+// GetActivitiesByStaff returns all activities in a table
+func (db *Database) GetActivitiesByStaff(id uint32) (*[]model.Activity, error) {
+	var activities []model.Activity
+
+	rows, err := db.Query("SELECT * FROM activity WHERE creator = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var activity model.Activity
+		err := rows.Scan(&activity)
+		// err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator)
+		if err != nil {
+			return nil, err
+		}
+		activities = append(activities, activity)
+	}
+
+	return &activities, nil
+}
+
+// GetActivitiesByStudent returns all activities in a table
+func (db *Database) GetActivitiesByStudent(id string) (*[]model.Activity, error) {
+	var activities []model.Activity
+
+	rows, err := db.Query("SELECT activity.activityId, activity.activityName, activity.date, activity.creator, activity.studentSite FROM activity, attendedActivity WHERE activity.activityId = attendedActivity.activityId AND activity.activityId = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var activity model.Activity
+		err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
 		if err != nil {
 			return nil, err
 		}
@@ -58,6 +103,23 @@ func (db *Database) CreateActivity(activity *model.Activity) error {
 
 	return nil
 }
+
+/*
+// UpdateActivity deletes a activity from activityID
+func (db *Database) UpdateActivity(activityID uint32) error {
+	stmt, err := db.Prepare("UPDATE FROM activity WHERE activityId = $1")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(activityID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+*/
 
 // DeleteActivity deletes a activity from activityID
 func (db *Database) DeleteActivity(activityID uint32) error {

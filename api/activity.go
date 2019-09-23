@@ -6,31 +6,54 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
-
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
 )
 
-// GetActivity response with all of activities
-func (a *API) GetActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+// GetActivities response with all of activities
+func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	activities, err := ctx.GetActivities()
+	if err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(activities)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(data)
+	return nil
+}
+
+func (a *API) SearchActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	params := r.URL.Query()
 
 	var activities []*model.Activity
 
 	if params.Get("activity_id") != "" {
-		activity, err := ctx.GetActivityByID(params.Get("activity_id"))
+		activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
 		if err != nil {
 			return err
 		}
+
+		activity, err := ctx.GetActivityByID(uint32(activityID))
+		if err != nil {
+			return err
+		}
+
 		activities = append(activities, activity)
-	} else if params.Get("staff_id") != "" {
-		activities, err := ctx.GetActivitiesByStaff(params.Get("staff_id"))
-		if err != nil {
-			return err
-		}
 	} else {
-		activities, err := ctx.GetActivities()
+		var err error
+
+		if params.Get("staff_id") != "" {
+			activities, err = ctx.GetActivitiesByStaff(params.Get("staff_id"))
+		} else if params.Get("student_id") != "" {
+			activities, err = ctx.GetActivitiesByStudent(params.Get("student_id"))
+		} else {
+			activities, err = ctx.GetActivities()
+		}
+
 		if err != nil {
 			return err
 		}
@@ -42,12 +65,7 @@ func (a *API) GetActivity(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	_, err = w.Write(data)
-	return err
-}
-
-// CreateActivityResponse defines activityID for response back
-type CreateActivityResponse struct {
-	ActivityID uint32 `json:"activity_id"`
+	return nil
 }
 
 // CreateActivity create new activity from request
@@ -68,40 +86,39 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	data, err := json.Marshal(&CreateActivityResponse{ActivityID: input.ActivityID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
-	return err
+	return nil
 }
 
-// GetActivityByID response an activity from requested activityID
-func (a *API) GetActivityByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getActivityIDFromRequest(r)
-	activity, err := ctx.GetActivityByID(id)
+/*
+// UpdateActivity update an existing activity
+func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	id := getIdFromRequest("id", r)
+	var input model.Activity
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
 
-	data, err := json.Marshal(activity)
-	if err != nil {
+	if err := json.Unmarshal(body, &input); err != nil {
 		return err
 	}
 
-	_, err = w.Write(data)
-	return err
+	if err := ctx.UpdateActivity(&input); err != nil {
+		return err
+	}
+
+	return nil
 }
+*/
 
-func getActivityIDFromRequest(r *http.Request) uint32 {
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	intID, err := strconv.ParseUint(id, 10, 0)
-	if err != nil {
-		return 0
+// DeleteActivityByID delete an existing activity activity
+func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	id := getIdFromRequest("id", r)
+	if err := ctx.DeleteActivity(); err != nil {
+		return err
 	}
 
-	return uint32(intID)
+	return nil
 }
