@@ -24,8 +24,8 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 }
 
 // GetCompetences returns all competences in a table
-func (db *Database) GetCompetences() (*[]model.Competence, error) {
-	var competences []model.Competence
+func (db *Database) GetCompetences() ([]*model.Competence, error) {
+	var competences []*model.Competence
 
 	rows, err := db.Query("SELECT * FROM competence")
 	if err != nil {
@@ -38,10 +38,10 @@ func (db *Database) GetCompetences() (*[]model.Competence, error) {
 		if err != nil {
 			return nil, err
 		}
-		competences = append(competences, competence)
+		competences = append(competences, &competence)
 	}
 
-	return &competences, nil
+	return competences, nil
 }
 
 // CreateCompetence inserts a new competence

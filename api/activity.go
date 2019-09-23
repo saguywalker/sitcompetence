@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
-
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -25,12 +23,49 @@ func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	_, err = w.Write(data)
-	return err
+	return nil
 }
 
-// CreateActivityResponse defines activityID for response back
-type CreateActivityResponse struct {
-	ActivityID uint32 `json:"activity_id"`
+func (a *API) SearchActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	params := r.URL.Query()
+
+	var activities []*model.Activity
+
+	if params.Get("activity_id") != "" {
+		activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
+		if err != nil {
+			return err
+		}
+
+		activity, err := ctx.GetActivityByID(uint32(activityID))
+		if err != nil {
+			return err
+		}
+
+		activities = append(activities, activity)
+	} else {
+		var err error
+
+		if params.Get("staff_id") != "" {
+			activities, err = ctx.GetActivitiesByStaff(params.Get("staff_id"))
+		} else if params.Get("student_id") != "" {
+			activities, err = ctx.GetActivitiesByStudent(params.Get("student_id"))
+		} else {
+			activities, err = ctx.GetActivities()
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	data, err := json.Marshal(activities)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(data)
+	return nil
 }
 
 // CreateActivity create new activity from request
@@ -51,40 +86,45 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	data, err := json.Marshal(&CreateActivityResponse{ActivityID: input.ActivityID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
-	return err
+	return nil
 }
 
-// GetActivityByID response an activity from requested activityID
-func (a *API) GetActivityByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getActivityIDFromRequest(r)
-	activity, err := ctx.GetActivityByID(id)
+/*
+// UpdateActivity update an existing activity
+func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	id := getIdFromRequest("id", r)
+	var input model.Activity
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
 
-	data, err := json.Marshal(activity)
-	if err != nil {
+	if err := json.Unmarshal(body, &input); err != nil {
 		return err
 	}
 
-	_, err = w.Write(data)
-	return err
+	if err := ctx.UpdateActivity(&input); err != nil {
+		return err
+	}
+
+	return nil
 }
+*/
 
-func getActivityIDFromRequest(r *http.Request) uint32 {
-	vars := mux.Vars(r)
-	id := vars["id"]
+// DeleteActivityByID delete an existing activity activity
+func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	id := getIdFromRequest("id", r)
 
-	intID, err := strconv.ParseUint(id, 10, 0)
+	intID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return 0
+		return err
 	}
 
-	return uint32(intID)
+	if err := ctx.DeleteActivity(uint32(intID)); err != nil {
+		return err
+	}
+
+	return nil
 }

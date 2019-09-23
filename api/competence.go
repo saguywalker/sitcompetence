@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -62,7 +59,7 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 
 // GetCompetenceByID response a competence from requested competenceID
 func (a *API) GetCompetenceByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getCompetenceIDFromRequest(r)
+	id := getCompetenceIDFromRequest("id", r)
 	competence, err := ctx.GetCompetenceByID(id)
 	if err != nil {
 		return err
@@ -75,21 +72,4 @@ func (a *API) GetCompetenceByID(ctx *app.Context, w http.ResponseWriter, r *http
 
 	_, err = w.Write(data)
 	return err
-}
-
-// GetCompetenceByStudent response competences from by student id
-func (a *API) GetCompetenceByStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-func getCompetenceIDFromRequest(r *http.Request) uint16 {
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	intID, err := strconv.ParseUint(id, 10, 0)
-	if err != nil {
-		return 0
-	}
-
-	return uint16(intID)
 }

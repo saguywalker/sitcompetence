@@ -32,17 +32,7 @@ func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot []byte, tr
 	return transaction, nil
 }
 
-// UpdateCollectedCompetence update new competence and its transactionID to a corresponding studentID
-func (ctx *Context) UpdateCollectedCompetence(badges []*model.GiveBadge, txID []byte) error {
-	for _, badge := range badges {
-		tmp := model.NewCollectedCompetence(badge.StudentID, badge.CompetenceID, txID)
-		if err := ctx.Database.CreateCollectedCompetence(tmp); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
+// VerifyTX verify data with a given merkle root
 func (ctx *Context) VerifyTX(merkleRoot, data []byte) (bool, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {

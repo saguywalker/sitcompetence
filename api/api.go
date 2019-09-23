@@ -44,24 +44,25 @@ func New(a *app.App) (api *API, err error) {
 func (a *API) Init(r *mux.Router) {
 	// user methods
 	//r.Handle("/users/", a.handler(a.CreateUser)).Methods("POST")
-	//r.Handle("/", a.handler(a.HelloHandler)).Methods("GET")
 	r.Handle("/home", a.handler(a.Home)).Methods("GET")
 	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
 	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
 	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("POST")
-	r.Handle("/competences", a.handler(a.GetCompetences)).Methods("GET")
-	r.Handle("/competence/{id:[0-9]+}", a.handler(a.GetCompetenceByID)).Methods("GET")
+	r.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
 	r.Handle("/competence", a.handler(a.CreateCompetence)).Methods("POST")
-	r.Handle("/activities", a.handler(a.GetActivities)).Methods("GET")
-	r.Handle("/activity/{id:[0-9]+}", a.handler(a.GetActivityByID)).Methods("GET")
+	r.Handle("/activity", a.handler(a.GetActivities)).Methods("GET")
 	r.Handle("/activity", a.handler(a.CreateActivity)).Methods("POST")
-	r.Handle("/students", a.handler(a.GetStudents)).Methods("GET")
-	r.Handle("/student/{id:[0-9]+}", a.handler(a.GetStudentByID)).Methods("GET")
+	r.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
 	r.Handle("/student", a.handler(a.CreateStudent)).Methods("POST")
-	r.Handle("/staffs", a.handler(a.GetStaffs)).Methods("GET")
-	r.Handle("/staff/{id:[0-9]+}", a.handler(a.GetStaffByID)).Methods("GET")
+	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
 
+	searchRoute := r.PathPrefix("/search").Subrouter()
+	searchRoute.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
+	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
+	searchRoute.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
+	searchRoute.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
+	//searchRoute.Handle("/merkleitem", a.handler(a.GetMerkles)).Methods("GET")
 }
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {
@@ -174,6 +175,13 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 		}
 	}
 	return strings.Split(strings.TrimSpace(addr), ":")[0]
+}
+
+func getIdFromRequest(param string, r *http.Request) string {
+	vars := mux.Vars(r)
+	id := vars[param]
+
+	return id
 }
 
 // Home is for testing purpose only

@@ -45,12 +45,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	ctx.Logger.Infof("Merkle Root Hash: %x", tree.MerkleRoot())
-	/*
-		hashes := make([]string, uint(2*math.Ceil(float64(len(listOfHashes))/2.0)))
-		for i, leaf := range tree.Leafs {
-			hashes[i] = fmt.Sprintf("%x", leaf.Hash)
-		}
-	*/
+
 	transactionID, err := a.broadcastTX(ctx, w, tree.MerkleRoot())
 	if err != nil {
 		return err
@@ -61,7 +56,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	if err := ctx.UpdateCollectedCompetence(listOfBadges, transactionID); err != nil {
+	if err := ctx.CreateCollectedCompetence(listOfBadges, transactionID); err != nil {
 		return err
 
 	}
