@@ -5,18 +5,26 @@
 				<router-link
 					:to="{ name: 'activity' }"
 					class="back-btn"
-					@click="goBack"
 				>
 					<icon-arrow />
 					Back
 				</router-link>
 				<div class="function">
-					<b-button
-						size="sm"
-						variant="primary"
+					<router-link
+						:to="{
+							name: 'activity-approve',
+							params: {
+								id: $route.params.id
+							}
+						}"
 					>
-						Approve Student
-					</b-button>
+						<b-button
+							size="sm"
+							variant="primary"
+						>
+							Approve Student
+						</b-button>
+					</router-link>
 					<b-button
 						size="sm"
 					>

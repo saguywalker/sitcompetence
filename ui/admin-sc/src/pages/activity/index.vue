@@ -26,7 +26,7 @@
 						v-for="(activity, index) in postActivities"
 						:key="`${activity.id}${index}`"
 						:to="{
-							name: 'activity_id',
+							name: 'activity-detail',
 							params: {
 								id: activity.id
 							}
@@ -49,7 +49,7 @@
 						v-for="(activity, index) in saveActivities"
 						:key="`${activity.id}${index}`"
 						:to="{
-							name: 'activity_id',
+							name: 'activity-detail',
 							params: {
 								id: activity.id
 							}
