@@ -191,6 +191,20 @@ button {
 	}
 }
 
+.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: $white;
+  height: rem(20);
+  width: rem(20);
+  margin: 0 rem(5);
+  background-color: $main-blue;
+  border-radius: 50%;
+  font-size: rem(10);
+  font-weight: bold;
+}
+
 /* LOADER 1 */
 
 #spin-loader:before, #spin-loader:after{

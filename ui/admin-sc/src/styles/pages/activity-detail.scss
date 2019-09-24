@@ -1,0 +1,89 @@
+@import "../cores.scss";
+
+.activity-detail {
+	font-size: rem(14);
+	color: $black-2;
+
+	&-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: rem(18);
+
+		.back-btn {
+			color: $black;
+
+			svg {
+				position: relative;
+				top: rem(-1);
+				transform: rotate(180deg);
+				fill: $black;
+			}
+		}
+
+		.function {
+			.btn {
+				margin-left: rem(5);
+			}
+		}
+	}
+
+	.content {
+		padding: rem(16);
+	}
+
+	.activity-header {
+		margin-bottom: rem(18);
+	}
+
+	h2 {
+		color: $super-black;
+		font-size: rem(30);
+		font-weight: bold;
+		margin-bottom: rem(16);
+		margin-top: rem(16);
+	}
+
+	h5 {
+		color: $super-black;
+		font-weight: bold;
+	}
+
+	.eyebrow {
+		font-size: rem(16);
+	}
+
+	.title {
+		color: $super-black;
+		font-size: rem(36);
+		font-weight: bold;
+	}
+
+	.attendees-title {
+		position: relative;
+
+		.badge {
+			position: absolute;
+			top: rem(11);
+		}
+	}
+
+	.attendees-list {
+		border: rem(1) solid $gray-5;
+		border-radius: rem(3);
+		padding: 0 rem(10);
+		list-style: none;
+		max-height: rem(300);
+		overflow-y: auto;
+
+		.item {
+			color: $super-black;
+			padding: rem(14) 0;
+			border-bottom: rem(1) solid $gray-6;
+
+			&:last-child {
+				border: 0;
+			}
+		}
+	}
+}

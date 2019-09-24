@@ -43,6 +43,7 @@
 		<base-page-step
 			:step="step"
 			@next="submit"
+			@back="goBack"
 		/>
 	</div>
 </template>
@@ -60,11 +61,19 @@ export default {
 			input: {
 				name: "",
 				description: "",
-				activityDate: ""
+				organizer: "",
+				category: "",
+				location: "",
+				activityDate: "",
+				activityTime: ""
 			},
 			error: {
 				name: null,
-				activityDate: null
+				organizer: null,
+				category: null,
+				location: null,
+				activityDate: null,
+				activityTime: null
 			}
 		};
 	},
@@ -94,6 +103,9 @@ export default {
 			});
 
 			this.error.description = null;
+		},
+		goBack() {
+			this.$router.push({ name: this.step.back.link });
 		},
 		async submit() {
 			this.validateSubmit();

@@ -116,7 +116,7 @@ export default {
 		},
 		async goBack() {
 			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
-			this.$router.push({ name: "create-activity" });
+			this.$router.push({ name: this.step.back.link });
 		},
 		validateSubmit() {
 			this.hasError = this.selects.length === 0;

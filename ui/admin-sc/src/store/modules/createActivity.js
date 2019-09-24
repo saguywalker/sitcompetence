@@ -10,7 +10,11 @@ const state = {
 	detailInput: {
 		name: "",
 		description: "",
-		activityDate: ""
+		organizer: "",
+		category: "",
+		location: "",
+		activityDate: "",
+		activityTime: ""
 	},
 	competences: [],
 	steps: []

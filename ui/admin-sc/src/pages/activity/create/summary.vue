@@ -27,10 +27,42 @@
 					</div>
 					<div class="detail-row">
 						<label class="label">
+							Organizer:
+						</label>
+						<p class="data">
+							{{ summary.organizer }}
+						</p>
+					</div>
+					<div class="detail-row">
+						<label class="label">
+							Category:
+						</label>
+						<p class="data">
+							{{ summary.category }}
+						</p>
+					</div>
+					<div class="detail-row">
+						<label class="label">
+							Location:
+						</label>
+						<p class="data">
+							{{ summary.location }}
+						</p>
+					</div>
+					<div class="detail-row">
+						<label class="label">
 							Activity date:
 						</label>
 						<p class="data">
 							{{ summary.activityDate }}
+						</p>
+					</div>
+					<div class="detail-row">
+						<label class="label">
+							Start time:
+						</label>
+						<p class="data">
+							{{ summary.activityTime }}
 						</p>
 					</div>
 					<div class="detail-row description">
@@ -136,7 +168,7 @@ export default {
 		},
 		async goBack() {
 			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
-			this.$router.push({ name: "create-activity-competence" });
+			this.$router.push({ name: this.step.back.link });
 		}
 	}
 };

@@ -39,6 +39,10 @@ export const CREATE_ACTIVITY_STEP = Object.freeze({
 			name: "Select competence",
 			link: "create-activity-competence"
 		}),
+		back: Object.freeze({
+			name: "Activity main",
+			link: "activity"
+		}),
 		step: "detail"
 	}),
 	competence: Object.freeze({
