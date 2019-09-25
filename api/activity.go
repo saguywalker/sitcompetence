@@ -26,6 +26,7 @@ func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Req
 	return nil
 }
 
+// SearchActivities search activity by id
 func (a *API) SearchActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	params := r.URL.Query()
 
@@ -89,7 +90,6 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	return nil
 }
 
-/*
 // UpdateActivity update an existing activity
 func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getIdFromRequest("id", r)
@@ -111,9 +111,8 @@ func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 	return nil
 }
-*/
 
-// DeleteActivityByID delete an existing activity activity
+// DeleteActivity delete an existing activity activity
 func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getIdFromRequest("id", r)
 

@@ -3,7 +3,7 @@ package app
 import "github.com/saguywalker/sitcompetence/model"
 
 // GetActivityByID returns activity struct from activity id
-func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
+func (ctx *Context) GetActivityByID(id uint32) (*model.FullActivity, error) {
 	activity, err := ctx.Database.GetActivityByID(id)
 	if err != nil {
 		return nil, err
@@ -14,9 +14,12 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 		return nil, err
 	}
 
-	activity.Competences = competences
+	students, err := ctx.Database.GetAttendedActivityByID(id)
+	if err != nil {
+		return nil, err
+	}
 
-	return activity, nil
+	return &model.FullActivity{ActivityDetail: activity, Competences: competences, Students: students}, nil
 }
 
 // GetActivities returns all of activities

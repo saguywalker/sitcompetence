@@ -6,6 +6,7 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// GetCollectedCompetences return all competences collected by all students
 func (ctx *Context) GetCollectedCompetences() ([]*model.Competence, error) {
 	return nil, fmt.Errorf("unimplemented")
 }
