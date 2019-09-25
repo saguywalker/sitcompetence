@@ -79,19 +79,17 @@ type ApproveActivity struct {
 	StudentID  string `json:"student_id"`
 	ActivityID uint32 `json:"activity_id"`
 	Approver   string `json:"approver"`
-	Semester   uint16 `json:"semester"`
 }
 
 // ActivityList contains list of approveactivity struct
 type ActivityList []ApproveActivity
 
 // NewApproveActivity creates new ApproveActivity
-func NewApproveActivity(studentID string, activityID uint32, approver string, semester uint16) *ApproveActivity {
+func NewApproveActivity(studentID string, activityID uint32, approver string) *ApproveActivity {
 	return &ApproveActivity{
 		StudentID:  studentID,
 		ActivityID: activityID,
 		Approver:   approver,
-		Semester:   semester,
 	}
 }
 

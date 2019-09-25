@@ -45,12 +45,6 @@ func (a *API) CreateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 		return err
 	}
 
-	data, err := json.Marshal(&CreateStudentResponse{StudentID: input.StudentID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
 	return err
 }
 

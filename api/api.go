@@ -62,7 +62,6 @@ func (a *API) Init(r *mux.Router) {
 	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
 	searchRoute.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
 	searchRoute.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
-	//searchRoute.Handle("/merkleitem", a.handler(a.GetMerkles)).Methods("GET")
 }
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {

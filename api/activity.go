@@ -92,7 +92,7 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 // UpdateActivity update an existing activity
 func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	// id := getIdFromRequest("id", r)
 	var input model.Activity
 
 	defer r.Body.Close()

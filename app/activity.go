@@ -3,7 +3,7 @@ package app
 import "github.com/saguywalker/sitcompetence/model"
 
 // GetActivityByID returns activity struct from activity id
-func (ctx *Context) GetActivityByID(id uint32) (*model.FullActivity, error) {
+func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 	activity, err := ctx.Database.GetActivityByID(id)
 	if err != nil {
 		return nil, err
@@ -14,12 +14,15 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.FullActivity, error) {
 		return nil, err
 	}
 
-	students, err := ctx.Database.GetAttendedActivityByID(id)
+	attendees, err := ctx.Database.GetAttendeesByActivityID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &model.FullActivity{ActivityDetail: activity, Competences: competences, Students: students}, nil
+	activity.Competences = competences
+	activity.Attendees = attendees
+
+	return activity, nil
 }
 
 // GetActivities returns all of activities
@@ -35,7 +38,13 @@ func (ctx *Context) GetActivities() ([]*model.Activity, error) {
 			return nil, err
 		}
 
+		attendees, err := ctx.Database.GetAttendeesByActivityID(activities[i].ActivityID)
+		if err != nil {
+			return nil, err
+		}
+
 		activities[i].Competences = competences
+		activities[i].Attendees = attendees
 	}
 
 	return activities, err
@@ -77,6 +86,16 @@ func (ctx *Context) GetActivitiesByStudent(id string) ([]*model.Activity, error)
 	}
 
 	return activites, err
+}
+
+// ApproveActivity append activity and student to attended table iteratively
+func (ctx *Context) ApproveActivity(activities []*model.ApproveActivity, txID []byte) error {
+	for _, activity := range activities {
+		if err := ctx.Database.ApproveAttended(activity.ActivityID, activity.StudentID, txID); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // CreateActivity creates new activity
