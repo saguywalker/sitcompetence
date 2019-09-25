@@ -12,6 +12,15 @@ func (ctx *Context) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	return competence, nil
 }
 
+func (ctx *Context) GetCompetencesByActivityID(activityID uint32) ([]*model.Activity, error) {
+	competences, err := ctx.Database.GetCompetencesByActivityID(activityID)
+	if err != nil {
+		return nil, err
+	}
+
+	return competences, nil
+}
+
 // GetCompetences returns all of activities
 func (ctx *Context) GetCompetences() ([]*model.Competence, error) {
 	competences, err := ctx.Database.GetCompetences()

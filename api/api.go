@@ -43,26 +43,35 @@ func New(a *app.App) (api *API, err error) {
 // Init routes api with handler
 func (a *API) Init(r *mux.Router) {
 	// user methods
-	//r.Handle("/users/", a.handler(a.CreateUser)).Methods("POST")
-	r.Handle("/home", a.handler(a.Home)).Methods("GET")
 	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
 	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
 	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("POST")
+
 	r.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
 	r.Handle("/competence", a.handler(a.CreateCompetence)).Methods("POST")
+	r.Handle("/competence", a.handler(a.UpdateCompetence)).Methods("PUT")
+	r.Handle("/competence/{id:[0-9]+}", a.handler(a.DeleteCompetence)).Methods("DELETE")
+
 	r.Handle("/activity", a.handler(a.GetActivities)).Methods("GET")
 	r.Handle("/activity", a.handler(a.CreateActivity)).Methods("POST")
+	r.Handle("/activity", a.handler(a.UpdateActivity)).Methods("PUT")
+	r.Handle("/activity/{id:[0-9]+}", a.handler(a.DeleteActivity)).Methods("DELETE")
+
 	r.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
 	r.Handle("/student", a.handler(a.CreateStudent)).Methods("POST")
+	r.Handle("/student", a.handler(a.UpdateStudent)).Methods("PUT")
+	r.Handle("/student/{id:[0-9]+}", a.handler(a.DeleteStudent)).Methods("DELETE")
+
 	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
+	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
+	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
-	searchRoute.Handle("/competence", a.handler(a.GetCompetences)).Methods("GET")
+	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
 	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
-	searchRoute.Handle("/student", a.handler(a.GetStudents)).Methods("GET")
-	searchRoute.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
-	//searchRoute.Handle("/merkleitem", a.handler(a.GetMerkles)).Methods("GET")
+	searchRoute.Handle("/student", a.handler(a.SearchStudents)).Methods("GET")
+	searchRoute.Handle("/staff", a.handler(a.SearchStaffs)).Methods("GET")
 }
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {

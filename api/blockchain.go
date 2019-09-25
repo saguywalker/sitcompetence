@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"math"
 	"net/http"
 
 	"github.com/cbergoon/merkletree"
@@ -56,8 +55,8 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 	}
 
-	b64Txid := base64.StdEncoding.EncodeToString(result.TransactionID)
-	b64MerkleRoot := base64.StdEncoding.EncodeToString(result.MerkleRoot)
+	b64Txid := base64.StdEncoding.EncodeToString(transactionID)
+	b64MerkleRoot := base64.StdEncoding.EncodeToString(tree.MerkleRoot())
 	b64Struct := struct {
 		Txid   string `json:"transaction_id"`
 		Merkle string `json:"merkleroot"`
@@ -85,7 +84,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 	defer r.Body.Close()
 
-	var listOfActivities []model.ApproveActivity
+	var listOfActivities []*model.ApproveActivity
 	if err := json.Unmarshal(body, &listOfActivities); err != nil {
 		return err
 	}
@@ -108,22 +107,17 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	hashes := make([]string, uint(2*math.Ceil(float64(len(listOfHashes))/2.0)))
-	for i, leaf := range tree.Leafs {
-		hashes[i] = fmt.Sprintf("%x", leaf.Hash)
-	}
-
 	transactionID, err := a.broadcastTX(ctx, w, tree.MerkleRoot())
 	if err != nil {
 		return nil
 	}
 
-	if err := ctx.UpdateAttendedActivity(listOfBadges, transactionID); err != nil {
+	if err := ctx.ApproveActivity(listOfActivities, transactionID); err != nil {
 		return err
 	}
 
-	b64Txid := base64.StdEncoding.EncodeToString(result.TransactionID)
-	b64MerkleRoot := base64.StdEncoding.EncodeToString(result.MerkleRoot)
+	b64Txid := base64.StdEncoding.EncodeToString(transactionID)
+	b64MerkleRoot := base64.StdEncoding.EncodeToString(tree.MerkleRoot())
 	b64Struct := struct {
 		Txid   string
 		Merkle string
