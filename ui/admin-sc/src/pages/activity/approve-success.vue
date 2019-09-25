@@ -23,25 +23,10 @@
 </style>
 <script>
 import SuccessLogo from "@/components/SuccessLogo.vue";
-import { mapState } from "vuex";
 
 export default {
 	components: {
 		SuccessLogo
-	},
-	beforeRouteEnter(to, from, next) {
-		next((vm) => {
-			// TODO: GET the success data and show in the form
-			if (!vm.steps.includes("summary")) {
-				vm.$router.replace({ name: "create-activity" });
-			}
-		});
-	},
-	beforeRouteLeave(to, from, next) {
-		// TODO: What to do with this activiy when approved ???
-		this.$store.dispatch("createActivity/clearStep");
-		next();
-	},
-	computed: mapState("createActivity", ["steps"])
+	}
 };
 </script>

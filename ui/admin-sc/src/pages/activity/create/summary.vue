@@ -103,6 +103,7 @@
 <script>
 import IconPen from "@/components/icons/IconPen.vue";
 import loading from "@/plugin/loading";
+import { getSemester } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -150,6 +151,7 @@ export default {
 				await this.$store.dispatch("createActivity/submitCreateActivity", {
 					...this.summary,
 					creator: "st01", // TODO: Get from login user
+					semester: getSemester(),
 					student_site: this.student_site
 				});
 				await this.$store.dispatch("createActivity/addStep", this.step.step);

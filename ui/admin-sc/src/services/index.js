@@ -24,6 +24,9 @@ const Base = {
 };
 
 const Activity = {
+	postApproveActivity(data) {
+		return apiClient.post("/approve", data);
+	},
 	postCreateActivity(data) {
 		return apiClient.post("/activity", data);
 	},

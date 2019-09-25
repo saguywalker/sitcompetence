@@ -2,10 +2,43 @@ import { Activity } from "@/services";
 import {
 	LOAD_POST_ACTIVITIES,
 	LOAD_SAVE_ACTIVITIES,
-	LOAD_ACTIVITY
+	LOAD_ACTIVITY,
+	APPROVE_ACTIVITY
 } from "../mutationTypes";
 
 const state = {
+	pastActivities: [
+		{
+			id: "2093",
+			title: "Run",
+			description: "Bab P' Toon"
+		},
+		{
+			id: "321",
+			title: "Forrest Gump",
+			description: ""
+		},
+		{
+			id: "8632",
+			title: "Pokemon",
+			description: "The best Pokemon Trainer in the world is Sasuke wtf..."
+		},
+		{
+			id: "4433",
+			title: "Jeab",
+			description: ""
+		},
+		{
+			id: "4321",
+			title: "Prep",
+			description: "Cheapest Flight"
+		},
+		{
+			id: "6332",
+			title: "Potato Corner",
+			description: "French Fries"
+		}
+	],
 	postActivities: [
 		{
 			id: "2093",
@@ -101,7 +134,8 @@ const state = {
 			title: "Potato Corner",
 			description: "French Fries"
 		}
-	]
+	],
+	responseData: {}
 };
 
 const mutations = {
@@ -119,6 +153,11 @@ const mutations = {
 		stateData.activities = [
 			...data
 		];
+	},
+	[APPROVE_ACTIVITY](stateData, data) {
+		stateData.responseData = {
+			...data
+		};
 	}
 };
 
@@ -135,6 +174,22 @@ const actions = {
 		if (response.status === 200) {
 			commit(LOAD_ACTIVITY, response.data);
 		}
+	},
+	async submitApprove({ commit }, data) {
+		const payload = data.approvedStudents.map((student) => {
+			return {
+				student_id: student.id,
+				activity_id: data.activityId,
+				approver: data.approver
+			};
+		});
+
+		const	response = await Activity.postApproveActivity(payload);
+		if (response.status === 200) {
+			commit(APPROVE_ACTIVITY, response.data);
+		}
+
+		return response;
 	}
 };
 
@@ -147,6 +202,13 @@ const getters = {
 	},
 	getActivityById: (stateData) => (id) => {
 		return stateData.activities.find((activity) => activity.activity_id === id);
+	},
+	// eslint-disable-next-line no-shadow
+	getApprovedActivitiesBySemester: (state, getters) => (semester) => {
+		return getters.getApprovedActivities.filter((activity) => activity.semester === semester);
+	},
+	getApprovedActivities: (stateData) => {
+		return stateData.activities.filter((activity) => activity.approved);
 	}
 };
 

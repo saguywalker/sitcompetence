@@ -44,6 +44,16 @@ const router = new Router({
 					component: () => import("@/pages/activity/approve_id.vue")
 				},
 				{
+					name: "activity-approve-success",
+					path: "activity/approve/:id/success",
+					component: () => import("@/pages/activity/approve-success.vue")
+				},
+				{
+					name: "past-activity",
+					path: "activity/past",
+					component: () => import("@/pages/activity/past-activity.vue")
+				},
+				{
 					path: "activity/create",
 					component: () => import("@/layouts/LayoutCreateActivity.vue"),
 					children: [

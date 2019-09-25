@@ -111,6 +111,10 @@
 					</div>
 				</b-col>
 			</b-row>
+			<base-page-step
+				:step="step"
+				@next="submit"
+			/>
 		</section>
 	</div>
 </template>
@@ -120,6 +124,8 @@
 <script>
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
+import loading from "@/plugin/loading";
+import { mapGetters } from "vuex";
 
 // TODO get student from activty that they joined.
 export default {
@@ -168,10 +174,21 @@ export default {
 			selectedItems: [],
 			error: {
 				selectedItems: false
+			},
+			step: {
+				next: Object.freeze({
+					name: "Submit approve"
+				})
 			}
 		};
 	},
 	computed: {
+		...mapGetters("activity", [
+			"getActivityById"
+		]),
+		activityDetail() {
+			return this.getActivityById(this.$route.params.id);
+		},
 		hasSelectedItem() {
 			if (this.selectedItems.length > 0) {
 				return true;
@@ -203,6 +220,33 @@ export default {
 					}
 				});
 			});
+		},
+		async submit() {
+			loading.start();
+			try {
+				await this.$store.dispatch("activity/submitApprove", {
+					approvedStudents: this.selectedItems,
+					activityId: this.$route.params.id,
+					approver: "stf02" // GET from login user
+				});
+
+				this.$router.push({
+					name: "activity-approve-success",
+					params: {
+						id: this.$route.params.id
+					}
+				});
+			} catch (err) {
+				const notification = {
+					title: "Submit approve activity",
+					message: `There was a problem submitting data: ${err.message}`,
+					variant: "danger"
+				};
+
+				this.$store.dispatch("notification/add", notification);
+			} finally {
+				loading.stop();
+			}
 		},
 		onRowSelected(items) {
 			this.selectedItems = items;

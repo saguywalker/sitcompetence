@@ -6,6 +6,14 @@
 					Activity
 				</h1>
 				<div class="tools">
+					<router-link :to="{ name: 'past-activity' }">
+						<b-button
+							class="item"
+							size="sm"
+						>
+							Past Activity
+						</b-button>
+					</router-link>
 					<router-link :to="{ name: 'create-activity' }">
 						<b-button
 							class="item"
@@ -19,7 +27,7 @@
 			</div>
 			<div class="box">
 				<h1 class="box-header">
-					Posted Activity
+					Now on student site
 				</h1>
 				<div class="my-row">
 					<router-link
@@ -42,7 +50,7 @@
 			</div>
 			<div class="box">
 				<h1 class="box-header">
-					Saved Activity
+					Saved activity
 				</h1>
 				<div class="my-row">
 					<router-link

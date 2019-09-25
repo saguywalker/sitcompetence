@@ -105,6 +105,9 @@ export default {
 		activityDetail() {
 			return this.getActivityById(this.$route.params.id);
 		}
+		// activityJoiners() {
+		// 	return this.activityDetail.map((activity) => activity.joiners);
+		// }
 	}
 };
 </script>
