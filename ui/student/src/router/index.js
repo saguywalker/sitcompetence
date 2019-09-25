@@ -13,12 +13,17 @@ export default new Router({
 		},
 		{
 			path: "/",
-			component: () => import(/* webpackChunkName: "studentLayout" */"@/layouts/StudentLayout.vue"),
+			component: () => import(/* webpackChunkName: "student-layout" */"@/layouts/StudentLayout.vue"),
 			children: [
 				{
-					name: "dashboard",
-					path: "/",
-					component: () => import(/* webpackChunkName: "studentLayout" */"@/pages/Dashboard.vue")
+					name: "account",
+					path: "/account",
+					component: () => import(/* webpackChunkName: "account" */"@/pages/Account.vue")
+				},
+				{
+					name: "portfolio",
+					path: "/portfolio",
+					component: () => import(/* webpackChunkName: "portfolio" */"@/pages/Portfolio.vue")
 				}
 			]
 		},

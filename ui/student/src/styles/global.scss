@@ -1,5 +1,6 @@
 @import "fonts.scss";
 @import "cores.scss";
+@import "animations.scss";
 @import "bootstrap/scss/bootstrap";
 @import "bootstrap-vue/src/index.scss";
 
@@ -28,8 +29,6 @@ html, body {
 h1, h2, h3, h4, h5, h6, p {
 	margin-top: 0;
 	margin-bottom: 0;
-	line-height: inherit;
-	font-size: inherit;
 }
 
 label {
@@ -62,4 +61,23 @@ button {
 	&:focus {
 		outline: none;
 	}
+}
+
+.page-header {
+	display: flex;
+	align-items: center;
+	height: rem(200);
+	margin-bottom: rem(20);
+	background-color: $blue-1;
+	background: linear-gradient(90deg, rgba(24,86,192,1) 0%, rgba(35,107,229,1) 38%, $blue-4 100%);
+
+	.title {
+		color: $white;
+		font-weight: 600;
+	}
+}
+
+.wrapper {
+	width: 100%;
+	padding: 0 4%;
 }

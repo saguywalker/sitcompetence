@@ -40,6 +40,7 @@ module.exports = {
       rules: {
         "linebreak-style": "off",
         "import/extensions": 0,
+        "import/prefer-default-export": "off",
         quotes: [
           "error",
           "double"
