@@ -11,14 +11,10 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+/*
 // UpdateMerkleTransaction insert a new transactionID and merkleRootHash into transaction table
 // It also add a merkleRoot and all of its transaction into merkle table
 func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot []byte, transactionSet []merkletree.Content) (*model.TransactionLink, error) {
-	/*hexDigests := make([][]byte, len(transactionSet))
-	for i, item := range transactionSet {
-		hexDigests[i] = []byte(item)
-	}*/
-
 	merkle := model.NewMerkle(merkleRoot, transactionSet)
 	if err := ctx.Database.CreateMerkle(merkle); err != nil {
 		return nil, err
@@ -31,6 +27,7 @@ func (ctx *Context) UpdateMerkleTransaction(transactionID, merkleRoot []byte, tr
 
 	return transaction, nil
 }
+*/
 
 // VerifyTX verify data with a given merkle root
 func (ctx *Context) VerifyTX(merkleRoot, data []byte) (bool, error) {

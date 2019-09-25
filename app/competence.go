@@ -26,3 +26,17 @@ func (ctx *Context) GetCompetences() ([]*model.Competence, error) {
 func (ctx *Context) CreateCompetence(competence *model.Competence) error {
 	return ctx.Database.CreateCompetence(competence)
 }
+
+// UpdateCompetence update competence
+func (ctx *Context) UpdateCompetence(competence *model.Competence) error {
+	if err := ctx.Database.UpdateCompetence(competence); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteCompetence delete competence from competence id
+func (ctx *Context) DeleteCompetence(competenceID uint16) error {
+	return ctx.Database.DeleteCompetence(competenceID)
+}

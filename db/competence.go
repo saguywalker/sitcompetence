@@ -14,7 +14,7 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
+		err := row.Scan(&competence)
 		if err != nil {
 			return nil, err
 		}
@@ -34,7 +34,7 @@ func (db *Database) GetCompetences() ([]*model.Competence, error) {
 
 	for rows.Next() {
 		var competence model.Competence
-		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
+		err := rows.Scan(&competence)
 		if err != nil {
 			return nil, err
 		}
@@ -51,7 +51,24 @@ func (db *Database) CreateCompetence(competence *model.Competence) error {
 		return err
 	}
 
-	_, err = stmt.Exec(competence.CompetenceID, competence.CompetenceName, competence.BadgeIconURL, competence.TotalActivitiesRequired)
+	_, err = stmt.Exec(competence)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateCompetence update an existing competence from id
+func (db *Database) UpdateCompetence(competence *model.Competence) error {
+	stmt, err := db.Prepare("UPDATE competence " +
+		"set competenceName=$2, badgeIconURL=$3, totalActivitiesRequired=$4 " +
+		"WHERE competenceId=$1;")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(competence)
 	if err != nil {
 		return err
 	}
@@ -60,7 +77,7 @@ func (db *Database) CreateCompetence(competence *model.Competence) error {
 }
 
 // DeleteCompetence deletes a competence from competenceID
-func (db *Database) DeleteCompetence(competenceID []byte) error {
+func (db *Database) DeleteCompetence(competenceID uint16) error {
 	stmt, err := db.Prepare("DELETE FROM competence WHERE competenceId = $1")
 	if err != nil {
 		return err
