@@ -24,13 +24,13 @@ func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
 }
 
 // GetStaffs returns all staffs in a table
-func (db *Database) GetStaffs() (*[]model.Staff, error) {
+func (db *Database) GetStaffs() ([]*model.Staff, error) {
 	rows, err := db.Query("SELECT * FROM staff")
 	if err != nil {
 		return nil, err
 	}
 
-	var staffs []model.Staff
+	var staffs []*model.Staff
 
 	for rows.Next() {
 		var staff model.Staff
@@ -38,10 +38,10 @@ func (db *Database) GetStaffs() (*[]model.Staff, error) {
 		if err != nil {
 			return nil, err
 		}
-		staffs = append(staffs, staff)
+		staffs = append(staffs, &staff)
 	}
 
-	return &staffs, nil
+	return staffs, nil
 }
 
 // CreateStaff inserts a new staff
@@ -52,6 +52,23 @@ func (db *Database) CreateStaff(staff *model.Staff) error {
 	}
 
 	_, err = stmt.Exec(staff.StaffID, staff.FirstName, staff.LastName)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateStaff update staff from staff id
+func (db *Database) UpdateStaff(staff *model.Staff) error {
+	stmt, err := db.Prepare("UPDATE staff set firstName=$1, lastName=$2 " +
+		"WHERE staffId=$3")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(staff.FirstName, staff.LastName, staff.StaffID)
 	if err != nil {
 		return err
 	}

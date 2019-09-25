@@ -51,11 +51,6 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	result, err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
-	if err != nil {
-		return err
-	}
-
 	if err := ctx.CreateCollectedCompetence(listOfBadges, transactionID); err != nil {
 		return err
 
@@ -78,16 +73,6 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	if _, err := w.Write(b64Json); err != nil {
 		return err
 	}
-
-	// resultBytes, err := json.Marshal(result)
-	// if err != nil {
-	// return err
-	// }
-
-	// w.WriteHeader(http.StatusOK)
-	// if _, err := w.Write(resultBytes); err != nil {
-	// return err
-	// }
 
 	return nil
 }
@@ -133,15 +118,10 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return nil
 	}
 
-	result, err := ctx.UpdateMerkleTransaction(transactionID, tree.MerkleRoot(), listOfHashes)
-	if err != nil {
+	if err := ctx.UpdateAttendedActivity(listOfBadges, transactionID); err != nil {
 		return err
 	}
-	/*
-		if err := ctx.UpdateAttendedActivity(listOfBadges, transactionID); err != nil {
-			return err
-		}
-	*/
+
 	b64Txid := base64.StdEncoding.EncodeToString(result.TransactionID)
 	b64MerkleRoot := base64.StdEncoding.EncodeToString(result.MerkleRoot)
 	b64Struct := struct {

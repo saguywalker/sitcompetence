@@ -6,7 +6,7 @@ import (
 
 // GetActivityByID returns an activity from activityID
 func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
-	var activity model.Activity
+	var ac model.Activity
 
 	row, err := db.Query("SELECT * FROM activity WHERE activityId = $1", id)
 	if err != nil {
@@ -14,14 +14,13 @@ func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&activity)
-		//err := row.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
+		err := row.Scan(&ac.ActivityID, &ac.ActivityName, &ac.Description, &ac.Date, &ac.Time, &ac.Creator, &ac.Organizer, &ac.Category, &ac.Location, &ac.StudentSite)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return &activity, nil
+	return &ac, nil
 }
 
 // GetActivities returns all activities in a table
@@ -34,13 +33,12 @@ func (db *Database) GetActivities() ([]*model.Activity, error) {
 	}
 
 	for rows.Next() {
-		var activity model.Activity
-		err := rows.Scan(&activity)
-		//err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
+		var ac model.Activity
+		err := rows.Scan(&ac.ActivityID, &ac.ActivityName, &ac.Description, &ac.Date, &ac.Time, &ac.Creator, &ac.Organizer, &ac.Category, &ac.Location, &ac.StudentSite)
 		if err != nil {
 			return nil, err
 		}
-		activities = append(activities, &activity)
+		activities = append(activities, &ac)
 	}
 
 	return activities, nil
@@ -56,13 +54,12 @@ func (db *Database) GetActivitiesByStaff(id string) ([]*model.Activity, error) {
 	}
 
 	for rows.Next() {
-		var activity model.Activity
-		err := rows.Scan(&activity)
-		// err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator)
+		var ac model.Activity
+		err := rows.Scan(&ac.ActivityID, &ac.ActivityName, &ac.Description, &ac.Date, &ac.Time, &ac.Creator, &ac.Organizer, &ac.Category, &ac.Location, &ac.StudentSite)
 		if err != nil {
 			return nil, err
 		}
-		activities = append(activities, &activity)
+		activities = append(activities, &ac)
 	}
 
 	return activities, nil
@@ -72,24 +69,28 @@ func (db *Database) GetActivitiesByStaff(id string) ([]*model.Activity, error) {
 func (db *Database) GetActivitiesByStudent(id string) ([]*model.Activity, error) {
 	var activities []*model.Activity
 
-	rows, err := db.Query("SELECT activity.activityId, activity.activityName, activity.description, activity.date, activity.creator, activity.studentSite FROM activity, attendedActivity WHERE activity.activityId = attendedActivity.activityId AND activity.activityId = $1", id)
+	rows, err := db.Query("SELECT ac.activityId, ac.activityName, ac.description, ac.date,"+
+		"ac.time, ac.creator, ac.organizer, ac.category, ac.location, ac.studentSite"+
+		"FROM activity as ac, attendedActivity as at"+
+		"WHERE ac.activityId = at.activityId AND ac.activityId = $1", id)
+
 	if err != nil {
 		return nil, err
 	}
 
 	for rows.Next() {
-		var activity model.Activity
-		err := rows.Scan(&activity)
-		//err := rows.Scan(&activity.ActivityID, &activity.ActivityName, &activity.Date, &activity.Creator, &activity.StudentSite)
+		var ac model.Activity
+		err := rows.Scan(&ac.ActivityID, &ac.ActivityName, &ac.Description, &ac.Date, &ac.Time, &ac.Creator, &ac.Organizer, &ac.Category, &ac.Location, &ac.StudentSite)
 		if err != nil {
 			return nil, err
 		}
-		activities = append(activities, &activity)
+		activities = append(activities, &ac)
 	}
 
 	return activities, nil
 }
 
+// GetCompetencesByActivityID query competence from activity id
 func (db *Database) GetCompetencesByActivityID(id uint32) ([]model.Competence, error) {
 	var competences []model.Competence
 
@@ -112,13 +113,15 @@ func (db *Database) GetCompetencesByActivityID(id uint32) ([]model.Competence, e
 }
 
 // CreateActivity inserts a new activity
-func (db *Database) CreateActivity(activity *model.Activity) error {
-	stmt, err := db.Prepare("INSERT INTO activity(activityId, activityName, description, date, creator, studentSite) VALUES($1, $2, $3, $4, $5, $6)")
+func (db *Database) CreateActivity(a *model.Activity) error {
+	stmt, err := db.Prepare("INSERT INTO activity(activityName, description, date, " +
+		"time, creator, organizer, category, location, studentSite)" +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(activity.ActivityID, activity.ActivityName, activity.Description, activity.Date, activity.Creator, activity.StudentSite)
+	_, err = stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.StudentSite)
 	if err != nil {
 		return err
 	}
@@ -126,22 +129,23 @@ func (db *Database) CreateActivity(activity *model.Activity) error {
 	return nil
 }
 
-/*
 // UpdateActivity deletes a activity from activityID
-func (db *Database) UpdateActivity(activityID uint32) error {
-	stmt, err := db.Prepare("UPDATE FROM activity WHERE activityId = $1")
+func (db *Database) UpdateActivity(a *model.Activity) error {
+	stmt, err := db.Prepare("UPDATE activity " +
+		"set activityName=$1, description=$2, date=$3, time=$4, " +
+		"creator=$5, organizer=$6, category=$7, location=$8, studentSite=$9 " +
+		"WHERE activityId=$10")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(activityID)
+	_, err = stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.StudentSite, a.ActivityID)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
-*/
 
 // DeleteActivity deletes a activity from activityID
 func (db *Database) DeleteActivity(activityID uint32) error {

@@ -24,13 +24,13 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all students in a table
-func (db *Database) GetStudents() (*[]model.Student, error) {
+func (db *Database) GetStudents() ([]*model.Student, error) {
 	rows, err := db.Query("SELECT * FROM student")
 	if err != nil {
 		return nil, err
 	}
 
-	var students []model.Student
+	var students []*model.Student
 
 	for rows.Next() {
 		var student model.Student
@@ -38,10 +38,10 @@ func (db *Database) GetStudents() (*[]model.Student, error) {
 		if err != nil {
 			return nil, err
 		}
-		students = append(students, student)
+		students = append(students, &student)
 	}
 
-	return &students, nil
+	return students, nil
 }
 
 // CreateStudent inserts a new student
@@ -52,6 +52,23 @@ func (db *Database) CreateStudent(student *model.Student) error {
 	}
 
 	_, err = stmt.Exec(student.StudentID, student.FirstName, student.LastName, student.Department)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateStudent update student from staff id
+func (db *Database) UpdateStudent(student *model.Student) error {
+	stmt, err := db.Prepare("UPDATE student set firstName=$1, lastName=$2, department=$3 " +
+		"WHERE studentId=$4")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(student.FirstName, student.LastName, student.Department, student.StudentID)
 	if err != nil {
 		return err
 	}

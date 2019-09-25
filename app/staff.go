@@ -14,7 +14,7 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 }
 
 // GetStaffs returns all of activities
-func (ctx *Context) GetStaffs() (*[]model.Staff, error) {
+func (ctx *Context) GetStaffs() ([]*model.Staff, error) {
 	staffs, err := ctx.Database.GetStaffs()
 	if err != nil {
 		//ctx.Logger.Errorln(err.Error())
@@ -26,10 +26,19 @@ func (ctx *Context) GetStaffs() (*[]model.Staff, error) {
 
 // CreateStaff creates new staff
 func (ctx *Context) CreateStaff(staff *model.Staff) error {
-	if err := ctx.Database.CreateStaff(staff); err != nil {
-		//ctx.Logger.Errorln(err.Error())
+	return ctx.Database.CreateStaff(staff)
+}
+
+// UpdateStaff update staff
+func (ctx *Context) UpdateStaff(staff *model.Staff) error {
+	if err := ctx.Database.UpdateStaff(staff); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// DeleteStaff delete student from activity id
+func (ctx *Context) DeleteStaff(staffID string) error {
+	return ctx.Database.DeleteStaff(staffID)
 }

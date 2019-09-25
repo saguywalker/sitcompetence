@@ -27,11 +27,6 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	return err
 }
 
-// CreateStudentResponse defines a response with studentID
-type CreateStudentResponse struct {
-	StudentID string `json:"student_id"`
-}
-
 // CreateStudent creates a student from a request
 func (a *API) CreateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	var input model.Student

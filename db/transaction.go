@@ -1,5 +1,6 @@
 package db
 
+/*
 import "github.com/saguywalker/sitcompetence/model"
 
 // CreateTransaction insert new transaction into transaction table
@@ -91,3 +92,4 @@ func (db *Database) DeleteTransaction(transactionID []byte) error {
 
 	return nil
 }
+*/
