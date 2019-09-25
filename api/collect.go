@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
-
 	"github.com/saguywalker/sitcompetence/app"
 )
 
@@ -26,10 +24,14 @@ func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r
 	return err
 }
 
-// GetCompetenceByID response a competence from requested competenceID
+// GetCollectedByStudentID response a competence from requested competenceID
 func (a *API) GetCollectedByStudentID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getCompetenceIDFromRequest("id", r)
-	competence, err := ctx.GetCompetenceByID(id)
+	id := getIdFromRequest("id", r)
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+	competence, err := ctx.GetCompetenceByID(uint16(intID))
 	if err != nil {
 		return err
 	}
@@ -41,16 +43,4 @@ func (a *API) GetCollectedByStudentID(ctx *app.Context, w http.ResponseWriter, r
 
 	_, err = w.Write(data)
 	return err
-}
-
-func getCompetenceIDFromRequest(param string, r *http.Request) uint16 {
-	vars := mux.Vars(r)
-	id := vars[param]
-
-	intID, err := strconv.ParseUint(id, 10, 0)
-	if err != nil {
-		return 0
-	}
-
-	return uint16(intID)
 }

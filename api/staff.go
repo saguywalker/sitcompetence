@@ -75,3 +75,26 @@ func (a *API) GetStaffByID(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 	_, err = w.Write(data)
 	return err
 }
+
+// UpdateStaff update staff table
+func (a *API) UpdateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	var input model.Staff
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &input); err != nil {
+		return err
+	}
+
+	return ctx.UpdateStaff(&input)
+}
+
+// DeleteStaff delete staff from table
+func (a *API) DeleteStaff(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	id := getIdFromRequest("id", r)
+	return ctx.DeleteStaff(id)
+}

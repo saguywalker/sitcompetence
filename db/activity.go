@@ -91,10 +91,10 @@ func (db *Database) GetActivitiesByStudent(id string) ([]*model.Activity, error)
 }
 
 // GetCompetencesByActivityID query competence from activity id
-func (db *Database) GetCompetencesByActivityID(id uint32) ([]model.Competence, error) {
+func (db *Database) GetCompetencesByActivityID(id uint32) ([]*model.Competence, error) {
 	var competences []model.Competence
 
-	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired FROM competence as c, competenceReward as r WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
+	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired FROM competence as c,  as r WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
 	if err != nil {
 		return nil, err
 	}

@@ -64,3 +64,26 @@ func (a *API) GetStudentByID(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	_, err = w.Write(data)
 	return err
 }
+
+// UpdateStudent update student table
+func (a *API) UpdateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	var input model.Student
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &input); err != nil {
+		return err
+	}
+
+	return ctx.UpdateStudent(&input)
+}
+
+// DeleteStudent delete student from table
+func (a *API) DeleteStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	id := getIdFromRequest("id", r)
+	return ctx.DeleteStudent(id)
+}
