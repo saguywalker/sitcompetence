@@ -40,18 +40,35 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 		return err
 	}
 
-	if err := ctx.CreateCompetence(&input); err != nil {
+	if _, err := ctx.CreateCompetence(&input); err != nil {
 		return err
 	}
+	/*
+		id, err := ctx.CreateCompetence(&input)
+		if err != nil {
+			return err
+		}
 
-	return err
+		resp := make(map[string]int64)
+		resp["competence_id"] = id
+
+		data, err := json.Marshal(resp)
+		if err != nil {
+			return err
+		}
+
+		if _, err := w.Write(data); err != nil {
+			return err
+		}
+	*/
+	return nil
 }
 
-// SearchCompetence search competence from key
-func (a *API) SearchCompetence(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+// SearchCompetences search competence from key
+func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	params := r.URL.Query()
 
-	var competences []*model.Competence
+	var competences []model.Competence
 
 	if params.Get("competence_id") != "" {
 		competenceID, err := strconv.ParseUint(params.Get("competence_id"), 10, 16)
@@ -63,7 +80,7 @@ func (a *API) SearchCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 			return err
 		}
 
-		competences = append(competences, competence)
+		competences = append(competences, *competence)
 	} else {
 		var err error
 
@@ -72,9 +89,9 @@ func (a *API) SearchCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 			if err != nil {
 				return err
 			}
-			competences, err = ctx.GetCompetencesByActivityID(activityID)
+			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID))
 		} else if params.Get("student_id") != "" {
-			competences, err = ctx.GetCompetencesByStudentID(params.Get("student_id"))
+			competences, err = ctx.GetCollectedByStudentID(params.Get("student_id"))
 		} else {
 			competences, err = ctx.GetCompetences()
 		}

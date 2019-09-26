@@ -11,6 +11,38 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// SearchStudents query
+func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	var students []*model.Student
+	params := r.URL.Query()
+
+	if params.Get("student_id") != "" {
+		student, err := ctx.GetStudentByID(params.Get("student_id"))
+		if err != nil {
+			return err
+		}
+
+		students = append(students, student)
+	} else {
+		var err error
+		students, err = ctx.GetStudents()
+		if err != nil {
+			return err
+		}
+	}
+
+	data, err := json.Marshal(students)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetStudents responses with all of students
 func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	students, err := ctx.GetStudents()
@@ -76,6 +108,15 @@ func (a *API) UpdateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	if err := json.Unmarshal(body, &input); err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(input)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(data); err != nil {
 		return err
 	}
 

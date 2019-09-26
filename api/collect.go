@@ -8,6 +8,8 @@ import (
 	"github.com/saguywalker/sitcompetence/app"
 )
 
+/*
+
 // GetCollectedCompetences response with all of competences
 func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	collected, err := ctx.GetCollectedCompetences()
@@ -23,7 +25,7 @@ func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r
 	_, err = w.Write(data)
 	return err
 }
-
+*/
 // GetCollectedByStudentID response a competence from requested competenceID
 func (a *API) GetCollectedByStudentID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getIdFromRequest("id", r)

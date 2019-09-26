@@ -1,10 +1,10 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/saguywalker/sitcompetence/model"
 )
+
+/*
 
 // GetCollectedCompetences return all competences collected by all students
 func (ctx *Context) GetCollectedCompetences() ([]*model.Competence, error) {
@@ -12,7 +12,7 @@ func (ctx *Context) GetCollectedCompetences() ([]*model.Competence, error) {
 }
 
 // GetCollectedByCompetenceID returns competence struct from competence id
-func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]*model.Student, error) {
+func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]model.Student, error) {
 	competence, err := ctx.Database.GetCollectedByCompetenceID(id)
 	if err != nil {
 		return nil, err
@@ -20,15 +20,15 @@ func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]*model.Student, err
 
 	return competence, fmt.Errorf("unimplemented")
 }
-
+*/
 // GetCollectedByStudentID returns all of activities
-func (ctx *Context) GetCollectedByStudentID(id string) ([]*model.Competence, error) {
-	competences, err := ctx.Database.GetCollectedByStudentID(id)
+func (ctx *Context) GetCollectedByStudentID(id string) ([]model.Competence, error) {
+	competences, err := ctx.Database.GetCompetencesByStudentID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return competences, fmt.Errorf("unimplemented")
+	return competences, nil
 }
 
 // CreateCollectedCompetence update new competence and its transactionID to a corresponding studentID

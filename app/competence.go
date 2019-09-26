@@ -12,7 +12,8 @@ func (ctx *Context) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	return competence, nil
 }
 
-func (ctx *Context) GetCompetencesByActivityID(activityID uint32) ([]*model.Activity, error) {
+// GetCompetencesByActivityID query competence from activity id
+func (ctx *Context) GetCompetencesByActivityID(activityID uint32) ([]model.Competence, error) {
 	competences, err := ctx.Database.GetCompetencesByActivityID(activityID)
 	if err != nil {
 		return nil, err
@@ -22,7 +23,7 @@ func (ctx *Context) GetCompetencesByActivityID(activityID uint32) ([]*model.Acti
 }
 
 // GetCompetences returns all of activities
-func (ctx *Context) GetCompetences() ([]*model.Competence, error) {
+func (ctx *Context) GetCompetences() ([]model.Competence, error) {
 	competences, err := ctx.Database.GetCompetences()
 	if err != nil {
 		return nil, err
@@ -32,8 +33,13 @@ func (ctx *Context) GetCompetences() ([]*model.Competence, error) {
 }
 
 // CreateCompetence creates new competence
-func (ctx *Context) CreateCompetence(competence *model.Competence) error {
-	return ctx.Database.CreateCompetence(competence)
+func (ctx *Context) CreateCompetence(competence *model.Competence) (int64, error) {
+	id, err := ctx.CreateCompetence(competence)
+	if err != nil {
+		return -1, err
+	}
+
+	return id, nil
 }
 
 // UpdateCompetence update competence

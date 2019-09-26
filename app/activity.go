@@ -99,8 +99,19 @@ func (ctx *Context) ApproveActivity(activities []*model.ApproveActivity, txID []
 }
 
 // CreateActivity creates new activity
-func (ctx *Context) CreateActivity(activity *model.Activity) error {
-	return ctx.Database.CreateActivity(activity)
+func (ctx *Context) CreateActivity(activity *model.Activity) (int64, error) {
+	activityID, err := ctx.Database.CreateActivity(activity)
+	if err != nil {
+		return -1, err
+	}
+
+	for _, competence := range activity.Competences {
+		if err := ctx.Database.CreateCompetenceReward(uint32(activityID), competence.CompetenceID); err != nil {
+			return -1, err
+		}
+	}
+
+	return activityID, nil
 }
 
 // UpdateActivity update activity from activity id

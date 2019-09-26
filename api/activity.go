@@ -83,10 +83,26 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	if err := ctx.CreateActivity(&input); err != nil {
+	if _, err := ctx.CreateActivity(&input); err != nil {
 		return err
 	}
+	/*
+		if err != nil {
+			return err
+		}
 
+		resp := make(map[string]int64)
+		resp["activity_id"] = id
+
+		data, err := json.Marshal(resp)
+		if err != nil {
+			return err
+		}
+
+		if _, err = w.Write(data); err != nil {
+			return err
+		}
+	*/
 	return nil
 }
 
@@ -106,6 +122,15 @@ func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	}
 
 	if err := ctx.UpdateActivity(&input); err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(input)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(data); err != nil {
 		return err
 	}
 

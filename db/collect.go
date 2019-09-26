@@ -1,8 +1,6 @@
 package db
 
 import (
-	"fmt"
-
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -87,12 +85,26 @@ func (db *Database) GetMerkleByCompetenceID(competenceId uint16) ([]*model.Colle
 	return badges, nil
 }
 
-func (db *Database) GetCollectedByStudentID(id string) ([]*model.Competence, error) {
-	return nil, fmt.Errorf("unimplemented")
-}
+// GetCompetencesByStudentID query competence from student id
+func (db *Database) GetCompetencesByStudentID(id string) ([]model.Competence, error) {
+	var competences []model.Competence
 
-func (db *Database) GetCollectedByCompetenceID(id uint16) ([]*model.Student, error) {
-	return nil, fmt.Errorf("unimplemented")
+	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired " +
+		"FROM competence as c, collectedCompetence as s " +
+		"WHERE c.competenceId = s.competenceId AND s.studentId=$1;")
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var competence model.Competence
+		if err := rows.Scan(&competence); err != nil {
+			return nil, err
+		}
+		competences = append(competences, competence)
+	}
+
+	return competences, nil
 }
 
 // DeleteCollectedByStudentID delete a collected pair from studentId and competenceId

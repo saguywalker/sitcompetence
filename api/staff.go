@@ -11,6 +11,38 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// SearchStaffs query
+func (a *API) SearchStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	var staffs []*model.Staff
+	params := r.URL.Query()
+
+	if params.Get("staff_id") != "" {
+		staff, err := ctx.GetStaffByID(params.Get("staff_id"))
+		if err != nil {
+			return err
+		}
+
+		staffs = append(staffs, staff)
+	} else {
+		var err error
+		staffs, err = ctx.GetStaffs()
+		if err != nil {
+			return err
+		}
+	}
+
+	data, err := json.Marshal(staffs)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetStaffs responses with all of staffs
 func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	staffs, err := ctx.GetStaffs()
@@ -25,11 +57,6 @@ func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 	_, err = w.Write(data)
 	return err
-}
-
-// CreateStaffResponse defines a response with staffID
-type CreateStaffResponse struct {
-	StaffID string `json:"staff_id"`
 }
 
 // CreateStaff creates a staff from a request
@@ -50,12 +77,6 @@ func (a *API) CreateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	data, err := json.Marshal(&CreateStaffResponse{StaffID: input.StaffID})
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(data)
 	return err
 }
 
@@ -87,6 +108,15 @@ func (a *API) UpdateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	if err := json.Unmarshal(body, &input); err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(input)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(data); err != nil {
 		return err
 	}
 

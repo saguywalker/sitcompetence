@@ -90,46 +90,28 @@ func (db *Database) GetActivitiesByStudent(id string) ([]*model.Activity, error)
 	return activities, nil
 }
 
-// GetCompetencesByActivityID query competence from activity id
-func (db *Database) GetCompetencesByActivityID(id uint32) ([]*model.Competence, error) {
-	var competences []model.Competence
-
-	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired FROM competence as c,  as r WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
+// CreateActivity create an activity from activity struct
+func (db *Database) CreateActivity(a *model.Activity) (int64, error) {
+	stmt, err := db.Prepare("INSERT INTO activity(activityName, description, date," +
+		"time, creator, organizer, category, location, semester, studentSite) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);")
 	if err != nil {
-		return nil, err
+		return -1, err
 	}
 
-	for rows.Next() {
-		var competence model.Competence
-		err := rows.Scan(&competence)
-		if err != nil {
-			return nil, err
-		}
-		competences = append(competences, competence)
+	result, err := stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.Semester, a.StudentSite)
+	if err != nil {
+		return -1, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
 	}
 
-	return competences, nil
-
+	return id, nil
 }
 
-// CreateActivity inserts a new activity
-func (db *Database) CreateActivity(a *model.Activity) error {
-	stmt, err := db.Prepare("INSERT INTO activity(activityName, description, date, " +
-		"time, creator, organizer, category, location, studentSite)" +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)")
-	if err != nil {
-		return err
-	}
-
-	_, err = stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.StudentSite)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// UpdateActivity deletes a activity from activityID
+// UpdateActivity update an exisiting activity
 func (db *Database) UpdateActivity(a *model.Activity) error {
 	stmt, err := db.Prepare("UPDATE activity " +
 		"set activityName=$1, description=$2, date=$3, time=$4, " +
