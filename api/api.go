@@ -186,6 +186,7 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 	return strings.Split(strings.TrimSpace(addr), ":")[0]
 }
 
+// getIdFromRequest returnn id from request
 func getIdFromRequest(param string, r *http.Request) string {
 	vars := mux.Vars(r)
 	id := vars[param]

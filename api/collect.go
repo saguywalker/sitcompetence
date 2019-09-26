@@ -9,8 +9,6 @@ import (
 )
 
 /*
-
-// GetCollectedCompetences response with all of competences
 func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	collected, err := ctx.GetCollectedCompetences()
 	if err != nil {
@@ -26,6 +24,7 @@ func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r
 	return err
 }
 */
+
 // GetCollectedByStudentID response a competence from requested competenceID
 func (a *API) GetCollectedByStudentID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getIdFromRequest("id", r)
