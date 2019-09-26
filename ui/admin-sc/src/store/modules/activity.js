@@ -2,7 +2,10 @@ import { Activity } from "@/services";
 import {
 	LOAD_POST_ACTIVITIES,
 	LOAD_SAVE_ACTIVITIES,
+	LOAD_ACTIVITIES,
 	LOAD_ACTIVITY,
+	EDIT_ACTIVITY,
+	DELETE_ACTIVITY,
 	APPROVE_ACTIVITY
 } from "../mutationTypes";
 
@@ -90,52 +93,38 @@ const state = {
 	],
 	activities: [
 		{
-			activity_id: "1823",
-			title: "Charlie",
-			description: "Nack Charlie"
-		},
-		{
-			activity_id: "9121",
-			title: "Tame Impala",
-			description: ""
-		},
-		{
-			activity_id: "5555",
-			title: "Miyabi",
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima cupactivity_iditate laudantium ipsa est maxime quasi minus soluta laborum. Unde soluta natus itaque qui! Quod asperiores aliquid odio nihil, veniam in."
-		},
-		{
-			activity_id: "2093",
+			id: "2093",
 			title: "Run",
 			description: "Bab P' Toon"
 		},
 		{
-			activity_id: "321",
+			id: "321",
 			title: "Forrest Gump",
 			description: ""
 		},
 		{
-			activity_id: "8632",
+			id: "8632",
 			title: "Pokemon",
 			description: "The best Pokemon Trainer in the world is Sasuke wtf..."
 		},
 		{
-			activity_id: "4433",
+			id: "4433",
 			title: "Jeab",
 			description: ""
 		},
 		{
-			activity_id: "4321",
+			id: "4321",
 			title: "Prep",
 			description: "Cheapest Flight"
 		},
 		{
-			activity_id: "6332",
+			id: "6332",
 			title: "Potato Corner",
 			description: "French Fries"
 		}
 	],
-	responseData: {}
+	responseData: {},
+	activity: {}
 };
 
 const mutations = {
@@ -149,10 +138,23 @@ const mutations = {
 			...data
 		];
 	},
-	[LOAD_ACTIVITY](stateData, data) {
+	[LOAD_ACTIVITIES](stateData, data) {
 		stateData.activities = [
 			...data
 		];
+	},
+	[LOAD_ACTIVITY](stateData, data) {
+		stateData.activity = {
+			...data
+		};
+	},
+	[EDIT_ACTIVITY](stateData, data) {
+		stateData.activity = {
+			...data
+		};
+	},
+	[DELETE_ACTIVITY](stateData) {
+		stateData.activity = {};
 	},
 	[APPROVE_ACTIVITY](stateData, data) {
 		stateData.responseData = {
@@ -172,8 +174,28 @@ const actions = {
 		const response = await Activity.getActivities();
 
 		if (response.status === 200) {
+			commit(LOAD_ACTIVITIES, response.data);
+		}
+
+		return response;
+	},
+	async loadActivityById({ commit }, id) {
+		const response = await Activity.getActivityById(id);
+
+		if (response.status === 200) {
 			commit(LOAD_ACTIVITY, response.data);
 		}
+
+		return response;
+	},
+	async deleteActivityById({ commit }, id) {
+		const response = await Activity.deleteActivityById(id);
+
+		if (response.status === 200) {
+			commit(DELETE_ACTIVITY);
+		}
+
+		return response;
 	},
 	async submitApprove({ commit }, data) {
 		const payload = data.approvedStudents.map((student) => {
@@ -201,7 +223,7 @@ const getters = {
 		return stateData.activities.filter((activity) => !activity.student_site);
 	},
 	getActivityById: (stateData) => (id) => {
-		return stateData.activities.find((activity) => activity.activity_id === id);
+		return stateData.activities.find((activity) => activity.id === id);
 	},
 	// eslint-disable-next-line no-shadow
 	getApprovedActivitiesBySemester: (state, getters) => (semester) => {

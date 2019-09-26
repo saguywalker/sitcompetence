@@ -50,7 +50,6 @@ button {
 	line-height: normal;
 	-webkit-font-smoothing: inherit;
 	-moz-osx-font-smoothing: inherit;
-	-webkit-appearance: none;
 	text-align: inherit;
 	outline: none;
 
@@ -168,6 +167,11 @@ button {
 			background-color: transparent;
 		}
 	}
+}
+
+// Prevent deprecated warning message
+input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {
+	-webkit-appearance: initial;
 }
 
 .preview-image-modal {

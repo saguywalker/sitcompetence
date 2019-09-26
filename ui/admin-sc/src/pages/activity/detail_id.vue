@@ -14,7 +14,7 @@
 						:to="{
 							name: 'activity-approve',
 							params: {
-								id: $route.params.id
+								id: activityId
 							}
 						}"
 					>
@@ -25,14 +25,22 @@
 							Approve Student
 						</b-button>
 					</router-link>
-					<b-button
-						size="sm"
+					<router-link
+						:to="{
+							name: 'edit-activity',
+							params: {
+								id: activityId
+							}
+						}"
 					>
-						Edit
-					</b-button>
+						<b-button size="sm">
+							Edit
+						</b-button>
+					</router-link>
 					<b-button
 						size="sm"
 						variant="danger"
+						@click="deleteActivity"
 					>
 						Delete
 					</b-button>
@@ -78,6 +86,7 @@
 </style>
 <script>
 import IconArrow from "@/components/icons/IconArrow.vue";
+import loading from "@/plugin/loading";
 import { mapGetters } from "vuex";
 
 export default {
@@ -102,12 +111,55 @@ export default {
 		...mapGetters("activity", [
 			"getActivityById"
 		]),
+		activityId() {
+			return this.$route.params.id;
+		},
 		activityDetail() {
-			return this.getActivityById(this.$route.params.id);
+			return this.getActivityById(this.activityId);
 		}
-		// activityJoiners() {
-		// 	return this.activityDetail.map((activity) => activity.joiners);
+		// activityAttendees() {
+		// 	return this.activityDetail.map((activity) => activity.attendees);
 		// }
+	},
+	methods: {
+		deleteActivity() {
+			this.$bvModal.msgBoxConfirm("Are you sure you want to delete? This can't be undone.", {
+				title: "Delete Confirmation",
+				size: "sm",
+				buttonSize: "sm",
+				okVariant: "danger",
+				okTitle: "Yes",
+				cancelTitle: "No",
+				footerClass: "p-2",
+				hideHeaderClose: false,
+				centered: true
+			})
+				.then((value) => {
+					loading.start();
+
+					if (value) {
+						this.$store.dispatch("activity/deleteActivityById", this.activityId)
+							.then(() => {
+								this.$bvToast.toast("Success delete activity", {
+									title: "Delete successful",
+									variant: "success",
+									autoHideDelay: 1500
+								});
+							})
+							.catch((err) => {
+								this.$bvToast.toast("Error delete activity", {
+									title: "Deleting activity error",
+									message: `There was a problem deleting: ${err.message}`,
+									variant: "danger",
+									autoHideDelay: 1500
+								});
+							});
+					}
+				})
+				.finally(() => {
+					loading.stop();
+				});
+		}
 	}
 };
 </script>

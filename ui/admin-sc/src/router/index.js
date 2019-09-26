@@ -6,7 +6,8 @@ import {
 } from "@/constants/breadcrumb";
 import {
 	GIVE_BADGE_STEP,
-	CREATE_ACTIVITY_STEP
+	CREATE_ACTIVITY_STEP,
+	EDIT_ACTIVITY_STEP
 } from "@/constants/step";
 
 Vue.use(Router);
@@ -55,7 +56,7 @@ const router = new Router({
 				},
 				{
 					path: "activity/create",
-					component: () => import("@/layouts/LayoutCreateActivity.vue"),
+					component: () => import("@/layouts/LayoutCreateEditActivity.vue"),
 					children: [
 						{
 							name: "create-activity",
@@ -91,6 +92,48 @@ const router = new Router({
 							meta: {
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.success,
 								step: CREATE_ACTIVITY_STEP.success
+							}
+						}
+					]
+				},
+				{ // Use breadcrumb and step same as CREATE_ACTIVITY
+					path: "activity/edit/:id",
+					component: () => import("@/layouts/LayoutCreateEditActivity.vue"),
+					children: [
+						{
+							name: "edit-activity",
+							path: "/",
+							component: () => import("@/pages/activity/edit"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.detail,
+								step: EDIT_ACTIVITY_STEP.detail
+							}
+						},
+						{
+							name: "edit-activity-competence",
+							path: "select-competence",
+							component: () => import("@/pages/activity/edit/select-competence.vue"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.competence,
+								step: EDIT_ACTIVITY_STEP.competence
+							}
+						},
+						{
+							name: "edit-activity-summary",
+							path: "summary",
+							component: () => import("@/pages/activity/edit/summary.vue"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.summary,
+								step: EDIT_ACTIVITY_STEP.summary
+							}
+						},
+						{
+							name: "edit-activity-success",
+							path: "success",
+							component: () => import("@/pages/activity/edit/success.vue"),
+							meta: {
+								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.success,
+								step: EDIT_ACTIVITY_STEP.success
 							}
 						}
 					]

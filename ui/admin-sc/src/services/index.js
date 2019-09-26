@@ -25,13 +25,22 @@ const Base = {
 
 const Activity = {
 	postApproveActivity(data) {
-		return apiClient.post("/approve", data);
+		return apiClient.post("/approveActivity", data);
 	},
 	postCreateActivity(data) {
 		return apiClient.post("/activity", data);
 	},
 	getActivities() {
 		return apiClient.get("/activity");
+	},
+	getActivityById(id) {
+		return apiClient.get(`/search/activity/${id}`);
+	},
+	editActivityById(data) {
+		return apiClient.put("/activity", data);
+	},
+	deleteActivityById(id) {
+		return apiClient.delete(`/activity/${id}`);
 	}
 };
 

@@ -81,13 +81,11 @@ export default {
 
 				this.$router.push({ name: "verify-result" });
 			} catch (err) {
-				const notification = {
+				this.$bvToast.toast(`There was a problem verifying data: ${err.message}`, {
 					title: `Error verify give badge: ${err.status}`,
-					message: `There was a problem verifying data: ${err.message}`,
-					variant: "danger"
-				};
-
-				this.$store.dispatch("notification/add", notification);
+					variant: "danger",
+					autoHideDelay: 1500
+				});
 			} finally {
 				loading.stop();
 			}

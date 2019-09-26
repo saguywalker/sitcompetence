@@ -2,7 +2,7 @@ export const CREATE_ACTIVITY_FORM = Object.freeze([
 	{
 		label: "Activity name",
 		type: "text",
-		model: "name"
+		model: "activity_name"
 	},
 	{
 		label: "Description",
@@ -27,11 +27,11 @@ export const CREATE_ACTIVITY_FORM = Object.freeze([
 	{
 		label: "Activity date",
 		type: "date",
-		model: "activityDate"
+		model: "activity_date"
 	},
 	{
 		label: "Start time",
 		type: "time",
-		model: "activityTime"
+		model: "start_time"
 	}
 ]);
