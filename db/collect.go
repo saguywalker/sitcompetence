@@ -1,19 +1,18 @@
 package db
 
 import (
-	"database/sql"
-
 	"github.com/saguywalker/sitcompetence/model"
 )
 
 // CreateCollectedCompetence insert new competence to a student
-func (db *Database) CreateCollectedCompetence(badges *model.CollectedCompetence) error {
-	stmt, err := db.Prepare("INSERT INTO collectedCompetence(studentId, competenceId, transactionId) VALUES($1, $2, $3)")
+func (db *Database) CreateCollectedCompetence(c *model.CollectedCompetence) error {
+	stmt, err := db.Prepare("INSERT INTO collectedCompetence(studentId, competenceId, semester, giver, transactionId) " +
+		"VALUES($1, $2, $3, $4, $5)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(badges.StudentID, badges.CompetenceID, badges.TxID)
+	_, err = stmt.Exec(c.StudentID, c.CompetenceID, c.Semester, c.Giver, c.TxID)
 	if err != nil {
 		return err
 	}
@@ -33,7 +32,7 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 
 	for rows.Next() {
 		var badge model.CollectedCompetence
-		err = rows.Scan(&badge.StudentID, &badge.CompetenceID, &badge.TxID)
+		err = rows.Scan(&badge)
 		if err != nil {
 			return nil, err
 		}
@@ -43,89 +42,36 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 	return badges, nil
 }
 
-// GetMerkleByStudentID returns all query collected competence from studentId
-func (db *Database) GetMerkleByStudentID(studentID string) ([]*model.CollectedCompetence, error) {
-	row, err := db.Query("SELECT * FROM collectedCompetence WHERE studentId = $1", studentID)
-	if err != nil {
-		return nil, err
-	}
+// GetCompetencesIDByStudentID query competence from student id
+func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uint64) ([]uint16, error) {
+	var competences []uint16
 
-	var badges []*model.CollectedCompetence
-
-	for row.Next() {
-		var badge model.CollectedCompetence
-		err := row.Scan(&badge.StudentID, &badge.CompetenceID, &badge.TxID)
-		if err != nil {
-			return nil, err
-		}
-
-		badges = append(badges, &badge)
-	}
-
-	return badges, nil
-}
-
-// GetMerkleByCompetenceID returns all query collected competence from competenceId
-func (db *Database) GetMerkleByCompetenceID(competenceID uint16) ([]*model.CollectedCompetence, error) {
-	row, err := db.Query("SELECT * FROM collectedCompetence WHERE competenceId = $1", competenceID)
-	if err != nil {
-		return nil, err
-	}
-
-	var badges []*model.CollectedCompetence
-
-	for row.Next() {
-		var badge model.CollectedCompetence
-		err := row.Scan(&badge.StudentID, &badge.CompetenceID, &badge.TxID)
-		if err != nil {
-			return nil, err
-		}
-
-		badges = append(badges, &badge)
-	}
-
-	return badges, nil
-}
-
-// GetCompetencesByStudentID query competence from student id
-func (db *Database) GetCompetencesByStudentID(id string, pageLimit, pageNo uint64) ([]model.Competence, error) {
-	var competences []model.Competence
-
-	var rows *sql.Rows
-	var err error
-	if pageLimit == 0 || pageNo == 0 {
-		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired " +
-			"FROM competence as c, collectedCompetence as s " +
-			"WHERE c.competenceId = s.competenceId AND s.studentId=$1;")
-	} else {
-		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired " +
-			"FROM competence as c, collectedCompetence as s " +
-			"WHERE c.competenceId = s.competenceId AND s.studentId=$1;")
-	}
+	rows, err := db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
+		"ORDER BY competenceId LIMIT $1 OFFSET $2", id, pageLimit, (pageNo-1)*pageLimit)
 
 	if err != nil {
 		return nil, err
 	}
 
 	for rows.Next() {
-		var competence model.Competence
-		if err := rows.Scan(&competence); err != nil {
+		var competenceID uint16
+		if err := rows.Scan(&competenceID); err != nil {
 			return nil, err
 		}
-		competences = append(competences, competence)
+		competences = append(competences, competenceID)
 	}
 
 	return competences, nil
 }
 
 // DeleteCollectedByStudentID delete a collected pair from studentId and competenceId
-func (db *Database) DeleteCollectedByStudentID(studentID string, competenceID uint16) error {
-	stmt, err := db.Prepare("DELETE FROM collectedCompetence WHERE studentId = $1 AND competenceId = $2")
+func (db *Database) DeleteCollectedByStudentID(studentID string, competenceID, semester uint16) error {
+	stmt, err := db.Prepare("DELETE FROM collectedCompetence WHERE studentId = $1 AND competenceId = $2 AND giver =$3")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(studentID, competenceID)
+	_, err = stmt.Exec(studentID, competenceID, semester)
 	if err != nil {
 		return err
 	}

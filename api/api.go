@@ -24,11 +24,11 @@ func (r *statusCodeRecorder) WriteHeader(statusCode int) {
 	r.ResponseWriter.WriteHeader(statusCode)
 }
 */
+
 // API struct
 type API struct {
-	App              *app.App
-	Config           *Config
-	CurrentPeerIndex uint64
+	App    *app.App
+	Config *Config
 }
 
 // New returns API struct

@@ -43,13 +43,14 @@ func (db *Database) AddAttendee(activityID uint32, studentID string) error {
 }
 
 // ApproveAttended add approved student to attended activity
-func (db *Database) ApproveAttended(activityID uint32, studentID string, txID []byte) error {
-	stmt, err := db.Prepare(" UPDATE attendedActivity SET transactionId=$1 WHERE activityId=$2 AND studentId=$3")
+func (db *Database) ApproveAttended(a *model.AttendedActivity) error {
+	stmt, err := db.Prepare("UPDATE attendedActivity SET transactionId=$1, approver=$2 " +
+		"WHERE activityId=$3 AND studentId=$4")
 	if err != nil {
 		return err
 	}
 
-	if _, err := stmt.Exec(txID, activityID, studentID); err != nil {
+	if _, err := stmt.Exec(a.TransactionID, a.Approver, a.ActivityID, a.StudentID); err != nil {
 		return err
 	}
 

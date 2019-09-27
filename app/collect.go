@@ -24,19 +24,28 @@ func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]model.Student, erro
 
 // GetCollectedByStudentID returns all of activities
 func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint64) ([]model.Competence, error) {
-	competences, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
+	competencesID, err := ctx.Database.GetCompetencesIDByStudentID(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
+	}
+
+	var competences []model.Competence
+
+	for _, competenceID := range competencesID {
+		competence, err := ctx.Database.GetCompetenceByID(competenceID)
+		if err != nil {
+			return nil, err
+		}
+		competences = append(competences, *competence)
 	}
 
 	return competences, nil
 }
 
 // CreateCollectedCompetence update new competence and its transactionID to a corresponding studentID
-func (ctx *Context) CreateCollectedCompetence(badges []*model.GiveBadge, txID []byte) error {
+func (ctx *Context) CreateCollectedCompetence(badges []*model.CollectedCompetence, txID []byte) error {
 	for _, badge := range badges {
-		tmp := model.NewCollectedCompetence(badge.StudentID, badge.CompetenceID, txID)
-		if err := ctx.Database.CreateCollectedCompetence(tmp); err != nil {
+		if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
 			return err
 		}
 	}

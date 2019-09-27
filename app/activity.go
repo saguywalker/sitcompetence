@@ -88,6 +88,7 @@ func (ctx *Context) GetActivitiesByStudent(id string, pageNo uint64) ([]*model.A
 	return activites, err
 }
 
+/*
 // ApproveActivity append activity and student to attended table iteratively
 func (ctx *Context) ApproveActivity(activities []*model.ApproveActivity, txID []byte) error {
 	for _, activity := range activities {
@@ -97,6 +98,7 @@ func (ctx *Context) ApproveActivity(activities []*model.ApproveActivity, txID []
 	}
 	return nil
 }
+*/
 
 // CreateActivity creates new activity
 func (ctx *Context) CreateActivity(activity *model.Activity) (int64, error) {

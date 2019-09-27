@@ -16,7 +16,7 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 	var student model.Student
 
 	for row.Next() {
-		err := row.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department)
+		err := row.Scan(&student)
 		if err != nil {
 			return nil, nil
 		}
@@ -44,7 +44,7 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64) ([]*model.Stude
 
 	for rows.Next() {
 		var student model.Student
-		err := rows.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department)
+		err := rows.Scan(&student)
 		if err != nil {
 			return nil, err
 		}
