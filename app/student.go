@@ -1,6 +1,10 @@
 package app
 
-import "github.com/saguywalker/sitcompetence/model"
+import (
+	"strconv"
+
+	"github.com/saguywalker/sitcompetence/model"
+)
 
 // GetStudentByID returns student detail from student id
 func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
@@ -14,8 +18,30 @@ func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all of students
-func (ctx *Context) GetStudents(pageNo uint64) ([]*model.Student, error) {
-	students, err := ctx.Database.GetStudents(ctx.PageLimit, pageNo)
+func (ctx *Context) GetStudents(pageNo uint64, dp, semester, year string) ([]*model.Student, error) {
+	var semes uint64
+	var yr uint64
+	var err error
+
+	if semester == "" {
+		semes = 0
+	} else {
+		semes, err = strconv.ParseUint(semester, 0, 64)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if year == "" {
+		yr = 0
+	} else {
+		yr, err = strconv.ParseUint(year, 0, 64)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	students, err := ctx.Database.GetStudents(ctx.PageLimit, pageNo, dp, uint16(semes), uint16(yr))
 	if err != nil {
 		//ctx.Logger.Errorln(err.Error())
 		return nil, err

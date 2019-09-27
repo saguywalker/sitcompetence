@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -101,51 +100,4 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 
 	return nil
-}
-
-// BroadcastTX broadcast transaction to blockchain node
-// Note: Need to check wheater calling's node is reachable or not
-func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) ([]byte, error) {
-	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[ctx.CurrentPeerIndex], hash)
-	ctx.Logger.Infoln(url)
-
-	response, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	data, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var fullData map[string]interface{}
-	err = json.Unmarshal(data, &fullData)
-	if err != nil {
-		return nil, err
-	}
-
-	resultData, ok := fullData["result"].(map[string]interface{})
-	if !ok {
-		ctx.Logger.Errorf("%+v\n", fullData)
-		return nil, fmt.Errorf("error when asserting type from data[\"result\"]")
-	}
-
-	txIDInterface := resultData["hash"]
-	transactionID, err := hex.DecodeString(txIDInterface.(string))
-	if err != nil {
-		return nil, err
-	}
-	ctx.Logger.Infof("TransactionID: %x\n", transactionID)
-
-	// w.WriteHeader(http.StatusOK)
-	// if _, err := w.Write(data); err != nil {
-	// panic(err)
-	// }
-
-	// Move to the next peer in round-robin fashion
-	ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(ctx.Peers))
-
-	return transactionID, err
 }

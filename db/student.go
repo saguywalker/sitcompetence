@@ -1,7 +1,8 @@
 package db
 
 import (
-	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -26,16 +27,38 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all students in a table
-func (db *Database) GetStudents(pageLimit uint64, pageNo uint64) ([]*model.Student, error) {
-	var rows *sql.Rows
-	var err error
+func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, semester, year uint16) ([]*model.Student, error) {
+	commands := make([]string, 1)
+	commands[0] = "SELECT * FROM student"
+	params := make([]string, 0)
 
-	if pageLimit == 0 || pageNo == 0 {
-		rows, err = db.Query("SELECT * FROM student")
-	} else {
-		rows, err = db.Query("SELECT * FROM student ORDER BY studentId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
+	if dp != "" {
+		commands = append(commands, "WHERE dp=$1")
+		params = append(params, dp)
+	}
+	if semester != 0 {
+		if len(params) == 0 {
+			commands = append(commands, "WHERE")
+		}
+		commands = append(commands, fmt.Sprintf("semester=$%d", len(params)+1))
+		params = append(params, string(semester))
+	}
+	if year != 0 {
+		if len(params) == 0 {
+			commands = append(commands, "WHERE")
+		}
+		commands = append(commands, fmt.Sprintf("year=$%d", len(params)+1))
+		params = append(params, string(year))
+	}
+	if pageLimit != 0 && pageNo != 0 {
+		paramLen := len(params)
+		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramLen+1, paramLen+2))
+		params = append(params, string(pageLimit))
+		params = append(params, string((pageNo-1)*pageLimit))
 	}
 
+	command := strings.Join(commands, " ")
+	rows, err := db.Query(command, params)
 	if err != nil {
 		return nil, err
 	}
