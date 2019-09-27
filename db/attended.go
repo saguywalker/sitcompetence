@@ -1,6 +1,8 @@
 package db
 
-import "github.com/saguywalker/sitcompetence/model"
+import (
+	"github.com/saguywalker/sitcompetence/model"
+)
 
 // GetAttendeesByActivityID return student id who joined a corresponding activity id
 func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error) {

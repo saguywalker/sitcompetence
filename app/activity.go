@@ -9,7 +9,7 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 		return nil, err
 	}
 
-	competences, err := ctx.Database.GetCompetencesByActivityID(id)
+	competences, err := ctx.Database.GetCompetencesByActivityID(id, 0, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -26,14 +26,14 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all of activities
-func (ctx *Context) GetActivities() ([]*model.Activity, error) {
-	activities, err := ctx.Database.GetActivities()
+func (ctx *Context) GetActivities(pageNo uint64) ([]*model.Activity, error) {
+	activities, err := ctx.Database.GetActivities(ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
 	}
 
 	for i := 0; i < len(activities); i++ {
-		competences, err := ctx.Database.GetCompetencesByActivityID(activities[i].ActivityID)
+		competences, err := ctx.Database.GetCompetencesByActivityID(activities[i].ActivityID, 0, 0)
 		if err != nil {
 			return nil, err
 		}
@@ -51,14 +51,14 @@ func (ctx *Context) GetActivities() ([]*model.Activity, error) {
 }
 
 // GetActivitiesByStaff return activities from staff id
-func (ctx *Context) GetActivitiesByStaff(id string) ([]*model.Activity, error) {
-	activities, err := ctx.Database.GetActivitiesByStaff(id)
+func (ctx *Context) GetActivitiesByStaff(id string, pageNo uint64) ([]*model.Activity, error) {
+	activities, err := ctx.Database.GetActivitiesByStaff(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
 	}
 
 	for i := 0; i < len(activities); i++ {
-		competences, err := ctx.Database.GetCompetencesByActivityID(activities[i].ActivityID)
+		competences, err := ctx.Database.GetCompetencesByActivityID(activities[i].ActivityID, 0, 0)
 		if err != nil {
 			return nil, err
 		}
@@ -70,14 +70,14 @@ func (ctx *Context) GetActivitiesByStaff(id string) ([]*model.Activity, error) {
 }
 
 // GetActivitiesByStudent return activities from student id
-func (ctx *Context) GetActivitiesByStudent(id string) ([]*model.Activity, error) {
-	activites, err := ctx.Database.GetActivitiesByStudent(id)
+func (ctx *Context) GetActivitiesByStudent(id string, pageNo uint64) ([]*model.Activity, error) {
+	activites, err := ctx.Database.GetActivitiesByStudent(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
 	}
 
 	for i := 0; i < len(activites); i++ {
-		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID)
+		competences, err := ctx.Database.GetCompetencesByActivityID(activites[i].ActivityID, 0, 0)
 		if err != nil {
 			return nil, err
 		}

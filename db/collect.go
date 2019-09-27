@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -42,8 +44,8 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 }
 
 // GetMerkleByStudentID returns all query collected competence from studentId
-func (db *Database) GetMerkleByStudentID(studentId string) ([]*model.CollectedCompetence, error) {
-	row, err := db.Query("SELECT * FROM collectedCompetence WHERE studentId = $1", studentId)
+func (db *Database) GetMerkleByStudentID(studentID string) ([]*model.CollectedCompetence, error) {
+	row, err := db.Query("SELECT * FROM collectedCompetence WHERE studentId = $1", studentID)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +66,8 @@ func (db *Database) GetMerkleByStudentID(studentId string) ([]*model.CollectedCo
 }
 
 // GetMerkleByCompetenceID returns all query collected competence from competenceId
-func (db *Database) GetMerkleByCompetenceID(competenceId uint16) ([]*model.CollectedCompetence, error) {
-	row, err := db.Query("SELECT * FROM collectedCompetence WHERE competenceId = $1", competenceId)
+func (db *Database) GetMerkleByCompetenceID(competenceID uint16) ([]*model.CollectedCompetence, error) {
+	row, err := db.Query("SELECT * FROM collectedCompetence WHERE competenceId = $1", competenceID)
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +88,21 @@ func (db *Database) GetMerkleByCompetenceID(competenceId uint16) ([]*model.Colle
 }
 
 // GetCompetencesByStudentID query competence from student id
-func (db *Database) GetCompetencesByStudentID(id string) ([]model.Competence, error) {
+func (db *Database) GetCompetencesByStudentID(id string, pageLimit, pageNo uint64) ([]model.Competence, error) {
 	var competences []model.Competence
 
-	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired " +
-		"FROM competence as c, collectedCompetence as s " +
-		"WHERE c.competenceId = s.competenceId AND s.studentId=$1;")
+	var rows *sql.Rows
+	var err error
+	if pageLimit == 0 || pageNo == 0 {
+		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired " +
+			"FROM competence as c, collectedCompetence as s " +
+			"WHERE c.competenceId = s.competenceId AND s.studentId=$1;")
+	} else {
+		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired " +
+			"FROM competence as c, collectedCompetence as s " +
+			"WHERE c.competenceId = s.competenceId AND s.studentId=$1;")
+	}
+
 	if err != nil {
 		return nil, err
 	}

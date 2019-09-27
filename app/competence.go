@@ -13,8 +13,8 @@ func (ctx *Context) GetCompetenceByID(id uint16) (*model.Competence, error) {
 }
 
 // GetCompetencesByActivityID query competence from activity id
-func (ctx *Context) GetCompetencesByActivityID(activityID uint32) ([]model.Competence, error) {
-	competences, err := ctx.Database.GetCompetencesByActivityID(activityID)
+func (ctx *Context) GetCompetencesByActivityID(activityID uint32, pageNo uint64) ([]model.Competence, error) {
+	competences, err := ctx.Database.GetCompetencesByActivityID(activityID, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +23,8 @@ func (ctx *Context) GetCompetencesByActivityID(activityID uint32) ([]model.Compe
 }
 
 // GetCompetences returns all of activities
-func (ctx *Context) GetCompetences() ([]model.Competence, error) {
-	competences, err := ctx.Database.GetCompetences()
+func (ctx *Context) GetCompetences(pageNo uint64) ([]model.Competence, error) {
+	competences, err := ctx.Database.GetCompetences(ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
 	}

@@ -27,7 +27,7 @@ func (a *API) GetCollectedCompetences(ctx *app.Context, w http.ResponseWriter, r
 
 // GetCollectedByStudentID response a competence from requested competenceID
 func (a *API) GetCollectedByStudentID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	id := getIDFromRequest("id", r)
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		return err

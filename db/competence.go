@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -24,12 +26,22 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 }
 
 // GetCompetencesByActivityID query competence from activity id
-func (db *Database) GetCompetencesByActivityID(id uint32) ([]model.Competence, error) {
+func (db *Database) GetCompetencesByActivityID(id uint32, pageLimit, pageNo uint64) ([]model.Competence, error) {
 	var competences []model.Competence
 
-	rows, err := db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
-		"FROM competence as c, competenceReward as r "+
-		"WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
+	var rows *sql.Rows
+	var err error
+	if pageLimit == 0 || pageNo == 0 {
+		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
+			"FROM competence as c, competenceReward as r "+
+			"WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
+	} else {
+		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
+			"FROM competence as c, competenceReward as r "+
+			"WHERE r.activityId = $1 AND c.competenceId = r.competenceId "+
+			"ORDER BY c.competenceId LIMIT $2 OFFSET $3", id, pageLimit, (pageNo-1)*pageLimit)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -48,10 +60,17 @@ func (db *Database) GetCompetencesByActivityID(id uint32) ([]model.Competence, e
 }
 
 // GetCompetences returns all competences in a table
-func (db *Database) GetCompetences() ([]model.Competence, error) {
+func (db *Database) GetCompetences(pageLimit uint64, pageNo uint64) ([]model.Competence, error) {
 	var competences []model.Competence
 
-	rows, err := db.Query("SELECT * FROM competence")
+	var rows *sql.Rows
+	var err error
+
+	if pageLimit == 0 || pageNo == 0 {
+		rows, err = db.Query("SELECT * FROM competence")
+	} else {
+		rows, err = db.Query("SELECT * FROM competence ORDER BY competenceId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
+	}
 	if err != nil {
 		return nil, err
 	}

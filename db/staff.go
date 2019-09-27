@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -24,8 +26,15 @@ func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
 }
 
 // GetStaffs returns all staffs in a table
-func (db *Database) GetStaffs() ([]*model.Staff, error) {
-	rows, err := db.Query("SELECT * FROM staff")
+func (db *Database) GetStaffs(pageLimit uint64, pageNo uint64) ([]*model.Staff, error) {
+	var rows *sql.Rows
+	var err error
+
+	if pageLimit == 0 || pageNo == 0 {
+		rows, err = db.Query("SELECT * FROM staff")
+	} else {
+		rows, err = db.Query("SELECT * FROM staff ORDER BY staffId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -12,7 +12,12 @@ import (
 
 // GetActivities response with all of activities
 func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	activities, err := ctx.GetActivities()
+	page, err := getPageParam(r)
+	if err != nil {
+		return err
+	}
+
+	activities, err := ctx.GetActivities(page)
 	if err != nil {
 		return err
 	}
@@ -45,14 +50,17 @@ func (a *API) SearchActivities(ctx *app.Context, w http.ResponseWriter, r *http.
 
 		activities = append(activities, activity)
 	} else {
-		var err error
+		page, err := getPageParam(r)
+		if err != nil {
+			return err
+		}
 
 		if params.Get("staff_id") != "" {
-			activities, err = ctx.GetActivitiesByStaff(params.Get("staff_id"))
+			activities, err = ctx.GetActivitiesByStaff(params.Get("staff_id"), page)
 		} else if params.Get("student_id") != "" {
-			activities, err = ctx.GetActivitiesByStudent(params.Get("student_id"))
+			activities, err = ctx.GetActivitiesByStudent(params.Get("student_id"), page)
 		} else {
-			activities, err = ctx.GetActivities()
+			activities, err = ctx.GetActivities(page)
 		}
 
 		if err != nil {
@@ -139,7 +147,7 @@ func (a *API) UpdateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 // DeleteActivity delete an existing activity activity
 func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	id := getIDFromRequest("id", r)
 
 	intID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {

@@ -15,8 +15,9 @@ type App struct {
 // NewContext returns reference to context struct
 func (a *App) NewContext() *Context {
 	return &Context{
-		Logger:   logrus.StandardLogger(),
-		Database: a.Database,
+		Logger:    logrus.StandardLogger(),
+		Database:  a.Database,
+		PageLimit: 8,
 	}
 }
 
