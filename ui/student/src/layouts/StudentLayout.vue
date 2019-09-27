@@ -13,10 +13,16 @@
 				class="nav-mobile"
 			>
 				<router-link
-					:to="{ name: 'account' }"
+					:to="{ name: 'dashboard' }"
 					class="item-link"
 				>
 					Dashboard
+				</router-link>
+				<router-link
+					:to="{ name: 'activity' }"
+					class="item-link"
+				>
+					Activity
 				</router-link>
 				<router-link
 					:to="{ name: 'portfolio' }"

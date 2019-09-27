@@ -1,7 +1,7 @@
 <template>
 	<nav class="mynavbar">
 		<router-link
-			:to="{ name: 'account' }"
+			:to="{ name: 'dashboard' }"
 			class="logo-wrapper"
 		>
 			<sitcom-logo
@@ -14,10 +14,16 @@
 		</router-link>
 		<div class="mynavbar-main">
 			<router-link
-				:to="{ name: 'account' }"
+				:to="{ name: 'dashboard' }"
 				class="item-link"
 			>
 				Dashboard
+			</router-link>
+			<router-link
+				:to="{ name: 'activity' }"
+				class="item-link"
+			>
+				Activity
 			</router-link>
 			<router-link
 				:to="{ name: 'portfolio' }"
@@ -54,6 +60,11 @@ export default {
 		return {
 			isNavMobileOpen: false
 		};
+	},
+	watch: {
+		$route() {
+			this.isNavMobileOpen = false;
+		}
 	},
 	methods: {
 		handleNavMobileOpen() {
