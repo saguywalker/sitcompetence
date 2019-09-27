@@ -103,13 +103,11 @@ export default {
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });
 			} catch (err) {
-				const notification = {
+				this.$bvToast.toast(`There was a problem submitting data: ${err.message}`, {
 					title: "Submit give badge",
-					message: `There was a problem submitting data: ${err.message}`,
-					variant: "danger"
-				};
-
-				this.$store.dispatch("notification/add", notification);
+					variant: "danger",
+					autoHideDelay: 1500
+				});
 			} finally {
 				loading.stop();
 			}

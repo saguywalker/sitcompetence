@@ -27,6 +27,10 @@ export default {
 	},
 	computed: {
 		currentPage() {
+			if (this.$route.params.id) {
+				return `Edit ${this.breadcrumbList[this.breadcrumbList.length - 1]}`;
+			}
+
 			return this.breadcrumbList[this.breadcrumbList.length - 1];
 		}
 	},

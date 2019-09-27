@@ -52,7 +52,7 @@ export const CREATE_ACTIVITY_STEP = Object.freeze({
 		}),
 		back: Object.freeze({
 			name: "Activity detail",
-			link: "create-activity-detail"
+			link: "create-activity"
 		}),
 		step: "select"
 	}),
@@ -64,6 +64,45 @@ export const CREATE_ACTIVITY_STEP = Object.freeze({
 		back: Object.freeze({
 			name: "Select Competence",
 			link: "create-activity-competence"
+		}),
+		step: "summary"
+	}),
+	success: Object.freeze({
+		step: "success"
+	})
+});
+
+export const EDIT_ACTIVITY_STEP = Object.freeze({
+	detail: Object.freeze({
+		next: Object.freeze({
+			name: "Select competence",
+			link: "edit-activity-competence"
+		}),
+		back: Object.freeze({
+			name: "Activity main",
+			link: "activity"
+		}),
+		step: "detail"
+	}),
+	competence: Object.freeze({
+		next: Object.freeze({
+			name: "Confirmation",
+			link: "edit-activity-summary"
+		}),
+		back: Object.freeze({
+			name: "Activity detail",
+			link: "edit-activity-detail"
+		}),
+		step: "select"
+	}),
+	summary: Object.freeze({
+		next: Object.freeze({
+			name: "Submit",
+			link: "edit-activity-success"
+		}),
+		back: Object.freeze({
+			name: "Select Competence",
+			link: "edit-activity-competence"
 		}),
 		step: "summary"
 	}),

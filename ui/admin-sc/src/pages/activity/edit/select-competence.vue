@@ -76,7 +76,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("createActivity", [
+		...mapState("editActivity", [
 			"competences",
 			"steps"
 		]),
@@ -87,7 +87,7 @@ export default {
 	beforeRouteEnter(to, from, next) {
 		next((vm) => {
 			if (!vm.steps.includes("detail")) {
-				vm.$router.replace({ name: "create-activity" });
+				vm.$router.replace({ name: "edit-activity" });
 			}
 		});
 	},
@@ -110,12 +110,12 @@ export default {
 				return;
 			}
 
-			await this.$store.dispatch("createActivity/setCompetenceInput", this.selects);
-			await this.$store.dispatch("createActivity/addStep", this.step.step);
+			await this.$store.dispatch("editActivity/setCompetenceInput", this.selects);
+			await this.$store.dispatch("editActivity/addStep", this.step.step);
 			this.$router.push({ name: this.step.next.link });
 		},
 		async goBack() {
-			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
+			await this.$store.dispatch("editActivity/deleteStep", this.step.step);
 			this.$router.push({ name: this.step.back.link });
 		},
 		validateSubmit() {

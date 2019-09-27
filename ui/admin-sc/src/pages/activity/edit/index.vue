@@ -68,17 +68,17 @@ export default {
 				category: ""
 			},
 			error: {
-				activity_name: null,
-				activity_date: null,
-				start_time: null,
-				location: null,
-				organizer: null,
-				category: null
+				activity_name: "",
+				activity_date: "",
+				start_time: "",
+				location: "",
+				organizer: "",
+				category: ""
 			}
 		};
 	},
 	computed: {
-		...mapState("createActivity", [
+		...mapState("editActivity", [
 			"detailInput",
 			"steps"
 		]),
@@ -89,9 +89,18 @@ export default {
 			return Object.values(this.error).some((err) => err !== null);
 		}
 	},
-	created() {
+	async created() {
 		if (this.detailInput.activity_name) {
-			this.input = this.detailInput;
+			try {
+				await this.$store.dispatch("editActivity/loadActivityById", this.$route.params.id);
+				this.input = this.detailInput;
+			} catch (err) {
+				this.$bvToast.toast(`Fetch activity id:${this.$route.params.id} error`, {
+					title: `Error ${err.message}`,
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			}
 		}
 	},
 	methods: {
@@ -105,7 +114,12 @@ export default {
 			this.error.description = null;
 		},
 		goBack() {
-			this.$router.push({ name: this.step.back.link });
+			this.$router.push({
+				name: "activity-detail",
+				params: {
+					id: this.$route.params.id
+				}
+			});
 		},
 		async submit() {
 			this.validateSubmit();
@@ -119,9 +133,9 @@ export default {
 				return;
 			}
 
-			await this.$store.dispatch("createActivity/setDetailInput", this.input);
-			await this.$store.dispatch("createActivity/addStep", this.step.step);
-			this.$router.push({ name: this.step.next.link });
+			await this.$store.dispatch("editActivity/setDetailInput", this.input);
+			await this.$store.dispatch("editActivity/addStep", this.step.step);
+			this.$router.push({ name: "edit-activity-competence" });
 		}
 	}
 };

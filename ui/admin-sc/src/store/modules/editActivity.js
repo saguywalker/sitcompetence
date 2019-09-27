@@ -1,64 +1,82 @@
 import { Activity } from "@/services";
 import {
-	CREATE_ACTIVITY_STEP,
-	CREATE_ACTIVITY_DETAIL,
-	CREATE_ACTIVITY_COMPETENCE,
-	CREATE_ACTIVITY_SUBMIT
+	EDIT_ACTIVITY_STEP,
+	EDIT_ACTIVITY_DETAIL,
+	EDIT_ACTIVITY_COMPETENCE,
+	EDIT_ACTIVITY_SUBMIT
 } from "../mutationTypes";
 
 const state = {
 	detailInput: {
+		activity_id: "",
 		activity_name: "",
 		description: "",
 		activity_date: "",
 		start_time: "",
+		student_site: "",
 		location: "",
 		organizer: "",
-		category: ""
+		category: "",
+		creator: "",
+		semester: "",
+		competences: ""
 	},
 	competences: [],
 	steps: []
 };
 
 const mutations = {
-	[CREATE_ACTIVITY_DETAIL](stateData, data) {
+	[EDIT_ACTIVITY_DETAIL](stateData, data) {
 		stateData.detailInput = {
 			...data
 		};
 	},
-	[CREATE_ACTIVITY_COMPETENCE](stateData, data) {
+	[EDIT_ACTIVITY_COMPETENCE](stateData, data) {
 		stateData.competences = [
 			...data
 		];
 	},
-	[CREATE_ACTIVITY_STEP](stateData, data) {
+	[EDIT_ACTIVITY_STEP](stateData, data) {
 		stateData.steps = [
 			...data
 		];
 	},
-	[CREATE_ACTIVITY_SUBMIT](stateData) {
+	[EDIT_ACTIVITY_SUBMIT](stateData) {
 		stateData.steps = [];
 		stateData.competences = [];
 		stateData.detailInput = {
+			activity_id: "",
 			activity_name: "",
 			description: "",
 			activity_date: "",
 			start_time: "",
+			student_site: "",
 			location: "",
 			organizer: "",
-			category: ""
+			category: "",
+			creator: "",
+			semester: "",
+			competences: ""
 		};
 	}
 };
 
 const actions = {
 	setDetailInput({ commit }, data) {
-		commit(CREATE_ACTIVITY_DETAIL, data);
+		commit(EDIT_ACTIVITY_DETAIL, data);
 	},
 	setCompetenceInput({ commit }, data) {
-		commit(CREATE_ACTIVITY_COMPETENCE, data);
+		commit(EDIT_ACTIVITY_COMPETENCE, data);
 	},
-	async submitCreateActivity({ commit, state: stateData }, data) {
+	async loadActivityById({ commit }, id) {
+		const	response = await Activity.getActivityById(id);
+		if (response.status === 200) {
+			commit(EDIT_ACTIVITY_DETAIL, response.data);
+		}
+
+		return response;
+	},
+	async submitEditActivity({ commit, state: stateData }, data) {
 		const competenceIds = stateData.competences.map((com) => com.id);
 
 		const payload = {
@@ -66,9 +84,9 @@ const actions = {
 			competences: competenceIds
 		};
 
-		const	response = await Activity.postCreateActivity(payload);
+		const	response = await Activity.editActivityById(payload);
 		if (response.status === 200) {
-			commit(CREATE_ACTIVITY_SUBMIT);
+			commit(EDIT_ACTIVITY_SUBMIT);
 		}
 
 		return response;
@@ -83,14 +101,14 @@ const actions = {
 			data
 		];
 
-		commit(CREATE_ACTIVITY_STEP, payload);
+		commit(EDIT_ACTIVITY_STEP, payload);
 	},
 	deleteStep({ commit, state: stateData }, data) {
 		const payload = stateData.steps.filter((step) => step !== data);
-		commit(CREATE_ACTIVITY_STEP, payload);
+		commit(EDIT_ACTIVITY_STEP, payload);
 	},
 	clearStep({ commit }) {
-		commit(CREATE_ACTIVITY_STEP, []);
+		commit(EDIT_ACTIVITY_STEP, []);
 	}
 };
 

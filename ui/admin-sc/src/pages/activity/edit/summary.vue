@@ -4,14 +4,14 @@
 			<div class="wrapper">
 				<div class="header">
 					<h2 class="title">
-						Activity summary
+						Edit activity summary
 					</h2>
 					<h4 class="subtitle">
 						Confirm activity details
 					</h4>
 				</div>
 				<router-link
-					:to="{ name: 'create-activity' }"
+					:to="{ name: 'edit-activity' }"
 					class="edit"
 				>
 					<icon-pen /> Edit
@@ -110,7 +110,7 @@ export default {
 	beforeRouteEnter(to, from, next) {
 		next((vm) => {
 			if (!vm.steps.includes("select")) {
-				vm.$router.replace({ name: "create-activity" });
+				vm.$router.replace({ name: "edit-activity" });
 			}
 		});
 	},
@@ -133,7 +133,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("createActivity", [
+		...mapState("editActivity", [
 			"detailInput",
 			"steps"
 		]),
@@ -148,13 +148,13 @@ export default {
 		async submit() {
 			loading.start();
 			try {
-				await this.$store.dispatch("createActivity/submitCreateActivity", {
+				await this.$store.dispatch("editActivity/submitEditActivity", {
 					...this.summary,
 					creator: "st01", // TODO: Get from login user
 					semester: getSemester(),
 					student_site: this.student_site
 				});
-				await this.$store.dispatch("createActivity/addStep", this.step.step);
+				await this.$store.dispatch("editActivity/addStep", this.step.step);
 				this.$router.push({ name: this.step.next.link });
 			} catch (err) {
 				this.$bvToast.toast(`There was a problem submitting data: ${err.message}`, {
@@ -167,7 +167,7 @@ export default {
 			}
 		},
 		async goBack() {
-			await this.$store.dispatch("createActivity/deleteStep", this.step.step);
+			await this.$store.dispatch("editActivity/deleteStep", this.step.step);
 			this.$router.push({ name: this.step.back.link });
 		}
 	}
