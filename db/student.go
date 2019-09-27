@@ -27,34 +27,29 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all students in a table
-func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, semester, year uint16) ([]*model.Student, error) {
+func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year uint16) ([]*model.Student, error) {
 	commands := make([]string, 1)
 	commands[0] = "SELECT * FROM student"
 	params := make([]string, 0)
 
 	if dp != "" {
-		commands = append(commands, "WHERE dp=$1")
 		params = append(params, dp)
+		commands = append(commands, "WHERE dp=$1")
 	}
-	if semester != 0 {
-		if len(params) == 0 {
-			commands = append(commands, "WHERE")
-		}
-		commands = append(commands, fmt.Sprintf("semester=$%d", len(params)+1))
-		params = append(params, string(semester))
-	}
+
 	if year != 0 {
 		if len(params) == 0 {
 			commands = append(commands, "WHERE")
 		}
-		commands = append(commands, fmt.Sprintf("year=$%d", len(params)+1))
 		params = append(params, string(year))
+		commands = append(commands, fmt.Sprintf("studentId LIKE '%d%%'", len(params)))
 	}
+
 	if pageLimit != 0 && pageNo != 0 {
-		paramLen := len(params)
-		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramLen+1, paramLen+2))
 		params = append(params, string(pageLimit))
 		params = append(params, string((pageNo-1)*pageLimit))
+		paramsLen := len(params)
+		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramsLen, paramsLen-1))
 	}
 
 	command := strings.Join(commands, " ")

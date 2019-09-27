@@ -29,7 +29,7 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		students, err = ctx.GetStudents(page, params.Get("dp"), params.Get("semester"), params.Get("year"))
+		students, err = ctx.GetStudents(page, params.Get("dp"), params.Get("year"))
 		if err != nil {
 			return err
 		}
@@ -54,7 +54,11 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	students, err := ctx.GetStudents(page)
+	params := r.URL.Query()
+	dp := params.Get("dp")
+	year := params.Get("year")
+
+	students, err := ctx.GetStudents(page, dp, year)
 	if err != nil {
 		return err
 	}
