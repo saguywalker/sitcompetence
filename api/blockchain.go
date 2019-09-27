@@ -157,7 +157,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	ctx.Logger.Infof("decoded transaction id: %x", decodedTxid)
 
 	url := fmt.Sprintf("http://%s/tx?hash=0x%x", a.Config.Peers[a.CurrentPeerIndex], decodedTxid)
-	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
+	a.CurrentPeerIndex = (a.CurrentPeerIndex + uint64(1)) % uint64(len(a.Config.Peers))
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
@@ -287,7 +287,7 @@ func (a *API) broadcastTX(ctx *app.Context, w http.ResponseWriter, hash []byte) 
 	// }
 
 	// Move to the next peer in round-robin fashion
-	a.CurrentPeerIndex = (a.CurrentPeerIndex + 1) % len(a.Config.Peers)
+	a.CurrentPeerIndex = (a.CurrentPeerIndex + uint64(1)) % uint64(len(a.Config.Peers))
 
 	return transactionID, err
 }

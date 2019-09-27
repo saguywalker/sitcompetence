@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -27,7 +28,7 @@ func (r *statusCodeRecorder) WriteHeader(statusCode int) {
 type API struct {
 	App              *app.App
 	Config           *Config
-	CurrentPeerIndex int
+	CurrentPeerIndex uint64
 }
 
 // New returns API struct
@@ -186,12 +187,27 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 	return strings.Split(strings.TrimSpace(addr), ":")[0]
 }
 
-// getIdFromRequest returnn id from request
-func getIdFromRequest(param string, r *http.Request) string {
+// getIDFromRequest returnn id from request
+func getIDFromRequest(param string, r *http.Request) string {
 	vars := mux.Vars(r)
 	id := vars[param]
 
 	return id
+}
+
+func getPageParam(r *http.Request) (uint64, error) {
+	params := r.URL.Query()
+	pageStr := params.Get("page")
+	if pageStr == "" {
+		return 0, nil
+	}
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(page), nil
 }
 
 // Home is for testing purpose only

@@ -21,9 +21,10 @@ func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]model.Student, erro
 	return competence, fmt.Errorf("unimplemented")
 }
 */
+
 // GetCollectedByStudentID returns all of activities
-func (ctx *Context) GetCollectedByStudentID(id string) ([]model.Competence, error) {
-	competences, err := ctx.Database.GetCompetencesByStudentID(id)
+func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint64) ([]model.Competence, error) {
+	competences, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
 	}

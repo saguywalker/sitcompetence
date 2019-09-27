@@ -24,8 +24,12 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 		students = append(students, student)
 	} else {
-		var err error
-		students, err = ctx.GetStudents()
+		page, err := getPageParam(r)
+		if err != nil {
+			return err
+		}
+
+		students, err = ctx.GetStudents(page)
 		if err != nil {
 			return err
 		}
@@ -45,7 +49,12 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 // GetStudents responses with all of students
 func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	students, err := ctx.GetStudents()
+	page, err := getPageParam(r)
+	if err != nil {
+		return err
+	}
+
+	students, err := ctx.GetStudents(page)
 	if err != nil {
 		return err
 	}
@@ -125,6 +134,6 @@ func (a *API) UpdateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 
 // DeleteStudent delete student from table
 func (a *API) DeleteStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	id := getIDFromRequest("id", r)
 	return ctx.DeleteStudent(id)
 }

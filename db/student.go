@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -24,8 +26,16 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all students in a table
-func (db *Database) GetStudents() ([]*model.Student, error) {
-	rows, err := db.Query("SELECT * FROM student")
+func (db *Database) GetStudents(pageLimit uint64, pageNo uint64) ([]*model.Student, error) {
+	var rows *sql.Rows
+	var err error
+
+	if pageLimit == 0 || pageNo == 0 {
+		rows, err = db.Query("SELECT * FROM student")
+	} else {
+		rows, err = db.Query("SELECT * FROM student ORDER BY studentId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
+	}
+
 	if err != nil {
 		return nil, err
 	}

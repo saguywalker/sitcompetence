@@ -24,8 +24,13 @@ func (a *API) SearchStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 
 		staffs = append(staffs, staff)
 	} else {
-		var err error
-		staffs, err = ctx.GetStaffs()
+		page, err := getPageParam(r)
+		if err != nil {
+			return err
+		}
+
+		staffs, err = ctx.GetStaffs(page)
+
 		if err != nil {
 			return err
 		}
@@ -45,7 +50,12 @@ func (a *API) SearchStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 
 // GetStaffs responses with all of staffs
 func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	staffs, err := ctx.GetStaffs()
+	page, err := getPageParam(r)
+	if err != nil {
+		return err
+	}
+
+	staffs, err := ctx.GetStaffs(page)
 	if err != nil {
 		return err
 	}
@@ -125,6 +135,6 @@ func (a *API) UpdateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 
 // DeleteStaff delete staff from table
 func (a *API) DeleteStaff(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	id := getIDFromRequest("id", r)
 	return ctx.DeleteStaff(id)
 }

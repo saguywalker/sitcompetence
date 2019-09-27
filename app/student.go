@@ -14,8 +14,8 @@ func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all of students
-func (ctx *Context) GetStudents() ([]*model.Student, error) {
-	students, err := ctx.Database.GetStudents()
+func (ctx *Context) GetStudents(pageNo uint64) ([]*model.Student, error) {
+	students, err := ctx.Database.GetStudents(ctx.PageLimit, pageNo)
 	if err != nil {
 		//ctx.Logger.Errorln(err.Error())
 		return nil, err

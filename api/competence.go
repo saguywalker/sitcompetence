@@ -12,7 +12,12 @@ import (
 
 // GetCompetences response with all of competences
 func (a *API) GetCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	competences, err := ctx.GetCompetences()
+	page, err := getPageParam(r)
+	if err != nil {
+		return err
+	}
+
+	competences, err := ctx.GetCompetences(page)
 	if err != nil {
 		return err
 	}
@@ -82,18 +87,21 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 		competences = append(competences, *competence)
 	} else {
-		var err error
+		page, err := getPageParam(r)
+		if err != nil {
+			return err
+		}
 
 		if params.Get("activity_id") != "" {
 			activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
 			if err != nil {
 				return err
 			}
-			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID))
+			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID), page)
 		} else if params.Get("student_id") != "" {
-			competences, err = ctx.GetCollectedByStudentID(params.Get("student_id"))
+			competences, err = ctx.GetCollectedByStudentID(params.Get("student_id"), page)
 		} else {
-			competences, err = ctx.GetCompetences()
+			competences, err = ctx.GetCompetences(page)
 		}
 
 		if err != nil {
@@ -113,7 +121,7 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 // GetCompetenceByID response a competence from requested competenceID
 func (a *API) GetCompetenceByID(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	id := getIDFromRequest("id", r)
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		return err
@@ -152,7 +160,7 @@ func (a *API) UpdateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 
 // DeleteCompetence delete competence from table
 func (a *API) DeleteCompetence(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	id := getIdFromRequest("id", r)
+	id := getIDFromRequest("id", r)
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		return err
