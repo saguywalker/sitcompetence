@@ -17,7 +17,7 @@
 }
 
 html, body {
-	color: $blue-1;
+	color: $black;
 	font-size: rem($base-font);
 	font-family: "proxima-nova";
 	overflow-x: hidden;
@@ -73,6 +73,7 @@ button {
 
 	.title {
 		color: $white;
+		font-size: rem(50);
 		font-weight: 600;
 	}
 }

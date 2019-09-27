@@ -16,9 +16,18 @@ export default new Router({
 			component: () => import(/* webpackChunkName: "student-layout" */"@/layouts/StudentLayout.vue"),
 			children: [
 				{
-					name: "account",
-					path: "/account",
-					component: () => import(/* webpackChunkName: "account" */"@/pages/Account.vue")
+					path: "/",
+					redirect: { name: "dashboard" }
+				},
+				{
+					name: "dashboard",
+					path: "/dashboard",
+					component: () => import(/* webpackChunkName: "dashboard" */"@/pages/Dashboard.vue")
+				},
+				{
+					name: "activity",
+					path: "/activity",
+					component: () => import(/* webpackChunkName: "activity" */"@/pages/Activity.vue")
 				},
 				{
 					name: "portfolio",

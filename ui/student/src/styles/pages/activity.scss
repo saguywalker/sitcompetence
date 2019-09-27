@@ -1,0 +1,14 @@
+@import "../cores.scss";
+
+.activity {
+	&-body {
+		padding-top: rem(45);
+		padding-bottom: rem(45);
+	}
+
+	&-list {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}
