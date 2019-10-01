@@ -17,10 +17,10 @@
 					Hi
 				</li>
 				<li class="item">
-					Hi
+					Hi 20 pts.
 				</li>
 				<li class="item">
-					Hi
+					Hi 10 pts.
 				</li>
 				<li class="item">
 					Hi

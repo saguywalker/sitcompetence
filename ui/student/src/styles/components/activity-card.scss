@@ -2,7 +2,7 @@
 
 .activity-card {
 	display: grid;
-	grid-template-columns: auto auto 1fr;
+	grid-template-columns: auto auto;
 	grid-column-gap: 0;
 	grid-template-areas:
 	"activity-card-heading activity-card-heading"
@@ -71,10 +71,13 @@
 			display: flex;
 			flex-wrap: wrap;
 			margin: 0;
+			max-height: rem(86);
+			overflow-y: auto;
+			list-style: none;
 
 			.item {
 				display: flex;
-				align-items: center;
+				width: 100%;
 				font-weight: 600;
 				margin-right: rem(16);
 			}
@@ -86,6 +89,19 @@
 
 		.title {
 			font-size: rem(48);
+		}
+
+		.competences {
+			&-list {
+				max-height: rem(62);
+
+				.item {
+					display: flex;
+					width: 40%;
+					font-weight: 600;
+					margin-right: rem(16);
+				}
+			}
 		}
 	}
 }

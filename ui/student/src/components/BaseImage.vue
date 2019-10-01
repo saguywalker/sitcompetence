@@ -8,10 +8,8 @@
 	>
 		<img
 			:style="{
-				height: activityCard ? '140px' : '100%',
-				borderRadius: imageRounded,
-				borderTopLeftRadius: activityCard ? '5px' : 'none',
-				borderTopRightRadius: activityCard ? '5px' : 'none'
+				height: '100%',
+				borderRadius: imageRounded
 			}"
 			:src="imageSrc"
 			alt="Image"
@@ -39,10 +37,6 @@ export default {
 		round: {
 			type: Boolean,
 			default: true
-		},
-		activityCard: {
-			type: Boolean,
-			default: false
 		}
 	},
 	computed: {
