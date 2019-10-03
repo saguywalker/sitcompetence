@@ -12,6 +12,11 @@ export default new Router({
 			component: () => import(/* webpackChunkName: "login" */ "@/pages/Login.vue")
 		},
 		{
+			path: "/portfolio/:id",
+			name: "portfolio_id",
+			component: () => import(/* webpackChunkName: "portfolio_id" */ "@/pages/PortfolioId.vue")
+		},
+		{
 			path: "/",
 			component: () => import(/* webpackChunkName: "student-layout" */"@/layouts/StudentLayout.vue"),
 			children: [

@@ -119,6 +119,25 @@
 		}
 	}
 
+	.page-header.port-id {
+		.logo {
+			position: relative;
+			top: rem(-13);
+		}
+
+		.title {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			h2 {
+				margin-left: rem(16);
+				font-size: rem(25);
+				font-weight: 600;
+			}
+		}
+	}
+
 	@include tablet {
 		.portfolio-section {
 			.profile-bar {
@@ -159,6 +178,17 @@
 							top: rem(-2);
 						}
 					}
+				}
+			}
+		}
+
+		.page-header.port-id {
+			.title {
+			justify-content: flex-start;
+
+				h2 {
+					margin-left: rem(0);
+					font-size: rem(50);
 				}
 			}
 		}
