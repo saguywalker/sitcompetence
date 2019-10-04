@@ -29,7 +29,7 @@ func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error)
 
 // AddAttendee add student to attended activity
 func (db *Database) AddAttendee(activityID uint32, studentID string) error {
-	stmt, err := db.Prepare("INSERT INTO attendedActivity(activityId, studentId)" +
+	stmt, err := db.Prepare("INSERT INTO attendedActivity(activityId, studentId) " +
 		"VALUES($1, $2);")
 	if err != nil {
 		return err

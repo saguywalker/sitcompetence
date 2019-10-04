@@ -30,20 +30,21 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 // GetStudents returns all students in a table
 func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year uint16) ([]*model.Student, error) {
 	commands := make([]string, 1)
-	commands[0] = "SELECT * FROM student"
-	params := make([]string, 0)
+	commands[0] = "SELECT * FROM student "
+	params := make([]interface{}, 0)
 
 	if dp != "" {
 		params = append(params, dp)
-		commands = append(commands, "WHERE dp=$1")
+		commands = append(commands, "WHERE LOWER(department)=LOWER($1) ")
 	}
 
 	if year != 0 {
 		if len(params) == 0 {
-			commands = append(commands, "WHERE")
+			commands = append(commands, "WHERE ")
+		} else {
+			commands = append(commands, "AND ")
 		}
-		params = append(params, string(year))
-		commands = append(commands, fmt.Sprintf("studentId LIKE '%d%%'", len(params)))
+		commands = append(commands, fmt.Sprintf("studentId LIKE '%d%%' ", year))
 	}
 
 	if pageLimit != 0 && pageNo != 0 {
@@ -60,7 +61,7 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year
 	if len(params) == 0 {
 		rows, err = db.Query(command)
 	} else {
-		rows, err = db.Query(command, params)
+		rows, err = db.Query(command, params...)
 	}
 	if err != nil {
 		return nil, err

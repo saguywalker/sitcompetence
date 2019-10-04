@@ -10,7 +10,7 @@ import (
 func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 	var ac model.Activity
 
-	row, err := db.Query("SELECT * FROM activity WHERE activityId = $1", id)
+	row, err := db.Query("SELECT * FROM activity WHERE activityId = $1;", id)
 
 	if err != nil {
 		return nil, err
