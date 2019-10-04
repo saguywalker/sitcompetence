@@ -49,19 +49,32 @@
 			<div class="box">
 				<div class="content">
 					<div class="activity-header">
-						<span class="eyebrow">@10.00 on Aug 28 2019</span>
+						<span class="eyebrow">{{ eyebrowContent }}</span>
 						<h1 class="title">
-							{{ activityDetail.title }}
+							{{ activityDetail.activity_name }}
 						</h1>
-						<h5>Organized by Nongtiny</h5>
-						<h5>Category: Play</h5>
+						<h5>Organized by {{ activityDetail.organizer }}</h5>
+						<h5>Category: {{ activityDetail.category }}</h5>
 					</div>
 
 					<h2>Location</h2>
-					<p>CB4 KMUTT</p>
+					<p>{{ activityDetail.location }}</p>
 
 					<h2>Activity details</h2>
 					<p>{{ activityDetail.description | noValue }}</p>
+
+					<h2 class="attendees-title">
+						Competence
+					</h2>
+					<ul class="attendees-list">
+						<li
+							v-for="(item, index) in activityDetail.competences"
+							:key="`${item}${index}`"
+							class="item"
+						>
+							{{ item.competence_name }}
+						</li>
+					</ul>
 
 					<h2 class="attendees-title">
 						Attendees
@@ -87,7 +100,8 @@
 <script>
 import IconArrow from "@/components/icons/IconArrow.vue";
 import loading from "@/plugin/loading";
-import { mapGetters } from "vuex";
+import { getMonthNameByDateFormat, getYearByDateFormat } from "@/helpers";
+import { mapState, mapGetters } from "vuex";
 
 export default {
 	components: {
@@ -108,18 +122,49 @@ export default {
 		};
 	},
 	computed: {
+		...mapState("activity", [
+			"activities",
+			"activity"
+		]),
 		...mapGetters("activity", [
 			"getActivityById"
 		]),
+		eyebrowContent() {
+			return `@${this.activityDetail.time} on ${getMonthNameByDateFormat(this.activityDetail.activity_date)} ${getYearByDateFormat(this.activityDetail.activity_date)}`;
+		},
 		activityId() {
 			return this.$route.params.id;
 		},
 		activityDetail() {
-			return this.getActivityById(this.activityId);
+			if (this.activities.length !== 0) {
+				return this.getActivityById(this.activityId);
+			}
+
+			return this.activity;
 		}
 		// activityAttendees() {
 		// 	return this.activityDetail.map((activity) => activity.attendees);
 		// }
+	},
+	async created() {
+		loading.start();
+
+		if (this.activities.length !== 0) {
+			loading.stop();
+			return;
+		}
+
+		try {
+			await this.$store.dispatch("activity/loadActivityById", this.activityId);
+		} catch (err) {
+			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+				title: "Fetching activity error",
+				variant: "danger",
+				autoHideDelay: 1500
+			});
+		} finally {
+			loading.stop();
+		}
 	},
 	methods: {
 		deleteActivity() {

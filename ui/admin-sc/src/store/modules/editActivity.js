@@ -71,7 +71,7 @@ const actions = {
 	async loadActivityById({ commit }, id) {
 		const	response = await Activity.getActivityById(id);
 		if (response.status === 200) {
-			commit(EDIT_ACTIVITY_DETAIL, response.data);
+			commit(EDIT_ACTIVITY_DETAIL, response.data[0]);
 		}
 
 		return response;

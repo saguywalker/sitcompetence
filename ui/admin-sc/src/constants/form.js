@@ -32,6 +32,6 @@ export const CREATE_ACTIVITY_FORM = Object.freeze([
 	{
 		label: "Start time",
 		type: "time",
-		model: "start_time"
+		model: "time"
 	}
 ]);

@@ -10,6 +10,7 @@
     "student"
   ],
   "scripts": {
+    "dev": "run-s dev:*",
     "dev:admin": "yarn workspace @p/admin-sc run serve",
     "dev:student": "yarn workspace @p/student run serve",
     "build": "run-s build:*",

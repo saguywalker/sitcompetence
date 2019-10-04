@@ -1,3 +1,5 @@
+import { MONTH_NAMES } from "@/constants";
+
 export const takeFileName = (path) => {
 	if (!path) {
 		return path;
@@ -40,4 +42,27 @@ export const getSemester = () => {
 	}
 
 	return 20000 + year;
+};
+
+export const getMonthNameByDateFormat = (format) => {
+	const date = new Date(format);
+
+	return MONTH_NAMES[date.getMonth()];
+};
+
+export const getYearByDateFormat = (format) => {
+	const date = new Date(format);
+
+	return date.getFullYear();
+};
+
+export const getEditDateFormat = (format) => {
+	const date = new Date(format);
+	const day = date.getDate();
+	const computedDay = day > 9 ? day : `0${day}`;
+	const month = date.getMonth();
+	const computedMonth = month > 9 ? month : `0${month}`;
+	const year = date.getFullYear();
+
+	return `${year}-${computedMonth}-${computedDay}`;
 };

@@ -51,7 +51,7 @@
 @import "@/styles/pages/create-activity-detail.scss";
 </style>
 <script>
-import { CREATE_ACTIVITY_FORM } from "@/constants/form";
+import { CREATE_ACTIVITY_FORM } from "@/constants";
 import { mapState } from "vuex";
 
 export default {
@@ -62,7 +62,7 @@ export default {
 				activity_name: "",
 				description: "",
 				activity_date: "",
-				start_time: "",
+				time: "",
 				location: "",
 				organizer: "",
 				category: ""
@@ -70,7 +70,7 @@ export default {
 			error: {
 				activity_name: null,
 				activity_date: null,
-				start_time: null,
+				time: null,
 				location: null,
 				organizer: null,
 				category: null

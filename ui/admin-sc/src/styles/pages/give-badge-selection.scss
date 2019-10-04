@@ -58,11 +58,14 @@
 			padding: rem(20) 0;
 
 			.badge-wrapper {
-				text-align: center;
+				margin-bottom: rem(22);
 				font-size: rem(12);
 			}
 
 			.badge-checkbox {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
 				position: relative;
 				padding: rem(5);
 				cursor: pointer;
@@ -71,7 +74,8 @@
 					&::after {
 						content: "SELECTED";
 						position: absolute;
-						left: 0;
+						left: 50%;
+						margin-left: rem(-52);
 						bottom: 47%;
 						padding: rem(5) 0;
 						text-align: center;
@@ -79,7 +83,7 @@
 						color: $white;
 						font-weight: bold;
 						font-size: rem(12);
-						width: 100%;
+						width: rem(104);
 					}
 				}
 

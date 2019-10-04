@@ -43,9 +43,9 @@ export default new Router({
 		},
 		{
 			name: "admin",
-			path: "/admin",
+			path: "/adminsitcompetence",
 			beforeEnter() {
-				location.href = "http://github.com";
+				location.href = "http://localhost:8080/admin/activity";
 			}
 		}
 	]

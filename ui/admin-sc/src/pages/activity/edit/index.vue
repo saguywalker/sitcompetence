@@ -51,7 +51,8 @@
 @import "@/styles/pages/create-activity-detail.scss";
 </style>
 <script>
-import { CREATE_ACTIVITY_FORM } from "@/constants/form";
+import { getEditDateFormat } from "@/helpers";
+import { CREATE_ACTIVITY_FORM } from "@/constants";
 import { mapState } from "vuex";
 
 export default {
@@ -62,22 +63,25 @@ export default {
 				activity_name: "",
 				description: "",
 				activity_date: "",
-				start_time: "",
+				time: "",
 				location: "",
 				organizer: "",
 				category: ""
 			},
 			error: {
-				activity_name: "",
-				activity_date: "",
-				start_time: "",
-				location: "",
-				organizer: "",
-				category: ""
+				activity_name: null,
+				activity_date: null,
+				time: null,
+				location: null,
+				organizer: null,
+				category: null
 			}
 		};
 	},
 	computed: {
+		...mapState("activity", [
+			"activity"
+		]),
 		...mapState("editActivity", [
 			"detailInput",
 			"steps"
@@ -90,17 +94,24 @@ export default {
 		}
 	},
 	async created() {
-		if (this.detailInput.activity_name) {
-			try {
-				await this.$store.dispatch("editActivity/loadActivityById", this.$route.params.id);
-				this.input = this.detailInput;
-			} catch (err) {
-				this.$bvToast.toast(`Fetch activity id:${this.$route.params.id} error`, {
-					title: `Error ${err.message}`,
-					variant: "danger",
-					autoHideDelay: 1500
-				});
-			}
+		try {
+			await this.$store.dispatch("editActivity/loadActivityById", this.$route.params.id);
+			this.input = {
+				...this.detailInput,
+				activity_name: this.detailInput.activity_name,
+				description: this.detailInput.description,
+				activity_date: getEditDateFormat(this.detailInput.activity_date),
+				time: "09:30",
+				location: this.detailInput.location,
+				organizer: this.detailInput.organizer,
+				category: this.detailInput.category
+			};
+		} catch (err) {
+			this.$bvToast.toast(`Fetch activity id:${this.$route.params.id} error`, {
+				title: `Error ${err.message}`,
+				variant: "danger",
+				autoHideDelay: 1500
+			});
 		}
 	},
 	methods: {

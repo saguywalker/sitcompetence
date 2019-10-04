@@ -1,11 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-	baseURL: "http://localhost:3000/api",
-	withCredentials: true,
-	headers: {
-		"Access-Control-Allow-Origin": "http://localhost:3000"
-	}
+	baseURL: "http://localhost:3000/api"
 });
 
 const GiveBadge = {
@@ -16,10 +12,13 @@ const GiveBadge = {
 
 const Base = {
 	getAllBadges() {
-		return apiClient.get("/competences");
+		return apiClient.get("/competence");
 	},
 	getAllStudents() {
-		return apiClient.get("/students");
+		return apiClient.get("/student");
+	},
+	getAllStaffs() {
+		return apiClient.get("/staffs");
 	}
 };
 
@@ -34,7 +33,7 @@ const Activity = {
 		return apiClient.get("/activity");
 	},
 	getActivityById(id) {
-		return apiClient.get(`/search/activity/${id}`);
+		return apiClient.get(`/search/activity?activity_id=${id}`);
 	},
 	editActivityById(data) {
 		return apiClient.put("/activity", data);

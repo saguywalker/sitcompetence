@@ -10,119 +10,10 @@ import {
 } from "../mutationTypes";
 
 const state = {
-	pastActivities: [
-		{
-			id: "2093",
-			title: "Run",
-			description: "Bab P' Toon"
-		},
-		{
-			id: "321",
-			title: "Forrest Gump",
-			description: ""
-		},
-		{
-			id: "8632",
-			title: "Pokemon",
-			description: "The best Pokemon Trainer in the world is Sasuke wtf..."
-		},
-		{
-			id: "4433",
-			title: "Jeab",
-			description: ""
-		},
-		{
-			id: "4321",
-			title: "Prep",
-			description: "Cheapest Flight"
-		},
-		{
-			id: "6332",
-			title: "Potato Corner",
-			description: "French Fries"
-		}
-	],
-	postActivities: [
-		{
-			id: "2093",
-			title: "Run",
-			description: "Bab P' Toon"
-		},
-		{
-			id: "321",
-			title: "Forrest Gump",
-			description: ""
-		},
-		{
-			id: "8632",
-			title: "Pokemon",
-			description: "The best Pokemon Trainer in the world is Sasuke wtf..."
-		},
-		{
-			id: "4433",
-			title: "Jeab",
-			description: ""
-		},
-		{
-			id: "4321",
-			title: "Prep",
-			description: "Cheapest Flight"
-		},
-		{
-			id: "6332",
-			title: "Potato Corner",
-			description: "French Fries"
-		}
-	],
-	saveActivities: [
-		{
-			id: "1823",
-			title: "Charlie",
-			description: "Nack Charlie"
-		},
-		{
-			id: "9121",
-			title: "Tame Impala",
-			description: ""
-		},
-		{
-			id: "5555",
-			title: "Miyabi",
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima cupiditate laudantium ipsa est maxime quasi minus soluta laborum. Unde soluta natus itaque qui! Quod asperiores aliquid odio nihil, veniam in."
-		}
-	],
-	activities: [
-		{
-			id: "2093",
-			title: "Run",
-			description: "Bab P' Toon"
-		},
-		{
-			id: "321",
-			title: "Forrest Gump",
-			description: ""
-		},
-		{
-			id: "8632",
-			title: "Pokemon",
-			description: "The best Pokemon Trainer in the world is Sasuke wtf..."
-		},
-		{
-			id: "4433",
-			title: "Jeab",
-			description: ""
-		},
-		{
-			id: "4321",
-			title: "Prep",
-			description: "Cheapest Flight"
-		},
-		{
-			id: "6332",
-			title: "Potato Corner",
-			description: "French Fries"
-		}
-	],
+	pastActivities: [],
+	postActivities: [],
+	saveActivities: [],
+	activities: [],
 	responseData: {},
 	activity: {}
 };
@@ -183,7 +74,7 @@ const actions = {
 		const response = await Activity.getActivityById(id);
 
 		if (response.status === 200) {
-			commit(LOAD_ACTIVITY, response.data);
+			commit(LOAD_ACTIVITY, response.data[0]);
 		}
 
 		return response;
@@ -223,7 +114,7 @@ const getters = {
 		return stateData.activities.filter((activity) => !activity.student_site);
 	},
 	getActivityById: (stateData) => (id) => {
-		return stateData.activities.find((activity) => activity.id === id);
+		return stateData.activities.find((activity) => activity.activity_id === id);
 	},
 	// eslint-disable-next-line no-shadow
 	getApprovedActivitiesBySemester: (state, getters) => (semester) => {

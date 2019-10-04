@@ -2,13 +2,11 @@ import Vue from "vue";
 import Router from "vue-router";
 import {
 	GIVE_BADGE_BREADCRUMB,
-	CREATE_ACTIVITY_BREADCRUMB
-} from "@/constants/breadcrumb";
-import {
+	CREATE_ACTIVITY_BREADCRUMB,
 	GIVE_BADGE_STEP,
 	CREATE_ACTIVITY_STEP,
 	EDIT_ACTIVITY_STEP
-} from "@/constants/step";
+} from "@/constants";
 
 Vue.use(Router);
 

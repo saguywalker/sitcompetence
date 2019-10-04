@@ -91,7 +91,7 @@ export const EDIT_ACTIVITY_STEP = Object.freeze({
 		}),
 		back: Object.freeze({
 			name: "Activity detail",
-			link: "edit-activity-detail"
+			link: "edit-activity"
 		}),
 		step: "select"
 	}),

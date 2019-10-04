@@ -27,71 +27,23 @@
 			</div>
 			<div class="box">
 				<h1 class="box-header">
-					Now on student site
-				</h1>
-				<div class="my-row">
-					<router-link
-						v-for="(activity, index) in postActivities"
-						:key="`${activity.id}${index}`"
-						:to="{
-							name: 'activity-detail',
-							params: {
-								id: activity.id
-							}
-						}"
-						class="activity-card-link"
-					>
-						<activity-card
-							:title="activity.title"
-							:description="activity.description"
-						/>
-					</router-link>
-				</div>
-			</div>
-			<div class="box">
-				<h1 class="box-header">
-					Saved activity
-				</h1>
-				<div class="my-row">
-					<router-link
-						v-for="(activity, index) in saveActivities"
-						:key="`${activity.id}${index}`"
-						:to="{
-							name: 'activity-detail',
-							params: {
-								id: activity.id
-							}
-						}"
-						class="activity-card-link"
-					>
-						<activity-card
-							:title="activity.title"
-							:description="activity.description"
-							date="19-08-2019"
-						/>
-					</router-link>
-				</div>
-			</div>
-			<div class="box">
-				<h1 class="box-header">
 					From API activity
 				</h1>
 				<div class="my-row">
 					<router-link
-						v-for="(activity, index) in acts"
-						:key="`${activity.id}${index}`"
+						v-for="(activity, index) in activities"
+						:key="`${activity.activity_id}${index}`"
 						:to="{
 							name: 'activity-detail',
 							params: {
-								id: activity.id
+								id: activity.activity_id
 							}
 						}"
 						class="activity-card-link"
 					>
 						<activity-card
-							:title="activity.title"
+							:title="activity.activity_name"
 							:description="activity.description"
-							date="19-08-2019"
 						/>
 					</router-link>
 				</div>
@@ -112,11 +64,6 @@ export default {
 	components: {
 		ActivityCard
 	},
-	data() {
-		return {
-			acts: []
-		};
-	},
 	computed: {
 		...mapState("activity", [
 			"postActivities",
@@ -125,11 +72,13 @@ export default {
 		])
 	},
 	async created() {
+		if (this.activities.length !== 0) {
+			return;
+		}
 		loading.start();
 
 		try {
 			await this.$store.dispatch("activity/loadActivity");
-			this.acts = this.activities;
 		} catch (err) {
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
 				title: "Fetching activity error",

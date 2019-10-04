@@ -134,7 +134,7 @@ export default {
 			currentPage: 1,
 			perPage: 3,
 			search: "",
-			fields: ["selected", "student_id", "first_name", "last_name", "department"],
+			fields: ["selected", "student_id", "firstname", "lastname", "department"],
 			items: [],
 			selectedItems: [],
 			error: {

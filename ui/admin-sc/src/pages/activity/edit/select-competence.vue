@@ -18,21 +18,21 @@
 					class="badge-wrapper"
 				>
 					<label
-						:for="`${option.name}${id}`"
+						:for="`${option.competence_name}${id}`"
 						:class="[
 							'badge-checkbox',
-							hasSelected(option.id) ? 'is-select' : ''
+							hasSelected(option.competence_id) ? 'is-select' : ''
 						]"
 					>
 						<base-image size="90" />
 						<input
-							:id="`${option.name}${id}`"
+							:id="`${option.competence_name}${id}`"
 							v-model="selects"
 							:value="option"
 							type="checkbox"
 							@input="hasError = false"
 						>
-						<p class="text">{{ option.name }}</p>
+						<p class="text">{{ option.competence_name }}</p>
 					</label>
 				</b-col>
 			</div>
@@ -54,28 +54,14 @@ export default {
 	data() {
 		return {
 			hasError: false,
-			options: [ // TODO: Get all badge options from backend
-				{
-					id: "002",
-					name: "Team working"
-				},
-				{
-					id: "003",
-					name: "Communication"
-				},
-				{
-					id: "004",
-					name: "Leadership"
-				},
-				{
-					id: "005",
-					name: "Flexible"
-				}
-			],
+			options: [],
 			selects: []
 		};
 	},
 	computed: {
+		...mapState("base", [
+			"badges"
+		]),
 		...mapState("editActivity", [
 			"competences",
 			"steps"
@@ -91,12 +77,17 @@ export default {
 			}
 		});
 	},
-	created() {
+	async created() {
+		if (this.badges.length === 0) {
+			await this.$store.dispatch("base/loadBadgeData");
+		}
+
+		this.options = this.badges;
 		this.selects = this.competences;
 	},
 	methods: {
 		hasSelected(id) {
-			return this.selects.some((select) => select.id === id);
+			return this.selects.some((select) => select.competence_id === id);
 		},
 		async submit() {
 			this.validateSubmit();

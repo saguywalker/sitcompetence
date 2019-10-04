@@ -67,6 +67,14 @@
 					</div>
 					<div class="detail-row description">
 						<label class="label">
+							Competence:
+						</label>
+						<p class="data">
+							{{ competenceNameList }}
+						</p>
+					</div>
+					<div class="detail-row description">
+						<label class="label">
 							Description:
 						</label>
 						<p class="data">
@@ -137,6 +145,18 @@ export default {
 			"detailInput",
 			"steps"
 		]),
+		competenceNameList() {
+			let result = "";
+			this.summary.competences.forEach((com, index) => {
+				if (index === this.summary.competences.length - 1) {
+					result += com.competence_name;
+				} else {
+					result += `${com.competence_name}, `;
+				}
+			});
+
+			return result;
+		},
 		step() {
 			return this.$route.meta.step;
 		}
