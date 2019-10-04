@@ -8,7 +8,7 @@ import (
 func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error) {
 	var students []model.Student
 
-	rows, err := db.Query("SELECT s.studentId, s.fisrtName, s.lastName, s.department "+
+	rows, err := db.Query("SELECT s.studentId, s.firstname, s.lastname, s.department "+
 		"FROM attendedActivity as a, student as s "+
 		"WHERE a.activityId=$1 AND s.studentId=a.studentId;", id)
 	if err != nil {

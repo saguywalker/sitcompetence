@@ -82,7 +82,7 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year
 
 // CreateStudent inserts a new student
 func (db *Database) CreateStudent(student *model.Student) error {
-	stmt, err := db.Prepare("INSERT INTO student(studentId, firstName, lastName, department) VALUES($1, $2, $3, $4)")
+	stmt, err := db.Prepare("INSERT INTO student(studentId, firstname, lastname, department) VALUES($1, $2, $3, $4)")
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func (db *Database) CreateStudent(student *model.Student) error {
 
 // UpdateStudent update student from staff id
 func (db *Database) UpdateStudent(student *model.Student) error {
-	stmt, err := db.Prepare("UPDATE student set firstName=$1, lastName=$2, department=$3 " +
+	stmt, err := db.Prepare("UPDATE student set firstname=$1, lastname=$2, department=$3 " +
 		"WHERE studentId=$4")
 
 	if err != nil {

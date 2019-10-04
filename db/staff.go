@@ -55,7 +55,7 @@ func (db *Database) GetStaffs(pageLimit uint64, pageNo uint64) ([]*model.Staff, 
 
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(staff *model.Staff) error {
-	stmt, err := db.Prepare("INSERT INTO staff(staffId, firstName, lastName) VALUES($1, $2, $3)")
+	stmt, err := db.Prepare("INSERT INTO staff(staffId, firstname, lastname) VALUES($1, $2, $3)")
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (db *Database) CreateStaff(staff *model.Staff) error {
 
 // UpdateStaff update staff from staff id
 func (db *Database) UpdateStaff(staff *model.Staff) error {
-	stmt, err := db.Prepare("UPDATE staff set firstName=$1, lastName=$2 " +
+	stmt, err := db.Prepare("UPDATE staff set firstname=$1, lastname=$2 " +
 		"WHERE staffId=$3")
 
 	if err != nil {
