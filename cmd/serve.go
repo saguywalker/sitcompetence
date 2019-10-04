@@ -10,7 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -20,11 +19,12 @@ import (
 )
 
 func serveAPI(ctx context.Context, api *api.API) {
-	cors := handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowedMethods([]string{"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE"}),
-	)
-
+	/*
+		cors := handlers.CORS(
+			handlers.AllowedOrigins([]string{"*"}),
+			handlers.AllowedMethods([]string{"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE"}),
+		)
+	*/
 	// var adminEntry = "ui/admin-sc/dist/admin/index.html"
 	// var adminStatic = "ui/admin-sc/dist/"
 
@@ -35,8 +35,9 @@ func serveAPI(ctx context.Context, api *api.API) {
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
 	s := &http.Server{
-		Addr:        fmt.Sprintf(":%d", api.Config.Port),
-		Handler:     cors(router),
+		Addr:    fmt.Sprintf(":%d", api.Config.Port),
+		Handler: router,
+		//Handler:     cors(router),
 		ReadTimeout: 2 * time.Minute,
 	}
 
