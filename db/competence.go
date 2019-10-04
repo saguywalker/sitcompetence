@@ -16,7 +16,7 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&competence)
+		err := row.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
 		if err != nil {
 			return nil, err
 		}
@@ -48,7 +48,7 @@ func (db *Database) GetCompetencesByActivityID(id uint32, pageLimit, pageNo uint
 
 	for rows.Next() {
 		var competence model.Competence
-		err := rows.Scan(&competence)
+		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
 		if err != nil {
 			return nil, err
 		}
@@ -77,7 +77,7 @@ func (db *Database) GetCompetences(pageLimit uint64, pageNo uint64) ([]model.Com
 
 	for rows.Next() {
 		var competence model.Competence
-		err := rows.Scan(&competence)
+		err := rows.Scan(&competence.CompetenceID, &competence.CompetenceName, &competence.BadgeIconURL, &competence.TotalActivitiesRequired)
 		if err != nil {
 			return nil, err
 		}

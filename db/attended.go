@@ -17,7 +17,7 @@ func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error)
 
 	for rows.Next() {
 		var student model.Student
-		if err := rows.Scan(&student); err != nil {
+		if err := rows.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department); err != nil {
 			return nil, err
 		}
 

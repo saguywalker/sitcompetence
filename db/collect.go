@@ -32,7 +32,7 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 
 	for rows.Next() {
 		var badge model.CollectedCompetence
-		err = rows.Scan(&badge)
+		err = rows.Scan(&badge.StudentID, &badge.CompetenceID, &badge.Semester, &badge.Giver, &badge.TxID)
 		if err != nil {
 			return nil, err
 		}

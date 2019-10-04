@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 
@@ -17,7 +18,7 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 	var student model.Student
 
 	for row.Next() {
-		err := row.Scan(&student)
+		err := row.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department)
 		if err != nil {
 			return nil, nil
 		}
@@ -53,7 +54,14 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year
 	}
 
 	command := strings.Join(commands, " ")
-	rows, err := db.Query(command, params)
+
+	var rows *sql.Rows
+	var err error
+	if len(params) == 0 {
+		rows, err = db.Query(command)
+	} else {
+		rows, err = db.Query(command, params)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +70,7 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year
 
 	for rows.Next() {
 		var student model.Student
-		err := rows.Scan(&student)
+		err := rows.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department)
 		if err != nil {
 			return nil, err
 		}
