@@ -14,7 +14,6 @@ type Context struct {
 	RemoteAddress    string
 	Database         *db.Database
 	PageLimit        uint64
-	Peers            []string
 	CurrentPeerIndex uint64
 	//User *model.User
 }

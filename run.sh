@@ -1,5 +1,4 @@
 cd ui
-yarn
-yarn build
+yarn && yarn dev
 cd ..
 go run main.go serve

@@ -12,9 +12,9 @@ type Activity struct {
 	Category      string       `json:"category"`
 	Location      string       `json:"location"`
 	Semester      uint8        `json:"semester"`
-	CompetencesID []uint16     `json:"competences_id"` // For request
-	Competences   []Competence `json:"competences"`    // For response
-	Attendees     []Student    `json:"attendees"`
+	CompetencesID []uint16     `json:"competences_id,omitempty"` // For request
+	Competences   []Competence `json:"competences,omitempty"`    // For response
+	Attendees     []Student    `json:"attendees,omitempty"`
 	StudentSite   bool         `json:"student_stie"`
 }
 

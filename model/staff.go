@@ -3,8 +3,8 @@ package model
 // Staff defines staff information
 type Staff struct {
 	StaffID   string `json:"staff_id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
 }
 
 // NewStaff returns new staff struct

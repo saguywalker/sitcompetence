@@ -26,10 +26,12 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	for _, badge := range listOfBadges {
-		err := ctx.GiveBadge(badge, w, a.Config.Peers)
+		currentIndex, err := ctx.GiveBadge(badge, w, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
+
+		a.App.CurrentPeerIndex = currentIndex
 	}
 
 	return nil
@@ -49,10 +51,12 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 
 	for _, activity := range listOfActivities {
-		err := ctx.ApproveActivity(activity, w, a.Config.Peers)
+		currentIndex, err := ctx.ApproveActivity(activity, w, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
+
+		a.App.CurrentPeerIndex = currentIndex
 	}
 
 	return nil
@@ -83,10 +87,12 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infof("json data\n%s\n", rawData)
 
-	result, err := ctx.VerifyTX(rawData, decodedTxid)
+	result, currentIndex, err := ctx.VerifyTX(rawData, decodedTxid, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}
+
+	a.App.CurrentPeerIndex = currentIndex
 
 	var returnResult string
 	if result {

@@ -8,8 +8,9 @@ import (
 
 // App contains Config and Database
 type App struct {
-	Config   *Config
-	Database *db.Database
+	Config           *Config
+	Database         *db.Database
+	CurrentPeerIndex uint64
 }
 
 // NewContext returns reference to context struct
@@ -38,6 +39,8 @@ func New() (app *App, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	app.CurrentPeerIndex = 0
 
 	return app, err
 }

@@ -3,8 +3,8 @@ package model
 // Student defines student information
 type Student struct {
 	StudentID  string `json:"student_id"`
-	FirstName  string `json:"first_name"`
-	LastName   string `json:"last_name"`
+	FirstName  string `json:"firstname"`
+	LastName   string `json:"lastname"`
 	Department string `json:"department"`
 }
 

@@ -14,49 +14,53 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, peers []string) error {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
 	badgeHash, err := badge.CalculateHash()
 	if err != nil {
-		return err
+		return index, err
 	}
 
-	txID, err := ctx.broadcastTX(badgeHash, peers)
+	txID, err := ctx.broadcastTX(badgeHash, index, peers)
 	if err != nil {
-		return err
+		return index, err
 	}
 
 	badge.TxID = txID
 
 	if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
-		return err
+		return index, err
 	}
 
-	return nil
+	index = (index + 1) % uint64(len(peers))
+
+	return index, nil
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, peers []string) error {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
 	activityHash, err := activity.CalculateHash()
 	if err != nil {
-		return err
+		return index, err
 	}
 
-	txID, err := ctx.broadcastTX(activityHash, peers)
+	txID, err := ctx.broadcastTX(activityHash, index, peers)
 	if err != nil {
-		return err
+		return index, err
 	}
 
 	activity.TransactionID = txID
 
 	if err := ctx.Database.ApproveAttended(activity); err != nil {
-		return err
+		return index, err
 	}
 
-	return nil
+	index = (index + 1) % uint64(len(peers))
+
+	return index, nil
 }
 
-func (ctx *Context) broadcastTX(hash []byte, peers []string) ([]byte, error) {
-	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[ctx.CurrentPeerIndex], hash)
+func (ctx *Context) broadcastTX(hash []byte, index uint64, peers []string) ([]byte, error) {
+	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], hash)
 	ctx.Logger.Infoln(url)
 
 	response, err := http.Get(url)
@@ -90,88 +94,90 @@ func (ctx *Context) broadcastTX(hash []byte, peers []string) ([]byte, error) {
 	ctx.Logger.Infof("TransactionID: %x\n", transactionID)
 
 	// Move to the next peer in round-robin fashion
-	ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(ctx.Peers))
+	//ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(ctx.Peers))
 
 	return transactionID, err
 }
 
 // VerifyTX verify data with a given merkle root
-func (ctx *Context) VerifyTX(data, txID []byte) (bool, error) {
+func (ctx *Context) VerifyTX(data, txID []byte, index uint64, peers []string) (bool, uint64, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {
-		return false, err
+		return false, 0, err
 	}
 	hashData := sha256.Sum256(trimData.Bytes())
 	ctx.Logger.Infof("H(data): %x\n", hashData)
 
-	url := fmt.Sprintf("http://%s/tx?hash=0x%x", ctx.Peers[ctx.CurrentPeerIndex], txID)
-	ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(ctx.Peers))
+	url := fmt.Sprintf("http://%s/tx?hash=0x%x", peers[index], txID)
+	ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(peers))
 	ctx.Logger.Infoln(url)
+
+	index = (index + 1) % uint64(len(peers))
 
 	response, err := http.Get(url)
 	if err != nil {
-		return false, err
+		return false, 0, err
 	}
 	defer response.Body.Close()
 
 	respData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return false, err
+		return false, 0, err
 	}
 
 	var fullData map[string]interface{}
 	err = json.Unmarshal(respData, &fullData)
 	if err != nil {
-		return false, err
+		return false, 0, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorln(fullData)
-		return false, fmt.Errorf("error when asserting type from data[\"result\"]")
+		return false, 0, fmt.Errorf("error when asserting type from data[\"result\"]")
 	}
 
 	txResult, ok := respResult["tx_result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorln(respResult)
-		return false, fmt.Errorf("error when asserting type from data[\"tx_result\"]")
+		return false, 0, fmt.Errorf("error when asserting type from data[\"tx_result\"]")
 	}
 
 	events, ok := txResult["events"].([]interface{})
 	if !ok {
 		ctx.Logger.Errorln(txResult)
-		return false, fmt.Errorf("error when asserting type from data[\"events\"]")
+		return false, 0, fmt.Errorf("error when asserting type from data[\"events\"]")
 	}
 
 	firstEvent, ok := events[0].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorln(events)
-		return false, fmt.Errorf("error when asserting type from data[\"events[0]\"]")
+		return false, 0, fmt.Errorf("error when asserting type from data[\"events[0]\"]")
 	}
 
 	attributes, ok := firstEvent["attributes"].([]interface{})
 	if !ok {
 		ctx.Logger.Errorln(firstEvent)
-		return false, fmt.Errorf("error when asserting type from data[\"attributes\"]")
+		return false, 0, fmt.Errorf("error when asserting type from data[\"attributes\"]")
 	}
 
 	firstAttribute, ok := attributes[0].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorln(attributes)
-		return false, fmt.Errorf("error when asserting type from data[\"attributes[0]\"]")
+		return false, 0, fmt.Errorf("error when asserting type from data[\"attributes[0]\"]")
 	}
 
 	encodedValue := firstAttribute["value"]
 	blockValue, err := base64.StdEncoding.DecodeString(encodedValue.(string))
 	if err != nil {
 		ctx.Logger.Errorf("%v", encodedValue)
-		return false, err
+		return false, 0, err
 	}
 	ctx.Logger.Infof("data on blockchain: %x", blockValue)
 
 	if bytes.Equal(blockValue, hashData[:]) {
-		return true, nil
+		return true, index, nil
 	}
 
-	return false, nil
+	return false, index, nil
 }
