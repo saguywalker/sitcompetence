@@ -31,6 +31,7 @@ func serveAPI(ctx context.Context, api *api.API) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
+	router.Use(mux.CORSMethodMiddleware(router))
 	// router.PathPrefix("/admin").Handler(http.FileServer(http.Dir(adminStatic)))
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
