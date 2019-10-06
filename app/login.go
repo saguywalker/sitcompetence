@@ -1,6 +1,8 @@
 package app
 
 import (
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 
 	"github.com/jtblin/go-ldap-client"
@@ -8,6 +10,8 @@ import (
 )
 
 type UserResponse struct {
+	Token string     `json:"token"`
+	User  model.User `json:"user"`
 }
 
 func NewLDAPClient(username, password string) *ldap.LDAPClient {
@@ -25,7 +29,7 @@ func NewLDAPClient(username, password string) *ldap.LDAPClient {
 	}
 }
 
-func (a *App) CheckPassword(username, password string) (*model.User, error) {
+func (a *App) CheckPassword(username, password string) (*UserResponse, error) {
 	client := NewLDAPClient(username, password)
 	ok, user, err := client.Authenticate(username, password)
 	if err != nil {
@@ -37,5 +41,20 @@ func (a *App) CheckPassword(username, password string) (*model.User, error) {
 	}
 
 	userStruct := model.NewUser(username, user["cn"], user["radiusGroupName"])
-	return userStruct, nil
+
+	userJson, err := json.Marshal(userStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	token := fmt.Sprintf("%x", sha256.Sum256(userJson))
+
+	resp := &UserResponse{
+		Token: token,
+		User:  *userStruct,
+	}
+
+	a.TokenUser[token] = userStruct
+
+	return resp, nil
 }

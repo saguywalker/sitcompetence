@@ -3,11 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"sync"
 	"time"
 
@@ -18,9 +16,9 @@ import (
 
 	"github.com/saguywalker/sitcompetence/api"
 	"github.com/saguywalker/sitcompetence/app"
-	"github.com/saguywalker/sitcompetence/model"
 )
 
+/*
 type authenMiddleware struct {
 	tokenUsers map[string]*model.User
 }
@@ -32,6 +30,7 @@ func (amw *authenMiddleware) Middleware(next http.Handler) http.Handler {
 
 		if len(token) == 0 {
 			http.Error(w, "Missing auth token", http.StatusForbidden)
+			return
 		}
 
 		if user, found := amw.tokenUsers[token]; found {
@@ -39,10 +38,11 @@ func (amw *authenMiddleware) Middleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 		} else {
 			http.Error(w, "No user in session", http.StatusForbidden)
+			return
 		}
 	})
 }
-
+*/
 func serveAPI(ctx context.Context, api *api.API) {
 	// var adminEntry = "ui/admin-sc/dist/admin/index.html"
 	// var adminStatic = "ui/admin-sc/dist/"
@@ -62,9 +62,9 @@ func serveAPI(ctx context.Context, api *api.API) {
 
 	corsHandler := c.Handler(router)
 
-	amw := authenMiddleware{}
+	// amw := authenMiddleware{}
 
-	router.Use(amw.Middleware)
+	// router.Use(amw.Middleware)
 
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Config.Port),

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -71,7 +70,8 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
-	r.Handle("/login", a.handler(a.Login)).Methods("POST")
+	r.HandleFunc("/login", a.Login).Methods("POST")
+	r.Handle("/logout", a.handler(a.Logout)).Methods("POST")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
@@ -87,6 +87,13 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		// beginTime := time.Now()
 		token := r.Header.Get("X-Session-Token")
 
+		token = strings.TrimSpace(token)
+
+		if len(token) == 0 {
+			http.Error(w, "Missing auth token", http.StatusForbidden)
+			return
+		}
+
 		hijacker, _ := w.(http.Hijacker)
 		w = &statusCodeRecorder{
 			ResponseWriter: w,
@@ -94,8 +101,6 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
-
-		ctx.Logger.Println(token)
 
 		/*
 			if username, password, ok := r.BasicAuth(); ok {
@@ -175,47 +180,49 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	})
 }
 
-func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 	var input model.Login
 
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
 	}
 
 	if err := json.Unmarshal(body, &input); err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
 	}
 
 	if len(input.Username) == 0 || len(input.Password) == 0 {
-		return fmt.Errorf("username and password must be set")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
 	}
 
-	user, err := a.App.CheckPassword(input.Username, input.Password)
+	respStruct, err := a.App.CheckPassword(input.Username, input.Password)
 	if err != nil {
-		// http.Error(w, err.Error(), http.StatusForbidden)
-		return err
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
 	}
 
-	ctx.WithUser(*user)
+	ctx := a.App.NewContext()
+	ctx.WithUser(respStruct.User)
 
-	data, err := json.Marshal(user)
+	resp, err := json.Marshal(respStruct)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
 	}
 
-	a.App.TokerUser[fmt.Sprintf("%x", sha256.Sum256(data))] = user
+	w.Write(resp)
 
-	w.Write(data)
-
-	return nil
 }
 
 func (a *API) Logout(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	token := r.Header.Get("X-Session-Token")
 
-	a.App.TokerUser[token] = nil
+	a.App.TokenUser[token] = nil
 
 	w.Write([]byte(fmt.Sprintf("%s has been logged out.", token)))
 
@@ -260,20 +267,4 @@ func getPageParam(r *http.Request) (uint64, error) {
 	}
 
 	return uint64(page), nil
-}
-
-// Home is for testing purpose only
-func (a *API) Home(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	vals := r.URL.Query()
-	params, ok := vals["name"]
-	if !ok {
-		return fmt.Errorf("missing data parameter")
-	}
-
-	_, err := w.Write([]byte(fmt.Sprintf("Hello %s", params[0])))
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

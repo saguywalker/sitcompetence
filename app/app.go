@@ -11,7 +11,7 @@ import (
 type App struct {
 	Config           *Config
 	Database         *db.Database
-	TokerUser        map[string]*model.User
+	TokenUser        map[string]*model.User
 	CurrentPeerIndex uint64
 }
 
@@ -42,6 +42,7 @@ func New() (app *App, err error) {
 		return nil, err
 	}
 
+	app.TokenUser = make(map[string]*model.User, 0)
 	// app.Ldap = NewLDAPClient(app.Config.Username, app.Config.Password)
 
 	app.CurrentPeerIndex = 0
