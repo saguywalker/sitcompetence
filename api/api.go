@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/saguywalker/sitcompetence/app"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
 type statusCodeRecorder struct {
@@ -68,11 +70,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
-<<<<<<< HEAD
-	// r.Handle("/login", a.handler(a.Login)).Methods("GET")
-=======
 	r.Handle("/login", a.handler(a.Login)).Methods("POST")
->>>>>>> 22f4bbed50e9982bc15d119de1dc11ec9f827eb5
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
@@ -175,29 +173,38 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Logger.Infof("In login function")
 
-	if username, password, ok := r.BasicAuth(); ok {
-		if len(username) == 0 || len(password) == 0 {
-			// http.Error(w, "username and password must be set", http.StatusForbidden)
-			return fmt.Errorf("username and password must be set")
-		}
+	var input model.Login
 
-		user, err := a.App.CheckPassword(username, password)
-		if err != nil {
-			// http.Error(w, err.Error(), http.StatusForbidden)
-			return err
-		}
-
-		ctx.WithUser(*user)
-
-		ctx.Logger.Infof("%+v\n", user)
-
-		data, err := json.Marshal(user)
-		if err != nil {
-			return err
-		}
-
-		w.Write(data)
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
 	}
+
+	if err := json.Unmarshal(body, &input); err != nil {
+		return err
+	}
+
+	if len(input.Username) == 0 || len(input.Password) == 0 {
+		return fmt.Errorf("username and password must be set")
+	}
+
+	user, err := a.App.CheckPassword(input.Username, input.Password)
+	if err != nil {
+		// http.Error(w, err.Error(), http.StatusForbidden)
+		return err
+	}
+
+	ctx.WithUser(*user)
+
+	ctx.Logger.Infof("%+v\n", user)
+
+	data, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+
+	w.Write(data)
 
 	return nil
 }
