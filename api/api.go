@@ -73,6 +73,8 @@ func (a *API) Init(r *mux.Router) {
 	r.HandleFunc("/login", a.Login).Methods("POST")
 	r.Handle("/logout", a.handler(a.Logout)).Methods("POST")
 
+	r.Handle("/userDetail", a.handler(a.GetUserDetail)).Methods("GET")
+
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
 	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
@@ -227,6 +229,23 @@ func (a *API) Logout(ctx *app.Context, w http.ResponseWriter, r *http.Request) e
 	w.Write([]byte(fmt.Sprintf("%s has been logged out.", token)))
 
 	return nil
+}
+
+func (a *API) GetUserDetail(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	token := r.Header.Get("X-Session-Token")
+
+	if val, ok := a.App.TokenUser[token]; ok {
+		data, err := json.Marshal(val)
+		if err != nil {
+			return err
+		}
+
+		w.Write(data)
+		return nil
+	}
+
+	w.Write([]byte("Token not found"))
+	return fmt.Errorf("Token not found")
 }
 
 // IPAddressForRequest returns ip address from request

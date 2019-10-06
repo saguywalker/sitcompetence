@@ -14,7 +14,7 @@ type UserResponse struct {
 	User  model.User `json:"user"`
 }
 
-func NewLDAPClient(username, password string) *ldap.LDAPClient {
+func NewLDAPClient(username, password, ou string) *ldap.LDAPClient {
 	return &ldap.LDAPClient{
 		Base:               "dc=sit,dc=kmutt,dc=ac,dc=th",
 		Host:               "ld0620.sit.kmutt.ac.th",
@@ -22,7 +22,7 @@ func NewLDAPClient(username, password string) *ldap.LDAPClient {
 		GroupFilter:        "(memberUid=%s)",
 		InsecureSkipVerify: true,
 		UseSSL:             true,
-		BindDN:             fmt.Sprintf("uid=%s,ou=People,ou=staff,dc=sit,dc=kmutt,dc=ac,dc=th", username),
+		BindDN:             fmt.Sprintf("uid=%s,ou=People,ou=%s,dc=sit,dc=kmutt,dc=ac,dc=th", username, ou),
 		BindPassword:       password,
 		UserFilter:         "(uid=%s)",
 		Attributes:         []string{"mail", "uid", "radiusGroupName", "cn"},
@@ -30,14 +30,24 @@ func NewLDAPClient(username, password string) *ldap.LDAPClient {
 }
 
 func (a *App) CheckPassword(username, password string) (*UserResponse, error) {
-	client := NewLDAPClient(username, password)
-	ok, user, err := client.Authenticate(username, password)
+	staffClient := NewLDAPClient(username, password, "staff")
+
+	var ok bool
+	var user map[string]string
+	var err error
+
+	ok, user, err = staffClient.Authenticate(username, password)
 	if err != nil {
-		return nil, err
+		stdClient := NewLDAPClient(username, password, "st")
+		ok, user, err = stdClient.Authenticate(username, password)
 	}
 
 	if !ok {
 		return nil, fmt.Errorf("Authenticating failed for user %s", username)
+	}
+
+	if err != nil {
+		return nil, err
 	}
 
 	userStruct := model.NewUser(username, user["cn"], user["radiusGroupName"])
