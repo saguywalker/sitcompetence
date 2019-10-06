@@ -17,7 +17,10 @@ func (a *API) GetActivities(ctx *app.Context, w http.ResponseWriter, r *http.Req
 		return err
 	}
 
-	activities, err := ctx.GetActivities(page)
+	params := r.URL.Query()
+	isStudent := params.Get("std")
+
+	activities, err := ctx.GetActivities(page, isStudent)
 	if err != nil {
 		return err
 	}
@@ -60,7 +63,7 @@ func (a *API) SearchActivities(ctx *app.Context, w http.ResponseWriter, r *http.
 		} else if params.Get("student_id") != "" {
 			activities, err = ctx.GetActivitiesByStudent(params.Get("student_id"), page)
 		} else {
-			activities, err = ctx.GetActivities(page)
+			activities, err = ctx.GetActivities(page, params.Get("std"))
 		}
 
 		if err != nil {

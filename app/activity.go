@@ -26,8 +26,8 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all of activities
-func (ctx *Context) GetActivities(pageNo uint64) ([]*model.Activity, error) {
-	activities, err := ctx.Database.GetActivities(ctx.PageLimit, pageNo)
+func (ctx *Context) GetActivities(pageNo uint64, isStudent string) ([]*model.Activity, error) {
+	activities, err := ctx.Database.GetActivities(ctx.PageLimit, pageNo, isStudent)
 	if err != nil {
 		return nil, err
 	}

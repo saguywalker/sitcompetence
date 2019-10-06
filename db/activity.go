@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -27,20 +29,52 @@ func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all activities in a table
-func (db *Database) GetActivities(pageNo uint64, pageLimit uint64) ([]*model.Activity, error) {
+func (db *Database) GetActivities(pageNo uint64, pageLimit uint64, isStudent string) ([]*model.Activity, error) {
 	var activities []*model.Activity
+
+	commands := make([]string, 1)
+	commands[0] = "SELECT * FROM activity "
+	params := make([]interface{}, 0)
+
+	if strings.ToLower(isStudent) == "true" {
+		params = append(params, isStudent)
+		commands = append(commands, "WHERE studentSite = $1 ")
+	}
+
+	if pageLimit != 0 && pageNo != 0 {
+		params = append(params, string(pageLimit))
+		params = append(params, string((pageNo-1)*pageLimit))
+		paramsLen := len(params)
+		commands = append(commands, fmt.Sprintf("ORDER BY activityId LIMIT $%d OFFSET $%d", paramsLen, paramsLen-1))
+	}
+
+	command := strings.Join(commands, " ")
 
 	var rows *sql.Rows
 	var err error
-	if pageLimit == 0 || pageNo == 0 {
-		rows, err = db.Query("SELECT * FROM activity;")
+
+	if len(params) == 0 {
+		rows, err = db.Query(command)
 	} else {
-		rows, err = db.Query("SELECT * FROM activity ORDER BY activityId LIMIT $1 OFFSET pageNo $2;", pageLimit, (pageNo-1)*pageLimit)
+		rows, err = db.Query(command, params...)
 	}
+
 	if err != nil {
 		return nil, err
 	}
 
+	/*
+		var rows *sql.Rows
+		var err error
+		if pageLimit == 0 || pageNo == 0 {
+			rows, err = db.Query("SELECT * FROM activity;")
+		} else {
+			rows, err = db.Query("SELECT * FROM activity ORDER BY activityId LIMIT $1 OFFSET pageNo $2;", pageLimit, (pageNo-1)*pageLimit)
+		}
+		if err != nil {
+			return nil, err
+		}
+	*/
 	for rows.Next() {
 		var ac model.Activity
 		err := rows.Scan(&ac.ActivityID, &ac.ActivityName, &ac.Description, &ac.Date, &ac.Time, &ac.Creator, &ac.Organizer, &ac.Category, &ac.Location, &ac.Semester, &ac.StudentSite)

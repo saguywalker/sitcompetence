@@ -6,10 +6,11 @@ import (
 	"github.com/jtblin/go-ldap-client"
 )
 
+/*
 func main() {
 	ExAuthenticate()
 }
-
+*/
 // ExAuthenticate shows how a typical application can verify a login attempt
 func ExAuthenticate() {
 	client := &ldap.LDAPClient{
