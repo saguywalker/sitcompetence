@@ -68,7 +68,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
-	r.Handle("/login", a.handler(a.Login)).Methods("OPTIONS")
+	// r.Handle("/login", a.handler(a.Login)).Methods("GET")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
