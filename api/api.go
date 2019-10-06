@@ -81,9 +81,10 @@ func (a *API) Init(r *mux.Router) {
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
+		// r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
 
 		// beginTime := time.Now()
+		token := r.Header.Get("X-Session-Token")
 
 		hijacker, _ := w.(http.Hijacker)
 		w = &statusCodeRecorder{
@@ -92,6 +93,9 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+
+		ctx.Logger.Println(token)
+
 		/*
 			if username, password, ok := r.BasicAuth(); ok {
 				if len(username) == 0 || len(password) == 0 {
@@ -171,7 +175,6 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 }
 
 func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx.Logger.Infof("In login function")
 
 	var input model.Login
 
@@ -196,8 +199,6 @@ func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) er
 	}
 
 	ctx.WithUser(*user)
-
-	ctx.Logger.Infof("%+v\n", user)
 
 	data, err := json.Marshal(user)
 	if err != nil {

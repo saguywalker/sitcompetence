@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"sync"
 	"time"
 
@@ -19,20 +18,41 @@ import (
 	"github.com/saguywalker/sitcompetence/app"
 )
 
+/*
+type authenMiddleware struct {
+	tokenUsers map[string]string
+}
+
+
+func (amw *authenMiddleware) Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := r.Header.Get("X-Session-Token")
+		token = strings.TrimSpace(token)
+
+		if len(token) == 0 {
+			http.Error(w, "Missing auth token", http.StatusForbidden)
+		}
+
+		tk := &model.Token{}
+
+		_,
+
+		if user, found := amw.tokenUsers[token]; found {
+			log.Printf("Authenticated user %s\n", user)
+			next.ServeHTTP(w, r)
+		} else {
+			http.Error(w, "No user in session", http.StatusForbidden)
+		}
+	})
+}
+*/
 func serveAPI(ctx context.Context, api *api.API) {
-	/*
-		cors := handlers.CORS(
-			handlers.AllowedOrigins([]string{"*"}),
-			handlers.AllowedMethods([]string{"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE"}),
-		)
-	*/
 	// var adminEntry = "ui/admin-sc/dist/admin/index.html"
 	// var adminStatic = "ui/admin-sc/dist/"
 
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
-	// mux.CORSMethodMiddleware(router)
 	// router.PathPrefix("/admin").Handler(http.FileServer(http.Dir(adminStatic)))
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
@@ -40,11 +60,13 @@ func serveAPI(ctx context.Context, api *api.API) {
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:8080", "http://localhost:8082"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		// Enable Debugging for testing, consider disabling in production
-		// Debug: true,
 	})
 
 	corsHandler := c.Handler(router)
+
+	// amw := authenMiddleware{}
+
+	// router.Use(amw.Middleware)
 
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Config.Port),
@@ -113,32 +135,6 @@ var serveCmd = &cobra.Command{
 		wg.Wait()
 		return nil
 	},
-}
-
-type spaHandler struct {
-	staticPath string
-	indexPath  string
-}
-
-func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path, err := filepath.Abs(r.URL.Path)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	path = filepath.Join(h.staticPath, path)
-
-	_, err = os.Stat(path)
-	if os.IsNotExist(err) {
-		http.ServeFile(w, r, filepath.Join(h.staticPath, h.indexPath))
-		return
-	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
 }
 
 func init() {
