@@ -3,9 +3,11 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,13 +18,12 @@ import (
 
 	"github.com/saguywalker/sitcompetence/api"
 	"github.com/saguywalker/sitcompetence/app"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
-/*
 type authenMiddleware struct {
-	tokenUsers map[string]string
+	tokenUsers map[string]*model.User
 }
-
 
 func (amw *authenMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,19 +34,15 @@ func (amw *authenMiddleware) Middleware(next http.Handler) http.Handler {
 			http.Error(w, "Missing auth token", http.StatusForbidden)
 		}
 
-		tk := &model.Token{}
-
-		_,
-
 		if user, found := amw.tokenUsers[token]; found {
-			log.Printf("Authenticated user %s\n", user)
+			log.Printf("Authenticated user %s\n", user.User)
 			next.ServeHTTP(w, r)
 		} else {
 			http.Error(w, "No user in session", http.StatusForbidden)
 		}
 	})
 }
-*/
+
 func serveAPI(ctx context.Context, api *api.API) {
 	// var adminEntry = "ui/admin-sc/dist/admin/index.html"
 	// var adminStatic = "ui/admin-sc/dist/"
@@ -65,9 +62,9 @@ func serveAPI(ctx context.Context, api *api.API) {
 
 	corsHandler := c.Handler(router)
 
-	// amw := authenMiddleware{}
+	amw := authenMiddleware{}
 
-	// router.Use(amw.Middleware)
+	router.Use(amw.Middleware)
 
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Config.Port),

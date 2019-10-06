@@ -4,12 +4,14 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/db"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
 // App contains Config and Database
 type App struct {
 	Config           *Config
 	Database         *db.Database
+	TokerUser        map[string]*model.User
 	CurrentPeerIndex uint64
 }
 

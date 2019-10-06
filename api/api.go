@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -175,7 +176,6 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 }
 
 func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-
 	var input model.Login
 
 	defer r.Body.Close()
@@ -205,7 +205,19 @@ func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) er
 		return err
 	}
 
+	a.App.TokerUser[fmt.Sprintf("%x", sha256.Sum256(data))] = user
+
 	w.Write(data)
+
+	return nil
+}
+
+func (a *API) Logout(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	token := r.Header.Get("X-Session-Token")
+
+	a.App.TokerUser[token] = nil
+
+	w.Write([]byte(fmt.Sprintf("%s has been logged out.", token)))
 
 	return nil
 }

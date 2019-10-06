@@ -7,6 +7,9 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+type UserResponse struct {
+}
+
 func NewLDAPClient(username, password string) *ldap.LDAPClient {
 	return &ldap.LDAPClient{
 		Base:               "dc=sit,dc=kmutt,dc=ac,dc=th",
