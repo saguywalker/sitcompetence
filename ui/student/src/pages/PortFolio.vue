@@ -7,6 +7,7 @@
 				</h2>
 			</div>
 		</div>
+		{{ statePortfolios }}
 		<div class="portfolio-actions">
 			<div class="right">
 				<b-button
@@ -44,7 +45,7 @@
 				<div class="portfolio-content">
 					<b-row>
 						<b-col
-							v-for="(com, index) in portfolio"
+							v-for="(com, index) in portfolios"
 							:key="`${com.competence_id}${forceReRender}`"
 							cols="6"
 							class="competence-wrapper"
@@ -85,7 +86,7 @@
 							Verify by Blockchain
 						</b-button>
 						<b-button
-							v-if="portfolio[0].verify_show"
+							v-if="portfolios[0].verify_show"
 							size="sm"
 							class="action-item"
 							variant="outline-primary"
@@ -106,6 +107,7 @@
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
+import { mapState } from "vuex";
 
 export default {
 	components: {
@@ -117,37 +119,17 @@ export default {
 		return {
 			fullName: "Tindanai Wongpipattanopas",
 			forceReRender: 0,
-			portfolio: [
-				{
-					competence_id: "234",
-					competence_name: "Flexible",
-					competence_img: "link"
-				},
-				{
-					competence_id: "111",
-					competence_name: "Communicaiton",
-					competence_img: "link"
-				},
-				{
-					competence_id: "334",
-					competence_name: "Growth mindset",
-					competence_img: "link"
-				},
-				{
-					competence_id: "994",
-					competence_name: "Leadership",
-					competence_img: "link"
-				},
-				{
-					competence_id: "667",
-					competence_name: "Team working",
-					competence_img: "link"
-				}
-			],
+			portfolios: [],
 			verify: false
 		};
 	},
 	computed: {
+		...mapState("portfolio", {
+			statePortfolios: "portfolios"
+		}),
+		userId() {
+			return "59130500210";
+		},
 		splitedFullname() {
 			return this.fullName.split(" ");
 		},
@@ -164,6 +146,21 @@ export default {
 			}
 
 			return "70";
+		}
+	},
+	async created() {
+		this.$Progress.start();
+
+		try {
+			await this.$store.dispatch("portfolio/loadPortfolio", this.userId);
+			this.portfolios = this.statePortfolios;
+		} catch (err) {
+			this.$Progress.fail();
+			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+				title: "Fetching competences error",
+				variant: "danger",
+				autoHideDelay: 1500
+			});
 		}
 	},
 	methods: {
@@ -198,6 +195,11 @@ export default {
 				await previousPromise;
 				return this.methodThatReturnsAPromise(index);
 			}, Promise.resolve());
+
+
+			// try {
+
+			// }
 		},
 		setVerifyStatusById(id, status) {
 			this.portfolio[id].verify_status = status;

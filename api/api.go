@@ -68,7 +68,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
-	r.Handle("/login", a.handler(a.Login)).Methods("OPTIONS")
+	r.Handle("/login", a.handler(a.Login)).Methods("POST")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
@@ -129,6 +129,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 				}
 			}()
 		*/
+		w.Header().Set("Allow", "http://localhost:8082")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")

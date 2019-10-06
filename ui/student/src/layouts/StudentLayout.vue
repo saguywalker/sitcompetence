@@ -1,5 +1,6 @@
 <template>
 	<div class="student-layout">
+		<vue-progress-bar />
 		<navbar
 			:nav-close="mobileNavOpen"
 			@nav-open="handleNavOpen"

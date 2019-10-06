@@ -1,9 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from "@/store";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
 	mode: "history",
 	routes: [
 		{
@@ -12,9 +13,9 @@ export default new Router({
 			component: () => import(/* webpackChunkName: "login" */ "@/pages/Login.vue")
 		},
 		{
-			path: "/portfolio/:id",
-			name: "portfolio_id",
-			component: () => import(/* webpackChunkName: "portfolio_id" */ "@/pages/PortfolioId.vue")
+			path: "/user/:id/portfolio",
+			name: "user_id-portfoilio",
+			component: () => import(/* webpackChunkName: "user-portfoilio" */ "@/pages/UserPortfolio_id.vue")
 		},
 		{
 			path: "/",
@@ -32,7 +33,28 @@ export default new Router({
 				{
 					name: "activity",
 					path: "/activity",
-					component: () => import(/* webpackChunkName: "activity" */"@/pages/Activity.vue")
+					component: () => import(/* webpackChunkName: "activity" */"@/pages/Activity.vue"),
+					beforeEnter: async (to, from, next) => {
+						try {
+							router.app.$Progress.start();
+							await store.dispatch("activity/loadActivities");
+							next();
+						} catch (err) {
+							router.app.$Progress.fail();
+							router.app.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+								title: "Fetching activity error",
+								variant: "danger",
+								autoHideDelay: 1500
+							});
+						} finally {
+							router.app.$Progress.finish();
+						}
+					}
+				},
+				{
+					name: "activity-detail_id",
+					path: "/activity/detail/:id",
+					component: () => import(/* webpackChunkName: "activity-detail" */"@/pages/ActivityDetail_id.vue")
 				},
 				{
 					name: "portfolio",
@@ -47,6 +69,25 @@ export default new Router({
 			beforeEnter() {
 				location.href = "http://localhost:8080/admin/activity";
 			}
+		},
+		{
+			name: "error404",
+			path: "*",
+			component: () => import("@/pages/Error404.vue")
 		}
 	]
 });
+
+// router.beforeEach(() => {
+// 	app.$Progress.start();
+// 	// Ignore login and error page
+// 	// const isLogin = sessionStorage.getItem("loginSession");
+// 	// if (to.name !== "login" && to.name !== "error404" && !isLogin) {
+// 	// 	next({
+// 	// 		name: "login"
+// 	// 	});
+// 	// }
+// 	// next();
+// });
+
+export default router;
