@@ -51,11 +51,13 @@ func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uin
 	var competences []uint16
 
 	rows, err := db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
-		"ORDER BY competenceId LIMIT $2 OFFSET $3", id, pageLimit, (pageNo-1)*pageLimit)
+		"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
 
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("pASS")
 
 	for rows.Next() {
 		var competenceID uint16

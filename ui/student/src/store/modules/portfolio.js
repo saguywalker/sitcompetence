@@ -1,18 +1,25 @@
+import { Base } from "@/services";
 import {
 	LOAD_PORTFOLIO,
+	UPDATE_PORTFOLIO,
 	UPDATE_PORTFOLIO_LINK
 } from "../mutationTypes";
 
 const state = {
-	portfolio: {},
+	portfolios: [],
 	link: ""
 };
 
 const mutations = {
 	[LOAD_PORTFOLIO](stateData, data) {
-		stateData.portfolio = {
+		stateData.portfolios = [
 			...data
-		};
+		];
+	},
+	[UPDATE_PORTFOLIO](stateData, data) {
+		stateData.portfolios = [
+			...data
+		];
 	},
 	[UPDATE_PORTFOLIO_LINK](stateData, data) {
 		stateData.link = data;
@@ -20,9 +27,14 @@ const mutations = {
 };
 
 const actions = {
-	loadPortfolio({ commit }) {
-		const response = "will do";
-		commit(LOAD_PORTFOLIO, response);
+	loadPortfolio({ commit }, id) {
+		const	response = Base.getBadgesByStudentId(id);
+
+		if (response.status === 200) {
+			commit(LOAD_PORTFOLIO, response.data);
+		}
+
+		return response;
 	}
 };
 

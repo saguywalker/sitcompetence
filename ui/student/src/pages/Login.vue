@@ -78,6 +78,7 @@
 </style>
 <script>
 import SitcomLogo from "@/components/SitcomLogo.vue";
+import { Login } from "@/services";
 
 export default {
 	components: {
@@ -111,7 +112,14 @@ export default {
 			this.validateSubmit();
 
 			if (!this.isError) {
-				this.$router.push({ name: "admin" });
+				Login.login(`${this.userName}:${this.passWord}`)
+					.then((res) => {
+						console.log(res.data);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+				// this.$router.push({ name: "admin" });
 			}
 		},
 		handleShowDetailMobile() {

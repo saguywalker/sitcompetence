@@ -9,17 +9,22 @@
 		</div>
 		<div class="activity-body wrapper">
 			<b-row>
-				<b-col lg="6">
-					<activity-card />
-				</b-col>
-				<b-col lg="6">
-					<activity-card />
-				</b-col>
-				<b-col lg="6">
-					<activity-card />
-				</b-col>
-				<b-col lg="6">
-					<activity-card />
+				<b-col
+					v-for="(activity, index) in activities"
+					:key="`${activity.activity_id}${index}`"
+					lg="6"
+				>
+					<router-link
+						:to="{
+							name: 'activity-detail_id',
+							params: {
+								id: activity.activity_id
+							}
+						}"
+						class="link-detail"
+					>
+						<activity-card :activity="activity" />
+					</router-link>
 				</b-col>
 			</b-row>
 		</div>
@@ -30,10 +35,16 @@
 </style>
 <script>
 import ActivityCard from "@/components/ActivityCard.vue";
+import { mapState } from "vuex";
 
 export default {
 	components: {
 		ActivityCard
+	},
+	computed: {
+		...mapState("activity", [
+			"activities"
+		])
 	}
 };
 </script>
