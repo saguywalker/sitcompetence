@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
@@ -31,14 +32,23 @@ func serveAPI(ctx context.Context, api *api.API) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
-	router.Use(mux.CORSMethodMiddleware(router))
+	// mux.CORSMethodMiddleware(router)
 	// router.PathPrefix("/admin").Handler(http.FileServer(http.Dir(adminStatic)))
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
+	// CORS middleware
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:8080", "http://localhost:8082"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		// Enable Debugging for testing, consider disabling in production
+		// Debug: true,
+	})
+
+	corsHandler := c.Handler(router)
+
 	s := &http.Server{
-		Addr:    fmt.Sprintf(":%d", api.Config.Port),
-		Handler: router,
-		//Handler:     cors(router),
+		Addr:        fmt.Sprintf(":%d", api.Config.Port),
+		Handler:     corsHandler,
 		ReadTimeout: 2 * time.Minute,
 	}
 

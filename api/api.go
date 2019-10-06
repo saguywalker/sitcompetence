@@ -131,16 +131,15 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 				}
 			}()
 		*/
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {
 				data, err := json.Marshal(verr)
 				if err == nil {
-					w.WriteHeader(http.StatusBadRequest)
+					// w.WriteHeader(http.StatusBadRequest)
 					_, err = w.Write(data)
 				}
 
@@ -151,18 +150,18 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			} else if uerr, ok := err.(*app.UserError); ok {
 				data, err := json.Marshal(uerr)
 				if err == nil {
-					w.WriteHeader(uerr.StatusCode)
+					// w.WriteHeader(uerr.StatusCode)
 					_, err = w.Write(data)
 				}
 
 				if err != nil {
 					ctx.Logger.Error(err)
-					w.WriteHeader(http.StatusInternalServerError)
+					// w.WriteHeader(http.StatusInternalServerError)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 				}
 			} else {
 				ctx.Logger.Error(err)
-				w.WriteHeader(http.StatusInternalServerError)
+				// w.WriteHeader(http.StatusInternalServerError)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
 		}
