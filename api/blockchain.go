@@ -1,11 +1,11 @@
 package api
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -75,33 +75,29 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 		return nil
 	}
 
-	decodedTxid, err := base64.StdEncoding.DecodeString(bodyMap["transaction_id"].(string))
-	if err != nil {
-		return err
-	}
-	ctx.Logger.Infof("decoded transaction id: %x", decodedTxid)
-
 	rawData, err := json.Marshal(bodyMap["data"])
 	if err != nil {
 		return err
 	}
 	ctx.Logger.Infof("json data\n%s\n", rawData)
 
-	result, currentIndex, err := ctx.VerifyTX(rawData, decodedTxid, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, currentIndex, hashData, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}
 
 	a.App.CurrentPeerIndex = currentIndex
 
-	var returnResult string
-	if result {
-		returnResult = fmt.Sprintf("Data was recorded in blockchain at TransactionID: %v :)", bodyMap["transaction_id"])
-	} else {
-		returnResult = fmt.Sprintf("Data was not recorded in the blockchain :(.")
+	returnResult := []string{fmt.Sprintf("Data hash(%x) was", hashData)}
+	if !isExists {
+		returnResult = append(returnResult, "not")
 	}
 
-	if _, err := w.Write([]byte(returnResult)); err != nil {
+	returnResult = append(returnResult, "recorded on the Blockchain.")
+
+	result := strings.Join(returnResult, " ")
+
+	if _, err := w.Write([]byte(result)); err != nil {
 		return err
 	}
 

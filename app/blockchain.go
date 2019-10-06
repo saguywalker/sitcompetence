@@ -3,7 +3,6 @@ package app
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -100,84 +99,50 @@ func (ctx *Context) broadcastTX(hash []byte, index uint64, peers []string) ([]by
 }
 
 // VerifyTX verify data with a given merkle root
-func (ctx *Context) VerifyTX(data, txID []byte, index uint64, peers []string) (bool, uint64, error) {
+func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, []byte, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {
-		return false, 0, err
+		return false, index, nil, err
 	}
 	hashData := sha256.Sum256(trimData.Bytes())
 	ctx.Logger.Infof("H(data): %x\n", hashData)
 
-	url := fmt.Sprintf("http://%s/tx?hash=0x%x", peers[index], txID)
-	ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(peers))
+	url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], hashData)
 	ctx.Logger.Infoln(url)
 
 	index = (index + 1) % uint64(len(peers))
 
-	response, err := http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		return false, 0, err
+		return false, index, hashData[:], err
 	}
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	respData, err := ioutil.ReadAll(response.Body)
+	respData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return false, 0, err
+		ctx.Logger.Errorf("%v", resp)
+		return false, index, hashData[:], err
 	}
 
 	var fullData map[string]interface{}
-	err = json.Unmarshal(respData, &fullData)
-	if err != nil {
-		return false, 0, err
+	if err := json.Unmarshal(respData, &data); err != nil {
+		ctx.Logger.Errorf("%v", respData)
+		return false, index, hashData[:], err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
-		ctx.Logger.Errorln(fullData)
-		return false, 0, fmt.Errorf("error when asserting type from data[\"result\"]")
+		ctx.Logger.Errorf("%v", fullData)
+		return false, index, hashData[:], err
 	}
 
-	txResult, ok := respResult["tx_result"].(map[string]interface{})
+	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
-		ctx.Logger.Errorln(respResult)
-		return false, 0, fmt.Errorf("error when asserting type from data[\"tx_result\"]")
+		ctx.Logger.Errorf("%v", respResult)
+		return false, index, hashData[:], err
 	}
 
-	events, ok := txResult["events"].([]interface{})
-	if !ok {
-		ctx.Logger.Errorln(txResult)
-		return false, 0, fmt.Errorf("error when asserting type from data[\"events\"]")
-	}
+	isExist := respResult["log"] == "exists"
 
-	firstEvent, ok := events[0].(map[string]interface{})
-	if !ok {
-		ctx.Logger.Errorln(events)
-		return false, 0, fmt.Errorf("error when asserting type from data[\"events[0]\"]")
-	}
-
-	attributes, ok := firstEvent["attributes"].([]interface{})
-	if !ok {
-		ctx.Logger.Errorln(firstEvent)
-		return false, 0, fmt.Errorf("error when asserting type from data[\"attributes\"]")
-	}
-
-	firstAttribute, ok := attributes[0].(map[string]interface{})
-	if !ok {
-		ctx.Logger.Errorln(attributes)
-		return false, 0, fmt.Errorf("error when asserting type from data[\"attributes[0]\"]")
-	}
-
-	encodedValue := firstAttribute["value"]
-	blockValue, err := base64.StdEncoding.DecodeString(encodedValue.(string))
-	if err != nil {
-		ctx.Logger.Errorf("%v", encodedValue)
-		return false, 0, err
-	}
-	ctx.Logger.Infof("data on blockchain: %x", blockValue)
-
-	if bytes.Equal(blockValue, hashData[:]) {
-		return true, index, nil
-	}
-
-	return false, index, nil
+	return isExist, index, hashData[:], nil
 }
