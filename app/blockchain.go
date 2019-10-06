@@ -92,9 +92,6 @@ func (ctx *Context) broadcastTX(hash []byte, index uint64, peers []string) ([]by
 	}
 	ctx.Logger.Infof("TransactionID: %x\n", transactionID)
 
-	// Move to the next peer in round-robin fashion
-	//ctx.CurrentPeerIndex = (ctx.CurrentPeerIndex + uint64(1)) % uint64(len(ctx.Peers))
-
 	return transactionID, err
 }
 
