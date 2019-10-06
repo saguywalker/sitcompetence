@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/db"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
 // Context contains request state
@@ -15,7 +16,7 @@ type Context struct {
 	Database         *db.Database
 	PageLimit        uint64
 	CurrentPeerIndex uint64
-	//User *model.User
+	User             model.User
 }
 
 // WithLogger sets a logger
@@ -32,13 +33,11 @@ func (ctx *Context) WithRemoteAddress(address string) *Context {
 	return &ret
 }
 
-/*
-func (ctx *Context) WithUser(user *model.User) *Context {
+func (ctx *Context) WithUser(user model.User) *Context {
 	ret := *ctx
 	ret.User = user
 	return &ret
 }
-*/
 
 // AuthorizationError return a reference to UserError struct
 func (ctx *Context) AuthorizationError() *UserError {

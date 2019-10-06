@@ -68,6 +68,8 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
+	r.Handle("/login", a.handler(a.Login)).Methods("OPTIONS")
+
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")
 	searchRoute.Handle("/activity", a.handler(a.SearchActivities)).Methods("GET")
@@ -79,7 +81,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
 
-		//beginTime := time.Now()
+		// beginTime := time.Now()
 
 		hijacker, _ := w.(http.Hijacker)
 		w = &statusCodeRecorder{
@@ -88,26 +90,22 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
-		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 		/*
-				if username, password, ok := r.BasicAuth(); ok {
-					user, err := a.App.GetUserByEmail(username)
-
-					if user == nil || err != nil {
-						if err != nil {
-							ctx.Logger.WithError(err).Error("unable to get user")
-						}
-						http.Error(w, "invalid credentials", http.StatusForbidden)
-						return
-					}
-
-					if ok := user.CheckPassword(password); !ok {
-						http.Error(w, "invalid credentials", http.StatusForbidden)
-						return
-					}
-
-					ctx = ctx.WithUser(user)
+			if username, password, ok := r.BasicAuth(); ok {
+				if len(username) == 0 || len(password) == 0 {
+					http.Error(w, "username and password must be set", http.StatusForbidden)
+					return
 				}
+
+				user, err := a.App.CheckPassword(username, password)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusForbidden)
+					return
+				}
+
+				ctx.WithUser(*user)
+			}
+			//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 
 			defer func() {
 				statusCode := w.(*statusCodeRecorder).StatusCode
@@ -167,6 +165,36 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 	})
+}
+
+func (a *API) Login(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx.Logger.Infof("In login function")
+
+	if username, password, ok := r.BasicAuth(); ok {
+		if len(username) == 0 || len(password) == 0 {
+			// http.Error(w, "username and password must be set", http.StatusForbidden)
+			return fmt.Errorf("username and password must be set")
+		}
+
+		user, err := a.App.CheckPassword(username, password)
+		if err != nil {
+			// http.Error(w, err.Error(), http.StatusForbidden)
+			return err
+		}
+
+		ctx.WithUser(*user)
+
+		ctx.Logger.Infof("%+v\n", user)
+
+		data, err := json.Marshal(user)
+		if err != nil {
+			return err
+		}
+
+		w.Write(data)
+	}
+
+	return nil
 }
 
 // IPAddressForRequest returns ip address from request

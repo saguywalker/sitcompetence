@@ -40,6 +40,8 @@ func New() (app *App, err error) {
 		return nil, err
 	}
 
+	// app.Ldap = NewLDAPClient(app.Config.Username, app.Config.Password)
+
 	app.CurrentPeerIndex = 0
 
 	return app, err
