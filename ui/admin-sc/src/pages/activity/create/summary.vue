@@ -85,7 +85,7 @@
 				<div class="question">
 					<b-form-checkbox
 						id="checkbox-1"
-						v-model="student_site"
+						v-model="student_stie"
 						name="checkbox-1"
 					>
 						Post to student website
@@ -136,7 +136,7 @@ export default {
 	},
 	data() {
 		return {
-			student_site: false,
+			student_stie: false,
 			summary: {}
 		};
 	},
@@ -172,7 +172,7 @@ export default {
 					...this.summary,
 					creator: "st01", // TODO: Get from login user
 					semester: getSemester(),
-					student_site: this.student_site
+					student_stie: this.student_stie
 				});
 				await this.$store.dispatch("createActivity/addStep", this.step.step);
 				this.$router.push({ name: this.step.next.link });

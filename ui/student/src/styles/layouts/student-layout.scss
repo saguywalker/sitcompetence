@@ -3,7 +3,7 @@
 .student-layout {
 	.nav-mobile {
 		position: fixed;
-		top: rem(79);
+		top: rem(75);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -12,37 +12,60 @@
 		height: 100%;
 		z-index: $mobile-nav-z;
 
-		.item-link {
-			font-size: rem(18);
-			position: relative;
-			text-decoration: none;
-			margin-bottom: rem(26);
-			color: $blue-2;
+		.main-navigation {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			height: rem(500);
 
-			&:first-child {
-				margin-top: rem(24);
+			.link-group {
+				display: flex;
+				flex: 2;
+				flex-direction: column;
+				align-items: center;
+				height: 100%;
+
+				.item-link {
+					font-size: rem(18);
+					position: relative;
+					text-decoration: none;
+					margin-bottom: rem(26);
+					color: $blue-2;
+
+					&:first-child {
+						margin-top: rem(24);
+					}
+
+					&.router-link-active {
+						font-weight: bold;
+					}
+
+					&::after {
+						content: "";
+						display: block;
+						position: absolute;
+						left: 50%;
+						bottom: 0;
+						background: none repeat scroll 0 0 transparent;
+						background-color: $blue-4;
+						width: 0;
+						height: rem(2);
+						transition: width 300ms ease 0s, left 300ms ease 0s;
+					}
+
+					&:hover::after {
+						left: 0;
+						width: 100%;
+					}
+				}
 			}
 
-			&.router-link-active {
-				font-weight: bold;
-			}
-
-			&::after {
-				content: "";
-				display: block;
-				position: absolute;
-				left: 50%;
-				bottom: 0;
-				background: none repeat scroll 0 0 transparent;
-				background-color: $blue-4;
-				width: 0;
-				height: rem(2);
-				transition: width 300ms ease 0s, left 300ms ease 0s;
-			}
-
-			&:hover::after {
-				left: 0;
-				width: 100%;
+			.navigation-secondary {
+				display: flex;
+				flex: 1;
+				flex-direction: column;
+				align-items: center;
 			}
 		}
 	}

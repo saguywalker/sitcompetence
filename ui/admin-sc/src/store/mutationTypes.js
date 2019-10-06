@@ -23,3 +23,5 @@ export const LOAD_ACTIVITY = "LOAD_ACTIVITY";
 export const EDIT_ACTIVITY = "EDIT_ACTIVITY";
 export const DELETE_ACTIVITY = "DELETE_ACTIVITY";
 export const APPROVE_ACTIVITY = "APPROVE_ACTIVITY";
+export const UPDATE_LOGIN = "UPDATE_LOGIN";
+export const LOGOUT = "LOGOUT";

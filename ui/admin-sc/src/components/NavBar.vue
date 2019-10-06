@@ -62,7 +62,10 @@
 					<b-button size="sm">
 						Setting
 					</b-button>
-					<b-button size="sm">
+					<b-button
+						size="sm"
+						@click="logout"
+					>
 						Sign out
 					</b-button>
 				</div>
@@ -104,6 +107,9 @@ export default {
 		},
 		handleClickOutside() {
 			this.isProfileOpen = false;
+		},
+		logout() {
+			this.$store.dispatch("base/logout");
 		}
 	}
 };

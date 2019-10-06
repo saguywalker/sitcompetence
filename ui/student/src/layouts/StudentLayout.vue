@@ -13,24 +13,41 @@
 				v-if="mobileNavOpen"
 				class="nav-mobile"
 			>
-				<router-link
-					:to="{ name: 'dashboard' }"
-					class="item-link"
-				>
-					Dashboard
-				</router-link>
-				<router-link
-					:to="{ name: 'activity' }"
-					class="item-link"
-				>
-					Activity
-				</router-link>
-				<router-link
-					:to="{ name: 'portfolio' }"
-					class="item-link"
-				>
-					Portfolio
-				</router-link>
+				<div class="main-navigation">
+					<div class="link-group">
+						<router-link
+							:to="{ name: 'dashboard' }"
+							class="item-link"
+						>
+							Dashboard
+						</router-link>
+						<router-link
+							:to="{ name: 'activity' }"
+							class="item-link"
+						>
+							Activity
+						</router-link>
+						<router-link
+							:to="{ name: 'portfolio' }"
+							class="item-link"
+						>
+							Portfolio
+						</router-link>
+					</div>
+					<div class="navigation-secondary">
+						<router-link :to="{ name: 'dashboard' }">
+							<b-button variant="primary">
+								Profile
+							</b-button>
+						</router-link>
+						<b-button
+							variant="primary"
+							class="mt-3"
+						>
+							Sign out
+						</b-button>
+					</div>
+				</div>
 			</div>
 		</transition>
 		<transition

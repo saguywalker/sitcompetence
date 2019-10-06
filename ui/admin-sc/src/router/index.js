@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from "@/store";
 import {
 	GIVE_BADGE_BREADCRUMB,
 	CREATE_ACTIVITY_BREADCRUMB,
@@ -13,6 +14,27 @@ Vue.use(Router);
 const router = new Router({
 	mode: "history",
 	routes: [
+		{
+			name: "login-page",
+			path: "/login",
+			beforeEnter: (to, from, next) => {
+				const isLogin = sessionStorage.getItem("inlog");
+
+				if (isLogin) {
+					next({ name: from.name });
+				} else {
+					location.href = "http://localhost:8082/login";
+				}
+			}
+		},
+		{
+			name: "login-redirect",
+			path: "/admin/login/:hash",
+			beforeEnter: (to, from, next) => {
+				store.dispatch("base/doLogin", to.params.hash);
+				next({ name: "activity" });
+			}
+		},
 		{
 			path: "/admin",
 			component: () => import("@/layouts/LayoutAdminDefault.vue"),
@@ -200,6 +222,15 @@ const router = new Router({
 			component: () => import("@/pages/error/error404")
 		}
 	]
+});
+
+router.beforeEach((to, from, next) => {
+	// Ignore login and error page
+	const isLogin = sessionStorage.getItem("inlog");
+	if (to.name !== "login-redirect" && to.name !== "error404" && !isLogin) {
+		next({ name: "login-page" });
+	}
+	next();
 });
 
 export default router;

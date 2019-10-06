@@ -1,7 +1,11 @@
 import axios from "axios";
+import { getLoginToken } from "@/helpers";
 
 const apiClient = axios.create({
-	baseURL: "http://localhost:3000/api"
+	baseURL: "http://localhost:3000/api",
+	headers: {
+		"X-Session-Token": getLoginToken
+	}
 });
 
 const GiveBadge = {
@@ -11,6 +15,9 @@ const GiveBadge = {
 };
 
 const Base = {
+	login(data) {
+		return apiClient.post("/login", data);
+	},
 	getAllBadges() {
 		return apiClient.get("/competence");
 	},

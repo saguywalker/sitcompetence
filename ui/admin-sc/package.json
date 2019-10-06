@@ -24,6 +24,7 @@
     "babel-eslint": "^10.0.1",
     "bootstrap-vue": "^2.0.0-rc.28",
     "chai": "^4.1.2",
+    "crypto-js": "^3.1.9-1",
     "eslint": "^5.16.0",
     "eslint-config-maqe": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",

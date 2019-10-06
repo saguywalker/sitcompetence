@@ -2,13 +2,11 @@
 
 .mynavbar {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: space-between;
-	height: rem(80);
-	padding: rem(11) rem(16) rem(16) rem(4);
-	max-width: rem(1400);
-	margin: 0 auto;
+	height: rem(75);
+	padding: rem(11) rem(16) rem(11) rem(4);
 
 	&-main {
 		display: none;
@@ -64,9 +62,18 @@
 	}
 
 	@include desktop {
+		justify-content: flex-start;
+
 		&-main {
 			display: flex;
+			justify-content: space-between;
 			align-items: center;
+			width: 100%;
+		}
+
+		.logo-wrapper {
+			min-width: rem(260);
+			margin-right: rem(70);
 		}
 
 		.hamburger {

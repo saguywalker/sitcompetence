@@ -1,3 +1,5 @@
+import CryptoJS from "crypto-js";
+
 export const takeFileName = (path) => {
 	if (!path) {
 		return path;
@@ -65,3 +67,14 @@ export const getEditDateFormat = (format) => {
 
 	return `${year}-${computedMonth}-${computedDay}`;
 };
+
+export const getCiphertext = (message) => {
+	const b64 = CryptoJS.AES.encrypt(message, "8NQMHLNx61Xr67u75b").toString();
+	const e64 = CryptoJS.enc.Base64.parse(b64);
+	const eHex = e64.toString(CryptoJS.enc.Hex);
+	return eHex;
+};
+
+
+
+export const getLoginToken = sessionStorage.getItem("inlog");

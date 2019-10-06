@@ -1,5 +1,5 @@
 <template>
-	<nav class="mynavbar">
+	<nav class="mynavbar wrapper">
 		<router-link
 			:to="{ name: 'dashboard' }"
 			class="logo-wrapper"
@@ -13,23 +13,28 @@
 			</p>
 		</router-link>
 		<div class="mynavbar-main">
-			<router-link
-				:to="{ name: 'dashboard' }"
-				class="item-link"
-			>
-				Dashboard
-			</router-link>
-			<router-link
-				:to="{ name: 'activity' }"
-				class="item-link"
-			>
-				Activity
-			</router-link>
-			<router-link
-				:to="{ name: 'portfolio' }"
-				class="item-link"
-			>
-				Portfolio
+			<div>
+				<router-link
+					:to="{ name: 'dashboard' }"
+					class="item-link"
+				>
+					Dashboard
+				</router-link>
+				<router-link
+					:to="{ name: 'activity' }"
+					class="item-link"
+				>
+					Activity
+				</router-link>
+				<router-link
+					:to="{ name: 'portfolio' }"
+					class="item-link"
+				>
+					Portfolio
+				</router-link>
+			</div>
+			<router-link :to="{ name: 'dashboard' }">
+				<icon-user />
 			</router-link>
 		</div>
 		<hamburger
@@ -44,11 +49,13 @@
 <script>
 import SitcomLogo from "@/components/SitcomLogo.vue";
 import Hamburger from "@/components/Hamburger.vue";
-// In progress
+import IconUser from "@/components/icons/IconUser.vue";
+
 export default {
 	components: {
 		SitcomLogo,
-		Hamburger
+		Hamburger,
+		IconUser
 	},
 	props: {
 		navClose: {

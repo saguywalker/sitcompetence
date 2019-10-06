@@ -38,7 +38,6 @@ const router = new Router({
 						try {
 							router.app.$Progress.start();
 							await store.dispatch("activity/loadActivities");
-							next();
 						} catch (err) {
 							router.app.$Progress.fail();
 							router.app.$bvToast.toast(`Fetching data problem: ${err.message}`, {
@@ -48,6 +47,7 @@ const router = new Router({
 							});
 						} finally {
 							router.app.$Progress.finish();
+							next();
 						}
 					}
 				},
@@ -64,13 +64,6 @@ const router = new Router({
 			]
 		},
 		{
-			name: "admin",
-			path: "/adminsitcompetence",
-			beforeEnter() {
-				location.href = "http://localhost:8080/admin/activity";
-			}
-		},
-		{
 			name: "error404",
 			path: "*",
 			component: () => import("@/pages/Error404.vue")
@@ -78,16 +71,15 @@ const router = new Router({
 	]
 });
 
-// router.beforeEach(() => {
-// 	app.$Progress.start();
-// 	// Ignore login and error page
-// 	// const isLogin = sessionStorage.getItem("loginSession");
-// 	// if (to.name !== "login" && to.name !== "error404" && !isLogin) {
-// 	// 	next({
-// 	// 		name: "login"
-// 	// 	});
-// 	// }
-// 	// next();
-// });
+router.beforeEach((to, from, next) => {
+	// Ignore login and error page
+	const isLogin = sessionStorage.getItem("inlog");
+	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
+		next({
+			name: "login"
+		});
+	}
+	next();
+});
 
 export default router;

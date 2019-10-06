@@ -1,12 +1,17 @@
+import { getPlainTextToken } from "@/helpers";
 import { Base } from "@/services";
 import {
+	UPDATE_LOGIN,
+	LOGOUT,
 	LOAD_BADGES,
 	LOAD_STUDENTS
 } from "../mutationTypes";
 
 const state = {
 	students: [],
-	badges: []
+	badges: [],
+	user: {},
+	token: ""
 };
 
 const mutations = {
@@ -19,6 +24,12 @@ const mutations = {
 		stateData.badges = [
 			...data
 		];
+	},
+	[UPDATE_LOGIN](stateData, data) {
+		stateData.token = data;
+	},
+	[LOGOUT](stateData) {
+		stateData.token = "";
 	}
 };
 
@@ -54,6 +65,17 @@ const actions = {
 
 			dispatch("notification/add", notification, { root: true });
 		}
+	},
+	async doLogin({ commit }, data) {
+		const token = getPlainTextToken(data);
+
+		sessionStorage.setItem("inlog", token);
+		commit(UPDATE_LOGIN, token);
+	},
+	logout({ commit }) {
+		sessionStorage.clear();
+		commit(LOGOUT);
+		location.href = "http://localhost:8082/login";
 	}
 };
 

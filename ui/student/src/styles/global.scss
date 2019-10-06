@@ -89,4 +89,9 @@ button {
 .wrapper {
 	width: 100%;
 	padding: 0 4%;
+
+	@include desktop {
+		max-width: rem(1400);
+		margin: 0 auto;
+	}
 }

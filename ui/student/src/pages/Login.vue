@@ -78,7 +78,6 @@
 </style>
 <script>
 import SitcomLogo from "@/components/SitcomLogo.vue";
-import { Login } from "@/services";
 
 export default {
 	components: {
@@ -108,18 +107,22 @@ export default {
 			this.error.userName = this.userName === "";
 			this.error.passWord = this.passWord === "";
 		},
-		submit() {
+		async submit() {
 			this.validateSubmit();
 
 			if (!this.isError) {
-				Login.login(`${this.userName}:${this.passWord}`)
-					.then((res) => {
-						console.log(res.data);
-					})
-					.catch((err) => {
-						console.log(err);
+				try {
+					await this.$store.dispatch("authentication/doLogin", {
+						username: this.userName,
+						password: this.passWord
 					});
-				// this.$router.push({ name: "admin" });
+				} catch (err) {
+					this.$bvToast.toast(`Problem: ${err.message}`, {
+						title: "Login error",
+						variant: "danger",
+						autoHideDelay: 1500
+					});
+				}
 			}
 		},
 		handleShowDetailMobile() {

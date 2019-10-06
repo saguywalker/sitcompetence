@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import { MONTH_NAMES } from "@/constants";
 
 export const takeFileName = (path) => {
@@ -66,3 +67,14 @@ export const getEditDateFormat = (format) => {
 
 	return `${year}-${computedMonth}-${computedDay}`;
 };
+
+// Decrypt
+export const getPlainTextToken = (cipher) => {
+	const reb64 = CryptoJS.enc.Hex.parse(cipher);
+	const bytes = reb64.toString(CryptoJS.enc.Base64);
+	const decrypt = CryptoJS.AES.decrypt(bytes, "8NQMHLNx61Xr67u75b");
+	const plain = decrypt.toString(CryptoJS.enc.Utf8);
+	return plain;
+};
+
+export const getLoginToken = sessionStorage.getItem("inlog");

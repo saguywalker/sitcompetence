@@ -108,10 +108,10 @@ const actions = {
 
 const getters = {
 	postedActivities: (stateData) => {
-		return stateData.activities.filter((activity) => activity.student_site);
+		return stateData.activities.filter((activity) => activity.student_stie);
 	},
 	savedActivities: (stateData) => {
-		return stateData.activities.filter((activity) => !activity.student_site);
+		return stateData.activities.filter((activity) => !activity.student_stie);
 	},
 	getActivityById: (stateData) => (id) => {
 		return stateData.activities.find((activity) => activity.activity_id === id);
