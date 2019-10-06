@@ -1,7 +1,8 @@
 package db
 
 import (
-	"github.com/labstack/gommon/log"
+	"log"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -45,7 +46,7 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 
 // GetCompetencesIDByStudentID query competence from student id
 func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uint64) ([]uint16, error) {
-	log.Info("In GetCompetencesIDByStudentID")
+	log.Println("In GetCompetencesIDByStudentID")
 
 	var competences []uint16
 

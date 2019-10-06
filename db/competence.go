@@ -2,14 +2,14 @@ package db
 
 import (
 	"database/sql"
+	"log"
 
-	"github.com/labstack/gommon/log"
 	"github.com/saguywalker/sitcompetence/model"
 )
 
 // GetCompetenceByID returns a competence from competenceID
 func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
-	log.Info("In GetCompetenceByID")
+	log.Println("In GetCompetenceByID")
 
 	var competence model.Competence
 
