@@ -135,8 +135,8 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 				}
 			}()
 		*/
-		w.Header().Set("Allow", "*")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		// w.Header().Set("Allow", "http://localhost:8082")
+		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")
 
