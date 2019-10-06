@@ -7,6 +7,7 @@ postgres.sql
 initdb.py
 querydb.py
 config2.yaml
+test.go
 
 #Executable file
 sitcom
