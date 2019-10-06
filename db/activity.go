@@ -143,12 +143,12 @@ func (db *Database) UpdateActivity(a *model.Activity) error {
 	stmt, err := db.Prepare("UPDATE activity " +
 		"set activityName=$1, description=$2, date=$3, time=$4, " +
 		"creator=$5, organizer=$6, category=$7, location=$8, semester=$9, studentSite=$10 " +
-		"WHERE activityId=$10")
+		"WHERE activityId=$11")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.StudentSite, a.Semester, a.ActivityID)
+	_, err = stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.Semester, a.StudentSite, a.ActivityID)
 	if err != nil {
 		return err
 	}
