@@ -62,7 +62,7 @@ func (db *Database) GetStaffs(pageLimit uint32, pageNo uint32) ([]*model.Staff, 
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(s *model.Staff) (string, error) {
 	var id string
-	command := "INSERT INTO staff(staffId, firstname, lastname) VALUES($1, $2, $3)"
+	command := "INSERT INTO staff(staffId, firstname, lastname) VALUES($1, $2, $3) RETURNING staffId;"
 	if err := db.QueryRow(command, s.StaffID, s.FirstName, s.LastName).Scan(&id); err != nil {
 		return "", err
 	}

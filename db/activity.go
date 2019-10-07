@@ -156,7 +156,7 @@ func (db *Database) CreateActivity(a *model.Activity) (uint32, error) {
 	var id uint32
 	command := "INSERT INTO activity(activityName, description, date," +
 		"time, creator, organizer, category, location, semester, studentSite) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);"
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING activityId;"
 
 	if err := db.QueryRow(command, a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.Semester, a.StudentSite).Scan(&id); err != nil {
 		return 0, err

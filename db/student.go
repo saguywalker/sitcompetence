@@ -89,7 +89,7 @@ func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year
 // CreateStudent inserts a new student
 func (db *Database) CreateStudent(s *model.Student) (string, error) {
 	var id string
-	command := "INSERT INTO student(studentId, firstname, lastname, department) VALUES($1, $2, $3, $4)"
+	command := "INSERT INTO student(studentId, firstname, lastname, department) VALUES($1, $2, $3, $4) RETURNING studentId;"
 	if err := db.QueryRow(command, s.StudentID, s.FirstName, s.LastName, s.Department).Scan(&id); err != nil {
 		return "", err
 	}

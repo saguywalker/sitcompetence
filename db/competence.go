@@ -105,8 +105,8 @@ func (db *Database) GetCompetences(pageLimit uint32, pageNo uint32) ([]model.Com
 // CreateCompetence inserts a new competence
 func (db *Database) CreateCompetence(c *model.Competence) (uint16, error) {
 	var id uint16
-	command := "INSERT INTO competence(competenceId, competenceName, badgeIconURL, totalActivitiesRequired) VALUES($1, $2, $3, $4)"
-	if err := db.QueryRow(command, c.CompetenceID, c.CompetenceName, c.BadgeIconURL, c.TotalActivitiesRequired).Scan(&id); err != nil {
+	command := "INSERT INTO competence(competenceName, badgeIconURL, totalActivitiesRequired) VALUES($1, $2, $3) RETURNING competenceId"
+	if err := db.QueryRow(command, c.CompetenceName, c.BadgeIconURL, c.TotalActivitiesRequired).Scan(&id); err != nil {
 		return 0, err
 	}
 
