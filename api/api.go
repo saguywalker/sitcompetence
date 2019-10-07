@@ -200,7 +200,7 @@ func getIDFromRequest(param string, r *http.Request) string {
 	return id
 }
 
-func getPageParam(r *http.Request) (uint64, error) {
+func getPageParam(r *http.Request) (uint32, error) {
 	params := r.URL.Query()
 	pageStr := params.Get("page")
 	if pageStr == "" {
@@ -212,5 +212,5 @@ func getPageParam(r *http.Request) (uint64, error) {
 		return 0, err
 	}
 
-	return uint64(page), nil
+	return uint32(page), nil
 }

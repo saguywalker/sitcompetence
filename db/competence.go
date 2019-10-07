@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/saguywalker/sitcompetence/model"
@@ -9,7 +10,7 @@ import (
 
 // GetCompetenceByID returns a competence from competenceID
 func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
-	log.Println("In GetCompetenceByID")
+	log.Println(fmt.Sprintf("SELECT * FROM competence WHERE competenceId = %d", id))
 
 	var competence model.Competence
 
@@ -29,16 +30,25 @@ func (db *Database) GetCompetenceByID(id uint16) (*model.Competence, error) {
 }
 
 // GetCompetencesByActivityID query competence from activity id
-func (db *Database) GetCompetencesByActivityID(id uint32, pageLimit, pageNo uint64) ([]model.Competence, error) {
+func (db *Database) GetCompetencesByActivityID(id uint32, pageLimit, pageNo uint32) ([]model.Competence, error) {
 	var competences []model.Competence
 
 	var rows *sql.Rows
 	var err error
 	if pageLimit == 0 || pageNo == 0 {
+		log.Println(fmt.Sprintf("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
+			"FROM competence as c, competenceReward as r "+
+			"WHERE r.activityId = %d AND c.competenceId = r.competenceId", id))
+
 		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
 			"FROM competence as c, competenceReward as r "+
 			"WHERE r.activityId = $1 AND c.competenceId = r.competenceId", id)
 	} else {
+		log.Println(fmt.Sprintf("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
+			"FROM competence as c, competenceReward as r "+
+			"WHERE r.activityId = %d AND c.competenceId = r.competenceId "+
+			"ORDER BY c.competenceId LIMIT %d OFFSET %d", id, pageLimit, (pageNo-1)*pageLimit))
+
 		rows, err = db.Query("SELECT c.competenceId, c.competenceName, c.badgeIconUrl, c.totalActivitiesRequired "+
 			"FROM competence as c, competenceReward as r "+
 			"WHERE r.activityId = $1 AND c.competenceId = r.competenceId "+
@@ -63,15 +73,17 @@ func (db *Database) GetCompetencesByActivityID(id uint32, pageLimit, pageNo uint
 }
 
 // GetCompetences returns all competences in a table
-func (db *Database) GetCompetences(pageLimit uint64, pageNo uint64) ([]model.Competence, error) {
+func (db *Database) GetCompetences(pageLimit uint32, pageNo uint32) ([]model.Competence, error) {
 	var competences []model.Competence
 
 	var rows *sql.Rows
 	var err error
 
 	if pageLimit == 0 || pageNo == 0 {
+		log.Println("SELECT * FROM competence")
 		rows, err = db.Query("SELECT * FROM competence")
 	} else {
+		log.Println(fmt.Sprintf("SELECT * FROM competence ORDER BY competenceId LIMIT %d OFFSET %d", pageLimit, (pageNo-1)*pageLimit))
 		rows, err = db.Query("SELECT * FROM competence ORDER BY competenceId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
 	}
 	if err != nil {

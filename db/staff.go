@@ -2,12 +2,16 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
 
 // GetStaffByID returns an staff from staffID
 func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
+	log.Println(fmt.Sprintf("SELECT staffId, firstname FROM staff WHERE staffId = %s", id))
+
 	row, err := db.Query("SELECT staffId, firstname FROM staff WHERE staffId = $1", id)
 	if err != nil {
 		return nil, err
@@ -26,13 +30,15 @@ func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
 }
 
 // GetStaffs returns all staffs in a table
-func (db *Database) GetStaffs(pageLimit uint64, pageNo uint64) ([]*model.Staff, error) {
+func (db *Database) GetStaffs(pageLimit uint32, pageNo uint32) ([]*model.Staff, error) {
 	var rows *sql.Rows
 	var err error
 
 	if pageLimit == 0 || pageNo == 0 {
+		log.Println("SELECT staffId, firstname FROM staff")
 		rows, err = db.Query("SELECT staffId, firstname FROM staff")
 	} else {
+		log.Println(fmt.Sprintf("SELECT staffId, firstname FROM staff ORDER BY staffId LIMIT %d OFFSET %d", pageLimit, (pageNo-1)*pageLimit))
 		rows, err = db.Query("SELECT staffId, firstname FROM staff ORDER BY staffId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
 	}
 	if err != nil {

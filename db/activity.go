@@ -29,7 +29,7 @@ func (db *Database) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all activities in a table
-func (db *Database) GetActivities(pageNo uint64, pageLimit uint64, isStudent string) ([]*model.Activity, error) {
+func (db *Database) GetActivities(pageNo uint32, pageLimit uint32, isStudent string) ([]*model.Activity, error) {
 	var activities []*model.Activity
 
 	commands := make([]string, 1)
@@ -88,7 +88,7 @@ func (db *Database) GetActivities(pageNo uint64, pageLimit uint64, isStudent str
 }
 
 // GetActivitiesByStaff returns all activities in a table
-func (db *Database) GetActivitiesByStaff(id string, pageNo uint64, pageLimit uint64) ([]*model.Activity, error) {
+func (db *Database) GetActivitiesByStaff(id string, pageNo uint32, pageLimit uint32) ([]*model.Activity, error) {
 	var activities []*model.Activity
 
 	var rows *sql.Rows
@@ -117,7 +117,7 @@ func (db *Database) GetActivitiesByStaff(id string, pageNo uint64, pageLimit uin
 }
 
 // GetActivitiesByStudent returns all activities in a table
-func (db *Database) GetActivitiesByStudent(id string, pageLimit uint64, pageNo uint64) ([]*model.Activity, error) {
+func (db *Database) GetActivitiesByStudent(id string, pageLimit uint32, pageNo uint32) ([]*model.Activity, error) {
 	var activities []*model.Activity
 
 	var rows *sql.Rows

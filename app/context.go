@@ -14,7 +14,7 @@ type Context struct {
 	Logger           logrus.FieldLogger
 	RemoteAddress    string
 	Database         *db.Database
-	PageLimit        uint64
+	PageLimit        uint32
 	CurrentPeerIndex uint64
 	User             model.User
 }

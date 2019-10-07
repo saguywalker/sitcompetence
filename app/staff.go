@@ -14,7 +14,7 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 }
 
 // GetStaffs returns all of activities
-func (ctx *Context) GetStaffs(pageNo uint64) ([]*model.Staff, error) {
+func (ctx *Context) GetStaffs(pageNo uint32) ([]*model.Staff, error) {
 	staffs, err := ctx.Database.GetStaffs(ctx.PageLimit, pageNo)
 	if err != nil {
 		//ctx.Logger.Errorln(err.Error())

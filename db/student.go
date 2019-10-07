@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/saguywalker/sitcompetence/model"
@@ -10,6 +11,8 @@ import (
 
 // GetStudentByID returns an student from studentID
 func (db *Database) GetStudentByID(id string) (*model.Student, error) {
+	log.Println(fmt.Sprintf("SELECT studentId, firstname, department FROM student WHERE studentID = %s", id))
+
 	row, err := db.Query("SELECT studentId, firstname, department FROM student WHERE studentID = $1", id)
 	if err != nil {
 		return nil, err
@@ -28,7 +31,7 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all students in a table
-func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year uint16) ([]*model.Student, error) {
+func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year uint16) ([]*model.Student, error) {
 	commands := make([]string, 1)
 	commands[0] = "SELECT studentId, firstname, department FROM student "
 	params := make([]interface{}, 0)
@@ -55,6 +58,8 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year
 	}
 
 	command := strings.Join(commands, " ")
+
+	log.Println(command, ":", params)
 
 	var rows *sql.Rows
 	var err error

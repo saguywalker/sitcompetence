@@ -23,7 +23,7 @@ func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]model.Student, erro
 */
 
 // GetCollectedByStudentID returns all of activities
-func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint64) ([]model.Competence, error) {
+func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint32) ([]model.Competence, error) {
 	competencesID, err := ctx.Database.GetCompetencesIDByStudentID(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint64) ([]model.C
 }
 
 // GetCollectedWithDetail return list of collected competence from student id
-func (ctx *Context) GetCollectedWithDetail(id string, pageNo uint64) ([]model.CollectedCompetence, error) {
+func (ctx *Context) GetCollectedWithDetail(id string, pageNo uint32) ([]model.CollectedCompetence, error) {
 	collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err

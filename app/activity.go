@@ -26,7 +26,7 @@ func (ctx *Context) GetActivityByID(id uint32) (*model.Activity, error) {
 }
 
 // GetActivities returns all of activities
-func (ctx *Context) GetActivities(pageNo uint64, isStudent string) ([]*model.Activity, error) {
+func (ctx *Context) GetActivities(pageNo uint32, isStudent string) ([]*model.Activity, error) {
 	activities, err := ctx.Database.GetActivities(ctx.PageLimit, pageNo, isStudent)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (ctx *Context) GetActivities(pageNo uint64, isStudent string) ([]*model.Act
 }
 
 // GetActivitiesByStaff return activities from staff id
-func (ctx *Context) GetActivitiesByStaff(id string, pageNo uint64) ([]*model.Activity, error) {
+func (ctx *Context) GetActivitiesByStaff(id string, pageNo uint32) ([]*model.Activity, error) {
 	activities, err := ctx.Database.GetActivitiesByStaff(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (ctx *Context) GetActivitiesByStaff(id string, pageNo uint64) ([]*model.Act
 }
 
 // GetActivitiesByStudent return activities from student id
-func (ctx *Context) GetActivitiesByStudent(id string, pageNo uint64) ([]*model.Activity, error) {
+func (ctx *Context) GetActivitiesByStudent(id string, pageNo uint32) ([]*model.Activity, error) {
 	activites, err := ctx.Database.GetActivitiesByStudent(id, ctx.PageLimit, pageNo)
 	if err != nil {
 		return nil, err

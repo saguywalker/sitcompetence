@@ -18,7 +18,7 @@ func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
 }
 
 // GetStudents returns all of students
-func (ctx *Context) GetStudents(pageNo uint64, dp, year string) ([]*model.Student, error) {
+func (ctx *Context) GetStudents(pageNo uint32, dp, year string) ([]*model.Student, error) {
 	var yr uint64
 	var err error
 
