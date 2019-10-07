@@ -10,7 +10,7 @@ import (
 
 // GetStudentByID returns an student from studentID
 func (db *Database) GetStudentByID(id string) (*model.Student, error) {
-	row, err := db.Query("SELECT * FROM student WHERE studentID = $1", id)
+	row, err := db.Query("SELECT studentId, firstname, department FROM student WHERE studentID = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -18,7 +18,7 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 	var student model.Student
 
 	for row.Next() {
-		err := row.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department)
+		err := row.Scan(&student.StudentID, &student.FirstName, &student.Department)
 		if err != nil {
 			return nil, nil
 		}
@@ -30,7 +30,7 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 // GetStudents returns all students in a table
 func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year uint16) ([]*model.Student, error) {
 	commands := make([]string, 1)
-	commands[0] = "SELECT * FROM student "
+	commands[0] = "SELECT studentId, firstname, department FROM student "
 	params := make([]interface{}, 0)
 
 	if dp != "" {
@@ -71,7 +71,7 @@ func (db *Database) GetStudents(pageLimit uint64, pageNo uint64, dp string, year
 
 	for rows.Next() {
 		var student model.Student
-		err := rows.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department)
+		err := rows.Scan(&student.StudentID, &student.FirstName, &student.Department)
 		if err != nil {
 			return nil, err
 		}
