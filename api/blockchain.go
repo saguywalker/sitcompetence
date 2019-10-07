@@ -64,16 +64,19 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 
 // VerifyTX verifies whethear a corresponding
 func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx.Logger.Infoln("Start verify")
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
 	defer r.Body.Close()
+	ctx.Logger.Infoln(string(body))
 
 	var bodyMap map[string]interface{}
 	if err := json.Unmarshal(body, &bodyMap); err != nil {
 		return nil
 	}
+	ctx.Logger.Infoln(bodyMap)
 
 	rawData, err := json.Marshal(bodyMap["data"])
 	if err != nil {
@@ -88,7 +91,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 
 	a.App.CurrentPeerIndex = currentIndex
 
-	returnResult := []string{fmt.Sprintf("Data hash(%x) was", hashData)}
+	returnResult := []string{fmt.Sprintf("Data (hash=0x%x was", hashData)}
 	if !isExists {
 		returnResult = append(returnResult, "not")
 	}

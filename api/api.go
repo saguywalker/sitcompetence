@@ -2,15 +2,11 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"runtime/debug"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/app"
 )
@@ -87,7 +83,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
 
-		beginTime := time.Now()
+		// beginTime := time.Now()
 		token := r.Header.Get("X-Session-Token")
 
 		token = strings.TrimSpace(token)
@@ -104,34 +100,49 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
-		ctx.WithUser(*(a.App.TokenUser[token]))
+
+		user, found := a.App.TokenUser[token]
+
+		ctx.Logger.Infoln(user)
+		ctx.Logger.Infoln(found)
+
+		if !found {
+			http.Error(w, "No user in session", http.StatusForbidden)
+			return
+		}
+
+		ctx.WithUser(*user)
+		ctx.Logger.Infoln(*user)
 		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
+		/*
+			defer func() {
+				statusCode := w.(*statusCodeRecorder).StatusCode
+				if statusCode == 0 {
+					statusCode = 200
+				}
+				duration := time.Since(beginTime)
 
-		defer func() {
-			statusCode := w.(*statusCodeRecorder).StatusCode
-			if statusCode == 0 {
-				statusCode = 200
-			}
-			duration := time.Since(beginTime)
+				logger := ctx.Logger.WithFields(logrus.Fields{
+					"duration":    duration,
+					"status_code": statusCode,
+					"remote":      ctx.RemoteAddress,
+				})
+				logger.Info(r.Method + " " + r.URL.RequestURI())
+			}()
 
-			logger := ctx.Logger.WithFields(logrus.Fields{
-				"duration":    duration,
-				"status_code": statusCode,
-				"remote":      ctx.RemoteAddress,
-			})
-			logger.Info(r.Method + " " + r.URL.RequestURI())
-		}()
-
-		defer func() {
-			if r := recover(); r != nil {
-				ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
-				http.Error(w, "internal server error", http.StatusInternalServerError)
-			}
-		}()
+			defer func() {
+				if r := recover(); r != nil {
+					ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
+					http.Error(w, "internal server error", http.StatusInternalServerError)
+				}
+			}()
+		*/
 		// w.Header().Set("Allow", "http://localhost:8082")
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")
+
+		ctx.Logger.Infoln("Before calling sub")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {

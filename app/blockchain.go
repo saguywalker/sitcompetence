@@ -118,24 +118,25 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 
 	respData := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], hashData)
+		url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], hashData)
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
 		if err != nil {
 			continue
 		} else {
-			data, err = ioutil.ReadAll(resp.Body)
+			respData, err = ioutil.ReadAll(resp.Body)
 			defer resp.Body.Close()
 			if err != nil {
 				continue
 			}
+			ctx.Logger.Infoln(string(respData))
 			break
 		}
 	}
 
 	var fullData map[string]interface{}
-	if err := json.Unmarshal(respData, &data); err != nil {
+	if err := json.Unmarshal(respData, &fullData); err != nil {
 		ctx.Logger.Errorf("%v", respData)
 		return false, index, hashData[:], err
 	}

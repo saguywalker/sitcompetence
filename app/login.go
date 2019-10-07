@@ -32,20 +32,19 @@ func NewLDAPClient(username, password, ou string) *ldap.LDAPClient {
 func (a *App) CheckPassword(username, password string) (*UserResponse, error) {
 	staffClient := NewLDAPClient(username, password, "staff")
 
-	var ok bool
 	var user map[string]string
 	var err error
 
-	ok, user, err = staffClient.Authenticate(username, password)
+	_, user, err = staffClient.Authenticate(username, password)
 	if err != nil {
 		stdClient := NewLDAPClient(username, password, "st")
-		ok, user, err = stdClient.Authenticate(username, password)
+		_, user, err = stdClient.Authenticate(username, password)
 	}
-
-	if !ok {
-		return nil, fmt.Errorf("Authenticating failed for user %s", username)
-	}
-
+	/*
+		if !ok {
+			return nil, fmt.Errorf("Authenticating failed for user %s", username)
+		}
+	*/
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +64,7 @@ func (a *App) CheckPassword(username, password string) (*UserResponse, error) {
 	}
 
 	a.TokenUser[token] = userStruct
+	fmt.Println(a.TokenUser)
 
 	return resp, nil
 }
