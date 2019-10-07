@@ -87,7 +87,25 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 			}
 			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID), page)
 		} else if params.Get("student_id") != "" {
-			competences, err = ctx.GetCollectedByStudentID(params.Get("student_id"), page)
+			studentID := params.Get("student_id")
+			collected, err := ctx.GetCollectedWithDetail(studentID, page)
+			if err != nil {
+				return err
+			}
+
+			student, err := ctx.GetStudentByID(studentID)
+			if err != nil {
+				return err
+			}
+
+			student.Collected = collected
+			data, err := json.Marshal(student)
+			if err != nil {
+				return err
+			}
+
+			w.Write(data)
+
 		} else {
 			competences, err = ctx.GetCompetences(page)
 		}
