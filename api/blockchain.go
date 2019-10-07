@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -90,25 +89,14 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infof("json data\n%s\n", rawData)
 
-	isExists, currentIndex, hashData, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, currentIndex, _, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}
 
 	a.App.CurrentPeerIndex = currentIndex
 
-	returnResult := []string{fmt.Sprintf("Data (hash=0x%x was", hashData)}
-	if !isExists {
-		returnResult = append(returnResult, "not")
-	}
-
-	returnResult = append(returnResult, "recorded on the Blockchain.")
-
-	result := strings.Join(returnResult, " ")
-
-	if _, err := w.Write([]byte(result)); err != nil {
-		return err
-	}
+	w.Write([]byte(fmt.Sprintf("%v", isExists)))
 
 	return nil
 }
