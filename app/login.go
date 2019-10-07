@@ -52,12 +52,12 @@ func (a *App) CheckPassword(username, password string) (*UserResponse, error) {
 
 	userStruct := model.NewUser(username, user["cn"], user["radiusGroupName"])
 
-	userJson, err := json.Marshal(userStruct)
+	userJSON, err := json.Marshal(userStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	token := fmt.Sprintf("%x", sha256.Sum256(userJson))
+	token := fmt.Sprintf("%x", sha256.Sum256(userJSON))
 
 	resp := &UserResponse{
 		Token: token,

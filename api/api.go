@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/app"
 )
@@ -104,7 +104,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
-		ctx.WithUser(a.App.TokenUser[token])
+		ctx.WithUser(*(a.App.TokenUser[token]))
 		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 
 		defer func() {

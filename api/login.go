@@ -33,7 +33,7 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if utf8.ValidString(input.Username) || utf8.ValidString(input.Password) {
-		http.Error(w, fmt.Errorf("Invalid username or password"), http.StatusMethodNotAllowed)
+		http.Error(w, "Invalid username or password", http.StatusMethodNotAllowed)
 	}
 
 	respStruct, err := a.App.CheckPassword(input.Username, input.Password)
