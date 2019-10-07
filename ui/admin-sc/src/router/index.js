@@ -228,7 +228,7 @@ router.beforeEach((to, from, next) => {
 	// Ignore login and error page
 	const isLogin = sessionStorage.getItem("inlog");
 	if (!isLogin && to.name !== "login-redirect" && to.name !== "error404") {
-		next("/login");
+		location.href = "http://localhost:8082/login";
 	}
 
 	next();

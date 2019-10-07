@@ -85,7 +85,7 @@
 				<div class="question">
 					<b-form-checkbox
 						id="checkbox-1"
-						v-model="student_stie"
+						v-model="student_site"
 						name="checkbox-1"
 					>
 						Post to student website
@@ -111,7 +111,7 @@
 <script>
 import IconPen from "@/components/icons/IconPen.vue";
 import loading from "@/plugin/loading";
-import { getSemester } from "@/helpers";
+import { getSemester, getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -136,19 +136,20 @@ export default {
 	},
 	data() {
 		return {
-			student_stie: false,
+			student_site: false,
 			summary: {}
 		};
 	},
 	computed: {
 		...mapState("createActivity", [
 			"detailInput",
+			"competences",
 			"steps"
 		]),
 		competenceNameList() {
 			let result = "";
-			this.summary.competences.forEach((com, index) => {
-				if (index === this.summary.competences.length - 1) {
+			this.competences.forEach((com, index) => {
+				if (index === this.competences.length - 1) {
 					result += com.competence_name;
 				} else {
 					result += `${com.competence_name}, `;
@@ -167,13 +168,14 @@ export default {
 	methods: {
 		async submit() {
 			loading.start();
+			const payload = {
+				...this.summary,
+				creator: getLoginUser,
+				semester: getSemester(),
+				student_site: this.student_site
+			};
 			try {
-				await this.$store.dispatch("createActivity/submitCreateActivity", {
-					...this.summary,
-					creator: "st01", // TODO: Get from login user
-					semester: getSemester(),
-					student_stie: this.student_stie
-				});
+				await this.$store.dispatch("createActivity/submitCreateActivity", payload);
 				await this.$store.dispatch("createActivity/addStep", this.step.step);
 				this.$router.push({ name: this.step.next.link });
 			} catch (err) {
