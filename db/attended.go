@@ -8,7 +8,7 @@ import (
 func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error) {
 	var students []model.Student
 
-	rows, err := db.Query("SELECT s.studentId, s.firstname, s.lastname, s.department "+
+	rows, err := db.Query("SELECT s.studentId, s.firstname, s.department "+
 		"FROM attendedActivity as a, student as s "+
 		"WHERE a.activityId=$1 AND s.studentId=a.studentId;", id)
 	if err != nil {
@@ -17,7 +17,7 @@ func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error)
 
 	for rows.Next() {
 		var student model.Student
-		if err := rows.Scan(&student.StudentID, &student.FirstName, &student.LastName, &student.Department); err != nil {
+		if err := rows.Scan(&student.StudentID, &student.FirstName, &student.Department); err != nil {
 			return nil, err
 		}
 
