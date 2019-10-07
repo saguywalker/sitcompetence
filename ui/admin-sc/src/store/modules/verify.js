@@ -6,7 +6,7 @@ import {
 
 const state = {
 	hashId: "",
-	verifyData: {}
+	verifyData: []
 };
 
 const mutations = {
@@ -14,7 +14,10 @@ const mutations = {
 		stateData.hashId = data;
 	},
 	[UPDATE_VERIFY_DATA](stateData, data) {
-		stateData.verifyData = data;
+		stateData.verifyData = [
+			...stateData.verifyData,
+			data
+		];
 	}
 };
 
@@ -28,6 +31,8 @@ const actions = {
 		if (response.status === 200) {
 			commit(UPDATE_VERIFY_DATA, response.data);
 		}
+
+		return response.data;
 	}
 };
 

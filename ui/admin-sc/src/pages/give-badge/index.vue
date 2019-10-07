@@ -29,7 +29,7 @@
 						</div>
 						<b-table
 							ref="selectableTable"
-							:items="tableItemProvider"
+							:items="items"
 							:fields="fields"
 							:per-page="perPage"
 							selectable
@@ -183,11 +183,23 @@ export default {
 		}
 	},
 	async created() {
-		// if (this.students.length === 0) {
-		// 	await this.$store.dispatch("base/loadStudentData");
-		// }
+		if (this.students.length === 0) {
+			loading.start();
 
-		// this.items = this.students;
+			try {
+				await this.$store.dispatch("base/loadStudentData");
+			} catch (err) {
+				this.$bvToast.toast(`There was a problem loading student data: ${err.message}`, {
+					title: "Student Table Error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			} finally {
+				loading.stop();
+			}
+		}
+
+		this.items = this.students;
 		this.selectedItems = this.selectedStudents;
 		if (this.steps.includes("selection")) {
 			this.setUpSelectedItems();
@@ -236,23 +248,23 @@ export default {
 			await this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
 			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-selection" });
-		},
-		async tableItemProvider() {
-			let items;
-			try {
-				items = await this.$store.dispatch("base/loadStudentDataByPage", this.currentPage);
-			} catch (err) {
-				this.$bvToast.toast(`There was a problem fetchin student table: ${err.message}`, {
-					title: "Student Table Error",
-					variant: "danger",
-					autoHideDelay: 1500
-				});
-			} finally {
-				loading.stop();
-			}
-
-			return items;
 		}
+		// async tableItemProvider() {
+		// 	let items;
+		// 	try {
+		// 		items = await this.$store.dispatch("base/loadStudentDataByPage", this.currentPage);
+		// 	} catch (err) {
+		// 		this.$bvToast.toast(`There was a problem fetchin student table: ${err.message}`, {
+		// 			title: "Student Table Error",
+		// 			variant: "danger",
+		// 			autoHideDelay: 1500
+		// 		});
+		// 	} finally {
+		// 		loading.stop();
+		// 	}
+
+		// 	return items;
+		// }
 	}
 };
 </script>

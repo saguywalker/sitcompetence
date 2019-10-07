@@ -232,7 +232,7 @@ export default {
 				await this.$store.dispatch("activity/submitApprove", {
 					approvedStudents: this.selectedItems,
 					activityId: this.$route.params.id,
-					approver: getLoginUser // GET from login user
+					approver: getLoginUser
 				});
 
 				this.$router.push({
