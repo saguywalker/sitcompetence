@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -59,23 +60,30 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.Res
 }
 
 func (ctx *Context) broadcastTX(hash []byte, index uint64, peers []string) ([]byte, error) {
-	url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], hash)
-	ctx.Logger.Infoln(url)
-
-	response, err := http.Get(url)
-	if err != nil {
-		return nil, err
+	httpClient := &http.Client{
+		Timeout: 3 * time.Second,
 	}
-	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
+	data := make([]byte, 0)
+	for i := 0; i < len(peers); i++ {
+		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], hash)
+		ctx.Logger.Infoln(url)
+		resp, err := httpClient.Get(url)
+		index = uint64((index + 1)) % uint64(len(peers))
+		if err != nil {
+			continue
+		} else {
+			data, err = ioutil.ReadAll(resp.Body)
+			defer resp.Body.Close()
+			if err != nil {
+				continue
+			}
+			break
+		}
 	}
 
 	var fullData map[string]interface{}
-	err = json.Unmarshal(data, &fullData)
-	if err != nil {
+	if err := json.Unmarshal(data, &fullData); err != nil {
 		return nil, err
 	}
 
@@ -104,21 +112,26 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	hashData := sha256.Sum256(trimData.Bytes())
 	ctx.Logger.Infof("H(data): %x\n", hashData)
 
-	url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], hashData)
-	ctx.Logger.Infoln(url)
-
-	index = (index + 1) % uint64(len(peers))
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return false, index, hashData[:], err
+	httpClient := &http.Client{
+		Timeout: 3 * time.Second,
 	}
-	defer resp.Body.Close()
 
-	respData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		ctx.Logger.Errorf("%v", resp)
-		return false, index, hashData[:], err
+	respData := make([]byte, 0)
+	for i := 0; i < len(peers); i++ {
+		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], hashData)
+		ctx.Logger.Infoln(url)
+		resp, err := httpClient.Get(url)
+		index = uint64((index + 1)) % uint64(len(peers))
+		if err != nil {
+			continue
+		} else {
+			data, err = ioutil.ReadAll(resp.Body)
+			defer resp.Body.Close()
+			if err != nil {
+				continue
+			}
+			break
+		}
 	}
 
 	var fullData map[string]interface{}
@@ -130,13 +143,13 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", fullData)
-		return false, index, hashData[:], err
+		return false, index, hashData[:], fmt.Errorf(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", respResult)
-		return false, index, hashData[:], err
+		return false, index, hashData[:], fmt.Errorf(string(respData))
 	}
 
 	isExist := respResult["log"] == "exists"
