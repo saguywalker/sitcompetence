@@ -88,14 +88,6 @@ func serveAPI(ctx context.Context, api *api.API) {
 	<-done
 }
 
-func IndexHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, entrypoint)
-	}
-
-	return http.HandlerFunc(fn)
-}
-
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "serves the api",

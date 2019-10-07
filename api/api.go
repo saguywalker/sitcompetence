@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"runtime/debug"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 
 	"github.com/saguywalker/sitcompetence/app"
@@ -86,7 +89,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
 
-		// beginTime := time.Now()
+		beginTime := time.Now()
 		token := r.Header.Get("X-Session-Token")
 
 		token = strings.TrimSpace(token)
@@ -103,46 +106,30 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+		ctx.WithUser(a.App.TokenUser[token])
+		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 
-		/*
-			if username, password, ok := r.BasicAuth(); ok {
-				if len(username) == 0 || len(password) == 0 {
-					http.Error(w, "username and password must be set", http.StatusForbidden)
-					return
-				}
-
-				user, err := a.App.CheckPassword(username, password)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusForbidden)
-					return
-				}
-
-				ctx.WithUser(*user)
+		defer func() {
+			statusCode := w.(*statusCodeRecorder).StatusCode
+			if statusCode == 0 {
+				statusCode = 200
 			}
-			//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
+			duration := time.Since(beginTime)
 
-			defer func() {
-				statusCode := w.(*statusCodeRecorder).StatusCode
-				if statusCode == 0 {
-					statusCode = 200
-				}
-				duration := time.Since(beginTime)
+			logger := ctx.Logger.WithFields(logrus.Fields{
+				"duration":    duration,
+				"status_code": statusCode,
+				"remote":      ctx.RemoteAddress,
+			})
+			logger.Info(r.Method + " " + r.URL.RequestURI())
+		}()
 
-				logger := ctx.Logger.WithFields(logrus.Fields{
-					"duration":    duration,
-					"status_code": statusCode,
-					"remote":      ctx.RemoteAddress,
-				})
-				logger.Info(r.Method + " " + r.URL.RequestURI())
-			}()
-
-			defer func() {
-				if r := recover(); r != nil {
-					ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
-					http.Error(w, "internal server error", http.StatusInternalServerError)
-				}
-			}()
-		*/
+		defer func() {
+			if r := recover(); r != nil {
+				ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+			}
+		}()
 		// w.Header().Set("Allow", "http://localhost:8082")
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
@@ -182,6 +169,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	})
 }
 
+// Login authenticate user with LDAP
 func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 	var input model.Login
 
@@ -221,6 +209,7 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Logout remove session toke from particular token
 func (a *API) Logout(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	token := r.Header.Get("X-Session-Token")
 
@@ -231,6 +220,7 @@ func (a *API) Logout(ctx *app.Context, w http.ResponseWriter, r *http.Request) e
 	return nil
 }
 
+// GetUserDetail return user detail from token
 func (a *API) GetUserDetail(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	token := r.Header.Get("X-Session-Token")
 
