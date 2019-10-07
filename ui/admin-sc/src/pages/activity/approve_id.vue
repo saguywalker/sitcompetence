@@ -114,6 +114,7 @@
 			<base-page-step
 				:step="step"
 				@next="submit"
+				@back="goBack"
 			/>
 		</section>
 	</div>
@@ -125,6 +126,7 @@
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
+import { getLoginUser } from "@/helpers";
 import { mapGetters } from "vuex";
 
 // TODO get student from activty that they joined.
@@ -178,6 +180,9 @@ export default {
 			step: {
 				next: Object.freeze({
 					name: "Submit approve"
+				}),
+				back: Object.freeze({
+					name: "Back"
 				})
 			}
 		};
@@ -227,7 +232,7 @@ export default {
 				await this.$store.dispatch("activity/submitApprove", {
 					approvedStudents: this.selectedItems,
 					activityId: this.$route.params.id,
-					approver: "stf02" // GET from login user
+					approver: getLoginUser // GET from login user
 				});
 
 				this.$router.push({
@@ -237,13 +242,11 @@ export default {
 					}
 				});
 			} catch (err) {
-				const notification = {
+				this.$bvToast.toast(`There was a problem submit approve: ${err.message}`, {
 					title: "Submit approve activity",
-					message: `There was a problem submitting data: ${err.message}`,
-					variant: "danger"
-				};
-
-				this.$store.dispatch("notification/add", notification);
+					variant: "danger",
+					autoHideDelay: 1500
+				});
 			} finally {
 				loading.stop();
 			}
@@ -260,6 +263,14 @@ export default {
 		deleteSelectedRow(id) {
 			const index = this.items.findIndex((item) => item.student_id === id);
 			this.$refs.selectableTable.unselectRow(index);
+		},
+		goBack() {
+			this.$router.push({
+				name: "activity-detail",
+				params: {
+					id: this.$route.params.id
+				}
+			});
 		}
 	}
 };
