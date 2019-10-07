@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"unicode/utf8"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -29,6 +30,10 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 	if len(input.Username) == 0 || len(input.Password) == 0 {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
+	}
+
+	if utf8.ValidString(input.Username) || utf8.ValidString(input.Password) {
+		http.Error(w, fmt.Errorf("Invalid username or password"), http.StatusMethodNotAllowed)
 	}
 
 	respStruct, err := a.App.CheckPassword(input.Username, input.Password)
