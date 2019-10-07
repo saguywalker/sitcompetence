@@ -59,7 +59,7 @@
 <script>
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import loading from "@/plugin/loading";
-import { getSemester } from "@/helpers";
+import { getSemester, getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -76,6 +76,7 @@ export default {
 			"selectedStudents",
 			"steps"
 		]),
+		...mapState("base", ["user"]),
 		step() {
 			return this.$route.meta.step;
 		}
@@ -92,12 +93,11 @@ export default {
 	},
 	methods: {
 		async submit() {
-			// TODO: Set giver by login user
 			loading.start();
 
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
-					giver: "tiny",
+					giver: getLoginUser(),
 					semester: getSemester()
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
@@ -111,9 +111,6 @@ export default {
 			} finally {
 				loading.stop();
 			}
-		},
-		sm() {
-			fetch("GET", "");
 		},
 		async goBack() {
 			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);

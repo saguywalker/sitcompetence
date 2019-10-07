@@ -24,8 +24,14 @@ const Base = {
 	getAllStudents() {
 		return apiClient.get("/student");
 	},
+	getStudentsPage(page) {
+		return apiClient.get(`/student?page=${page}`);
+	},
 	getAllStaffs() {
 		return apiClient.get("/staffs");
+	},
+	getUserDetail() {
+		return apiClient.get("/userDetail");
 	}
 };
 

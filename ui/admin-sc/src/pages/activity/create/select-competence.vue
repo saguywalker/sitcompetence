@@ -48,6 +48,7 @@
 @import "@/styles/pages/create-activity-competence.scss";
 </style>
 <script>
+import loading from "@/plugin/loading";
 import { mapState } from "vuex";
 
 export default {
@@ -78,12 +79,25 @@ export default {
 		});
 	},
 	async created() {
-		if (this.badges.length === 0) {
-			await this.$store.dispatch("base/loadBadgeData");
-		}
-
 		this.options = this.badges;
 		this.selects = this.competences;
+
+		if (this.badges.length > 0) {
+			return;
+		}
+
+		loading.start();
+		try {
+			await this.$store.dispatch("base/loadBadgeData");
+		} catch (err) {
+			this.$bvToast.toast(`There was a problem fetching badges data: ${err.message}`, {
+				title: "Badge Data Error",
+				variant: "danger",
+				autoHideDelay: 1500
+			});
+		} finally {
+			loading.stop();
+		}
 	},
 	methods: {
 		hasSelected(id) {

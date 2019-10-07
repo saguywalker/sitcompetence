@@ -78,3 +78,5 @@ export const getPlainTextToken = (cipher) => {
 };
 
 export const getLoginToken = sessionStorage.getItem("inlog");
+
+export const getLoginUser = sessionStorage.getItem("user");
