@@ -163,3 +163,32 @@ func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 	return nil
 }
+
+func (a *API) JoinActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	var input model.AttendedActivity
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &input); err != nil {
+		return err
+	}
+
+	if err := ctx.JoinActivity(&input); err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(input)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(data); err != nil {
+		return err
+	}
+
+	return nil
+}

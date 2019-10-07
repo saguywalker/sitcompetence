@@ -28,14 +28,14 @@ func (db *Database) GetAttendeesByActivityID(id uint32) ([]model.Student, error)
 }
 
 // AddAttendee add student to attended activity
-func (db *Database) AddAttendee(activityID uint32, studentID string) error {
-	stmt, err := db.Prepare("INSERT INTO attendedActivity(activityId, studentId) " +
-		"VALUES($1, $2);")
+func (db *Database) AddAttendee(activityID uint32, studentID string, isApprove bool) error {
+	stmt, err := db.Prepare("INSERT INTO attendedActivity(activityId, studentId, isApprove) " +
+		"VALUES($1, $2, $3);")
 	if err != nil {
 		return err
 	}
 
-	if _, err := stmt.Exec(activityID, studentID); err != nil {
+	if _, err := stmt.Exec(activityID, studentID, isApprove); err != nil {
 		return err
 	}
 

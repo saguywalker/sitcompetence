@@ -116,6 +116,14 @@ func (ctx *Context) CreateActivity(activity *model.Activity) (int64, error) {
 	return activityID, nil
 }
 
+func (ctx *Context) JoinActivity(activity *model.AttendedActivity) error {
+	if err := ctx.Database.AddAttendee(activity.ActivityID, activity.StudentID, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // UpdateActivity update activity from activity id
 func (ctx *Context) UpdateActivity(activity *model.Activity) error {
 	return ctx.Database.UpdateActivity(activity)
