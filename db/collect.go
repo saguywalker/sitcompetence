@@ -90,17 +90,19 @@ func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uin
 
 	var rows *sql.Rows
 	var err error
+
 	if pageNo == 0 || pageLimit == 0 {
+		log.Println(fmt.Sprintf("SELECT competenceId FROM collectedCompetence WHERE studentId=%s;", id))
+
+		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1;", id)
+	} else {
 		log.Println(fmt.Sprintf("SELECT competenceId FROM collectedCompetence WHERE studentId=%s "+
 			"ORDER BY competenceId LIMIT %d OFFSET %d", id, pageLimit, (pageNo-1)*pageLimit))
 
 		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
 			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, pageLimit, (pageNo-1)*pageLimit)
-	} else {
-		log.Println(fmt.Sprintf("SELECT competenceId FROM collectedCompetence WHERE studentId=%s;", id))
-
-		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1;", id)
 	}
+
 	if err != nil {
 		return nil, err
 	}
