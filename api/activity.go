@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -94,9 +95,12 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	if _, err := ctx.CreateActivity(&input); err != nil {
+	id, err := ctx.CreateActivity(&input)
+	if err != nil {
 		return err
 	}
+
+	w.Write([]byte(fmt.Sprintf("%d", id)))
 	/*
 		if err != nil {
 			return err

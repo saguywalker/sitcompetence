@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -45,7 +46,8 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 		return err
 	}
 
-	if _, err := ctx.CreateCompetence(&input); err != nil {
+	id, err := ctx.CreateCompetence(&input)
+	if err != nil {
 		return err
 	}
 	/*
@@ -66,6 +68,8 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 			return err
 		}
 	*/
+	w.Write([]byte(fmt.Sprintf("%d", id)))
+
 	return nil
 }
 
