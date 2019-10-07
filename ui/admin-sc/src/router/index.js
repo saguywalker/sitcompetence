@@ -14,25 +14,25 @@ Vue.use(Router);
 const router = new Router({
 	mode: "history",
 	routes: [
-		{
-			name: "login-page",
-			path: "/login",
-			beforeEnter: (to, from, next) => {
-				const isLogin = sessionStorage.getItem("inlog");
-
-				if (isLogin) {
-					next({ name: from.name });
-				} else {
-					location.href = "http://localhost:8082/login";
-				}
-			}
-		},
+		// {
+		// 	name: "login-page",
+		// 	path: "/login",
+		// 	beforeEnter: (to, from, next) => {
+		// 		const isLogin = sessionStorage.getItem("inlog");
+		// 		if (isLogin) {
+		// 			console.log("inn", from.name);
+		// 			next({ name: from.name });
+		// 		} else {
+		// 			location.href = "http://localhost:8082/login";
+		// 		}
+		// 	}
+		// },
 		{
 			name: "login-redirect",
 			path: "/admin/login/:hash",
 			beforeEnter: (to, from, next) => {
 				store.dispatch("base/doLogin", to.params.hash);
-				next({ name: "dashboard" });
+				next();
 			}
 		},
 		{
@@ -227,9 +227,10 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
 	// Ignore login and error page
 	const isLogin = sessionStorage.getItem("inlog");
-	if (to.name !== "login-redirect" && to.name !== "error404" && !isLogin) {
-		next({ name: "login-page" });
+	if (!isLogin && to.name !== "login-redirect" && to.name !== "error404") {
+		next("/login");
 	}
+
 	next();
 });
 

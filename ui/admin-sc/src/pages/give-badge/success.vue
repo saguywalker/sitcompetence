@@ -3,7 +3,7 @@
 		<div class="box">
 			<div class="form">
 				<success-logo />
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label class="label">Transaction ID:</label>
 					<a
 						class="hash"
@@ -19,13 +19,20 @@
 					<p class="hash">
 						{{ hexMerkle }}
 					</p>
-				</div>
+				</div> -->
+				<b-button
+					variant="primary"
+					class="mt-3"
+					size="sm"
+				>
+					Verify
+				</b-button>
 				<router-link :to="{ name: 'give-badge' }">
 					<b-button
-						variant="primary"
+						class="mt-2"
 						size="sm"
 					>
-						Home
+						Back home
 					</b-button>
 				</router-link>
 			</div>
@@ -37,8 +44,8 @@
 </style>
 <script>
 import SuccessLogo from "@/components/SuccessLogo.vue";
-import loading from "@/plugin/loading";
-import { base64ToHex } from "@/helpers";
+// import loading from "@/plugin/loading";
+// import { base64ToHex } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -47,7 +54,6 @@ export default {
 	},
 	beforeRouteEnter(to, from, next) {
 		next((vm) => {
-			// TODO: GET the success data and show in the form
 			if (!vm.steps.includes("confirmation")) {
 				vm.$router.replace({ name: "give-badge" });
 			}
@@ -61,35 +67,13 @@ export default {
 		...mapState("giveBadge", [
 			"success",
 			"steps"
-		]),
-		hexTransactionId() {
-			return base64ToHex(this.success.transaction_id);
-		},
-		hexMerkle() {
-			return base64ToHex(this.success.merkleroot);
-		}
-	},
-	methods: {
-		async verifyHash() {
-			loading.start();
-
-			try {
-				await this.$store.dispatch("verify/verifyTransaction", {
-					data: this.success.data[0],
-					transaction_id: this.success.transaction_id
-				});
-
-				this.$router.push({ name: "verify-result" });
-			} catch (err) {
-				this.$bvToast.toast(`There was a problem verifying data: ${err.message}`, {
-					title: `Error verify give badge: ${err.status}`,
-					variant: "danger",
-					autoHideDelay: 1500
-				});
-			} finally {
-				loading.stop();
-			}
-		}
+		])
+		// hexTransactionId() {
+		// 	return base64ToHex(this.success.transaction_id);
+		// },
+		// hexMerkle() {
+		// 	return base64ToHex(this.success.merkleroot);
+		// }
 	}
 };
 </script>

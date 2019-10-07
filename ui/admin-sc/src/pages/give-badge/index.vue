@@ -29,18 +29,16 @@
 						</div>
 						<b-table
 							ref="selectableTable"
-							:items="items"
+							:items="tableItemProvider"
 							:fields="fields"
+							:per-page="perPage"
 							selectable
 							select-mode="multi"
 							selected-variant="primary"
 							responsive="sm"
 							@row-selected="onRowSelected"
 						>
-							<template
-								slot="[selected]"
-								slot-scope="{ rowSelected }"
-							>
+							<template v-slot:cell(selected)="{ rowSelected }">
 								<template v-if="rowSelected">
 									<span aria-hidden="true">
 										<icon-check />
@@ -120,6 +118,7 @@
 @import "@/styles/pages/give-badge-main.scss";
 </style>
 <script>
+import loading from "@/plugin/loading";
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import { mapState } from "vuex";
@@ -132,9 +131,23 @@ export default {
 	data() {
 		return {
 			currentPage: 1,
-			perPage: 3,
+			perPage: 10,
 			search: "",
-			fields: ["selected", "student_id", "firstname", "lastname", "department"],
+			fields: [
+				{
+					key: "selected"
+				},
+				{
+					key: "student_id",
+					sortable: true
+				},
+				{
+					key: "firstname"
+				},
+				{
+					key: "department"
+				}
+			],
 			items: [],
 			selectedItems: [],
 			error: {
@@ -170,11 +183,11 @@ export default {
 		}
 	},
 	async created() {
-		if (this.students.length === 0) {
-			await this.$store.dispatch("base/loadStudentData");
-		}
+		// if (this.students.length === 0) {
+		// 	await this.$store.dispatch("base/loadStudentData");
+		// }
 
-		this.items = this.students;
+		// this.items = this.students;
 		this.selectedItems = this.selectedStudents;
 		if (this.steps.includes("selection")) {
 			this.setUpSelectedItems();
@@ -223,6 +236,22 @@ export default {
 			await this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
 			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-selection" });
+		},
+		async tableItemProvider() {
+			let items;
+			try {
+				items = await this.$store.dispatch("base/loadStudentDataByPage", this.currentPage);
+			} catch (err) {
+				this.$bvToast.toast(`There was a problem fetchin student table: ${err.message}`, {
+					title: "Student Table Error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			} finally {
+				loading.stop();
+			}
+
+			return items;
 		}
 	}
 };
