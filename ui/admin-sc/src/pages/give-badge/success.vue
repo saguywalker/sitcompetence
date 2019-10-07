@@ -24,6 +24,7 @@
 					variant="primary"
 					class="mt-3"
 					size="sm"
+					@click="testVerify"
 				>
 					Verify
 				</b-button>
@@ -36,6 +37,35 @@
 					</b-button>
 				</router-link>
 			</div>
+		</div>
+		<div class="box">
+			<h2 class="box-header">
+				Verify Status
+			</h2>
+			<ul class="form">
+				<li
+					v-for="(s, index) in success"
+					:key="`${s}${index}${rerender}`"
+				>
+					<h1>Student ID: {{ s.student_id }}</h1>
+					<template v-if="verifyData[index]">
+						<p>
+							Recorded in the blockchain
+						</p>
+						<code>
+							{{ verifyData[index] }}
+						</code>
+					</template>
+					<template v-else>
+						<p>
+							Wait for verification
+						</p>
+						<code>
+							{{ verifyData[index] }}
+						</code>
+					</template>
+				</li>
+			</ul>
 		</div>
 	</div>
 </template>
@@ -63,10 +93,19 @@ export default {
 		this.$store.dispatch("giveBadge/clearStep");
 		next();
 	},
+	data() {
+		return {
+			rerender: 0,
+			status: []
+		};
+	},
 	computed: {
 		...mapState("giveBadge", [
 			"success",
 			"steps"
+		]),
+		...mapState("verify", [
+			"verifyData"
 		])
 		// hexTransactionId() {
 		// 	return base64ToHex(this.success.transaction_id);
@@ -74,6 +113,20 @@ export default {
 		// hexMerkle() {
 		// 	return base64ToHex(this.success.merkleroot);
 		// }
+	},
+	methods: {
+		testVerify() {
+			this.success.reduce(async (previousPromise, student) => {
+				const payload = {
+					data: {
+						...student
+					}
+				};
+				this.rerender++;
+				await previousPromise;
+				return this.$store.dispatch("verify/verifyTransaction", payload);
+			}, Promise.resolve());
+		}
 	}
 };
 </script>

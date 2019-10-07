@@ -4,13 +4,14 @@ import {
 	GIVE_BADGE_STEP,
 	GIVE_BADGE_SUBMIT,
 	GIVE_BADGE_SELECT_BADGE,
-	GIVE_BADGE_SUCCESS
+	GIVE_BADGE_SUCCESS,
+	GIVE_BADGE_CLEAR
 } from "../mutationTypes";
 
 const state = {
 	steps: [],
 	selectedStudents: [],
-	success: {}
+	success: []
 };
 
 const mutations = {
@@ -33,14 +34,19 @@ const mutations = {
 		stateData.selectedStudents = [];
 	},
 	[GIVE_BADGE_SUCCESS](stateData, data) {
-		stateData.success = {
+		stateData.success = [
 			...data
-		};
+		];
 	},
 	[GIVE_BADGE_STEP](stateData, data) {
 		stateData.steps = [
 			...data
 		];
+	},
+	[GIVE_BADGE_CLEAR](stateData) {
+		stateData.selectedStudents = [];
+		stateData.steps = [];
+		stateData.success = [];
 	}
 };
 
@@ -91,11 +97,7 @@ const actions = {
 
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {
-			commit(GIVE_BADGE_SUCCESS, {
-				transaction_id: response.data.transaction_id,
-				merkleroot: response.data.merkleroot,
-				data: payload
-			});
+			commit(GIVE_BADGE_SUCCESS, payload);
 		}
 
 		return response;
@@ -117,7 +119,7 @@ const actions = {
 		commit(GIVE_BADGE_STEP, payload);
 	},
 	clearStep({ commit }) {
-		commit(GIVE_BADGE_STEP, []);
+		commit(GIVE_BADGE_CLEAR);
 	}
 };
 

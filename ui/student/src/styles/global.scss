@@ -95,3 +95,11 @@ button {
 		margin: 0 auto;
 	}
 }
+
+.card {
+	display: flex;
+	background: $white;
+	box-shadow: 0 rem(1) rem(4) 0 rgba(0, 0, 0, 0.3);
+	border-radius: rem(12);
+	transition: box-shadow .5s cubic-bezier(0.19, 1, 0.22, 1);
+}

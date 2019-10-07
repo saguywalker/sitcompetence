@@ -1,5 +1,5 @@
 <template>
-	<div class="activity-card">
+	<div class="activity-card card">
 		<div class="heading">
 			<h2 class="title">
 				{{ activity.activity_name }}
