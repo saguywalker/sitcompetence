@@ -7,7 +7,6 @@
 				</h2>
 			</div>
 		</div>
-		{{ statePortfolios }}
 		<div class="portfolio-actions">
 			<div class="right">
 				<b-button
@@ -30,72 +29,63 @@
 					<div class="profile-header">
 						<base-image :size="resizeImage" />
 						<div class="name">
-							<h5
-								v-for="(name, index) in splitedFullname"
-								:key="`${name}${index}`"
-							>
-								{{ name }}
-							</h5>
+							<h5>{{ user.username }}</h5>
 						</div>
 					</div>
 					<p class="profile-description">
 						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<div class="portfolio-content">
-					<b-row>
-						<b-col
-							v-for="(com, index) in portfolios"
-							:key="`${com.competence_id}${forceReRender}`"
-							cols="6"
-							class="competence-wrapper"
-						>
-							<base-image
-								:size="resizeImage"
-								class="sitcom-badge"
-							/>
-							<p class="name">
-								{{ com.competence_name }}
-							</p>
-							<transition
-								:key="`${com.competence_id}${index}`"
-								name="fade"
-								mode="out-in"
+				<template v-if="statePortfolios.collected_competence">
+					<div class="portfolio-content">
+						<b-row>
+							<b-col
+								v-for="(com, index) in ports"
+								:key="`${com.competence_id}${forceReRender}`"
+								cols="6"
+								class="competence-wrapper"
 							>
-								<p
-									v-if="com.verify_show"
-									class="verify-status"
-								>
-									<span class="icon">
-										<icon-check-circle v-if="com.verify_status" />
-										<icon-time-circle v-else />
-									</span>
-									Verified
+								<base-image
+									:size="resizeImage"
+									class="sitcom-badge"
+								/>
+								<p class="name">
+									{{ com.competence_name }}
 								</p>
-							</transition>
-						</b-col>
-					</b-row>
-					<div class="portfolio-footer">
-						<b-button
-							:block="resizeVerifyButton"
-							variant="primary"
-							size="sm"
-							class="action-item"
-							@click="testVerify"
-						>
-							Verify by Blockchain
-						</b-button>
-						<b-button
-							v-if="portfolios[0].verify_show"
-							size="sm"
-							class="action-item"
-							variant="outline-primary"
-							@click="clearVerified"
-						>
-							Clear Verified
-						</b-button>
+								<transition
+									:key="`${com.competence_id}${index}`"
+									name="fade"
+									mode="out-in"
+								>
+									<p
+										v-if="com.verify_show"
+										class="verify-status"
+									>
+										<span class="icon">
+											<icon-check-circle v-if="com.verify_status" />
+											<icon-time-circle v-else />
+										</span>
+										Verified
+									</p>
+								</transition>
+							</b-col>
+						</b-row>
+						<div class="portfolio-footer">
+							<b-button
+								:block="resizeVerifyButton"
+								variant="primary"
+								size="sm"
+								class="action-item"
+								@click="testVerify"
+							>
+								Verify by Blockchain
+							</b-button>
+						</div>
 					</div>
-				</div>
+				</template>
+				<template v-else>
+					<h1>No data</h1>
+				</template>
 			</div>
 		</section>
 	</div>
@@ -119,7 +109,7 @@ export default {
 		return {
 			fullName: "Tindanai Wongpipattanopas",
 			forceReRender: 0,
-			portfolios: [],
+			ports: [],
 			verify: false
 		};
 	},
@@ -127,9 +117,9 @@ export default {
 		...mapState("portfolio", {
 			statePortfolios: "portfolios"
 		}),
-		userId() {
-			return "59130500210";
-		},
+		...mapState("base", [
+			"user"
+		]),
 		splitedFullname() {
 			return this.fullName.split(" ");
 		},
@@ -152,8 +142,9 @@ export default {
 		this.$Progress.start();
 
 		try {
-			await this.$store.dispatch("portfolio/loadPortfolio", this.userId);
-			this.portfolios = this.statePortfolios;
+			await this.$store.dispatch("base/loadUserDetail");
+			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
+			this.setupPortfolio();
 		} catch (err) {
 			this.$Progress.fail();
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
@@ -161,40 +152,44 @@ export default {
 				variant: "danger",
 				autoHideDelay: 1500
 			});
+		} finally {
+			this.$Progress.finish();
 		}
 	},
 	methods: {
+		setupPortfolio() {
+			if (!this.statePortfolios.collected_competence) {
+				return;
+			}
+			this.ports = this.statePortfolios.collected_competence.map((port) => {
+				return {
+					...port,
+					verify_show: false,
+					verify_status: null
+				};
+			});
+		},
 		methodThatReturnsAPromise(id) {
 			/* eslint-disable */
-			return new Promise((resolve, reject) => {
-				setTimeout(() => {
-					console.log(`Resolve! ${id}`);
-					this.setVerifyStatusById(id, false);
-					++this.forceReRender;
-					resolve();
-				}, Math.random() * 1000);
-			});
-		},
-		clearVerified() {
-			this.portfolio.map((p) => {
-				delete p.verify_show;
-				delete p.verify_status;
-
-				return p;
-			});
-
-			++this.forceReRender;
+			// return new Promise((resolve, reject) => {
+			// 	setTimeout(() => {
+			// 		console.log(`Resolve! ${id}`);
+			// 		this.setVerifyStatusById(id, false);
+			// 		++this.forceReRender;
+			// 		resolve();
+			// 	}, Math.random() * 1000);
+			// });
 		},
 		testVerify() {
-			this.portfolio.reduce(async (previousPromise, port, index) => {
-				console.log(`Loop: ${index}`);
-				if (port.verify_show) {
-					port.verify_status = null;
-					port.verify_show = false;
-				}
-				await previousPromise;
-				return this.methodThatReturnsAPromise(index);
-			}, Promise.resolve());
+			// this.portfolio.reduce(async (previousPromise, port, index) => {
+			// 	console.log(`Loop: ${index}`);
+			// 	if (port.verify_show) {
+			// 		port.verify_status = null;
+			// 		port.verify_show = false;
+			// 	}
+			// 	await previousPromise;
+			// 	return this.methodThatReturnsAPromise(index);
+			// }, Promise.resolve());
 
 
 			// try {
@@ -202,8 +197,8 @@ export default {
 			// }
 		},
 		setVerifyStatusById(id, status) {
-			this.portfolio[id].verify_status = status;
-			this.portfolio[id].verify_show = true;
+			// this.portfolio[id].verify_status = status;
+			// this.portfolio[id].verify_show = true;
 		}
 	}
 };

@@ -93,7 +93,7 @@
 					<p class="descript">
 						If you not select this activity, it still be shown in activity page.
 						<br>
-						You can post to student web later.
+						You can post to student web later. {{ loginUser }}
 					</p>
 				</div>
 			</div>
@@ -111,7 +111,7 @@
 <script>
 import IconPen from "@/components/icons/IconPen.vue";
 import loading from "@/plugin/loading";
-import { getSemester, getLoginUser } from "@/helpers";
+import { getSemester } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -160,6 +160,9 @@ export default {
 		},
 		step() {
 			return this.$route.meta.step;
+		},
+		loginUser() {
+			return sessionStorage.getItem("user");
 		}
 	},
 	created() {
@@ -170,7 +173,7 @@ export default {
 			loading.start();
 			const payload = {
 				...this.summary,
-				creator: getLoginUser,
+				creator: this.loginUser,
 				semester: getSemester(),
 				student_site: this.student_site
 			};

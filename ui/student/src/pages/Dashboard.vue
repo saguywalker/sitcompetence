@@ -2,7 +2,7 @@
 	<div class="dashboard">
 		<div class="page-header">
 			<h1 class="wrapper title">
-				Welcome
+				Welcome {{ loginUser }}
 			</h1>
 		</div>
 		<section class="wrapper">
@@ -37,6 +37,9 @@ export default {
 	computed: {
 		currentTabComponent() {
 			return `dashboard-${this.tabs[this.selectedTab]}`;
+		},
+		loginUser() {
+			return sessionStorage.getItem("user");
 		}
 	}
 };

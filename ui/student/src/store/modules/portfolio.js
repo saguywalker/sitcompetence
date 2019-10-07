@@ -12,14 +12,10 @@ const state = {
 
 const mutations = {
 	[LOAD_PORTFOLIO](stateData, data) {
-		stateData.portfolios = [
-			...data
-		];
+		stateData.portfolios = data;
 	},
 	[UPDATE_PORTFOLIO](stateData, data) {
-		stateData.portfolios = [
-			...data
-		];
+		stateData.portfolios = data;
 	},
 	[UPDATE_PORTFOLIO_LINK](stateData, data) {
 		stateData.link = data;
@@ -27,9 +23,8 @@ const mutations = {
 };
 
 const actions = {
-	loadPortfolio({ commit }, id) {
-		const	response = Base.getBadgesByStudentId(id);
-
+	async loadPortfolio({ commit }, id) {
+		const	response = await Base.getBadgesByStudentId(id);
 		if (response.status === 200) {
 			commit(LOAD_PORTFOLIO, response.data);
 		}

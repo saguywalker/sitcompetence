@@ -38,7 +38,8 @@
 											:for="`${item.student_id}${id}`"
 											:class="[
 												'badge-checkbox',
-												hasSelected(item.badges, option.competence_id) ? 'is-select' : ''
+												hasSelected(item.badges, option.competence_id) ? 'is-select' : '',
+												hasCollected(item.collected_competence, option.competence_id) ? 'is-collected' : ''
 											]"
 										>
 											<base-image size="90" />
@@ -162,6 +163,12 @@ export default {
 		},
 		hasSelected(badges, id) {
 			return badges.some((badge) => badge.competence_id === id);
+		},
+		hasCollected(collected, id) {
+			if (!collected) {
+				return false;
+			}
+			return collected.some((collectedBadge) => collectedBadge.competence_id === id);
 		}
 	}
 };

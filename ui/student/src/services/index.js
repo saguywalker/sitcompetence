@@ -26,6 +26,9 @@ const Base = {
 	},
 	getStaffs() {
 		return apiClient.get("/staff");
+	},
+	getUserDetail() {
+		return apiClient.get("/userDetail");
 	}
 };
 

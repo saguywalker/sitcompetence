@@ -78,9 +78,12 @@
 
 					<h2 class="attendees-title">
 						Attendees
-						<span class="badge">{{ attendees.length }}</span>
+						<span class="badge">{{ activityAttendeeNumber }}</span>
 					</h2>
-					<ul class="attendees-list">
+					<ul
+						v-if="activityDetail.attendees"
+						class="attendees-list"
+					>
 						<li
 							v-for="(item, index) in attendees"
 							:key="`${item}${index}`"
@@ -89,6 +92,9 @@
 							{{ item }}
 						</li>
 					</ul>
+					<p v-else>
+						No attendees
+					</p>
 				</div>
 			</div>
 		</section>
@@ -141,6 +147,13 @@ export default {
 			}
 
 			return this.activity;
+		},
+		activityAttendeeNumber() {
+			if (this.activityDetail.attendees) {
+				return this.activityDetail.attendees.length;
+			}
+
+			return 0;
 		}
 		// activityAttendees() {
 		// 	return this.activityDetail.map((activity) => activity.attendees);
@@ -190,6 +203,7 @@ export default {
 									variant: "success",
 									autoHideDelay: 1500
 								});
+								this.$router.push({ name: "activity" });
 							})
 							.catch((err) => {
 								this.$bvToast.toast("Error delete activity", {

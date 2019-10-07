@@ -5,3 +5,4 @@ export const UPDATE_LOGIN = "UPDATE_LOGIN";
 export const LOGOUT = "LOGOUT";
 export const LOAD_ACTIVITIES = "LOAD_ACTIVITIES";
 export const LOAD_ACTIVITY_ID = "LOAD_ACTIVITY_ID";
+export const LOAD_LOGIN_USER = "LOAD_LOGIN_USER";

@@ -184,9 +184,8 @@ export default {
 	},
 	async created() {
 		if (this.students.length === 0) {
-			loading.start();
-
 			try {
+				loading.start();
 				await this.$store.dispatch("base/loadStudentData");
 			} catch (err) {
 				this.$bvToast.toast(`There was a problem loading student data: ${err.message}`, {

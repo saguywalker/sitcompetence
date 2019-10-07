@@ -37,7 +37,7 @@
 			>
 				<icon-user-cog />
 				<p class="profile-name">
-					Tindanai Wongpipattanopas
+					{{ loginUser }}
 				</p>
 			</button>
 			<div
@@ -52,7 +52,7 @@
 			>
 				<div class="profile-dropdown-detail">
 					<h4 class="name">
-						Tindanai Wongpipattanopas
+						{{ loginUser }}
 					</h4>
 					<p class="role">
 						Staff
@@ -96,6 +96,11 @@ export default {
 			isSidebarOpen: false,
 			isProfileOpen: false
 		};
+	},
+	computed: {
+		loginUser() {
+			return sessionStorage.getItem("user");
+		}
 	},
 	methods: {
 		toggleSidebar() {
