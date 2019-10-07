@@ -59,11 +59,11 @@ const actions = {
 		commit(CREATE_ACTIVITY_COMPETENCE, data);
 	},
 	async submitCreateActivity({ commit, state: stateData }, data) {
-		const competenceIds = stateData.competences.map((com) => com.id);
+		const competenceIds = stateData.competences.map((com) => com.competence_id);
 
 		const payload = {
 			...data,
-			competences: competenceIds
+			competences_id: competenceIds
 		};
 
 		const	response = await Activity.postCreateActivity(payload);

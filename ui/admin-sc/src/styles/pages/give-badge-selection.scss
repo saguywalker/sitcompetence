@@ -87,6 +87,25 @@
 					}
 				}
 
+				&.is-collected {
+					pointer-events: none;
+
+					&::after {
+						content: "COLLECTED";
+						position: absolute;
+						left: 50%;
+						margin-left: rem(-52);
+						bottom: 47%;
+						padding: rem(5) 0;
+						text-align: center;
+						background-color: $green;
+						color: $white;
+						font-weight: bold;
+						font-size: rem(12);
+						width: rem(104);
+					}
+				}
+
 				input[type="checkbox"] {
 					display: none;
 				}

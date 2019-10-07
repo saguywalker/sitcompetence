@@ -36,10 +36,13 @@ const actions = {
 		if (response.data.user.group === "inst_group") {
 			const hash = getCiphertext(response.data.token);
 			location.href = `http://localhost:8080/admin/login/${hash}`;
-		} else {
-			sessionStorage.setItem("inlog", true);
-			commit(UPDATE_LOGIN, response.data);
+			return;
 		}
+
+		sessionStorage.setItem("inlog", response.data.token);
+		sessionStorage.setItem("user", response.data.user.uid);
+		commit(UPDATE_LOGIN, response.data);
+		location.href = "http://localhost:8082/dashboard";
 	},
 	logout({ commit }) {
 		sessionStorage.clear();

@@ -17,7 +17,7 @@
 			<div class="user-panel">
 				<div class="user-panel-info">
 					<p class="name">
-						Tindanai <span>{{ "Wongpipattanopas" | longSurname }}</span>
+						{{ loginUser }}
 					</p>
 					<p class="role">
 						Staff
@@ -100,6 +100,11 @@ export default {
 		return {
 			windowWidth: 0
 		};
+	},
+	computed: {
+		loginUser() {
+			return sessionStorage.getItem("user");
+		}
 	},
 	methods: {
 		handleClickOutside() {

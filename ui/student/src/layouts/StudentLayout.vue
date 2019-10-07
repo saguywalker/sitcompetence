@@ -54,7 +54,7 @@
 			name="page"
 			mode="out-in"
 		>
-			<router-view />
+			<router-view class="main-layout" />
 		</transition>
 	</div>
 </template>

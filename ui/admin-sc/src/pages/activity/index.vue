@@ -72,9 +72,6 @@ export default {
 		])
 	},
 	async created() {
-		if (this.activities.length !== 0) {
-			return;
-		}
 		loading.start();
 
 		try {
