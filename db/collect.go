@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -46,9 +48,18 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 func (db *Database) GetCompetencesByStudentID(id string, pageLimit, pageNo uint64) ([]model.CollectedCompetence, error) {
 	var collectedList []model.CollectedCompetence
 
-	rows, err := db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
-		"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
-
+	var rows *sql.Rows
+	var err error
+	if pageNo == 0 {
+		rows, err = db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1;", id)
+	} else {
+		rows, err = db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
+			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
+	}
+	/*
+		rows, err := db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
+			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
+	*/
 	if err != nil {
 		return nil, err
 	}
@@ -68,9 +79,14 @@ func (db *Database) GetCompetencesByStudentID(id string, pageLimit, pageNo uint6
 func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uint64) ([]uint16, error) {
 	var competences []uint16
 
-	rows, err := db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
-		"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
-
+	var rows *sql.Rows
+	var err error
+	if pageNo == 0 {
+		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
+			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
+	} else {
+		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1;", id)
+	}
 	if err != nil {
 		return nil, err
 	}
