@@ -1,0 +1,30 @@
+@import "../cores.scss";
+
+.dashboard-profile {
+	.title {
+		font-size: rem(28);
+		font-weight: 600;
+	}
+
+	.card {
+		margin: rem(16) 0;
+	}
+
+	.setting {
+		width: 100%;
+		padding: rem(20);
+	}
+
+	.form-group {
+		.d-block {
+			font-weight: 600;
+			margin-bottom: rem(6);
+		}
+	}
+
+	@include desktop {
+		.title {
+			font-size: rem(40);
+		}
+	}
+}
