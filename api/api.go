@@ -67,7 +67,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 
-	r.Handle("joinActivity", a.handler(a.JoinActivity)).Methods("POST")
+	r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
 	r.HandleFunc("/login", a.Login).Methods("POST")
 	r.Handle("/logout", a.handler(a.Logout)).Methods("POST")
 
