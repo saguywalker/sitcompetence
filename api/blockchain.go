@@ -13,6 +13,10 @@ import (
 
 // GiveBadge takes a giving badge request and response with transactionID
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	if ctx.User.Group != "inst_group" {
+		return fmt.Errorf("GiveBadge must be called by admin only.")
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
@@ -39,6 +43,10 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 // ApproveActivity takes an approving activity request and response with transactionID
 func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	if ctx.User.Group != "inst_group" {
+		return fmt.Errorf("GiveBadge must be called by admin only.")
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
@@ -64,19 +72,16 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 
 // VerifyTX verifies whethear a corresponding
 func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx.Logger.Infoln("Start verify")
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
 	defer r.Body.Close()
-	ctx.Logger.Infoln(string(body))
 
 	var bodyMap map[string]interface{}
 	if err := json.Unmarshal(body, &bodyMap); err != nil {
 		return nil
 	}
-	ctx.Logger.Infoln(bodyMap)
 
 	rawData, err := json.Marshal(bodyMap["data"])
 	if err != nil {

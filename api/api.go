@@ -103,8 +103,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 
 		user, found := a.App.TokenUser[token]
 
-		ctx.Logger.Infoln(user)
-		ctx.Logger.Infoln(found)
+		ctx.Logger.Infoln(found, user)
 
 		if !found {
 			http.Error(w, "No user in session", http.StatusForbidden)
@@ -112,7 +111,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx.WithUser(*user)
-		ctx.Logger.Infoln(*user)
+		ctx.Logger.Infoln(user.Group)
 		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 		/*
 			defer func() {
@@ -141,8 +140,6 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")
-
-		ctx.Logger.Infoln("Before calling sub")
 
 		if err := f(ctx, w, r); err != nil {
 			if verr, ok := err.(*app.ValidationError); ok {
