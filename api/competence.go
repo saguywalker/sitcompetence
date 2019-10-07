@@ -106,6 +106,8 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 			w.Write(data)
 
+			return nil
+
 		} else {
 			competences, err = ctx.GetCompetences(page)
 		}
