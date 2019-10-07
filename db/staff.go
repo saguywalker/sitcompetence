@@ -8,7 +8,7 @@ import (
 
 // GetStaffByID returns an staff from staffID
 func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
-	row, err := db.Query("SELECT * FROM staff WHERE staffId = $1", id)
+	row, err := db.Query("SELECT staffId, firstname FROM staff WHERE staffId = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +16,7 @@ func (db *Database) GetStaffByID(id string) (*model.Staff, error) {
 	var staff model.Staff
 
 	for row.Next() {
-		err := row.Scan(&staff.StaffID, &staff.FirstName, &staff.LastName)
+		err := row.Scan(&staff.StaffID, &staff.FirstName)
 		if err != nil {
 			return nil, err
 		}
@@ -31,9 +31,9 @@ func (db *Database) GetStaffs(pageLimit uint64, pageNo uint64) ([]*model.Staff, 
 	var err error
 
 	if pageLimit == 0 || pageNo == 0 {
-		rows, err = db.Query("SELECT * FROM staff")
+		rows, err = db.Query("SELECT staffId, firstname FROM staff")
 	} else {
-		rows, err = db.Query("SELECT * FROM staff ORDER BY staffId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
+		rows, err = db.Query("SELECT staffId, firstname FROM staff ORDER BY staffId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
 	}
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (db *Database) GetStaffs(pageLimit uint64, pageNo uint64) ([]*model.Staff, 
 
 	for rows.Next() {
 		var staff model.Staff
-		err := rows.Scan(&staff.StaffID, &staff.FirstName, &staff.LastName)
+		err := rows.Scan(&staff.StaffID, &staff.FirstName)
 		if err != nil {
 			return nil, err
 		}
