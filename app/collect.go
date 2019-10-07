@@ -42,6 +42,16 @@ func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint64) ([]model.C
 	return competences, nil
 }
 
+// GetCollectedWithDetail return list of collected competence from student id
+func (ctx *Context) GetCollectedWithDetail(id string, pageNo uint64) ([]model.CollectedCompetence, error) {
+	collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
+	if err != nil {
+		return nil, err
+	}
+
+	return collected, nil
+}
+
 // CreateCollectedCompetence update new competence and its transactionID to a corresponding studentID
 func (ctx *Context) CreateCollectedCompetence(badges []*model.CollectedCompetence, txID []byte) error {
 	for _, badge := range badges {

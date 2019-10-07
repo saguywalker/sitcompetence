@@ -63,6 +63,14 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
+	for i := range students {
+		collected, err := ctx.GetCollectedWithDetail(students[i].StudentID, 0)
+		if err != nil {
+			return err
+		}
+		students[i].Collected = collected
+	}
+
 	data, err := json.Marshal(students)
 	if err != nil {
 		return err

@@ -1,7 +1,7 @@
 package db
 
 import (
-	"log"
+	"database/sql"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -44,20 +44,52 @@ func (db *Database) GetCollectedCompetence() ([]*model.CollectedCompetence, erro
 	return badges, nil
 }
 
-// GetCompetencesIDByStudentID query competence from student id
-func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uint64) ([]uint16, error) {
-	log.Println("In GetCompetencesIDByStudentID")
+// GetCompetencesByStudentID query competence from student id
+func (db *Database) GetCompetencesByStudentID(id string, pageLimit, pageNo uint64) ([]model.CollectedCompetence, error) {
+	var collectedList []model.CollectedCompetence
 
-	var competences []uint16
-
-	rows, err := db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
-		"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
-
+	var rows *sql.Rows
+	var err error
+	if pageNo == 0 {
+		rows, err = db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1;", id)
+	} else {
+		rows, err = db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
+			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
+	}
+	/*
+		rows, err := db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
+			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
+	*/
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("pASS")
+	for rows.Next() {
+		var c model.CollectedCompetence
+		if err := rows.Scan(&c.StudentID, &c.CompetenceID, &c.Semester, &c.Giver, &c.TxID); err != nil {
+			return nil, err
+		}
+		collectedList = append(collectedList, c)
+	}
+
+	return collectedList, nil
+}
+
+// GetCompetencesIDByStudentID query competence id from student id
+func (db *Database) GetCompetencesIDByStudentID(id string, pageLimit, pageNo uint64) ([]uint16, error) {
+	var competences []uint16
+
+	var rows *sql.Rows
+	var err error
+	if pageNo == 0 {
+		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1 "+
+			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
+	} else {
+		rows, err = db.Query("SELECT competenceId FROM collectedCompetence WHERE studentId=$1;", id)
+	}
+	if err != nil {
+		return nil, err
+	}
 
 	for rows.Next() {
 		var competenceID uint16
