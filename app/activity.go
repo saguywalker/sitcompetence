@@ -47,7 +47,7 @@ func (ctx *Context) GetActivities(pageNo uint32, isStudent string) ([]*model.Act
 		activities[i].Attendees = attendees
 	}
 
-	return activities, err
+	return activities, nil
 }
 
 // GetActivitiesByStaff return activities from staff id
@@ -66,7 +66,7 @@ func (ctx *Context) GetActivitiesByStaff(id string, pageNo uint32) ([]*model.Act
 		activities[i].Competences = competences
 	}
 
-	return activities, err
+	return activities, nil
 }
 
 // GetActivitiesByStudent return activities from student id
@@ -85,7 +85,7 @@ func (ctx *Context) GetActivitiesByStudent(id string, pageNo uint32) ([]*model.A
 		activites[i].Competences = competences
 	}
 
-	return activites, err
+	return activites, nil
 }
 
 /*
@@ -101,19 +101,27 @@ func (ctx *Context) ApproveActivity(activities []*model.ApproveActivity, txID []
 */
 
 // CreateActivity creates new activity
-func (ctx *Context) CreateActivity(activity *model.Activity) (int64, error) {
+func (ctx *Context) CreateActivity(activity *model.Activity) (uint32, error) {
 	activityID, err := ctx.Database.CreateActivity(activity)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	for _, competence := range activity.Competences {
-		if err := ctx.Database.CreateCompetenceReward(uint32(activityID), competence.CompetenceID); err != nil {
-			return -1, err
+		if err := ctx.Database.CreateCompetenceReward(activityID, competence.CompetenceID); err != nil {
+			return 0, err
 		}
 	}
 
 	return activityID, nil
+}
+
+func (ctx *Context) JoinActivity(activity *model.AttendedActivity) error {
+	if err := ctx.Database.AddAttendee(activity.ActivityID, activity.StudentID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // UpdateActivity update activity from activity id

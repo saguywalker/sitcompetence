@@ -41,7 +41,7 @@ func (ctx *Context) GetStudents(pageNo uint32, dp, year string) ([]*model.Studen
 }
 
 // CreateStudent create new student
-func (ctx *Context) CreateStudent(student *model.Student) error {
+func (ctx *Context) CreateStudent(student *model.Student) (string, error) {
 	return ctx.Database.CreateStudent(student)
 }
 

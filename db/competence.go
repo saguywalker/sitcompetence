@@ -103,20 +103,11 @@ func (db *Database) GetCompetences(pageLimit uint32, pageNo uint32) ([]model.Com
 }
 
 // CreateCompetence inserts a new competence
-func (db *Database) CreateCompetence(competence *model.Competence) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO competence(competenceId, competenceName, badgeIconURL, totalActivitiesRequired) VALUES($1, $2, $3, $4)")
-	if err != nil {
-		return -1, err
-	}
-
-	result, err := stmt.Exec(competence)
-	if err != nil {
-		return -1, err
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return -1, err
+func (db *Database) CreateCompetence(c *model.Competence) (uint16, error) {
+	var id uint16
+	command := "INSERT INTO competence(competenceId, competenceName, badgeIconURL, totalActivitiesRequired) VALUES($1, $2, $3, $4)"
+	if err := db.QueryRow(command, c.CompetenceID, c.CompetenceName, c.BadgeIconURL, c.TotalActivitiesRequired).Scan(&id); err != nil {
+		return 0, err
 	}
 
 	return id, nil

@@ -60,18 +60,14 @@ func (db *Database) GetStaffs(pageLimit uint32, pageNo uint32) ([]*model.Staff, 
 }
 
 // CreateStaff inserts a new staff
-func (db *Database) CreateStaff(staff *model.Staff) error {
-	stmt, err := db.Prepare("INSERT INTO staff(staffId, firstname, lastname) VALUES($1, $2, $3)")
-	if err != nil {
-		return err
+func (db *Database) CreateStaff(s *model.Staff) (string, error) {
+	var id string
+	command := "INSERT INTO staff(staffId, firstname, lastname) VALUES($1, $2, $3)"
+	if err := db.QueryRow(command, s.StaffID, s.FirstName, s.LastName).Scan(&id); err != nil {
+		return "", err
 	}
 
-	_, err = stmt.Exec(staff.StaffID, staff.FirstName, staff.LastName)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return id, nil
 }
 
 // UpdateStaff update staff from staff id

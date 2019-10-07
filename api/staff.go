@@ -66,7 +66,7 @@ func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	_, err = w.Write(data)
-	return err
+	return nil
 }
 
 // CreateStaff creates a staff from a request
@@ -83,11 +83,14 @@ func (a *API) CreateStaff(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	if err := ctx.CreateStaff(&input); err != nil {
+	id, err := ctx.CreateStaff(&input)
+	if err != nil {
 		return err
 	}
 
-	return err
+	w.Write([]byte(id))
+
+	return nil
 }
 
 // GetStaffByID responses a staff from a requested staffID
@@ -104,7 +107,7 @@ func (a *API) GetStaffByID(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 	}
 
 	_, err = w.Write(data)
-	return err
+	return nil
 }
 
 // UpdateStaff update staff table

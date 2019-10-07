@@ -10,7 +10,7 @@ import (
 type AttendedActivity struct {
 	ActivityID    uint32 `json:"activity_id"`
 	StudentID     string `json:"student_id"`
-	Approver      string `json:"approver"`
+	Approver      string `json:"approver,omitempty"`
 	TransactionID []byte `json:"transaction_id,omitempty"`
 }
 

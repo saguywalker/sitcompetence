@@ -53,8 +53,8 @@ func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year
 	if pageLimit != 0 && pageNo != 0 {
 		params = append(params, string(pageLimit))
 		params = append(params, string((pageNo-1)*pageLimit))
-		paramsLen := len(params)
-		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramsLen, paramsLen-1))
+		var paramsLen int = len(params)
+		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramsLen-1, paramsLen))
 	}
 
 	command := strings.Join(commands, " ")
@@ -87,18 +87,14 @@ func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year
 }
 
 // CreateStudent inserts a new student
-func (db *Database) CreateStudent(student *model.Student) error {
-	stmt, err := db.Prepare("INSERT INTO student(studentId, firstname, lastname, department) VALUES($1, $2, $3, $4)")
-	if err != nil {
-		return err
+func (db *Database) CreateStudent(s *model.Student) (string, error) {
+	var id string
+	command := "INSERT INTO student(studentId, firstname, lastname, department) VALUES($1, $2, $3, $4)"
+	if err := db.QueryRow(command, s.StudentID, s.FirstName, s.LastName, s.Department).Scan(&id); err != nil {
+		return "", err
 	}
 
-	_, err = stmt.Exec(student.StudentID, student.FirstName, student.LastName, student.Department)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return id, nil
 }
 
 // UpdateStudent update student from staff id
