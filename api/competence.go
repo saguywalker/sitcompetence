@@ -50,24 +50,8 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 	if err != nil {
 		return err
 	}
-	/*
-		id, err := ctx.CreateCompetence(&input)
-		if err != nil {
-			return err
-		}
 
-		resp := make(map[string]int64)
-		resp["competence_id"] = id
-
-		data, err := json.Marshal(resp)
-		if err != nil {
-			return err
-		}
-
-		if _, err := w.Write(data); err != nil {
-			return err
-		}
-	*/
+	ctx.Logger.Infof("Competence id: %d\n", id)
 	w.Write([]byte(fmt.Sprintf("%d", id)))
 
 	return nil

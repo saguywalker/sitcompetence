@@ -33,7 +33,7 @@ func (ctx *Context) GetCompetences(pageNo uint32) ([]model.Competence, error) {
 }
 
 // CreateCompetence creates new competence
-func (ctx *Context) CreateCompetence(competence *model.Competence) (int64, error) {
+func (ctx *Context) CreateCompetence(competence *model.Competence) (int32, error) {
 	id, err := ctx.CreateCompetence(competence)
 	if err != nil {
 		return -1, err

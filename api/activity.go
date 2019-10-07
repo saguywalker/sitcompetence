@@ -100,24 +100,9 @@ func (a *API) CreateActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 
+	ctx.Logger.Infof("Activity: %d\n", id)
 	w.Write([]byte(fmt.Sprintf("%d", id)))
-	/*
-		if err != nil {
-			return err
-		}
 
-		resp := make(map[string]int64)
-		resp["activity_id"] = id
-
-		data, err := json.Marshal(resp)
-		if err != nil {
-			return err
-		}
-
-		if _, err = w.Write(data); err != nil {
-			return err
-		}
-	*/
 	return nil
 }
 

@@ -107,8 +107,8 @@ func (ctx *Context) CreateActivity(activity *model.Activity) (uint32, error) {
 		return 0, err
 	}
 
-	for _, competence := range activity.Competences {
-		if err := ctx.Database.CreateCompetenceReward(activityID, competence.CompetenceID); err != nil {
+	for _, competence := range activity.CompetencesID {
+		if err := ctx.Database.CreateCompetenceReward(activityID, competence); err != nil {
 			return 0, err
 		}
 	}
