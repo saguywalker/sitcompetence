@@ -38,6 +38,9 @@ const Activity = {
 	},
 	getActivityById(id) {
 		return apiClient.get(`/search/activity?activity_id=${id}`);
+	},
+	postJoinActivity(data) {
+		return apiClient.post("/joinActivity", data);
 	}
 };
 

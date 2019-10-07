@@ -1,12 +1,14 @@
 import { Activity } from "@/services";
 import {
 	LOAD_ACTIVITIES,
-	LOAD_ACTIVITY_ID
+	LOAD_ACTIVITY_ID,
+	JOIN_ACTIVITY
 } from "../mutationTypes";
 
 const state = {
 	activities: [],
-	activity: {}
+	activity: {},
+	join: false
 };
 
 const mutations = {
@@ -19,6 +21,9 @@ const mutations = {
 		stateData.activity = {
 			...data
 		};
+	},
+	[JOIN_ACTIVITY](stateData, data) {
+		stateData.join = data;
 	}
 };
 
@@ -40,6 +45,15 @@ const actions = {
 
 		if (response.status === 200) {
 			commit(LOAD_ACTIVITY_ID, response.data[0]);
+		}
+
+		return response;
+	},
+	async joinActivity({ commit }, data) {
+		const response = await Activity.postJoinActivity(data);
+
+		if (response.status === 200) {
+			commit(JOIN_ACTIVITY, true);
 		}
 
 		return response;

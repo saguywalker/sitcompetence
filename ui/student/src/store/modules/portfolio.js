@@ -1,13 +1,17 @@
-import { Base } from "@/services";
+import { Base, Verify } from "@/services";
 import {
 	LOAD_PORTFOLIO,
 	UPDATE_PORTFOLIO,
-	UPDATE_PORTFOLIO_LINK
+	UPDATE_PORTFOLIO_LINK,
+	UPDATE_VERIFY_DATA,
+	CLEAR_VERIFY_DATA
 } from "../mutationTypes";
 
 const state = {
 	portfolios: [],
-	link: ""
+	link: "",
+	verify: [],
+	show: false
 };
 
 const mutations = {
@@ -19,6 +23,14 @@ const mutations = {
 	},
 	[UPDATE_PORTFOLIO_LINK](stateData, data) {
 		stateData.link = data;
+	},
+	[UPDATE_VERIFY_DATA](stateData, data) {
+		stateData.verify.push(data);
+		stateData.show = true;
+	},
+	[CLEAR_VERIFY_DATA](stateData) {
+		stateData.verify = [];
+		stateData.show = false;
 	}
 };
 
@@ -30,6 +42,18 @@ const actions = {
 		}
 
 		return response;
+	},
+	async verifyTransaction({ commit }, data) {
+		const	response = await Verify.postVerifyTransaction(data);
+
+		if (response.status === 200) {
+			commit(UPDATE_VERIFY_DATA, response.data);
+		}
+
+		return response.data;
+	},
+	clearVerify({ commit }) {
+		commit(CLEAR_VERIFY_DATA);
 	}
 };
 

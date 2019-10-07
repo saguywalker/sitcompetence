@@ -6,7 +6,10 @@
 					Activity
 				</h1>
 				<div class="tools">
-					<router-link :to="{ name: 'past-activity' }">
+					<router-link
+						v-if="false"
+						:to="{ name: 'past-activity' }"
+					>
 						<b-button
 							class="item"
 							size="sm"

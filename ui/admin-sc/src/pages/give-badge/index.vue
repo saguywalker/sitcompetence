@@ -12,7 +12,10 @@
 						Student list
 					</h2>
 					<div class="table">
-						<div class="header">
+						<div
+							v-if="false"
+							class="header"
+						>
 							<b-button-group class="search">
 								<b-form-input
 									v-model="search"

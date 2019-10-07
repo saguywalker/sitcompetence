@@ -46,7 +46,7 @@
 						<span class="name">Activity</span>
 					</router-link>
 				</li>
-				<li>
+				<li v-if="false">
 					<router-link
 						:to="{ name: 'verify' }"
 						class="item"

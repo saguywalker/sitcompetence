@@ -26,6 +26,7 @@
 						</b-button>
 					</router-link>
 					<router-link
+						v-if="false"
 						:to="{
 							name: 'edit-activity',
 							params: {
@@ -85,11 +86,12 @@
 						class="attendees-list"
 					>
 						<li
-							v-for="(item, index) in attendees"
+							v-for="(item, index) in activityDetail.attendees"
 							:key="`${item}${index}`"
 							class="item"
 						>
-							{{ item }}
+							{{ item.firstname }}
+							{{ item.department }}
 						</li>
 					</ul>
 					<p v-else>

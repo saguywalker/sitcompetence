@@ -42,7 +42,10 @@
 												hasCollected(item.collected_competence, option.competence_id) ? 'is-collected' : ''
 											]"
 										>
-											<base-image size="90" />
+											<base-image
+												:src="getBadgeImgById(option.competence_id)"
+												size="90"
+											/>
 											<input
 												:id="`${item.student_id}${id}`"
 												v-model="item.badges"
@@ -71,6 +74,7 @@
 @import "@/styles/pages/give-badge-selection.scss";
 </style>
 <script>
+import { COMPETENCE } from "@/constants/competence";
 import loading from "@/plugin/loading";
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { mapState } from "vuex";
@@ -127,6 +131,9 @@ export default {
 		this.selectStudent = this.selectedStudents;
 	},
 	methods: {
+		getBadgeImgById(id) {
+			return COMPETENCE[id].img;
+		},
 		validateSubmit() {
 			this.errors = [];
 

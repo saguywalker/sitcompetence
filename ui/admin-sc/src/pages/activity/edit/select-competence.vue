@@ -24,7 +24,10 @@
 							hasSelected(option.competence_id) ? 'is-select' : ''
 						]"
 					>
-						<base-image size="90" />
+						<base-image
+							:src="getBadgeImgById(option.competence_id)"
+							size="90"
+						/>
 						<input
 							:id="`${option.competence_name}${id}`"
 							v-model="selects"
@@ -48,6 +51,7 @@
 @import "@/styles/pages/create-activity-competence.scss";
 </style>
 <script>
+import { COMPETENCE } from "@/constants/competence";
 import loading from "@/plugin/loading";
 import { mapState } from "vuex";
 
@@ -99,6 +103,9 @@ export default {
 	methods: {
 		hasSelected(id) {
 			return this.selects.some((select) => select.competence_id === id);
+		},
+		getBadgeImgById(id) {
+			return COMPETENCE[id].img;
 		},
 		async submit() {
 			this.validateSubmit();

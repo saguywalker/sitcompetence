@@ -11,7 +11,7 @@
 						variant="primary"
 						size="sm"
 					>
-						Home
+						Back home
 					</b-button>
 				</router-link>
 			</div>

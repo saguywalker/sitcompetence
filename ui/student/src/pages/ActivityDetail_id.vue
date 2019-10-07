@@ -36,26 +36,12 @@
 				{{ item.competence_name }}
 			</li>
 		</ul>
-
-		<h2 class="attendees-title">
-			Attendees
-			<span class="badge">{{ activityAttendeeNumber }}</span>
-		</h2>
-		<ul
-			v-if="activityDetail.attendees"
-			class="attendees-list"
+		<b-button
+			variant="primary"
+			@click="joinActivity"
 		>
-			<li
-				v-for="(item, index) in attendees"
-				:key="`${item}${index}`"
-				class="item"
-			>
-				{{ item }}
-			</li>
-		</ul>
-		<p v-else>
-			No attendees
-		</p>
+			Join activity
+		</b-button>
 	</div>
 </template>
 <style lang="scss">
@@ -100,16 +86,9 @@ export default {
 
 			return this.activity;
 		},
-		activityAttendeeNumber() {
-			if (this.activityDetail.attendees) {
-				return this.activityDetail.attendees.length;
-			}
-
-			return 0;
+		loginUser() {
+			return sessionStorage.getItem("user");
 		}
-		// activityAttendees() {
-		// 	return this.activityDetail.map((activity) => activity.attendees);
-		// }
 	},
 	async created() {
 		this.$Progress.start();
@@ -130,6 +109,33 @@ export default {
 			this.$Progress.fail();
 		} finally {
 			this.$Progress.finish();
+		}
+	},
+	methods: {
+		async joinActivity() {
+			this.$Progress.start();
+
+			try {
+				await this.$store.dispatch("activity/joinActivity", {
+					activity_id: this.activityId,
+					student_id: this.loginUser
+				});
+				this.$bvToast.toast("Join activity success", {
+					title: "Join activity successful",
+					variant: "success",
+					autoHideDelay: 1500
+				});
+				this.$router.push({ name: "activity" });
+			} catch (err) {
+				this.$bvToast.toast(`Join activity problem: ${err.message}`, {
+					title: "Joining activity error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+				this.$Progress.fail();
+			} finally {
+				this.$Progress.finish();
+			}
 		}
 	}
 };

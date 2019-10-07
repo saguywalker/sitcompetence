@@ -38,10 +38,7 @@
 								responsive="sm"
 								@row-selected="onRowSelected"
 							>
-								<template
-									slot="[selected]"
-									slot-scope="{ rowSelected }"
-								>
+								<template v-slot:cell(selected)="{ rowSelected }">
 									<template v-if="rowSelected">
 										<span aria-hidden="true">
 											<icon-check />
@@ -126,10 +123,8 @@
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
-import { getLoginUser } from "@/helpers";
 import { mapGetters } from "vuex";
 
-// TODO get student from activty that they joined.
 export default {
 	components: {
 		IconCheck,
@@ -140,39 +135,8 @@ export default {
 			currentPage: 1,
 			perPage: 3,
 			search: "",
-			fields: ["selected", "student_id", "first_name", "last_name", "department"],
-			items: [
-				{
-					student_id: "59130500210",
-					first_name: "itinnt",
-					last_name: "sdssd",
-					department: "CS"
-				},
-				{
-					student_id: "59130500211",
-					first_name: "wow",
-					last_name: "doge",
-					department: "DSI"
-				},
-				{
-					student_id: "59130500212",
-					first_name: "eiie",
-					last_name: "ehhe",
-					department: "CS"
-				},
-				{
-					student_id: "59130500213",
-					first_name: "jeab",
-					last_name: "noninoa",
-					department: "CS"
-				},
-				{
-					student_id: "59130500214",
-					first_name: "mather",
-					last_name: "fukker",
-					department: "IT"
-				}
-			],
+			fields: ["selected", "student_id", "firstname", "department"],
+			items: [],
 			selectedItems: [],
 			error: {
 				selectedItems: false
@@ -203,12 +167,18 @@ export default {
 		},
 		rows() {
 			return this.items.length;
+		},
+		loginUser() {
+			return sessionStorage.getItem("user");
 		}
 	},
 	watch: {
 		selectedItems() {
 			this.error.selectedItems = false;
 		}
+	},
+	created() {
+		this.items = this.activityDetail.attendees;
 	},
 	mounted() {
 		this.selectedItems.forEach((item) => {
@@ -232,7 +202,7 @@ export default {
 				await this.$store.dispatch("activity/submitApprove", {
 					approvedStudents: this.selectedItems,
 					activityId: this.$route.params.id,
-					approver: getLoginUser
+					approver: this.loginUser
 				});
 
 				this.$router.push({

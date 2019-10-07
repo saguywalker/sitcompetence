@@ -33,7 +33,7 @@
 						</div>
 					</div>
 					<p class="profile-description">
-						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
+						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
 				<template v-if="statePortfolios.collected_competence">
@@ -46,11 +46,12 @@
 								class="competence-wrapper"
 							>
 								<base-image
+									:src="getCompetenceImgById(com.competence_id)"
 									:size="resizeImage"
 									class="sitcom-badge"
 								/>
 								<p class="name">
-									{{ com.competence_name }}
+									{{ getCompetenceNameById(com.competence_id) }}
 								</p>
 								<transition
 									:key="`${com.competence_id}${index}`"
@@ -58,14 +59,14 @@
 									mode="out-in"
 								>
 									<p
-										v-if="com.verify_show"
+										v-if="show"
 										class="verify-status"
 									>
 										<span class="icon">
-											<icon-check-circle v-if="com.verify_status" />
+											<icon-check-circle v-if="verify[index]" />
 											<icon-time-circle v-else />
 										</span>
-										Verified
+										{{ verifyText(index) }}
 									</p>
 								</transition>
 							</b-col>
@@ -79,6 +80,15 @@
 								@click="testVerify"
 							>
 								Verify by Blockchain
+							</b-button>
+							<b-button
+								v-if="show"
+								variant="outline"
+								size="sm"
+								class="action-item"
+								@click="clearVerify"
+							>
+								Clear verify
 							</b-button>
 						</div>
 					</div>
@@ -97,6 +107,7 @@
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
+import { COMPETENCE } from "@/constants/competence";
 import { mapState } from "vuex";
 
 export default {
@@ -109,20 +120,18 @@ export default {
 		return {
 			fullName: "Tindanai Wongpipattanopas",
 			forceReRender: 0,
-			ports: [],
-			verify: false
+			ports: []
 		};
 	},
 	computed: {
 		...mapState("portfolio", {
-			statePortfolios: "portfolios"
+			statePortfolios: "portfolios",
+			verify: "verify",
+			show: "show"
 		}),
 		...mapState("base", [
 			"user"
 		]),
-		splitedFullname() {
-			return this.fullName.split(" ");
-		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
 				return false;
@@ -157,48 +166,35 @@ export default {
 		}
 	},
 	methods: {
-		setupPortfolio() {
-			if (!this.statePortfolios.collected_competence) {
-				return;
-			}
-			this.ports = this.statePortfolios.collected_competence.map((port) => {
-				return {
-					...port,
-					verify_show: false,
-					verify_status: null
-				};
-			});
+		getCompetenceNameById(id) {
+			return COMPETENCE[id].name;
 		},
-		methodThatReturnsAPromise(id) {
-			/* eslint-disable */
-			// return new Promise((resolve, reject) => {
-			// 	setTimeout(() => {
-			// 		console.log(`Resolve! ${id}`);
-			// 		this.setVerifyStatusById(id, false);
-			// 		++this.forceReRender;
-			// 		resolve();
-			// 	}, Math.random() * 1000);
-			// });
+		getCompetenceImgById(id) {
+			return COMPETENCE[id].img;
+		},
+		setupPortfolio() {
+			this.ports = this.statePortfolios.collected_competence;
+		},
+		verifyText(id) {
+			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			// this.portfolio.reduce(async (previousPromise, port, index) => {
-			// 	console.log(`Loop: ${index}`);
-			// 	if (port.verify_show) {
-			// 		port.verify_status = null;
-			// 		port.verify_show = false;
-			// 	}
-			// 	await previousPromise;
-			// 	return this.methodThatReturnsAPromise(index);
-			// }, Promise.resolve());
-
-
-			// try {
-
-			// }
+			this.statePortfolios.collected_competence.reduce(async (previousPromise, competence, index) => {
+				const payload = {
+					data: {
+						...competence
+					}
+				};
+				this.forceReRender++;
+				await previousPromise;
+				const result = this.$store.dispatch("portfolio/verifyTransaction", payload);
+				this.ports[index].status = result;
+				this.ports[index].show = result;
+				return result;
+			}, Promise.resolve());
 		},
-		setVerifyStatusById(id, status) {
-			// this.portfolio[id].verify_status = status;
-			// this.portfolio[id].verify_show = true;
+		clearVerify() {
+			this.$store.dispatch("portfolio/clearVerify");
 		}
 	}
 };
