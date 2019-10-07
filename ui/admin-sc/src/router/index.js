@@ -32,7 +32,7 @@ const router = new Router({
 			path: "/admin/login/:hash",
 			beforeEnter: (to, from, next) => {
 				store.dispatch("base/doLogin", to.params.hash);
-				next({ name: "activity" });
+				next({ name: "dashboard" });
 			}
 		},
 		{
