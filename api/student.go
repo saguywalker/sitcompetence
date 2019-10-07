@@ -94,11 +94,14 @@ func (a *API) CreateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 		return err
 	}
 
-	if err := ctx.CreateStudent(&input); err != nil {
+	id, err := ctx.CreateStudent(&input)
+	if err != nil {
 		return err
 	}
 
-	return err
+	w.Write([]byte(id))
+
+	return nil
 }
 
 // GetStudentByID responses a student from a requested studentID

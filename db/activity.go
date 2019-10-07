@@ -152,20 +152,13 @@ func (db *Database) GetActivitiesByStudent(id string, pageLimit uint32, pageNo u
 }
 
 // CreateActivity create an activity from activity struct
-func (db *Database) CreateActivity(a *model.Activity) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO activity(activityName, description, date," +
+func (db *Database) CreateActivity(a *model.Activity) (uint32, error) {
+	var id uint32
+	command := "INSERT INTO activity(activityName, description, date," +
 		"time, creator, organizer, category, location, semester, studentSite) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);")
-	if err != nil {
-		return -1, err
-	}
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);"
 
-	result, err := stmt.Exec(a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.Semester, a.StudentSite)
-	if err != nil {
-		return -1, err
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
+	if err := db.QueryRow(command, a.ActivityName, a.Description, a.Date, a.Time, a.Creator, a.Organizer, a.Category, a.Location, a.Semester, a.StudentSite).Scan(&id); err != nil {
 		return 0, err
 	}
 

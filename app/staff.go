@@ -25,7 +25,7 @@ func (ctx *Context) GetStaffs(pageNo uint32) ([]*model.Staff, error) {
 }
 
 // CreateStaff creates new staff
-func (ctx *Context) CreateStaff(staff *model.Staff) error {
+func (ctx *Context) CreateStaff(staff *model.Staff) (string, error) {
 	return ctx.Database.CreateStaff(staff)
 }
 
