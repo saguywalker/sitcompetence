@@ -110,7 +110,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			return
 		}
 
-		ctx.WithUser(*user)
+		ctx = ctx.WithUser(*user)
 		ctx.Logger.Infoln(user.Group)
 		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 		/*

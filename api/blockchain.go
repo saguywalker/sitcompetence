@@ -13,6 +13,7 @@ import (
 
 // GiveBadge takes a giving badge request and response with transactionID
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx.Logger.Infoln(ctx.User.Group)
 	if ctx.User.Group != "inst_group" {
 		return fmt.Errorf("GiveBadge must be called by admin only.")
 	}
