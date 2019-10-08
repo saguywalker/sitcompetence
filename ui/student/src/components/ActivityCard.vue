@@ -1,8 +1,15 @@
 <template>
-	<div class="activity-card card">
+	<div
+		:class="[
+			'activity-card',
+			'card',
+			join ? 'joined' : ''
+		]"
+	>
 		<div class="heading">
 			<h2 class="title">
 				{{ activity.activity_name }}
+				<span v-if="join">(Joined)</span>
 			</h2>
 		</div>
 		<div class="competences">
@@ -57,6 +64,10 @@ export default {
 		activity: {
 			type: Object,
 			default: () => {}
+		},
+		join: {
+			type: Boolean,
+			default: false
 		}
 	},
 	computed: {

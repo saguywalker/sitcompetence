@@ -1,13 +1,9 @@
 <template>
-	<b-container>
-		<code>
-			{{ user }}
-		</code>
-	</b-container>
+	<b-container />
 </template>
 <script>
-import { mapState } from "vuex";
 import loading from "@/plugin/loading";
+import { mapState } from "vuex";
 
 export default {
 	computed: {
@@ -16,19 +12,20 @@ export default {
 			return sessionStorage.getItem("user");
 		}
 	},
-	async created() {
+	async beforeRouteEnter(to, from, next) {
 		loading.start();
-
+		next();
+	},
+	async created() {
 		try {
 			await this.$store.dispatch("base/loadUserDetail");
+			location.href = "http://localhost:8080/admin/give-badge";
 		} catch (err) {
 			this.$bvToast.toast(`There was a problem loading user data: ${err.message}`, {
 				title: "User data",
 				variant: "danger",
 				autoHideDelay: 1500
 			});
-		} finally {
-			loading.stop();
 		}
 	}
 };

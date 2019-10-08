@@ -7,7 +7,10 @@
 				</h2>
 			</div>
 		</div>
-		<div class="portfolio-actions">
+		<div
+			v-if="false"
+			class="portfolio-actions"
+		>
 			<div class="right">
 				<b-button
 					variant="primary"
@@ -179,17 +182,18 @@ export default {
 			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			this.statePortfolios.collected_competence.reduce(async (previousPromise, competence, index) => {
+			this.statePortfolios.collected_competence.reduce(async (previousPromise, competence) => {
 				const payload = {
 					data: {
-						...competence
+						competence_id: competence.competence_id,
+						giver: competence.giver,
+						semester: competence.semester,
+						student_id: competence.student_id
 					}
 				};
 				this.forceReRender++;
 				await previousPromise;
 				const result = this.$store.dispatch("portfolio/verifyTransaction", payload);
-				this.ports[index].status = result;
-				this.ports[index].show = result;
 				return result;
 			}, Promise.resolve());
 		},

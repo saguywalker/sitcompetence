@@ -14,10 +14,16 @@
 	width: 100%;
 	transition: all 150ms ease;
 	cursor: pointer;
+	position: relative;
 
 	&:hover {
 		transform: scale(1.01);
 		box-shadow: 0 rem(3) rem(12) 0 rgba(0, 0, 0, 0.2), 0 rem(1) rem(15) 0 rgba(0, 0, 0, 0.19);
+	}
+
+	&.joined {
+		opacity: 0.4;
+		pointer-events: none;
 	}
 
 	.heading {

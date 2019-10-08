@@ -43,6 +43,7 @@
 						<b-button
 							variant="primary"
 							class="mt-3"
+							@click="logout"
 						>
 							Sign out
 						</b-button>
@@ -92,6 +93,9 @@ export default {
 	methods: {
 		handleNavOpen(e) {
 			this.isNavOpen = e;
+		},
+		logout() {
+			this.$store.dispatch("authentication/logout");
 		}
 	}
 };

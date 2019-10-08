@@ -38,7 +38,10 @@
 												'badge-checkbox'
 											]"
 										>
-											<base-image size="90" />
+											<base-image
+												:src="getBadgeImgById(item.student_id)"
+												size="90"
+											/>
 											<p class="text">{{ badge.competence_name }}</p>
 										</label>
 									</b-col>
@@ -58,6 +61,7 @@
 </template>
 <script>
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
+import { COMPETENCE } from "@/constants/competence";
 import loading from "@/plugin/loading";
 import { getSemester, getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
@@ -92,6 +96,9 @@ export default {
 		this.selectStudent = this.selectedStudents;
 	},
 	methods: {
+		getBadgeImgById(id) {
+			return COMPETENCE[id].img;
+		},
 		async submit() {
 			loading.start();
 

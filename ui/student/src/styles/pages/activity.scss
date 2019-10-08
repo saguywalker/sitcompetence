@@ -12,6 +12,10 @@
 		align-items: center;
 	}
 
+	.disable {
+		pointer-events: none;
+	}
+
 	.link-detail {
 		color: $black;
 		text-decoration: none;
