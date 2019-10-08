@@ -14,7 +14,7 @@ import (
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Logger.Infoln(ctx.User.Group)
 	if ctx.User.Group != "inst_group" {
-		return fmt.Errorf("GiveBadge must be called by admin only.")
+		return fmt.Errorf("giveBadge must be called by admin only")
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -44,7 +44,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 // ApproveActivity takes an approving activity request and response with transactionID
 func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	if ctx.User.Group != "inst_group" {
-		return fmt.Errorf("GiveBadge must be called by admin only.")
+		return fmt.Errorf("giveBadge must be called by admin only")
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
