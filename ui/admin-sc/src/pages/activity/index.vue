@@ -29,9 +29,9 @@
 				</div>
 			</div>
 			<div class="box">
-				<h1 class="box-header">
+				<h2 class="box-header">
 					From API activity
-				</h1>
+				</h2>
 				<div class="my-row">
 					<router-link
 						v-for="(activity, index) in activities"

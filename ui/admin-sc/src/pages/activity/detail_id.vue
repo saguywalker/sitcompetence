@@ -51,9 +51,9 @@
 				<div class="content">
 					<div class="activity-header">
 						<span class="eyebrow">{{ eyebrowContent }}</span>
-						<h1 class="title">
+						<h2 class="title">
 							{{ activityDetail.activity_name }}
-						</h1>
+						</h2>
 						<h5>Organized by {{ activityDetail.organizer }}</h5>
 						<h5>Category: {{ activityDetail.category }}</h5>
 					</div>

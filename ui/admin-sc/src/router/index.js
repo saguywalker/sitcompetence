@@ -42,12 +42,12 @@ const router = new Router({
 				{
 					name: "admin",
 					path: "/",
-					redirect: { name: "dashboard" }
+					redirect: { name: "loading" }
 				},
 				{
-					name: "dashboard",
+					name: "loading",
 					path: "dashboard",
-					component: () => import("@/pages/dashboard.vue")
+					component: () => import("@/pages/loading.vue")
 				},
 				{
 					name: "activity",
@@ -205,6 +205,11 @@ const router = new Router({
 					]
 				},
 				{
+					name: "setting",
+					path: "setting",
+					component: () => import("@/pages/setting")
+				},
+				{
 					name: "verify",
 					path: "verify",
 					component: () => import("@/pages/verify")
@@ -224,14 +229,14 @@ const router = new Router({
 	]
 });
 
-router.beforeEach((to, from, next) => {
-	// Ignore login and error page
-	const isLogin = sessionStorage.getItem("inlog");
-	if (!isLogin && to.name !== "login-redirect" && to.name !== "error404") {
-		location.href = "http://localhost:8082/login";
-	}
+// router.beforeEach((to, from, next) => {
+// 	// Ignore login and error page
+// 	const isLogin = sessionStorage.getItem("inlog");
+// 	if (!isLogin && to.name !== "login-redirect" && to.name !== "error404") {
+// 		location.href = "http://localhost:8082/login";
+// 	}
 
-	next();
-});
+// 	next();
+// });
 
 export default router;

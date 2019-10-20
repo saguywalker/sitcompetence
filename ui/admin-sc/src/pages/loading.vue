@@ -8,13 +8,16 @@ import { mapState } from "vuex";
 export default {
 	computed: {
 		...mapState("base", ["user"]),
-		userDeta() {
+		userData() {
 			return sessionStorage.getItem("user");
 		}
 	},
-	async beforeRouteEnter(to, from, next) {
+	beforeCreate() {
 		loading.start();
-		next();
+
+		if (this.userData) {
+			this.$router.push({ name: "give-badge" });
+		}
 	},
 	async created() {
 		try {

@@ -1,9 +1,9 @@
 <template>
 	<section class="section">
 		<div class="page-header">
-			<h1 class="title">
+			<h2 class="title">
 				{{ currentPage }}
-			</h1>
+			</h2>
 			<base-breadcrumb
 				:items="breadcrumbList"
 				class="breadcrumb"
