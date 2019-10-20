@@ -35,10 +35,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/activity.scss";
+@import "@/styles/pages/student/activity.scss";
 </style>
 <script>
-import ActivityCard from "@/components/ActivityCard.vue";
+import ActivityCard from "@/components/student/ActivityCard.vue";
 import { mapState } from "vuex";
 
 export default {

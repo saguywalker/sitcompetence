@@ -19,10 +19,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/create-activity-success.scss";
+@import "@/styles/pages/admin/create-activity-success.scss";
 </style>
 <script>
-import SuccessLogo from "@/components/SuccessLogo.vue";
+import SuccessLogo from "@/components/admin/SuccessLogo.vue";
 
 export default {
 	components: {

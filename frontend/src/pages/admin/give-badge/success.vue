@@ -70,10 +70,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/give-badge-success";
+@import "@/styles/pages/admin/give-badge-success";
 </style>
 <script>
-import SuccessLogo from "@/components/SuccessLogo.vue";
+import SuccessLogo from "@/components/admin/SuccessLogo.vue";
 // import loading from "@/plugin/loading";
 // import { base64ToHex } from "@/helpers";
 import { mapState } from "vuex";
@@ -104,7 +104,7 @@ export default {
 			"success",
 			"steps"
 		]),
-		...mapState("verify", [
+		...mapState("adminVerify", [
 			"verifyData"
 		])
 		// hexTransactionId() {
@@ -124,7 +124,7 @@ export default {
 				};
 				this.rerender++;
 				await previousPromise;
-				return this.$store.dispatch("verify/verifyTransaction", payload);
+				return this.$store.dispatch("adminVerify/verifyTransaction", payload);
 			}, Promise.resolve());
 		}
 	}

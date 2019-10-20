@@ -1,6 +1,6 @@
 <template>
 	<section class="section">
-		<div class="page-header">
+		<div class="page-header-admin">
 			<h2 class="title">
 				{{ currentPage }}
 			</h2>
@@ -13,7 +13,7 @@
 	</section>
 </template>
 <script>
-import BaseBreadcrumb from "@/components/BaseBreadcrumb.vue";
+import BaseBreadcrumb from "@/components/admin/BaseBreadcrumb.vue";
 
 export default {
 	components: {

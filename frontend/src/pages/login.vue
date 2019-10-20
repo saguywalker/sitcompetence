@@ -14,7 +14,7 @@
 					Welcome to
 				</p>
 				<div class="logo">
-					<sitcom-logo />
+					<base-sitcom-logo />
 					<p class="text">
 						SIT-Competence
 					</p>
@@ -77,12 +77,7 @@
 @import "@/styles/pages/login.scss";
 </style>
 <script>
-import SitcomLogo from "@/components/SitcomLogo.vue";
-
 export default {
-	components: {
-		SitcomLogo
-	},
 	data() {
 		return {
 			userName: "",

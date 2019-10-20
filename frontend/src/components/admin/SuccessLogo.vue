@@ -13,7 +13,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/components/success-logo.scss";
+@import "@/styles/components/admin/success-logo.scss";
 </style>
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";

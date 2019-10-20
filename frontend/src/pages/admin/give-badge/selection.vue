@@ -71,10 +71,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/give-badge-selection.scss";
+@import "@/styles/pages/admin/give-badge-selection.scss";
 </style>
 <script>
-import { COMPETENCE } from "@/constants/competence";
+import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { mapState } from "vuex";

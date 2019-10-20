@@ -117,7 +117,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/activity-approve.scss";
+@import "@/styles/pages/admin/activity-approve.scss";
 </style>
 <script>
 import IconCheck from "@/components/icons/IconCheck.vue";

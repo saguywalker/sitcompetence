@@ -48,7 +48,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/create-activity-detail.scss";
+@import "@/styles/pages/admin/create-activity-detail.scss";
 </style>
 <script>
 import { getEditDateFormat } from "@/helpers";

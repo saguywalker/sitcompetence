@@ -2,7 +2,7 @@
 	<div class="portfolio">
 		<header class="page-header port-id">
 			<div class="title wrapper">
-				<sitcom-logo
+				<base-sitcom-logo
 					:size="96"
 					class="logo"
 				/>
@@ -91,17 +91,15 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/portfolio.scss";
+@import "@/styles/pages/student/portfolio.scss";
 </style>
 <script>
-import SitcomLogo from "@/components/SitcomLogo.vue";
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
 
 export default {
 	components: {
-		SitcomLogo,
 		IconCheckCircle,
 		IconTimeCircle
 	},

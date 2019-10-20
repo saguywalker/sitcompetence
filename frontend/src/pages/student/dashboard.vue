@@ -20,8 +20,8 @@
 	</div>
 </template>
 <script>
-import DashboardContent from "@/components/DashboardContent.vue";
-import DashboardProfile from "@/components/DashboardProfile.vue";
+import DashboardContent from "@/components/student/DashboardContent.vue";
+import DashboardProfile from "@/components/student/DashboardProfile.vue";
 
 export default {
 	components: {

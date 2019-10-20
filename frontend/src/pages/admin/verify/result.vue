@@ -11,7 +11,7 @@ import { mapState } from "vuex";
 
 export default {
 	computed: {
-		...mapState("verify", ["verifyData"])
+		...mapState("adminVerify", ["verifyData"])
 	}
 };
 </script>

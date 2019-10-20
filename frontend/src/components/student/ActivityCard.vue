@@ -46,7 +46,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/components/activity-card.scss";
+@import "@/styles/components/student/activity-card.scss";
 </style>
 <script>
 import IconCalendar from "@/components/icons/IconCalendar.vue";

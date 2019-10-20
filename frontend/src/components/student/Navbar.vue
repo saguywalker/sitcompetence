@@ -4,7 +4,7 @@
 			:to="{ name: 'dashboard' }"
 			class="logo-wrapper"
 		>
-			<sitcom-logo
+			<base-sitcom-logo
 				:size="60"
 				class="logo"
 			/>
@@ -44,16 +44,14 @@
 	</nav>
 </template>
 <style lang="scss">
-@import "@/styles/components/navbar.scss";
+@import "@/styles/components/student/navbar.scss";
 </style>
 <script>
-import SitcomLogo from "@/components/SitcomLogo.vue";
-import Hamburger from "@/components/Hamburger.vue";
+import Hamburger from "@/components/student/Hamburger.vue";
 import IconUser from "@/components/icons/IconUser.vue";
 
 export default {
 	components: {
-		SitcomLogo,
 		Hamburger,
 		IconUser
 	},

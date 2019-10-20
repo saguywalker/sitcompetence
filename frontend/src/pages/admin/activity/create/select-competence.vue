@@ -48,10 +48,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/create-activity-competence.scss";
+@import "@/styles/pages/admin/create-activity-competence.scss";
 </style>
 <script>
-import { COMPETENCE } from "@/constants/competence";
+import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
 import { mapState } from "vuex";
 

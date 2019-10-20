@@ -29,7 +29,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/dashboard-profile.scss";
+@import "@/styles/pages/student/dashboard-profile.scss";
 </style>
 <script>
 import { mapState } from "vuex";

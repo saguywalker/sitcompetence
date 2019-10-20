@@ -9,7 +9,7 @@
 	</ol>
 </template>
 <style lang="scss">
-@import "@/styles/components/base-breadcrumb.scss";
+@import "@/styles/components/admin/base-breadcrumb.scss";
 </style>
 <script>
 export default {

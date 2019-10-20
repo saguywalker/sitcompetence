@@ -1,0 +1,52 @@
+@import "../../cores.scss";
+
+.activity-card {
+	width: rem(250);
+	height: rem(100);
+	max-height: rem(100);
+	border: rem(1) solid $gray-6;
+	border-radius: rem(5);
+	margin: rem(10) 0;
+	cursor: pointer;
+	transition: all 200ms ease;
+
+	.card-img {
+		margin-left: rem(-1);
+		margin-top: rem(-1);
+	}
+
+	.card-body {
+		padding: rem(10);
+		text-align: left;
+
+		.title {
+			color: $admin-main-blue;
+			font-size: rem(24);
+			font-weight: bold;
+			text-transform: capitalize;
+		}
+
+		.description {
+			font-size: rem(12);
+			color: $gray-3;
+			@include ellipsisOneline(180);
+		}
+
+		.date {
+			font-size: rem(12);
+			color: $gray-3;
+		}
+	}
+
+	&:hover {
+		box-shadow: 0 rem(8) rem(20) $gray-6;
+	}
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	@include desktop {
+		margin: rem(10) rem(15);
+	}
+}

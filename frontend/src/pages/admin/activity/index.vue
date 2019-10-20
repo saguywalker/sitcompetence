@@ -1,7 +1,7 @@
 <template>
 	<div class="activity-main">
 		<section class="section">
-			<div class="page-header">
+			<div class="page-header-admin">
 				<h1 class="title">
 					Activity
 				</h1>
@@ -55,10 +55,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/activity-main.scss";
+@import "@/styles/pages/admin/activity-main.scss";
 </style>
 <script>
-import ActivityCard from "@/components/ActivityCard.vue";
+import ActivityCard from "@/components/admin/ActivityCard.vue";
 import loading from "@/plugin/loading";
 import { mapState } from "vuex";
 // TODO: GET list of activities

@@ -67,11 +67,6 @@ const router = new Router({
 					name: "portfolio",
 					path: "/portfolio",
 					component: () => import(/* webpackChunkName: "portfolio" */"@/pages/student/portfolio")
-				},
-				{
-					name: "error404",
-					path: "*",
-					component: () => import("@/pages/student/error/404.vue")
 				}
 			]
 		},
@@ -90,7 +85,7 @@ const router = new Router({
 					component: () => import("@/pages/admin/loading.vue")
 				},
 				{
-					name: "activity",
+					name: "admin-activity",
 					path: "activity",
 					component: () => import("@/pages/admin/activity")
 				},
@@ -260,6 +255,11 @@ const router = new Router({
 					component: () => import("@/pages/admin/verify/result.vue")
 				}
 			]
+		},
+		{
+			name: "error404",
+			path: "*",
+			component: () => import("@/pages/error/404.vue")
 		}
 	]
 });

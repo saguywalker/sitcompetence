@@ -118,7 +118,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/give-badge-main.scss";
+@import "@/styles/pages/admin/give-badge-main.scss";
 </style>
 <script>
 import loading from "@/plugin/loading";

@@ -103,7 +103,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/activity-detail.scss";
+@import "@/styles/pages/admin/activity-detail.scss";
 </style>
 <script>
 import IconArrow from "@/components/icons/IconArrow.vue";

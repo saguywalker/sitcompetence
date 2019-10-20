@@ -39,7 +39,7 @@
 				</li>
 				<li>
 					<router-link
-						:to="{ name: 'activity' }"
+						:to="{ name: 'admin-activity' }"
 						class="item"
 					>
 						<icon-activity class="icon" />
@@ -63,7 +63,7 @@
 	</aside>
 </template>
 <style lang="scss">
-@import "@/styles/components/sidebar.scss";
+@import "@/styles/components/admin/sidebar.scss";
 </style>
 <script>
 import IconGiveBadge from "@/components/icons/IconGiveBadge.vue";

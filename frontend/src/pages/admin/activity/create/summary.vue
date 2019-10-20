@@ -106,7 +106,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/create-activity-summary.scss";
+@import "@/styles/pages/admin/create-activity-summary.scss";
 </style>
 <script>
 import IconPen from "@/components/icons/IconPen.vue";

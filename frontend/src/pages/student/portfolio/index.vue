@@ -104,13 +104,13 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/portfolio.scss";
+@import "@/styles/pages/student/portfolio.scss";
 </style>
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
-import { COMPETENCE } from "@/constants/competence";
+import { COMPETENCE } from "@/constants";
 import { mapState } from "vuex";
 
 export default {

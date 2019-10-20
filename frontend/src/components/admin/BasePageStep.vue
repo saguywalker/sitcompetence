@@ -32,7 +32,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/components/base-page-step.scss";
+@import "@/styles/components/admin/base-page-step.scss";
 </style>
 <script>
 import IconArrow from "@/components/icons/IconArrow.vue";

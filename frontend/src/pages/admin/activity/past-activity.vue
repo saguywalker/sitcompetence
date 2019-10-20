@@ -36,10 +36,10 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/past-activity.scss";
+@import "@/styles/pages/admin/past-activity.scss";
 </style>
 <script>
-import ActivityCard from "@/components/ActivityCard.vue";
+import ActivityCard from "@/components/admin/ActivityCard.vue";
 import IconCalendar from "@/components/icons/IconCalendar.vue";
 import { mapState, mapGetters } from "vuex";
 // TODO: GET list of past activities

@@ -20,7 +20,7 @@
 	</article>
 </template>
 <style lang="scss">
-@import "@/styles/components/activity-card.scss";
+@import "@/styles/components/admin/activity-card.scss";
 </style>
 <script>
 export default {

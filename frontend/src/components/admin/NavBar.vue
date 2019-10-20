@@ -8,7 +8,7 @@
 			]"
 		>
 			<span class="detail">
-				<base-logo
+				<base-sitcom-logo
 					:size="30"
 					class="img"
 				/>
@@ -76,17 +76,15 @@
 	</header>
 </template>
 <style lang="scss">
-@import "@/styles/components/navbar.scss";
+@import "@/styles/components/admin/navbar.scss";
 </style>
 <script>
-import BaseLogo from "@/components/BaseLogo.vue";
 import IconHamburger from "@/components/icons/IconHamburger.vue";
 import IconUserCog from "@/components/icons/IconUserCog.vue";
 import { clickOutside } from "@/helpers/directives/clickOutside";
 
 export default {
 	components: {
-		BaseLogo,
 		IconHamburger,
 		IconUserCog
 	},

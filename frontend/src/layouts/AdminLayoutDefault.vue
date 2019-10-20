@@ -1,7 +1,7 @@
 <template>
 	<div
 		:class="[
-			'default',
+			'admin-layout',
 			isSidebarOpen ? 'sidebar-open' : ''
 		]"
 	>
@@ -14,23 +14,20 @@
 			@hide-mobile="hideMobile"
 		/>
 		<router-view class="content-wrapper" />
-		<notification />
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/layouts/default.scss";
+@import "@/styles/layouts/admin-layout.scss";
 </style>
 <script>
-import SideBar from "@/components/SideBar.vue";
-import NavBar from "@/components/NavBar.vue";
-import Notification from "@/components/Notification.vue";
+import SideBar from "@/components/admin/SideBar.vue";
+import NavBar from "@/components/admin/NavBar.vue";
 import { widthSize } from "@/helpers/mixins";
 
 export default {
 	components: {
 		NavBar,
-		SideBar,
-		Notification
+		SideBar
 	},
 	mixins: [widthSize],
 	data() {

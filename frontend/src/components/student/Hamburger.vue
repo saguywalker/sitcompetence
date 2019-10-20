@@ -12,7 +12,7 @@
 	</button>
 </template>
 <style lang="scss">
-@import "@/styles/components/hamburger.scss";
+@import "@/styles/components/student/hamburger.scss";
 </style>
 <script>
 export default {

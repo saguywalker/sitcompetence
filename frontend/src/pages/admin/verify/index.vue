@@ -32,7 +32,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/verify.scss";
+@import "@/styles/pages/admin/verify.scss";
 </style>
 <script>
 import { mapState } from "vuex";
@@ -44,7 +44,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("verify", [
+		...mapState("adminVerify", [
 			"hashId"
 		])
 	},
@@ -57,7 +57,7 @@ export default {
 	},
 	methods: {
 		verifyTransaction() {
-			this.$store.dispatch("verify/verifyTransaction", this.hash);
+			this.$store.dispatch("adminVerify/verifyTransaction", this.hash);
 		}
 	}
 };

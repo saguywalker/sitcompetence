@@ -1,0 +1,65 @@
+@import "../../cores.scss";
+
+.give-badge-main {
+	.table {
+		font-size: rem(14);
+		padding: rem(10);
+		color: $black;
+
+		.header {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: rem(10);
+
+			.search {
+				margin-bottom: rem(10);
+			}
+		}
+
+		.footer {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+	}
+
+	.selected {
+		display: flex;
+		flex-direction: column;
+		list-style: none;
+		margin: 0;
+
+		.item {
+			position: relative;
+			padding: rem(10);
+			font-size: rem(14);
+			border-bottom: rem(1) solid $admin-gray-2;
+
+			.delete {
+				position: absolute;
+				top: rem(12);
+				right: rem(8);
+			}
+		}
+	}
+
+	@include desktop {
+		.table {
+			.header {
+				flex-direction: row;
+				align-items: center;
+				justify-content: flex-end;
+
+				.search {
+					order: 2;
+				}
+			}
+
+			.footer {
+				flex-direction: row;
+				justify-content: space-between;
+			}
+		}
+	}
+}

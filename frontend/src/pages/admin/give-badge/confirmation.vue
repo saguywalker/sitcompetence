@@ -61,7 +61,7 @@
 </template>
 <script>
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
-import { COMPETENCE } from "@/constants/competence";
+import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
 import { getSemester, getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
