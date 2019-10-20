@@ -1,0 +1,10 @@
+@import "../cores.scss";
+
+.create-activity-success {
+	.form {
+		padding: rem(10) 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}

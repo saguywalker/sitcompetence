@@ -1,0 +1,21 @@
+@import "../cores.scss";
+
+.past-activity {
+	.box-header {
+		.semester-select {
+			&.custom-select {
+				width: rem(100);
+			}
+
+			list-style: none;
+			margin-left: rem(20);
+			border-left: rem(1) solid $gray-6;
+			border-right: rem(1) solid $gray-6;
+			text-align: center;
+		}
+	}
+
+	.activity-card-link {
+		text-decoration: none;
+	}
+}

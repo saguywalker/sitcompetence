@@ -1,0 +1,20 @@
+{
+  "name": "SIT-Competence",
+  "short_name": "sitcom-admin",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "#408eba",
+  "background_color": "#fff",
+  "icons": [
+    {
+      "src": "sitcom-admin.png",
+      "sizes": "144x144 144x167",
+      "type": "image/png"
+    },
+    {
+      "src": "sitcom-adminL.png",
+      "sizes": "512x594",
+      "type": "image/png"
+    }
+  ]
+}
