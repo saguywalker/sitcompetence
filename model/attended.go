@@ -15,7 +15,7 @@ type AttendedActivity struct {
 }
 
 // NewAttendedActivity return new struct
-func NewAttendedActivity(activityID uint32, studentID, approver string, txid []byte) *AttendedActivity {
+func NewAttendedActivity(activityID uint32, studentID string, approver string, txid []byte) *AttendedActivity {
 	return &AttendedActivity{
 		ActivityID:    activityID,
 		StudentID:     studentID,
