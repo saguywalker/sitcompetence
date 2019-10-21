@@ -116,6 +116,7 @@ func (ctx *Context) CreateActivity(activity *model.Activity) (uint32, error) {
 	return activityID, nil
 }
 
+// JoinActivity update attendee according to activityID
 func (ctx *Context) JoinActivity(activity *model.AttendedActivity) error {
 	if err := ctx.Database.AddAttendee(activity.ActivityID, activity.StudentID); err != nil {
 		return err

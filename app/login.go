@@ -9,11 +9,13 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
+// UserResponse contain user and his token
 type UserResponse struct {
 	Token string     `json:"token"`
 	User  model.User `json:"user"`
 }
 
+// NewLDAPClient return new LDAPClient struct
 func NewLDAPClient(username, password, ou string) *ldap.LDAPClient {
 	return &ldap.LDAPClient{
 		Base:               "dc=sit,dc=kmutt,dc=ac,dc=th",
@@ -29,6 +31,7 @@ func NewLDAPClient(username, password, ou string) *ldap.LDAPClient {
 	}
 }
 
+// CheckPassword authenticate user and password
 func (a *App) CheckPassword(username, password string) (*UserResponse, error) {
 	staffClient := NewLDAPClient(username, password, "staff")
 
