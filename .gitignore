@@ -1,4 +1,7 @@
 /node_modules
+ui/node_modules
+ui/admin-sc/node_modules
+ui/student/node_modules
 yarn.lock
 
 #for configuration
