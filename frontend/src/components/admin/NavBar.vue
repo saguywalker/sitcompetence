@@ -9,7 +9,7 @@
 		>
 			<span class="detail">
 				<base-sitcom-logo
-					:size="30"
+					:size="40"
 					class="img"
 				/>
 				<p>

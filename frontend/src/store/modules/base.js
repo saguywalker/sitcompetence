@@ -37,7 +37,7 @@ const mutations = {
 
 const actions = {
 	async loadStudentData({ commit }) {
-		const response = await Base.getAllStudents();
+		const response = await Base.getStudents();
 
 		if (response.status === 200) {
 			commit(LOAD_STUDENTS, response.data);
@@ -55,7 +55,7 @@ const actions = {
 		return response.data;
 	},
 	async loadBadgeData({ commit }) {
-		const response = await Base.getAllBadges();
+		const response = await Base.getBadges();
 
 		if (response.status === 200) {
 			commit(LOAD_BADGES, response.data);

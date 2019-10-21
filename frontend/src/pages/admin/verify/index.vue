@@ -20,7 +20,7 @@
 						size="sm"
 					/>
 					<b-button
-						variant="primary"
+						variant="admin-primary"
 						size="sm"
 						@click="verifyTransaction"
 					>

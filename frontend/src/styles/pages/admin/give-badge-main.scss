@@ -44,6 +44,15 @@
 		}
 	}
 
+	.admin-pagination {
+		.page-item.active {
+			.page-link {
+				background-color: $admin-main-blue;
+				color: $white;
+			}
+		}
+	}
+
 	@include desktop {
 		.table {
 			.header {
