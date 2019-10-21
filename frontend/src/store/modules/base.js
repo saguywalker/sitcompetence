@@ -1,9 +1,9 @@
-import { getPlainTextToken } from "@/helpers";
-import { Base } from "@/services";
+import router from "@/router";
+import { getCiphertext } from "@/helpers";
+import { Base, Login } from "@/services";
 import {
-	LOAD_LOGIN_USER,
+	LOAD_LOGIN_DATA,
 	LOGOUT,
-	NOTHING,
 	LOAD_BADGES,
 	LOAD_STUDENTS
 } from "../mutationTypes";
@@ -11,8 +11,7 @@ import {
 const state = {
 	students: [],
 	badges: [],
-	user: {},
-	nothing: ""
+	user: {}
 };
 
 const mutations = {
@@ -26,13 +25,10 @@ const mutations = {
 			...data
 		];
 	},
-	[NOTHING](stateData) {
-		stateData.nothing = "";
-	},
 	[LOGOUT](stateData) {
 		stateData.user = {};
 	},
-	[LOAD_LOGIN_USER](stateData, data) {
+	[LOAD_LOGIN_DATA](stateData, data) {
 		stateData.user = {
 			...data
 		};
@@ -40,16 +36,6 @@ const mutations = {
 };
 
 const actions = {
-	async loadUserDetail({ commit }) {
-		const response = await Base.getUserDetail();
-
-		if (response.status === 200) {
-			sessionStorage.setItem("user", response.data.uid);
-			commit(LOAD_LOGIN_USER, response.data);
-		}
-
-		return response;
-	},
 	async loadStudentData({ commit }) {
 		const response = await Base.getAllStudents();
 
@@ -78,15 +64,31 @@ const actions = {
 		return response;
 	},
 	async doLogin({ commit }, data) {
-		const token = getPlainTextToken(data);
-		sessionStorage.setItem("inlog", token);
-		commit(NOTHING);
-		location.href = "http://localhost:8080/admin/dashboard";
+		if (data.username === "" && data.password === "") {
+			commit(LOGOUT);
+			return;
+		}
+		const response = await Login.login(data);
+		if (response.status !== 200) {
+			return;
+		}
+
+		const loginDataString = JSON.stringify(response.data);
+		const encryptedLoginData = getCiphertext(loginDataString);
+		localStorage.setItem("user", encryptedLoginData);
+
+		if (response.data.user.group === "inst_group") {
+			router.push({ name: "give-badge" });
+			return;
+		}
+
+		commit(LOAD_LOGIN_DATA, response.data);
+		router.push({ name: "dashboard" });
 	},
 	logout({ commit }) {
-		sessionStorage.clear();
+		localStorage.removeItem("user");
 		commit(LOGOUT);
-		location.href = "http://localhost:8082/login";
+		router.push({ name: "login" });
 	}
 };
 

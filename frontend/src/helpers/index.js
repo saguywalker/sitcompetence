@@ -69,7 +69,7 @@ export const getEditDateFormat = (format) => {
 };
 
 // Decrypt
-export const getPlainTextToken = (cipher) => {
+const getPlainTextToken = (cipher) => {
 	const reb64 = CryptoJS.enc.Hex.parse(cipher);
 	const bytes = reb64.toString(CryptoJS.enc.Base64);
 	const decrypt = CryptoJS.AES.decrypt(bytes, "8NQMHLNx61Xr67u75b");
@@ -77,6 +77,7 @@ export const getPlainTextToken = (cipher) => {
 	return plain;
 };
 
+// Encrypt
 export const getCiphertext = (message) => {
 	const b64 = CryptoJS.AES.encrypt(message, "8NQMHLNx61Xr67u75b").toString();
 	const e64 = CryptoJS.enc.Base64.parse(b64);
@@ -84,6 +85,6 @@ export const getCiphertext = (message) => {
 	return eHex;
 };
 
-export const getLoginToken = sessionStorage.getItem("inlog");
+export const getLoginToken = () => JSON.parse(getPlainTextToken(localStorage.getItem("user"))).token;
 
-export const getLoginUser = sessionStorage.getItem("user");
+export const getLoginUser = () => JSON.parse(getPlainTextToken(localStorage.getItem("user"))).user;

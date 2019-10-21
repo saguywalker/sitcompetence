@@ -77,12 +77,7 @@ const router = new Router({
 				{
 					name: "admin",
 					path: "/",
-					redirect: { name: "loading" }
-				},
-				{
-					name: "loading",
-					path: "dashboard",
-					component: () => import("@/pages/admin/loading.vue")
+					redirect: { name: "give-badge" }
 				},
 				{
 					name: "admin-activity",

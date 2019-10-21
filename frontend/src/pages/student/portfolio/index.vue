@@ -110,6 +110,7 @@
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
+import { getLoginUser } from "@/helpers";
 import { COMPETENCE } from "@/constants";
 import { mapState } from "vuex";
 
@@ -132,9 +133,9 @@ export default {
 			verify: "verify",
 			show: "show"
 		}),
-		...mapState("base", [
-			"user"
-		]),
+		user() {
+			return getLoginUser();
+		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
 				return false;
@@ -154,7 +155,6 @@ export default {
 		this.$Progress.start();
 
 		try {
-			await this.$store.dispatch("base/loadUserDetail");
 			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
 			this.setupPortfolio();
 		} catch (err) {

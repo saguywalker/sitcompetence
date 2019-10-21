@@ -32,7 +32,7 @@
 @import "@/styles/pages/student/dashboard-profile.scss";
 </style>
 <script>
-import { mapState } from "vuex";
+import { getLoginUser } from "@/helpers";
 
 export default {
 	data() {
@@ -41,30 +41,16 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("base", [
-			"user"
-		])
+		user() {
+			return getLoginUser();
+		},
 	},
 	async created() {
-		this.$Progress.start();
-
-		try {
-			await this.$store.dispatch("base/loadUserDetail");
-			this.userData = this.user;
-		} catch (err) {
-			this.$Progress.fail();
-			this.$bvToast.toast(`Fetching user data problem: ${err.message}`, {
-				title: "Fetching user error",
-				variant: "danger",
-				autoHideDelay: 1500
-			});
-		} finally {
-			this.$Progress.finish();
-		}
+		this.userData = this.user;
 	},
 	methods: {
 		logout() {
-			this.$store.dispatch("authentication/logout");
+			this.$store.dispatch("base/logout");
 		}
 	}
 };

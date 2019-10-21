@@ -95,7 +95,7 @@ export default {
 			this.isNavOpen = e;
 		},
 		logout() {
-			this.$store.dispatch("authentication/logout");
+			this.$store.dispatch("base/logout");
 		}
 	}
 };

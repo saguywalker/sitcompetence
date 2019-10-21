@@ -4,7 +4,7 @@ import { getLoginToken } from "@/helpers";
 const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api",
 	headers: {
-		"X-Session-Token": getLoginToken
+		"X-Session-Token": getLoginToken()
 	}
 });
 

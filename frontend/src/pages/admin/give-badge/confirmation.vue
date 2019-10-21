@@ -104,7 +104,7 @@ export default {
 
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
-					giver: getLoginUser,
+					giver: getLoginUser(),
 					semester: getSemester()
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);

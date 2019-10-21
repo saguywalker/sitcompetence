@@ -107,7 +107,7 @@ export default {
 
 			if (!this.isError) {
 				try {
-					await this.$store.dispatch("authentication/doLogin", {
+					await this.$store.dispatch("base/doLogin", {
 						username: this.userName,
 						password: this.passWord
 					});
