@@ -62,10 +62,10 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("activity", [
+		...mapState("adminActivity", [
 			"pastActivities"
 		]),
-		...mapGetters("activity", [
+		...mapGetters("adminActivity", [
 			"getApprovedActivitiesBySemester"
 		])
 	},

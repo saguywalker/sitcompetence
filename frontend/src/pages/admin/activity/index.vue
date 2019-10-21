@@ -21,7 +21,7 @@
 						<b-button
 							class="item"
 							size="sm"
-							variant="primary"
+							variant="admin-primary"
 						>
 							Create Activity
 						</b-button>
@@ -68,7 +68,7 @@ export default {
 		ActivityCard
 	},
 	computed: {
-		...mapState("activity", [
+		...mapState("adminActivity", [
 			"postActivities",
 			"saveActivities",
 			"activities"
@@ -78,7 +78,7 @@ export default {
 		loading.start();
 
 		try {
-			await this.$store.dispatch("activity/loadActivity");
+			await this.$store.dispatch("adminActivity/loadActivity");
 		} catch (err) {
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
 				title: "Fetching activity error",

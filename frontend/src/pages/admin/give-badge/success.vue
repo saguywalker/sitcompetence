@@ -21,7 +21,7 @@
 					</p>
 				</div> -->
 				<b-button
-					variant="primary"
+					variant="admin-primary"
 					class="mt-3"
 					size="sm"
 					@click="testVerify"

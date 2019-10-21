@@ -24,6 +24,9 @@ const Base = {
 	getStudents() {
 		return apiClient.get("/student");
 	},
+	getStudentsPage(page) {
+		return apiClient.get(`/search/student?page=${page}`);
+	},
 	getStaffs() {
 		return apiClient.get("/staff");
 	},

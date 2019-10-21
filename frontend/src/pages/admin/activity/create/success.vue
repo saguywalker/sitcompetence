@@ -8,7 +8,7 @@
 					class="mt-3"
 				>
 					<b-button
-						variant="primary"
+						variant="admin-primary"
 						size="sm"
 					>
 						Home

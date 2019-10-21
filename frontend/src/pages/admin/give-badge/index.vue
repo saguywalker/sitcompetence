@@ -23,7 +23,7 @@
 									size="sm"
 								/>
 								<b-button
-									variant="primary"
+									variant="admin-primary"
 									size="sm"
 								>
 									Search
@@ -37,7 +37,7 @@
 							:per-page="perPage"
 							selectable
 							select-mode="multi"
-							selected-variant="primary"
+							selected-variant="admin-primary"
 							responsive="sm"
 							@row-selected="onRowSelected"
 						>
@@ -58,14 +58,14 @@
 							<div class="text-center">
 								<b-button
 									class="mr-2"
-									variant="primary"
+									variant="admin-primary"
 									size="sm"
 									@click="selectAllRows"
 								>
 									Select all
 								</b-button>
 								<b-button
-									variant="outline-primary"
+									variant="outline-admin-primary"
 									size="sm"
 									@click="clearSelected"
 								>
@@ -77,6 +77,7 @@
 									v-model="currentPage"
 									:total-rows="rows"
 									:per-page="perPage"
+									class="admin-pagination"
 									aria-controls="my-table"
 									align="center"
 									size="sm"
