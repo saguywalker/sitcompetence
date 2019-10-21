@@ -18,7 +18,7 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, index uint64, peers []string) ([]byte, uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
 	/*
 		badgeHash, err := badge.CalculateHash()
 		if err != nil {
@@ -28,7 +28,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseW
 
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	badge.Giver = giverPK
@@ -38,27 +38,27 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseW
 
 	badgeBytes, err := json.Marshal(badge)
 	if err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, privKey, index, peers)
 	if err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	badge.TxID = txID
 
 	if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	index = (index + 1) % uint64(len(peers))
 
-	return txID, index, nil
+	return index, nil
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, index uint64, peers []string) ([]byte, uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
 	/*
 		activityHash, err := activity.CalculateHash()
 		if err != nil {
@@ -68,7 +68,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.Res
 
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	activity.Approver = approverPK
@@ -78,23 +78,23 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.Res
 
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, privKey, index, peers)
 	if err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	activity.TransactionID = txID
 
 	if err := ctx.Database.ApproveAttended(activity); err != nil {
-		return nil, index, err
+		return index, err
 	}
 
 	index = (index + 1) % uint64(len(peers))
 
-	return txID, index, nil
+	return index, nil
 }
 
 func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string) ([]byte, error) {
