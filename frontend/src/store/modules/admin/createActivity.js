@@ -1,4 +1,4 @@
-import { Activity } from "@/services/admin";
+import { AdminActivity } from "@/services";
 import {
 	CREATE_ACTIVITY_STEP,
 	CREATE_ACTIVITY_DETAIL,
@@ -66,7 +66,7 @@ const actions = {
 			competences_id: competenceIds
 		};
 
-		const	response = await Activity.postCreateActivity(payload);
+		const	response = await AdminActivity.postCreateActivity(payload);
 		if (response.status === 200) {
 			commit(CREATE_ACTIVITY_SUBMIT);
 		}

@@ -2,7 +2,7 @@ import axios from "axios";
 import { getLoginToken } from "@/helpers";
 
 const apiClient = axios.create({
-	baseURL: "http://localhost:3000/api",
+	baseURL: process.env.VUE_APP_API_URL,
 	headers: {
 		"X-Session-Token": getLoginToken()
 	}
@@ -14,7 +14,7 @@ const GiveBadge = {
 	}
 };
 
-const Activity = {
+const AdminActivity = {
 	postApproveActivity(data) {
 		return apiClient.post("/approveActivity", data);
 	},

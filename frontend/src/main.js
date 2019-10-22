@@ -11,10 +11,6 @@ import BasePageStep from "@/components/admin/BasePageStep.vue";
 import "./registerServiceWorker";
 import "@/styles/global.scss";
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);

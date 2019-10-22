@@ -1,4 +1,4 @@
-import { GiveBadge } from "@/services/admin";
+import { GiveBadge } from "@/services";
 import {
 	GIVE_BADGE_SELECT_STUDENT,
 	GIVE_BADGE_STEP,

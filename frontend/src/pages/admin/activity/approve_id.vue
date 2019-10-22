@@ -123,6 +123,7 @@
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
+import { getLoginUser } from "@/helpers";
 import { mapGetters } from "vuex";
 
 export default {
@@ -169,7 +170,7 @@ export default {
 			return this.items.length;
 		},
 		loginUser() {
-			return localStorage.getItem("user");
+			return getLoginUser();
 		}
 	},
 	watch: {

@@ -59,7 +59,7 @@
 					</p>
 				</div>
 				<div class="profile-dropdown-footer">
-					<router-link :to="{ name: 'setting' }">
+					<router-link :to="{ name: 'user-setting' }">
 						<b-button size="sm">
 							Setting
 						</b-button>

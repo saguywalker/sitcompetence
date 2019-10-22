@@ -194,6 +194,11 @@ const router = new Router({
 					component: () => import("@/pages/admin/badge-setting")
 				},
 				{
+					name: "user-setting",
+					path: "user/setting",
+					component: () => import("@/pages/admin/user/setting")
+				},
+				{
 					path: "give-badge",
 					component: () => import("@/layouts/AdminLayoutGiveBadge.vue"),
 					children: [
@@ -233,11 +238,6 @@ const router = new Router({
 							}
 						}
 					]
-				},
-				{
-					name: "setting",
-					path: "setting",
-					component: () => import("@/pages/admin/setting")
 				},
 				{
 					name: "verify",

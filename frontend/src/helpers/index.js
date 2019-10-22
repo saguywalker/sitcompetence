@@ -72,14 +72,14 @@ export const getEditDateFormat = (format) => {
 export const getPlainTextToken = (cipher) => {
 	const reb64 = CryptoJS.enc.Hex.parse(cipher);
 	const bytes = reb64.toString(CryptoJS.enc.Base64);
-	const decrypt = CryptoJS.AES.decrypt(bytes, "8NQMHLNx61Xr67u75b");
+	const decrypt = CryptoJS.AES.decrypt(bytes, process.env.VUE_APP_USER_DATA_KEY);
 	const plain = decrypt.toString(CryptoJS.enc.Utf8);
 	return plain;
 };
 
 // Encrypt
 export const getCiphertext = (message) => {
-	const b64 = CryptoJS.AES.encrypt(message, "8NQMHLNx61Xr67u75b").toString();
+	const b64 = CryptoJS.AES.encrypt(message, process.env.VUE_APP_USER_DATA_KEY).toString();
 	const e64 = CryptoJS.enc.Base64.parse(b64);
 	const eHex = e64.toString(CryptoJS.enc.Hex);
 	return eHex;
