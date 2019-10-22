@@ -78,12 +78,12 @@ const actions = {
 		localStorage.setItem("user", encryptedLoginData);
 
 		if (response.data.user.group === "inst_group") {
-			router.push({ name: "give-badge" });
+			location.href = "http://localhost:8080/admin";
 			return;
 		}
 
 		commit(LOAD_LOGIN_DATA, response.data);
-		router.push({ name: "dashboard" });
+		location.href = "http://localhost:8080/";
 	},
 	logout({ commit }) {
 		localStorage.removeItem("user");

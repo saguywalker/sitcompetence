@@ -39,7 +39,7 @@
 											]"
 										>
 											<base-image
-												:src="getBadgeImgById(item.student_id)"
+												:src="getBadgeImgById(badge.competence_id)"
 												size="90"
 											/>
 											<p class="text">{{ badge.competence_name }}</p>

@@ -17,12 +17,18 @@ const router = new Router({
 		{
 			path: "/login",
 			name: "login",
-			component: () => import(/* webpackChunkName: "login" */ "@/pages/login.vue")
+			component: () => import(/* webpackChunkName: "login" */ "@/pages/login.vue"),
+			meta: {
+				rule: "isPublic"
+			}
 		},
 		{
 			path: "/user/:id/portfolio",
 			name: "user_id-portfoilio",
-			component: () => import(/* webpackChunkName: "user-portfoilio" */ "@/pages/student/user/_id-portfolio.vue")
+			component: () => import(/* webpackChunkName: "user-portfoilio" */ "@/pages/student/user/_id-portfolio.vue"),
+			meta: {
+				rule: "isPublic"
+			}
 		},
 		{
 			path: "/",
@@ -35,12 +41,18 @@ const router = new Router({
 				{
 					name: "dashboard",
 					path: "/dashboard",
-					component: () => import(/* webpackChunkName: "dashboard" */"@/pages/student/dashboard.vue")
+					component: () => import(/* webpackChunkName: "dashboard" */"@/pages/student/dashboard.vue"),
+					meta: {
+						rule: "isStudent"
+					}
 				},
 				{
 					name: "activity",
 					path: "/activity",
 					component: () => import(/* webpackChunkName: "activity" */"@/pages/student/activity"),
+					meta: {
+						rule: "isStudent"
+					},
 					beforeEnter: async (to, from, next) => {
 						try {
 							router.app.$Progress.start();
@@ -61,12 +73,18 @@ const router = new Router({
 				{
 					name: "activity-detail_id",
 					path: "/activity/detail/:id",
-					component: () => import(/* webpackChunkName: "activity-detail" */"@/pages/student/activity/detail.vue")
+					component: () => import(/* webpackChunkName: "activity-detail" */"@/pages/student/activity/detail.vue"),
+					meta: {
+						rule: "isStudent"
+					}
 				},
 				{
 					name: "portfolio",
 					path: "/portfolio",
-					component: () => import(/* webpackChunkName: "portfolio" */"@/pages/student/portfolio")
+					component: () => import(/* webpackChunkName: "portfolio" */"@/pages/student/portfolio"),
+					meta: {
+						rule: "isStudent"
+					}
 				}
 			]
 		},
@@ -82,27 +100,42 @@ const router = new Router({
 				{
 					name: "admin-activity",
 					path: "activity",
-					component: () => import("@/pages/admin/activity")
+					component: () => import("@/pages/admin/activity"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "activity-detail",
 					path: "activity/detail/:id",
-					component: () => import("@/pages/admin/activity/detail_id.vue")
+					component: () => import("@/pages/admin/activity/detail_id.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "activity-approve",
 					path: "activity/approve/:id",
-					component: () => import("@/pages/admin/activity/approve_id.vue")
+					component: () => import("@/pages/admin/activity/approve_id.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "activity-approve-success",
 					path: "activity/approve/:id/success",
-					component: () => import("@/pages/admin/activity/approve-success.vue")
+					component: () => import("@/pages/admin/activity/approve-success.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "past-activity",
 					path: "activity/past",
-					component: () => import("@/pages/admin/activity/past-activity.vue")
+					component: () => import("@/pages/admin/activity/past-activity.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					path: "activity/create",
@@ -113,6 +146,7 @@ const router = new Router({
 							path: "/",
 							component: () => import("@/pages/admin/activity/create"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.detail,
 								step: CREATE_ACTIVITY_STEP.detail
 							}
@@ -122,6 +156,7 @@ const router = new Router({
 							path: "select-competence",
 							component: () => import("@/pages/admin/activity/create/select-competence.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.competence,
 								step: CREATE_ACTIVITY_STEP.competence
 							}
@@ -131,6 +166,7 @@ const router = new Router({
 							path: "summary",
 							component: () => import("@/pages/admin/activity/create/summary.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.summary,
 								step: CREATE_ACTIVITY_STEP.summary
 							}
@@ -140,6 +176,7 @@ const router = new Router({
 							path: "success",
 							component: () => import("@/pages/admin/activity/create/success.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.success,
 								step: CREATE_ACTIVITY_STEP.success
 							}
@@ -155,6 +192,7 @@ const router = new Router({
 							path: "/",
 							component: () => import("@/pages/admin/activity/edit"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.detail,
 								step: EDIT_ACTIVITY_STEP.detail
 							}
@@ -164,6 +202,7 @@ const router = new Router({
 							path: "select-competence",
 							component: () => import("@/pages/admin/activity/edit/select-competence.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.competence,
 								step: EDIT_ACTIVITY_STEP.competence
 							}
@@ -173,6 +212,7 @@ const router = new Router({
 							path: "summary",
 							component: () => import("@/pages/admin/activity/edit/summary.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.summary,
 								step: EDIT_ACTIVITY_STEP.summary
 							}
@@ -182,6 +222,7 @@ const router = new Router({
 							path: "success",
 							component: () => import("@/pages/admin/activity/edit/success.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: CREATE_ACTIVITY_BREADCRUMB.success,
 								step: EDIT_ACTIVITY_STEP.success
 							}
@@ -191,12 +232,26 @@ const router = new Router({
 				{
 					name: "badge-setting",
 					path: "badge-setting",
-					component: () => import("@/pages/admin/badge-setting")
+					component: () => import("@/pages/admin/badge-setting"),
+					meta: {
+						rule: "isAdmin"
+					}
+				},
+				{
+					name: "user-genkey",
+					path: "user/genkey",
+					component: () => import("@/pages/admin/user/genkey.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "user-setting",
 					path: "user/setting",
-					component: () => import("@/pages/admin/user/setting")
+					component: () => import("@/pages/admin/user/setting.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					path: "give-badge",
@@ -207,6 +262,7 @@ const router = new Router({
 							path: "/",
 							component: () => import("@/pages/admin/give-badge"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: GIVE_BADGE_BREADCRUMB.main,
 								step: GIVE_BADGE_STEP.main
 							}
@@ -216,6 +272,7 @@ const router = new Router({
 							path: "selection",
 							component: () => import("@/pages/admin/give-badge/selection.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: GIVE_BADGE_BREADCRUMB.selection,
 								step: GIVE_BADGE_STEP.selection
 							}
@@ -225,6 +282,7 @@ const router = new Router({
 							path: "confirmation",
 							component: () => import("@/pages/admin/give-badge/confirmation.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: GIVE_BADGE_BREADCRUMB.confirmation,
 								step: GIVE_BADGE_STEP.confirmation
 							}
@@ -234,6 +292,7 @@ const router = new Router({
 							path: "success",
 							component: () => import("@/pages/admin/give-badge/success.vue"),
 							meta: {
+								rule: "isAdmin",
 								breadcrumb: GIVE_BADGE_BREADCRUMB.success
 							}
 						}
@@ -242,19 +301,49 @@ const router = new Router({
 				{
 					name: "verify",
 					path: "verify",
-					component: () => import("@/pages/admin/verify")
+					component: () => import("@/pages/admin/verify"),
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "verify-result",
 					path: "verify/result",
-					component: () => import("@/pages/admin/verify/result.vue")
+					component: () => import("@/pages/admin/verify/result.vue"),
+					meta: {
+						rule: "isAdmin"
+					}
 				}
 			]
 		},
 		{
 			name: "error404",
 			path: "*",
-			component: () => import("@/pages/error/404.vue")
+			component: () => import("@/pages/error/404.vue"),
+			meta: {
+				rule: "isPublic"
+			}
+		},
+		{
+			name: "unknown",
+			path: "/unknown",
+			component: () => import("@/pages/error/404.vue"),
+			meta: {
+				rule: "isPublic"
+			}
+		},
+		{
+			name: "error403",
+			path: "/notfound",
+			component: () => import("@/pages/error/403.vue"),
+			meta: {
+				rule: "isPublic"
+			},
+			beforeEnter: (to, from, next) => {
+				// Force user to login again when he/she try to access without authentication
+				localStorage.removeItem("user");
+				next();
+			}
 		}
 	]
 });

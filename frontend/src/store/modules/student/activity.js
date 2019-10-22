@@ -1,4 +1,4 @@
-import { Activity } from "@/services/student";
+import { Activity } from "@/services";
 import {
 	LOAD_ACTIVITIES,
 	LOAD_ACTIVITY_ID,

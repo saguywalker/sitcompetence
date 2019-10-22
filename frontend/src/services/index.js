@@ -1,5 +1,14 @@
 import axios from "axios";
 import { getLoginToken } from "@/helpers";
+import router from "@/router";
+
+const handleResponse = (response) => response;
+
+const handle403 = (error) => {
+	if (error.response.status === 403) {
+		router.push({ name: "error403" });
+	}
+};
 
 const apiClient = axios.create({
 	baseURL: process.env.VUE_APP_API_URL,
@@ -7,6 +16,9 @@ const apiClient = axios.create({
 		"X-Session-Token": getLoginToken()
 	}
 });
+
+// Handle response status error 403
+apiClient.interceptors.response.use(handleResponse, handle403);
 
 const Login = {
 	login(data) {

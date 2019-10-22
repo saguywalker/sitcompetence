@@ -8,6 +8,7 @@ import BaseImage from "@/components/BaseImage.vue";
 import BaseSitcomLogo from "@/components/BaseSitcomLogo.vue";
 import BaseInputText from "@/components/BaseInputText.vue";
 import BasePageStep from "@/components/admin/BasePageStep.vue";
+import acl from "@/plugin/acl";
 import "./registerServiceWorker";
 import "@/styles/global.scss";
 
@@ -28,5 +29,6 @@ Vue.component("base-sitcom-logo", BaseSitcomLogo);
 new Vue({
 	router,
 	store,
+	acl,
 	render: (h) => h(App)
 }).$mount("#app");

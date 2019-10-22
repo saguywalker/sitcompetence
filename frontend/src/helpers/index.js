@@ -85,8 +85,29 @@ export const getCiphertext = (message) => {
 	return eHex;
 };
 
-export const getLoginToken = () => localStorage.getItem("user");
-// export const getLoginToken = () => JSON.parse(getPlainTextToken(localStorage.getItem("user"))).token;
+export const getLoginToken = () => {
+	const loggedInData = localStorage.getItem("user");
+	if (!loggedInData) {
+		return null;
+	}
 
-export const getLoginUser = () => localStorage.getItem("user");
-// export const getLoginUser = () => JSON.parse(getPlainTextToken(localStorage.getItem("user"))).user;
+	return JSON.parse(getPlainTextToken(loggedInData)).token;
+};
+
+export const getLoginUser = () => {
+	const loggedInData = localStorage.getItem("user");
+	if (!loggedInData) {
+		return null;
+	}
+
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).user;
+};
+
+export const getLoginUserRole = () => {
+	const loggedInData = localStorage.getItem("user");
+	if (!loggedInData) {
+		return null;
+	}
+
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).user.group;
+};
