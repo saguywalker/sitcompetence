@@ -5,6 +5,7 @@ type Staff struct {
 	StaffID   string `json:"staff_id"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
+	PublicKey string `json:"publickey"`
 }
 
 // NewStaff returns new staff struct

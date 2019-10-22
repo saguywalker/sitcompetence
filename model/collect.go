@@ -9,14 +9,15 @@ import (
 // CollectedCompetence defines collected badges for corresponding student
 type CollectedCompetence struct {
 	StudentID    string `json:"student_id"`
-	CompetenceID uint16 `json:"competence_id"`
-	Semester     uint16 `json:"semester"`
-	Giver        string `json:"giver"`
+	CompetenceID uint32 `json:"competence_id"`
+	Semester     uint32 `json:"semester"`
+	Giver        []byte `json:"giver"`
 	TxID         []byte `json:"transaction_id,omitempty"`
+	PrivateKey   string `json:"sk,omitempty"`
 }
 
 // NewCollectedCompetence return new CollectedBadges struct
-func NewCollectedCompetence(studentID string, competenceID, semester uint16, giver string, txid []byte) *CollectedCompetence {
+func NewCollectedCompetence(studentID string, competenceID, semester uint32, giver, txid []byte) *CollectedCompetence {
 	return &CollectedCompetence{
 		StudentID:    studentID,
 		CompetenceID: competenceID,

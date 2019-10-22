@@ -10,12 +10,13 @@ import (
 type AttendedActivity struct {
 	ActivityID    uint32 `json:"activity_id"`
 	StudentID     string `json:"student_id"`
-	Approver      string `json:"approver,omitempty"`
+	Approver      []byte `json:"approver,omitempty"`
 	TransactionID []byte `json:"transaction_id,omitempty"`
+	PrivateKey    string `json:"sk,omitempty"`
 }
 
 // NewAttendedActivity return new struct
-func NewAttendedActivity(activityID uint32, studentID, approver string, txid []byte) *AttendedActivity {
+func NewAttendedActivity(activityID uint32, studentID string, approver, txid []byte) *AttendedActivity {
 	return &AttendedActivity{
 		ActivityID:    activityID,
 		StudentID:     studentID,

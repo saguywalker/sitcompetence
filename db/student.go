@@ -53,7 +53,7 @@ func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year
 	if pageLimit != 0 && pageNo != 0 {
 		params = append(params, string(pageLimit))
 		params = append(params, string((pageNo-1)*pageLimit))
-		var paramsLen int = len(params)
+		paramsLen := len(params)
 		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramsLen-1, paramsLen))
 	}
 

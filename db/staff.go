@@ -59,6 +59,24 @@ func (db *Database) GetStaffs(pageLimit uint32, pageNo uint32) ([]*model.Staff, 
 	return staffs, nil
 }
 
+// GetStaffPublicKey return staff public key from staff id
+func (db *Database) GetStaffPublicKey(id string) ([]byte, error) {
+	row, err := db.Query("SELECT publicKey FROM staff WHERE staffId = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	publicKey := make([]byte, 32)
+
+	for row.Next() {
+		if err := row.Scan(&publicKey); err != nil {
+			return nil, err
+		}
+	}
+
+	return publicKey, nil
+}
+
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(s *model.Staff) (string, error) {
 	var id string
