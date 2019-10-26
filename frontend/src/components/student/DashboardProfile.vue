@@ -43,7 +43,7 @@ export default {
 	computed: {
 		user() {
 			return getLoginUser();
-		},
+		}
 	},
 	async created() {
 		this.userData = this.user;

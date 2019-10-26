@@ -238,14 +238,6 @@ const router = new Router({
 					}
 				},
 				{
-					name: "user-genkey",
-					path: "user/genkey",
-					component: () => import("@/pages/admin/user/genkey.vue"),
-					meta: {
-						rule: "isAdmin"
-					}
-				},
-				{
 					name: "user-setting",
 					path: "user/setting",
 					component: () => import("@/pages/admin/user/setting.vue"),
@@ -315,6 +307,14 @@ const router = new Router({
 					}
 				}
 			]
+		},
+		{
+			name: "user-genkey",
+			path: "/admin/user/genkey",
+			component: () => import("@/pages/admin/user/genkey.vue"),
+			meta: {
+				rule: "isAdmin"
+			}
 		},
 		{
 			name: "error404",

@@ -13,7 +13,7 @@ export default new AclCreate({
 	acceptLocalRules: true,
 	globalRules: {
 		isAdmin: new AclRule("inst_group").generate(),
-		isStudent: new AclRule("student").generate(),
+		isStudent: new AclRule("std_group").generate(),
 		isPublic: new AclRule("*").generate()
 	},
 	middleware: async (acl) => {
