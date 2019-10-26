@@ -52,6 +52,34 @@
 				</ul>
 			</div>
 		</div>
+		<b-modal
+			id="modal-prevent-closing"
+			ref="modal"
+			title="Submit Your Name"
+			@show="resetModal"
+			@hidden="resetModal"
+			@ok="handleOk"
+		>
+			<form
+				ref="form"
+				@submit.stop.prevent="handleSubmit"
+			>
+				<b-form-group
+					:state="skKeyState"
+					label="Secret Key"
+					label-for="sk-input"
+					invalid-feedback="Secret key is required"
+				>
+					<b-form-input
+						id="sk-input"
+						v-model="skKey"
+						:state="skKeyState"
+						required
+						@input="skKeyState = null"
+					/>
+				</b-form-group>
+			</form>
+		</b-modal>
 		<base-page-step
 			:step="step"
 			@next="submit"
@@ -72,7 +100,9 @@ export default {
 	},
 	data() {
 		return {
-			selectStudent: []
+			selectStudent: [],
+			skKey: "",
+			skKeyState: null
 		};
 	},
 	computed: {
@@ -98,6 +128,33 @@ export default {
 	methods: {
 		getBadgeImgById(id) {
 			return COMPETENCE[id].img;
+		},
+		checkFormValidity() {
+			const valid = this.$refs.form.checkValidity();
+			this.skKeyState = !!valid;
+			return valid;
+		},
+		resetModal() {
+			this.skKey = "";
+			this.skKeyState = null;
+		},
+		handleOk(bvModalEvt) {
+			// Prevent modal from closing
+			bvModalEvt.preventDefault();
+			// Trigger submit handler
+			this.handleSubmit();
+		},
+		handleSubmit() {
+			// Exit when the form isn't valid
+			if (!this.checkFormValidity()) {
+				return;
+			}
+			// Submit
+			this.submit();
+			// Hide the modal manually
+			this.$nextTick(() => {
+				this.$refs.modal.hide();
+			});
 		},
 		async submit() {
 			loading.start();
