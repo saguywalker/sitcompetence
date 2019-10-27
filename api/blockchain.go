@@ -89,7 +89,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infof("json data\n%s\n", rawData)
 
-	isExists, currentIndex, _, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, currentIndex, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}

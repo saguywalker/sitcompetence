@@ -2,10 +2,10 @@ package app
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -167,13 +167,12 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 }
 
 // VerifyTX verify data with a given merkle root
-func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, []byte, error) {
+func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {
-		return false, index, nil, err
+		return false, index, err
 	}
-	hashData := sha256.Sum256(trimData.Bytes())
-	ctx.Logger.Infof("H(data): %x\n", hashData)
+	ctx.Logger.Infof("data: %v\n", trimData.Bytes())
 
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
@@ -181,7 +180,7 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 
 	respData := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], hashData)
+		url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], trimData.Bytes())
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -201,22 +200,22 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(respData, &fullData); err != nil {
 		ctx.Logger.Errorf("%v", respData)
-		return false, index, hashData[:], err
+		return false, index, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", fullData)
-		return false, index, hashData[:], fmt.Errorf(string(respData))
+		return false, index, errors.New(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", respResult)
-		return false, index, hashData[:], fmt.Errorf(string(respData))
+		return false, index, errors.New(string(respData))
 	}
 
 	isExist := respResult["log"] == "exists"
 
-	return isExist, index, hashData[:], nil
+	return isExist, index, nil
 }
