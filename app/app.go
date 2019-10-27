@@ -1,6 +1,10 @@
 package app
 
 import (
+	"crypto/sha256"
+	"encoding/gob"
+
+	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/sitcompetence/db"
@@ -11,7 +15,7 @@ import (
 type App struct {
 	Config           *Config
 	Database         *db.Database
-	TokenUser        map[string]*model.User
+	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
 }
 
@@ -42,8 +46,13 @@ func New() (app *App, err error) {
 		return nil, err
 	}
 
-	app.TokenUser = make(map[string]*model.User, 0)
-	// app.Ldap = NewLDAPClient(app.Config.Username, app.Config.Password)
+	// app.TokenUser = make(map[string]*model.User, 0)
+	gob.Register(model.User{})
+	keyHash := sha256.Sum256(app.Config.SecretKey)
+	app.UserSession = sessions.NewCookieStore(keyHash[:])
+	app.UserSession.Options = &sessions.Options{
+		MaxAge: 60 * 15,
+	}
 
 	app.CurrentPeerIndex = 0
 

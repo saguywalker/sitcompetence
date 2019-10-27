@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/saguywalker/sitcompetence/app"
+	"github.com/saguywalker/sitcompetence/model"
 )
 
 type statusCodeRecorder struct {
@@ -69,7 +70,7 @@ func (a *API) Init(r *mux.Router) {
 
 	r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
 	r.HandleFunc("/login", a.Login).Methods("POST")
-	r.Handle("/logout", a.handler(a.Logout)).Methods("POST")
+	r.Handle("/logout", a.handler(a.Logout)).Methods("GET")
 
 	r.Handle("/userDetail", a.handler(a.GetUserDetail)).Methods("GET")
 
@@ -82,15 +83,9 @@ func (a *API) Init(r *mux.Router) {
 
 func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) error) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
-
-		// beginTime := time.Now()
-		token := r.Header.Get("X-Session-Token")
-
-		token = strings.TrimSpace(token)
-
-		if len(token) == 0 {
-			http.Error(w, "Missing auth token", http.StatusForbidden)
+		session, err := a.App.UserSession.Get(r, "x-session-token")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -102,17 +97,18 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
 
-		user, found := a.App.TokenUser[token]
-
-		ctx.Logger.Infoln(found, user)
-
-		if !found {
-			http.Error(w, "No user in session", http.StatusForbidden)
+		user := model.User{}
+		var ok bool
+		userInterface := session.Values["user"]
+		user, ok = userInterface.(model.User)
+		if !ok && !user.Authenticated {
+			http.Error(w, "unauthenticated", http.StatusForbidden)
 			return
 		}
 
-		ctx = ctx.WithUser(*user)
-		ctx.Logger.Infoln(user.Group)
+		ctx.Logger.Infof("%+v\n", user)
+
+		ctx = ctx.WithUser(user)
 		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
 		/*
 			defer func() {
