@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"errors"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -14,7 +15,7 @@ import (
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Logger.Infoln(ctx.User.Group)
 	if ctx.User.Group != "inst_group" {
-		return fmt.Errorf("giveBadge must be called by admin only")
+		return errors.New("giveBadge must be called by admin only")
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -31,7 +32,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	for _, badge := range giveBadgeRequest.Badges {
-		currentIndex, err := ctx.GiveBadge(badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
+		currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
@@ -54,13 +55,14 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 	defer r.Body.Close()
 
-	var listOfActivities []*model.AttendedActivity
-	if err := json.Unmarshal(body, &listOfActivities); err != nil {
+	var activityRequest *model.ApproveActivityRequest
+	// var listOfActivities []*model.AttendedActivity
+	if err := json.Unmarshal(body, &activityRequest); err != nil {
 		return err
 	}
 
-	for _, activity := range listOfActivities {
-		currentIndex, err := ctx.ApproveActivity(activity, a.App.CurrentPeerIndex, a.Config.Peers)
+	for _, activity := range activityRequest.Activities {
+		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}

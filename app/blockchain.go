@@ -13,7 +13,6 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/saguywalker/sitcompetence/model"
-	dataTm "github.com/saguywalker/sitcompetence/proto/data"
 	protoTm "github.com/saguywalker/sitcompetence/proto/tendermint"
 	"golang.org/x/crypto/ed25519"
 )
@@ -27,14 +26,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 
 	badge.Giver = giverPK
 
-	badgeProto := dataTm.CollectedBadge{
-		StudentID: badge.StudentID,
-		CompetenceID: badge.CompetenceID,
-		Semester: badge.Semester,
-		Giver: badge.Giver,
-	}
-
-	badgeBytes, err := proto.Marshal(&badgeProto)
+	badgeBytes, err := json.Marshal(badge)
 	if err != nil {
 		return index, err
 	}
@@ -56,7 +48,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint64, peers []string) (uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string) (uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -64,15 +56,12 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint
 
 	activity.Approver = approverPK
 
-	privKey := activity.PrivateKey
-	activity.PrivateKey = ""
-
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, privKey, index, peers)
+	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers)
 	if err != nil {
 		return index, err
 	}
