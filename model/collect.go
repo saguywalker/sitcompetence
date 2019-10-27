@@ -6,6 +6,12 @@ import (
 	"encoding/json"
 )
 
+// GiveBadgeRequest define givebadge request 
+type GiveBadgeRequest struct {
+	Badges []CollectedCompetence `json:"badges"`
+	PrivateKey string `json:"sk"`
+}
+
 // CollectedCompetence defines collected badges for corresponding student
 type CollectedCompetence struct {
 	StudentID    string `json:"student_id"`
@@ -13,9 +19,10 @@ type CollectedCompetence struct {
 	Semester     uint32 `json:"semester"`
 	Giver        []byte `json:"giver"`
 	TxID         []byte `json:"transaction_id,omitempty"`
-	PrivateKey   string `json:"sk,omitempty"`
+	// PrivateKey   string `json:"sk,omitempty"`
 }
 
+/*
 // NewCollectedCompetence return new CollectedBadges struct
 func NewCollectedCompetence(studentID string, competenceID, semester uint32, giver, txid []byte) *CollectedCompetence {
 	return &CollectedCompetence{
@@ -26,6 +33,7 @@ func NewCollectedCompetence(studentID string, competenceID, semester uint32, giv
 		TxID:         txid,
 	}
 }
+*/
 
 // CalculateHash return hash of calling struct
 func (c CollectedCompetence) CalculateHash() ([]byte, error) {

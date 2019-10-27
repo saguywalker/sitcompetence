@@ -13,12 +13,13 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/saguywalker/sitcompetence/model"
+	dataTm "github.com/saguywalker/sitcompetence/proto/data"
 	protoTm "github.com/saguywalker/sitcompetence/proto/tendermint"
 	"golang.org/x/crypto/ed25519"
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, peers []string) (uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string) (uint64, error) {
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -26,15 +27,19 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, pe
 
 	badge.Giver = giverPK
 
-	privKey := badge.PrivateKey
-	badge.PrivateKey = ""
+	badgeProto := dataTm.CollectedBadge{
+		StudentID: badge.StudentID,
+		CompetenceID: badge.CompetenceID,
+		Semester: badge.Semester,
+		Giver: badge.Giver,
+	}
 
-	badgeBytes, err := json.Marshal(badge)
+	badgeBytes, err := proto.Marshal(&badgeProto)
 	if err != nil {
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, privKey, index, peers)
+	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers)
 	if err != nil {
 		return index, err
 	}

@@ -24,13 +24,14 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	defer r.Body.Close()
 
 	// Struct of objects
-	var listOfBadges []*model.CollectedCompetence
-	if err := json.Unmarshal(body, &listOfBadges); err != nil {
+	var giveBadgeRequest *model.GiveBadgeRequest
+	// var listOfBadges []*model.CollectedCompetence
+	if err := json.Unmarshal(body, &giveBadgeRequest); err != nil {
 		return err
 	}
 
-	for _, badge := range listOfBadges {
-		currentIndex, err := ctx.GiveBadge(badge, a.App.CurrentPeerIndex, a.Config.Peers)
+	for _, badge := range giveBadgeRequest.Badges {
+		currentIndex, err := ctx.GiveBadge(badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
