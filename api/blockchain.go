@@ -30,7 +30,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	for _, badge := range listOfBadges {
-		currentIndex, err := ctx.GiveBadge(badge, w, a.App.CurrentPeerIndex, a.Config.Peers)
+		currentIndex, err := ctx.GiveBadge(badge, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
@@ -59,7 +59,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 
 	for _, activity := range listOfActivities {
-		currentIndex, err := ctx.ApproveActivity(activity, w, a.App.CurrentPeerIndex, a.Config.Peers)
+		currentIndex, err := ctx.ApproveActivity(activity, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}

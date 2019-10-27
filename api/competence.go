@@ -88,7 +88,8 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID), page)
 		} else if params.Get("student_id") != "" {
 			studentID := params.Get("student_id")
-			collected, err := ctx.GetCollectedWithDetail(studentID, page)
+			// collected, err := ctx.GetCollectedWithDetail(studentID, page)
+			collected, err := ctx.GetBadgeFromStudent(studentID, a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
 				return err
 			}

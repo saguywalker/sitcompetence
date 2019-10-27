@@ -18,14 +18,7 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
-	/*
-		badgeHash, err := badge.CalculateHash()
-		if err != nil {
-			return nil, index, err
-		}
-	*/
-
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, peers []string) (uint64, error) {
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -58,14 +51,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseW
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
-	/*
-		activityHash, err := activity.CalculateHash()
-		if err != nil {
-			return nil, index, err
-		}
-	*/
-
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint64, peers []string) (uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -218,4 +204,9 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	isExist := respResult["log"] == "exists"
 
 	return isExist, index, nil
+}
+
+// GetBadgeFromStudent return all of collected badges from corresponding studentId from in blockchain
+func (ctx *Context) GetBadgeFromStudent(id string, index uint64, peers []string) ([]model.CollectedCompetence, error) {
+	return nil, nil
 }
