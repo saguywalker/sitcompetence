@@ -55,9 +55,10 @@ func serveAPI(ctx context.Context, api *api.API) {
 
 	// CORS middleware
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:8080", "http://localhost:8082"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders: []string{"*"},
+		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:8082"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
 	})
 
 	corsHandler := c.Handler(router)
