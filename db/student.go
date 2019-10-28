@@ -1,7 +1,7 @@
 package db
 
 import (
-	"database/sql"
+	// "database/sql"
 	"fmt"
 	"log"
 	"strings"
@@ -34,15 +34,13 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year uint16) ([]*model.Student, error) {
 	commands := make([]string, 1)
 	commands[0] = "SELECT studentId, firstname, department FROM student "
-	params := make([]interface{}, 0)
 
 	if dp != "" {
-		params = append(params, dp)
-		commands = append(commands, "WHERE LOWER(department)=LOWER($1) ")
+		commands = append(commands, fmt.Sprintf("WHERE LOWER(department)=LOWER(%s) ", dp))
 	}
 
 	if year != 0 {
-		if len(params) == 0 {
+		if dp == "" {
 			commands = append(commands, "WHERE ")
 		} else {
 			commands = append(commands, "AND ")
@@ -51,23 +49,14 @@ func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year
 	}
 
 	if pageLimit != 0 && pageNo != 0 {
-		params = append(params, string(pageLimit))
-		params = append(params, string((pageNo-1)*pageLimit))
-		paramsLen := len(params)
-		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramsLen-1, paramsLen))
+		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT %d OFFSET %d", pageLimit, (pageNo-1)*pageLimit))
 	}
 
 	command := strings.Join(commands, " ")
 
-	log.Println(command, ":", params)
+	log.Println("command: ", command)
 
-	var rows *sql.Rows
-	var err error
-	if len(params) == 0 {
-		rows, err = db.Query(command)
-	} else {
-		rows, err = db.Query(command, params...)
-	}
+	rows, err := db.Query(command)
 	if err != nil {
 		return nil, err
 	}
