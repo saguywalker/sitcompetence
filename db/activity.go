@@ -34,47 +34,22 @@ func (db *Database) GetActivities(pageNo uint32, pageLimit uint32, isStudent str
 
 	commands := make([]string, 1)
 	commands[0] = "SELECT * FROM activity "
-	params := make([]interface{}, 0)
 
 	if strings.ToLower(isStudent) == "true" {
-		params = append(params, isStudent)
-		commands = append(commands, "WHERE studentSite = $1 ")
+		commands = append(commands, fmt.Sprintf("WHERE studentSite = %s ", strings.ToLower(isStudent)))
 	}
 
 	if pageLimit != 0 && pageNo != 0 {
-		params = append(params, string(pageLimit))
-		params = append(params, string((pageNo-1)*pageLimit))
-		paramsLen := len(params)
-		commands = append(commands, fmt.Sprintf("ORDER BY activityId LIMIT $%d OFFSET $%d", paramsLen, paramsLen-1))
+		commands = append(commands, fmt.Sprintf("ORDER BY activityId LIMIT %d OFFSET %d", pageLimit, (pageNo-1)*pageLimit))
 	}
 
-	command := strings.Join(commands, " ")
+	command := strings.Join(commands, "")
 
-	var rows *sql.Rows
-	var err error
-
-	if len(params) == 0 {
-		rows, err = db.Query(command)
-	} else {
-		rows, err = db.Query(command, params...)
-	}
-
+	rows, err := db.Query(command)
 	if err != nil {
 		return nil, err
 	}
 
-	/*
-		var rows *sql.Rows
-		var err error
-		if pageLimit == 0 || pageNo == 0 {
-			rows, err = db.Query("SELECT * FROM activity;")
-		} else {
-			rows, err = db.Query("SELECT * FROM activity ORDER BY activityId LIMIT $1 OFFSET pageNo $2;", pageLimit, (pageNo-1)*pageLimit)
-		}
-		if err != nil {
-			return nil, err
-		}
-	*/
 	for rows.Next() {
 		var ac model.Activity
 		err := rows.Scan(&ac.ActivityID, &ac.ActivityName, &ac.Description, &ac.Date, &ac.Time, &ac.Creator, &ac.Organizer, &ac.Category, &ac.Location, &ac.Semester, &ac.StudentSite)
