@@ -80,10 +80,8 @@ func (db *Database) GetCompetences(pageLimit uint32, pageNo uint32) ([]model.Com
 	var err error
 
 	if pageLimit == 0 || pageNo == 0 {
-		log.Println("SELECT * FROM competence")
 		rows, err = db.Query("SELECT * FROM competence")
 	} else {
-		log.Println(fmt.Sprintf("SELECT * FROM competence ORDER BY competenceId LIMIT %d OFFSET %d", pageLimit, (pageNo-1)*pageLimit))
 		rows, err = db.Query("SELECT * FROM competence ORDER BY competenceId LIMIT $1 OFFSET $2", pageLimit, (pageNo-1)*pageLimit)
 	}
 	if err != nil {
