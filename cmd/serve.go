@@ -58,7 +58,7 @@ func serveAPI(ctx context.Context, api *api.API) {
 		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:8082"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
+		// AllowCredentials: true,
 	})
 
 	corsHandler := c.Handler(router)
