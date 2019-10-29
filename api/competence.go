@@ -89,6 +89,10 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 			sepCollected := bytes.Split(collectedBytes, []byte("|"))
 			collected := make([]model.CollectedCompetence, 0)
 			for _, c := range sepCollected {
+				if len(c) == 0 {
+					continue
+				}
+
 				var tmp model.CollectedCompetence
 				if err := json.Unmarshal(c, &tmp); err != nil {
 					return err
