@@ -221,6 +221,7 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	return isExist, index, hashData[:], nil
 }
 
-func (ctx *Context) BlockchainQueryWithParmas() {
-
+// BlockchainQueryWithParams return []byte from corresponding parameters
+func (ctx *Context) BlockchainQueryWithParams(params string) ([]byte, error) {
+	return nil, nil
 }

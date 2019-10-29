@@ -74,7 +74,7 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 		}
 
 		competences = append(competences, *competence)
-	} else {
+	} else {		
 		/*
 		page, err := getPageParam(r)
 		if err != nil {
@@ -114,6 +114,31 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 			return nil
 		*/
+
+		if len(params) != 0 {
+			collectedBytes, err := ctx.BlockchainQueryWithParmas(params.Encode())
+			if err != nil {
+				return err
+			}
+
+			sepCollected := bytes.Split(collectedBytes, []byte("|"))
+			collected := make([]model.CollectedCompetence, len(sepCollected))
+			for i, c := range sepCollected {
+				var tmp model.CollectedCompetence
+				if err := json.Unmarshal(c, &tmp); err != nil {
+					return err
+				}
+				collected = append(collected, tmp)
+			}
+
+			resp, err := json.Marshal(collected)
+			if err != nil {
+				return err
+			}
+
+			w.Write(string(resp))
+			return
+
 		} else {
 			competences, err = ctx.GetCompetences(page)
 		}
