@@ -57,13 +57,31 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := a.App.NewContext()
 	ctx.WithUser(user)
 
-	resp, err := json.Marshal(user)
+	mapResp := make(map[string]interface{})
+
+	if user.Group == "inst_group" {
+		pubkey, err := ctx.Database.GetStaffPublicKey(user.UserID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if len(pubkey) == 0 {
+			mapResp["first"] = true
+		} else {
+			mapResp["first"] = false
+		}
+	}
+
+	resp, err := json.Marshal(mapResp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	session.Values["user"] = user
+
+	mapResp["user"] = user
 
 	ctx.Logger.Infof("%+v\n", session.Values["user"])
 	ctx.Logger.Infoln(string(resp))
