@@ -6,15 +6,21 @@ import (
 	"encoding/json"
 )
 
+// ApproveActivityRequest define activity approving request
+type ApproveActivityRequest struct {
+	Activities []AttendedActivity `json:"activities"`
+	PrivateKey string             `json:"sk"`
+}
+
 // AttendedActivity table in postgres
 type AttendedActivity struct {
 	ActivityID    uint32 `json:"activity_id"`
 	StudentID     string `json:"student_id"`
 	Approver      []byte `json:"approver,omitempty"`
 	TransactionID []byte `json:"transaction_id,omitempty"`
-	PrivateKey    string `json:"sk,omitempty"`
 }
 
+/*
 // NewAttendedActivity return new struct
 func NewAttendedActivity(activityID uint32, studentID string, approver, txid []byte) *AttendedActivity {
 	return &AttendedActivity{
@@ -24,6 +30,7 @@ func NewAttendedActivity(activityID uint32, studentID string, approver, txid []b
 		TransactionID: txid,
 	}
 }
+*/
 
 // CalculateHash return hash of calling struct
 func (a AttendedActivity) CalculateHash() ([]byte, error) {

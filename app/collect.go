@@ -45,6 +45,7 @@ func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint32) ([]model.C
 // GetCollectedWithDetail return list of collected competence from student id
 func (ctx *Context) GetCollectedWithDetail(id string, pageNo uint32) ([]model.CollectedCompetence, error) {
 	collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
+	// collected, err := ctx.BlockchainQueryWithKey(id)
 	if err != nil {
 		return nil, err
 	}

@@ -54,7 +54,7 @@ func serveAPI(ctx context.Context, api *api.API) {
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
 	// CORS middleware
-	
+
 	c := cors.New(cors.Options{
 		// AllowedOrigins: []string{"*"},
 		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
@@ -66,8 +66,8 @@ func serveAPI(ctx context.Context, api *api.API) {
 	corsHandler := c.Handler(router)
 
 	s := &http.Server{
-		Addr:        fmt.Sprintf(":%d", api.Config.Port),
-		Handler:     corsHandler,
+		Addr:    fmt.Sprintf(":%d", api.Config.Port),
+		Handler: corsHandler,
 		// Handler: router,
 		ReadTimeout: 2 * time.Minute,
 	}
