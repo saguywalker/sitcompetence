@@ -79,16 +79,19 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 		if err != nil {
 			return err
 		}
-
+/*
 		if params.Get("activity_id") != "" {
 			activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
 			if err != nil {
 				return err
 			}
 			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID), page)
-		} else if params.Get("student_id") != "" {
+		} else
+		*/
+		if params.Get("student_id") != "" {
 			studentID := params.Get("student_id")
-			collected, err := ctx.GetCollectedWithDetail(studentID, page)
+			// collected, err := ctx.GetCollectedWithDetail(studentID, page)
+			collected, err := ctx.BlockchainQueryWithKey("student_id", )
 			if err != nil {
 				return err
 			}
