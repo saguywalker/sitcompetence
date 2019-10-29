@@ -87,17 +87,22 @@ const actions = {
 			return separateBadge;
 		});
 
-		const payload = [];
+		const payloadBadges = [];
 
 		filterData.forEach((student) => {
 			student.forEach((x) => {
-				payload.push(x);
+				payloadBadges.push(x);
 			});
 		});
 
+		const payload = {
+			sk: data.sk,
+			badges: payloadBadges
+		};
+
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {
-			commit(GIVE_BADGE_SUCCESS, payload);
+			commit(GIVE_BADGE_SUCCESS, payloadBadges);
 		}
 
 		return response;

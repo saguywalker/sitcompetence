@@ -55,30 +55,47 @@
 		<b-modal
 			id="modal-prevent-closing"
 			ref="modal"
-			title="Submit Your Name"
+			title="Submit Your Secret Key"
 			@show="resetModal"
 			@hidden="resetModal"
 			@ok="handleOk"
 		>
-			<form
-				ref="form"
-				@submit.stop.prevent="handleSubmit"
+			<b-form-file
+				v-model="skFile"
+				:state="Boolean(skFile)"
+				placeholder="Choose secret key file here..."
+			/>
+			<b-button
+				v-b-toggle="'text-collapse'"
+				class="my-3"
+				size="sm"
 			>
-				<b-form-group
-					:state="skKeyState"
-					label="Secret Key"
-					label-for="sk-input"
-					invalid-feedback="Secret key is required"
+				Use the copy way
+				<icon-arrow-dropdown />
+			</b-button>
+			<b-collapse id="text-collapse">
+				<form
+					ref="form"
+					@submit.stop.prevent="handleSubmit"
 				>
-					<b-form-input
-						id="sk-input"
-						v-model="skKey"
+					<b-form-group
 						:state="skKeyState"
-						required
-						@input="skKeyState = null"
-					/>
-				</b-form-group>
-			</form>
+						label="Insert your Secret Key"
+						label-for="sk-input"
+						invalid-feedback="Secret key is required"
+					>
+						<b-form-textarea
+							id="sk-input"
+							v-model="skKey"
+							:state="skKeyState"
+							rows="5"
+							max-rows="10"
+							required
+							@input="skKeyState = null"
+						/>
+					</b-form-group>
+				</form>
+			</b-collapse>
 		</b-modal>
 		<base-page-step
 			:step="step"
@@ -91,7 +108,7 @@
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
-import { getSemester, getLoginUser } from "@/helpers";
+import { getSemester, getLoginUser, getSHA256Message, getCiphertext } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -100,6 +117,7 @@ export default {
 	},
 	data() {
 		return {
+			skFile: null,
 			selectStudent: [],
 			skKey: "",
 			skKeyState: null
@@ -132,7 +150,8 @@ export default {
 		checkFormValidity() {
 			const valid = this.$refs.form.checkValidity();
 			this.skKeyState = !!valid;
-			return valid;
+
+			return valid || this.skFile;
 		},
 		showModal() {
 			this.$refs.modal.show();
@@ -153,6 +172,11 @@ export default {
 		handleSubmit() {
 			// Exit when the form isn't valid
 			if (!this.checkFormValidity()) {
+				this.$bvToast.toast("Please insert the secret key before submitting", {
+					title: "Secret key",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
 				return;
 			}
 			// Submit
@@ -168,7 +192,8 @@ export default {
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
 					giver: getLoginUser(),
-					semester: getSemester()
+					semester: getSemester(),
+					sk: getCiphertext(this.skKey, getSHA256Message(process.env.VUE_APP_SKKEY))
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });

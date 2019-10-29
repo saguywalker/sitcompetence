@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import SHA256 from "crypto-js/sha256";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
 
@@ -86,21 +87,23 @@ export const getEditDateFormat = (format) => {
 };
 
 // Decrypt
-export const getPlainTextToken = (cipher) => {
+export const getPlainTextToken = (cipher, key) => {
 	const reb64 = CryptoJS.enc.Hex.parse(cipher);
 	const bytes = reb64.toString(CryptoJS.enc.Base64);
-	const decrypt = CryptoJS.AES.decrypt(bytes, process.env.VUE_APP_USER_DATA_KEY);
+	const decrypt = CryptoJS.AES.decrypt(bytes, key);
 	const plain = decrypt.toString(CryptoJS.enc.Utf8);
 	return plain;
 };
 
 // Encrypt
-export const getCiphertext = (message) => {
-	const b64 = CryptoJS.AES.encrypt(message, process.env.VUE_APP_USER_DATA_KEY).toString();
+export const getCiphertext = (message, key) => {
+	const b64 = CryptoJS.AES.encrypt(message, key).toString();
 	const e64 = CryptoJS.enc.Base64.parse(b64);
 	const eHex = e64.toString(CryptoJS.enc.Hex);
 	return eHex;
 };
+
+export const getSHA256Message = (message) => SHA256(message);
 
 export const getLoginToken = () => {
 	const loggedInData = localStorage.getItem("user");
@@ -108,7 +111,7 @@ export const getLoginToken = () => {
 		return null;
 	}
 
-	return JSON.parse(getPlainTextToken(loggedInData)).token;
+	return JSON.parse(getPlainTextToken(loggedInData, process.env.VUE_APP_USER_DATA_KEY)).token;
 };
 
 export const getLoginUser = () => {
@@ -116,7 +119,7 @@ export const getLoginUser = () => {
 	if (!loggedInData) {
 		return null;
 	}
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).username;
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY)).username;
 };
 
 export const getLoginUserRole = () => {
@@ -125,5 +128,5 @@ export const getLoginUserRole = () => {
 		return null;
 	}
 
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).group;
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY)).group;
 };

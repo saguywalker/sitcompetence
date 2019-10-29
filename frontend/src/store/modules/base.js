@@ -74,7 +74,7 @@ const actions = {
 		}
 
 		const loginDataString = JSON.stringify(response.data);
-		const encryptedLoginData = getCiphertext(loginDataString);
+		const encryptedLoginData = getCiphertext(loginDataString, process.env.VUE_APP_USER_DATA_KEY);
 		localStorage.setItem("user", encryptedLoginData);
 
 		if (response.data.group === "inst_group") {

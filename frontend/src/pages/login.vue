@@ -28,6 +28,7 @@
 					permanent and decentalized data storage. This
 					project also provides two web applications for staff
 					and students.
+					{{ pros }}
 				</p>
 			</div>
 		</div>

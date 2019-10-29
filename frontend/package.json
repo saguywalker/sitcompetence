@@ -30,6 +30,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "js-cookie": "^2.2.1",
     "node-sass": "^4.12.0",
+    "read-yaml": "^1.1.0",
     "sass-loader": "^8.0.0",
     "vue-acl": "^4.1.5",
     "vue-progressbar": "^0.7.5",
