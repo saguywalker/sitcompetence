@@ -152,15 +152,75 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	if err := json.Compact(&trimData, data); err != nil {
 		return false, index, err
 	}
-	ctx.Logger.Infof("data: %v\n", trimData.Bytes())
+	ctx.Logger.Infof("data: %s\n", trimData.String())
+	/*
+		httpClient := &http.Client{
+			Timeout: 3 * time.Second,
+		}
 
+		respData := make([]byte, 0)
+		for i := 0; i < len(peers); i++ {
+			url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], trimData.Bytes())
+			ctx.Logger.Infoln(url)
+			resp, err := httpClient.Get(url)
+			index = uint64((index + 1)) % uint64(len(peers))
+			if err != nil {
+				continue
+			} else {
+				respData, err = ioutil.ReadAll(resp.Body)
+				defer resp.Body.Close()
+				if err != nil {
+					continue
+				}
+				ctx.Logger.Infoln(string(respData))
+				break
+			}
+		}
+
+		var fullData map[string]interface{}
+		if err := json.Unmarshal(respData, &fullData); err != nil {
+			ctx.Logger.Errorf("%v", respData)
+			return false, index, err
+		}
+
+		respResult, ok := fullData["result"].(map[string]interface{})
+		if !ok {
+			ctx.Logger.Errorf("%v", fullData)
+			return false, index, errors.New(string(respData))
+		}
+
+		respResult, ok = respResult["response"].(map[string]interface{})
+		if !ok {
+			ctx.Logger.Errorf("%v", respResult)
+			return false, index, errors.New(string(respData))
+		}
+	*/
+	_, returnIndex, err := ctx.BlockchainQueryWithParams(trimData.String(), index, peers)
+	if err != nil {
+		if err.Error() == "not exists" {
+			return false, returnIndex, nil
+		}
+
+		return false, returnIndex, err
+	}
+
+	return true, returnIndex, nil
+}
+
+// GetBadgeFromStudent return all of collected badges from corresponding studentId from in blockchain
+func (ctx *Context) GetBadgeFromStudent(id string, index uint64, peers []string) ([]model.CollectedCompetence, error) {
+	return nil, nil
+}
+
+// BlockchainQueryWithParams return []byte from corresponding parameters
+func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers []string) ([]byte, uint64, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
 
 	respData := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], trimData.Bytes())
+		url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], []byte(params))
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -180,32 +240,24 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(respData, &fullData); err != nil {
 		ctx.Logger.Errorf("%v", respData)
-		return false, index, err
+		return nil, index, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", fullData)
-		return false, index, errors.New(string(respData))
+		return nil, index, errors.New(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", respResult)
-		return false, index, errors.New(string(respData))
+		return nil, index, errors.New(string(respData))
 	}
 
-	isExist := respResult["log"] == "exists"
+	if isExist := respResult["exists"] == "exists"; !isExist {
+		return nil, index, errors.New("not exists")
+	}
 
-	return isExist, index, nil
-}
-
-// GetBadgeFromStudent return all of collected badges from corresponding studentId from in blockchain
-func (ctx *Context) GetBadgeFromStudent(id string, index uint64, peers []string) ([]model.CollectedCompetence, error) {
-	return nil, nil
-}
-
-// BlockchainQueryWithParams return []byte from corresponding parameters
-func (ctx *Context) BlockchainQueryWithParams(params string) ([]byte, error) {
-	return nil, nil
+	return respResult["value"].([]byte), index, nil
 }

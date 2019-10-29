@@ -51,7 +51,7 @@ func New() (app *App, err error) {
 	keyHash := sha256.Sum256(app.Config.SecretKey)
 	app.UserSession = sessions.NewCookieStore(keyHash[:])
 	app.UserSession.Options = &sessions.Options{
-		MaxAge: 60 * 15,
+		MaxAge:   60 * 15,
 		HttpOnly: true,
 	}
 

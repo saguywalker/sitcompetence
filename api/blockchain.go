@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"errors"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"

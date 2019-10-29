@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -58,7 +59,7 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 }
 
 // SearchCompetences search competence from key
-func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	params := r.URL.Query()
 
 	var competences []model.Competence
@@ -76,14 +77,16 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 		competences = append(competences, *competence)
 	} else {
 		if len(params) != 0 {
-			collectedBytes, err := ctx.BlockchainQueryWithParmas(params.Encode())
+			collectedBytes, returnIndex, err := ctx.BlockchainQueryWithParams(params.Encode(), a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
 				return err
 			}
 
+			a.App.CurrentPeerIndex = returnIndex
+
 			sepCollected := bytes.Split(collectedBytes, []byte("|"))
-			collected := make([]model.CollectedCompetence, len(sepCollected))
-			for i, c := range sepCollected {
+			collected := make([]model.CollectedCompetence, 0)
+			for _, c := range sepCollected {
 				var tmp model.CollectedCompetence
 				if err := json.Unmarshal(c, &tmp); err != nil {
 					return err
@@ -96,12 +99,17 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 				return err
 			}
 
-			w.Write(string(resp))
-			return
+			w.Write(resp)
+			return nil
 
-		} else {
-			competences, err = ctx.GetCompetences(page)
 		}
+
+		page, err := getPageParam(r)
+		if err != nil {
+			return err
+		}
+
+		competences, err = ctx.GetCompetences(page)
 
 		if err != nil {
 			return err
