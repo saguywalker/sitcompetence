@@ -65,7 +65,11 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 
 	session.Values["user"] = user
 
-	if err := session.Save(r, w); err != nil {
+	ctx.Logger.Infof("%+v\n", session.Values["user"])
+	ctx.Logger.Infoln(string(resp))
+
+	err = session.Save(r, w)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -36,7 +36,7 @@
 				<h4 class="title">
 					Login
 				</h4>
-				<div class="login-form">
+				<form @submit.prevent="submit">
 					<base-input-text
 						v-model="userName"
 						:error-message="error.userName ? 'Please enter a username' : ''"
@@ -53,13 +53,12 @@
 						name="kmutt-password"
 						@input="error.passWord = false"
 					/>
-					<b-button
-						variant="primary"
-						@click="submit"
+					<input
+						class="btn btn-primary"
+						type="submit"
+						value="Login"
 					>
-						Login
-					</b-button>
-				</div>
+				</form>
 			</div>
 		</div>
 		<button

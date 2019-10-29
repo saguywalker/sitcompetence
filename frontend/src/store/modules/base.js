@@ -77,7 +77,7 @@ const actions = {
 		const encryptedLoginData = getCiphertext(loginDataString);
 		localStorage.setItem("user", encryptedLoginData);
 
-		if (response.data.user.group === "inst_group") {
+		if (response.data.group === "inst_group") {
 			location.href = "http://localhost:8080/admin";
 			return;
 		}

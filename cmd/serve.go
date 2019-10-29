@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	// "github.com/rs/cors"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
@@ -54,25 +54,21 @@ func serveAPI(ctx context.Context, api *api.API) {
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
 	// CORS middleware
-	/*
+	
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		// AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:8082"},
+		// AllowedOrigins: []string{"*"},
+		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	})
 
 	corsHandler := c.Handler(router)
-*/
-	// amw := authenMiddleware{}
-
-	// router.Use(amw.Middleware)
 
 	s := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Config.Port),
-		// Handler:     corsHandler,
-		Handler: router,
+		Handler:     corsHandler,
+		// Handler: router,
 		ReadTimeout: 2 * time.Minute,
 	}
 

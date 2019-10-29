@@ -21,6 +21,15 @@ const router = new Router({
 			meta: {
 				rule: "isPublic"
 			}
+			// beforeEnter: (to, from, next) => {
+			// 	// Prevent user go back to Login page when already logged in
+			// 	const isLogin = localStorage.getItem("user");
+			// 	if (isLogin && to.name === "login") {
+			// 		router.replace({ name: from.name });
+			// 		return;
+			// 	}
+			// 	next();
+			// }
 		},
 		{
 			path: "/user/:id/portfolio",
@@ -335,28 +344,25 @@ const router = new Router({
 		{
 			name: "error403",
 			path: "/notfound",
-			component: () => import("@/pages/error/403.vue"),
-			meta: {
-				rule: "isPublic"
-			},
-			beforeEnter: (to, from, next) => {
-				// Force user to login again when he/she try to access without authentication
-				localStorage.removeItem("user");
-				next();
-			}
+			component: () => import("@/pages/error/403.vue")
+			// beforeEnter: (to, from, next) => {
+			// 	// Force user to login again when he/she try to access without authentication
+			// 	localStorage.removeItem("user");
+			// 	next();
+			// }
 		}
 	]
 });
 
-// router.beforeEach((to, from, next) => {
-// 	// Ignore login and error page
-// 	const isLogin = localStorage.getItem("user");
-// 	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
-// 		next({
-// 			name: "login"
-// 		});
-// 	}
-// 	next();
-// });
+router.beforeEach((to, from, next) => {
+	// Ignore login and error page
+	const isLogin = localStorage.getItem("user");
+	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
+		next({
+			name: "login"
+		});
+	}
+	next();
+});
 
 export default router;

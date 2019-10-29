@@ -1,5 +1,22 @@
 import CryptoJS from "crypto-js";
+import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
+
+export function clearCookie() {
+	const cookies = Cookies.get();
+
+	Object.keys(cookies).forEach((item) => {
+		Cookies.remove(item);
+	});
+}
+
+export function getCookie(name) {
+	return Cookies.getJSON(name);
+}
+
+export function setCookie(name, value) {
+	return Cookies.set(name, value);
+}
 
 export const takeFileName = (path) => {
 	if (!path) {
@@ -99,8 +116,7 @@ export const getLoginUser = () => {
 	if (!loggedInData) {
 		return null;
 	}
-
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).user;
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).username;
 };
 
 export const getLoginUserRole = () => {
@@ -109,5 +125,5 @@ export const getLoginUserRole = () => {
 		return null;
 	}
 
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).user.group;
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"))).group;
 };

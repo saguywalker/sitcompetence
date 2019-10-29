@@ -52,6 +52,7 @@ func New() (app *App, err error) {
 	app.UserSession = sessions.NewCookieStore(keyHash[:])
 	app.UserSession.Options = &sessions.Options{
 		MaxAge: 60 * 15,
+		HttpOnly: true,
 	}
 
 	app.CurrentPeerIndex = 0
