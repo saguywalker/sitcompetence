@@ -2,10 +2,10 @@ package app
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,14 +18,7 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
-	/*
-		badgeHash, err := badge.CalculateHash()
-		if err != nil {
-			return nil, index, err
-		}
-	*/
-
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string) (uint64, error) {
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -33,15 +26,12 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseW
 
 	badge.Giver = giverPK
 
-	privKey := badge.PrivateKey
-	badge.PrivateKey = ""
-
 	badgeBytes, err := json.Marshal(badge)
 	if err != nil {
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, privKey, index, peers)
+	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers)
 	if err != nil {
 		return index, err
 	}
@@ -58,14 +48,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseW
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
-	/*
-		activityHash, err := activity.CalculateHash()
-		if err != nil {
-			return nil, index, err
-		}
-	*/
-
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string) (uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -73,15 +56,12 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.Res
 
 	activity.Approver = approverPK
 
-	privKey := activity.PrivateKey
-	activity.PrivateKey = ""
-
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, privKey, index, peers)
+	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers)
 	if err != nil {
 		return index, err
 	}
@@ -167,13 +147,12 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 }
 
 // VerifyTX verify data with a given merkle root
-func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, []byte, error) {
+func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {
-		return false, index, nil, err
+		return false, index, err
 	}
-	hashData := sha256.Sum256(trimData.Bytes())
-	ctx.Logger.Infof("H(data): %x\n", hashData)
+	ctx.Logger.Infof("data: %v\n", trimData.Bytes())
 
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
@@ -181,7 +160,7 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 
 	respData := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], hashData)
+		url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], trimData.Bytes())
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -201,24 +180,29 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(respData, &fullData); err != nil {
 		ctx.Logger.Errorf("%v", respData)
-		return false, index, hashData[:], err
+		return false, index, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", fullData)
-		return false, index, hashData[:], fmt.Errorf(string(respData))
+		return false, index, errors.New(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%v", respResult)
-		return false, index, hashData[:], fmt.Errorf(string(respData))
+		return false, index, errors.New(string(respData))
 	}
 
 	isExist := respResult["log"] == "exists"
 
-	return isExist, index, hashData[:], nil
+	return isExist, index, nil
+}
+
+// GetBadgeFromStudent return all of collected badges from corresponding studentId from in blockchain
+func (ctx *Context) GetBadgeFromStudent(id string, index uint64, peers []string) ([]model.CollectedCompetence, error) {
+	return nil, nil
 }
 
 // BlockchainQueryWithParams return []byte from corresponding parameters

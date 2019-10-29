@@ -74,47 +74,7 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 		}
 
 		competences = append(competences, *competence)
-	} else {		
-		/*
-		page, err := getPageParam(r)
-		if err != nil {
-			return err
-		}
-		*/
-/*
-		if params.Get("activity_id") != "" {
-			activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
-			if err != nil {
-				return err
-			}
-			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID), page)
-		} else
-		*/
-		/*
-		if params.Get("student_id") != "" {
-			studentID := params.Get("student_id")
-			// collected, err := ctx.GetCollectedWithDetail(studentID, page)
-			collected, err := ctx.BlockchainQueryWithKey("student_id", )
-			if err != nil {
-				return err
-			}
-
-			student, err := ctx.GetStudentByID(studentID)
-			if err != nil {
-				return err
-			}
-
-			student.Collected = collected
-			data, err := json.Marshal(student)
-			if err != nil {
-				return err
-			}
-
-			w.Write(data)
-
-			return nil
-		*/
-
+	} else {
 		if len(params) != 0 {
 			collectedBytes, err := ctx.BlockchainQueryWithParmas(params.Encode())
 			if err != nil {

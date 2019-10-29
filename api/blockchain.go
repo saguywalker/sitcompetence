@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"errors"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -14,7 +15,7 @@ import (
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Logger.Infoln(ctx.User.Group)
 	if ctx.User.Group != "inst_group" {
-		return fmt.Errorf("giveBadge must be called by admin only")
+		return errors.New("giveBadge must be called by admin only")
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -24,13 +25,14 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	defer r.Body.Close()
 
 	// Struct of objects
-	var listOfBadges []*model.CollectedCompetence
-	if err := json.Unmarshal(body, &listOfBadges); err != nil {
+	var giveBadgeRequest *model.GiveBadgeRequest
+	// var listOfBadges []*model.CollectedCompetence
+	if err := json.Unmarshal(body, &giveBadgeRequest); err != nil {
 		return err
 	}
 
-	for _, badge := range listOfBadges {
-		currentIndex, err := ctx.GiveBadge(badge, w, a.App.CurrentPeerIndex, a.Config.Peers)
+	for _, badge := range giveBadgeRequest.Badges {
+		currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
@@ -53,13 +55,14 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 	defer r.Body.Close()
 
-	var listOfActivities []*model.AttendedActivity
-	if err := json.Unmarshal(body, &listOfActivities); err != nil {
+	var activityRequest *model.ApproveActivityRequest
+	// var listOfActivities []*model.AttendedActivity
+	if err := json.Unmarshal(body, &activityRequest); err != nil {
 		return err
 	}
 
-	for _, activity := range listOfActivities {
-		currentIndex, err := ctx.ApproveActivity(activity, w, a.App.CurrentPeerIndex, a.Config.Peers)
+	for _, activity := range activityRequest.Activities {
+		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
@@ -89,7 +92,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	ctx.Logger.Infof("json data\n%s\n", rawData)
 
-	isExists, currentIndex, _, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, currentIndex, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}
