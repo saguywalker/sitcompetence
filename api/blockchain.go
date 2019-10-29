@@ -23,6 +23,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 	defer r.Body.Close()
+	ctx.Logger.Infof("%s\n", body)
 
 	// Struct of objects
 	var giveBadgeRequest *model.GiveBadgeRequest
@@ -30,6 +31,8 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	if err := json.Unmarshal(body, &giveBadgeRequest); err != nil {
 		return err
 	}
+
+	ctx.Logger.Infof("%+v", giveBadgeRequest)
 
 	for _, badge := range giveBadgeRequest.Badges {
 		currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers)
@@ -39,6 +42,8 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 		a.App.CurrentPeerIndex = currentIndex
 	}
+
+	w.Write([]byte("give badge successfully"))
 
 	return nil
 }
@@ -80,19 +85,21 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 		return err
 	}
 	defer r.Body.Close()
+	/*
+		var bodyMap map[string]interface{}
+		if err := json.Unmarshal(body, &bodyMap); err != nil {
+			return nil
+		}
 
-	var bodyMap map[string]interface{}
-	if err := json.Unmarshal(body, &bodyMap); err != nil {
-		return nil
-	}
+		rawData, err := json.Marshal(bodyMap["data"])
+		if err != nil {
+			return err
+		}
+		ctx.Logger.Infof("json data: %s\n", rawData)
+	*/
+	ctx.Logger.Infof("json data: %s\n", body)
 
-	rawData, err := json.Marshal(bodyMap["data"])
-	if err != nil {
-		return err
-	}
-	ctx.Logger.Infof("json data\n%s\n", rawData)
-
-	isExists, currentIndex, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}

@@ -19,6 +19,8 @@ import (
 
 // GiveBadge hashing badge, broadcast it and update to database
 func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string) (uint64, error) {
+	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
+
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -109,7 +111,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 
 	data := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=%v", peers[index], txBytes)
+		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], txBytes)
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -153,48 +155,7 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 		return false, index, err
 	}
 	ctx.Logger.Infof("data: %s\n", trimData.String())
-	/*
-		httpClient := &http.Client{
-			Timeout: 3 * time.Second,
-		}
 
-		respData := make([]byte, 0)
-		for i := 0; i < len(peers); i++ {
-			url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], trimData.Bytes())
-			ctx.Logger.Infoln(url)
-			resp, err := httpClient.Get(url)
-			index = uint64((index + 1)) % uint64(len(peers))
-			if err != nil {
-				continue
-			} else {
-				respData, err = ioutil.ReadAll(resp.Body)
-				defer resp.Body.Close()
-				if err != nil {
-					continue
-				}
-				ctx.Logger.Infoln(string(respData))
-				break
-			}
-		}
-
-		var fullData map[string]interface{}
-		if err := json.Unmarshal(respData, &fullData); err != nil {
-			ctx.Logger.Errorf("%v", respData)
-			return false, index, err
-		}
-
-		respResult, ok := fullData["result"].(map[string]interface{})
-		if !ok {
-			ctx.Logger.Errorf("%v", fullData)
-			return false, index, errors.New(string(respData))
-		}
-
-		respResult, ok = respResult["response"].(map[string]interface{})
-		if !ok {
-			ctx.Logger.Errorf("%v", respResult)
-			return false, index, errors.New(string(respData))
-		}
-	*/
 	_, returnIndex, err := ctx.BlockchainQueryWithParams(trimData.String(), index, peers)
 	if err != nil {
 		if err.Error() == "not exists" {
@@ -220,7 +181,7 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 
 	respData := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/abci_query?data=%v", peers[index], []byte(params))
+		url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], []byte(params))
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -239,19 +200,19 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(respData, &fullData); err != nil {
-		ctx.Logger.Errorf("%v", respData)
+		ctx.Logger.Errorf("%s", respData)
 		return nil, index, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
-		ctx.Logger.Errorf("%v", fullData)
+		ctx.Logger.Errorf("%s", fullData)
 		return nil, index, errors.New(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
-		ctx.Logger.Errorf("%v", respResult)
+		ctx.Logger.Errorf("%s", respResult)
 		return nil, index, errors.New(string(respData))
 	}
 
