@@ -75,10 +75,12 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 		competences = append(competences, *competence)
 	} else {
+		/*
 		page, err := getPageParam(r)
 		if err != nil {
 			return err
 		}
+		*/
 /*
 		if params.Get("activity_id") != "" {
 			activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
