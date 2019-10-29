@@ -82,7 +82,7 @@
 		</b-modal>
 		<base-page-step
 			:step="step"
-			@next="submit"
+			@next="showModal"
 			@back="goBack"
 		/>
 	</div>
@@ -134,6 +134,12 @@ export default {
 			this.skKeyState = !!valid;
 			return valid;
 		},
+		showModal() {
+			this.$refs.modal.show();
+		},
+		hideModal() {
+			this.$refs.modal.hide();
+		},
 		resetModal() {
 			this.skKey = "";
 			this.skKeyState = null;
@@ -153,7 +159,7 @@ export default {
 			this.submit();
 			// Hide the modal manually
 			this.$nextTick(() => {
-				this.$refs.modal.hide();
+				this.hideModal();
 			});
 		},
 		async submit() {

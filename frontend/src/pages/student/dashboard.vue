@@ -2,7 +2,7 @@
 	<div class="dashboard">
 		<div class="page-header">
 			<h1 class="wrapper title">
-				Welcome {{ loginUser }} {{ envi }}
+				Welcome {{ loginUser }}
 			</h1>
 		</div>
 		<section class="wrapper">
