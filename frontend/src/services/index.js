@@ -1,7 +1,7 @@
 import axios from "axios";
 import router from "@/router";
 
-// axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 // Handlers
 const handleResponse = (response) => response;
 const handle403 = (error) => {

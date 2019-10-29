@@ -8,6 +8,7 @@ import {
 	CREATE_ACTIVITY_STEP,
 	EDIT_ACTIVITY_STEP
 } from "@/constants";
+import { getLoginUserRole } from "@/helpers";
 
 Vue.use(Router);
 
@@ -20,16 +21,23 @@ const router = new Router({
 			component: () => import(/* webpackChunkName: "login" */ "@/pages/login.vue"),
 			meta: {
 				rule: "isPublic"
+			},
+			beforeEnter: (to, from, next) => {
+				// Prevent user go back to Login page when already logged in
+				const isLogin = localStorage.getItem("user");
+				const role = getLoginUserRole();
+
+				if (isLogin && to.name === "login") {
+					if (role === "inst_group") {
+						next({ name: "admin" });
+					} else {
+						next({ name: "student" });
+					}
+
+					return;
+				}
+				next();
 			}
-			// beforeEnter: (to, from, next) => {
-			// 	// Prevent user go back to Login page when already logged in
-			// 	const isLogin = localStorage.getItem("user");
-			// 	if (isLogin && to.name === "login") {
-			// 		router.replace({ name: from.name });
-			// 		return;
-			// 	}
-			// 	next();
-			// }
 		},
 		{
 			path: "/user/:id/portfolio",
@@ -45,6 +53,7 @@ const router = new Router({
 			children: [
 				{
 					path: "/",
+					name: "student",
 					redirect: { name: "dashboard" }
 				},
 				{

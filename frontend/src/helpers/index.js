@@ -2,7 +2,7 @@ import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
 
-export function clearCookie() {
+export function clearCookies() {
 	const cookies = Cookies.get();
 
 	Object.keys(cookies).forEach((item) => {

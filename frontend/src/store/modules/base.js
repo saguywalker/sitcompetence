@@ -1,5 +1,5 @@
 import router from "@/router";
-import { getCiphertext } from "@/helpers";
+import { getCiphertext, clearCookies } from "@/helpers";
 import { Base, Login } from "@/services";
 import {
 	LOAD_LOGIN_DATA,
@@ -78,15 +78,18 @@ const actions = {
 		localStorage.setItem("user", encryptedLoginData);
 
 		if (response.data.group === "inst_group") {
-			location.href = "http://localhost:8080/admin";
+			router.push({ name: "admin" });
+			// location.href = "http://localhost:8080/admin";
 			return;
 		}
 
 		commit(LOAD_LOGIN_DATA, response.data);
-		location.href = "http://localhost:8080/";
+		router.push({ name: "student" });
+		// location.href = "http://localhost:8080";
 	},
 	logout({ commit }) {
 		localStorage.removeItem("user");
+		clearCookies();
 		commit(LOGOUT);
 		router.push({ name: "login" });
 	}

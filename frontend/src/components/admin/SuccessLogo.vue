@@ -2,7 +2,10 @@
 	<div class="success-logo">
 		<div class="circle">
 			<div class="content">
-				<icon-check-circle fill="white" />
+				<icon-check-circle
+					size="30"
+					fill="white"
+				/>
 				<h2 class="text">
 					{{ text }}
 					<br>

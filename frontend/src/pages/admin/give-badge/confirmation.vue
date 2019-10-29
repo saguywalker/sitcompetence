@@ -115,13 +115,13 @@ export default {
 			return this.$route.meta.step;
 		}
 	},
-	beforeRouteEnter(to, from, next) {
-		next((vm) => {
-			if (!vm.steps.includes("selection")) {
-				vm.$router.replace({ name: "give-badge" });
-			}
-		});
-	},
+	// beforeRouteEnter(to, from, next) {
+	// 	next((vm) => {
+	// 		if (!vm.steps.includes("selection")) {
+	// 			vm.$router.replace({ name: "give-badge" });
+	// 		}
+	// 	});
+	// },
 	created() {
 		this.selectStudent = this.selectedStudents;
 	},
