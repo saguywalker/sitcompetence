@@ -77,6 +77,8 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 		competences = append(competences, *competence)
 	} else {
 		if len(params) != 0 {
+			params.Del("page")
+
 			collectedBytes, returnIndex, err := ctx.BlockchainQueryWithParams(params.Encode(), a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
 				return err
