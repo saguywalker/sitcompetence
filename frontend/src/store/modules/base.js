@@ -78,14 +78,17 @@ const actions = {
 		localStorage.setItem("user", encryptedLoginData);
 
 		if (response.data.group === "inst_group") {
+			if (response.data.first) {
+				router.push({ name: "user-genkey" });
+				return;
+			}
+
 			router.push({ name: "admin" });
-			// location.href = "http://localhost:8080/admin";
 			return;
 		}
 
 		commit(LOAD_LOGIN_DATA, response.data);
 		router.push({ name: "student" });
-		// location.href = "http://localhost:8080";
 	},
 	logout({ commit }) {
 		localStorage.removeItem("user");
