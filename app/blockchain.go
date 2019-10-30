@@ -95,9 +95,11 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey []
 
 	// Decrypt aes
 	decb64 := make([]byte, len(privKey))
+	ctx.Logger.Infof("encrypted base64 sk: %s", privKey)
 	if _, err := base64.StdEncoding.Decode(decb64, privKey); err != nil {
 		return nil, err
 	}
+	ctx.Logger.Infof("decrypted base64 sk: %x", decb64)
 
 	c, err := aes.NewCipher(key)
 	if err != nil {
