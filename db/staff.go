@@ -77,6 +77,19 @@ func (db *Database) GetStaffPublicKey(id string) ([]byte, error) {
 	return publicKey, nil
 }
 
+func (db *Database) SetPubkey(id string, pubkey []byte) error {
+	stmt, err := db.Prepare("UPDATE staff set publicKey=$1 WHERE staffId=$2")
+	if err != nil {
+		return err
+	}
+
+	if _, err := stmt.Exec(id, pubkey); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(s *model.Staff) (string, error) {
 	var id string

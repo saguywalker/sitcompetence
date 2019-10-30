@@ -48,6 +48,23 @@ func (a *API) SearchStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 	return nil
 }
 
+// SetPubkey set pubkey from corresponding staff
+func (a *API) SetPubkey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	staffID := ctx.User.UserID
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	if err := ctx.SetPubkey(staffID, body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetStaffs responses with all of staffs
 func (a *API) GetStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	page, err := getPageParam(r)

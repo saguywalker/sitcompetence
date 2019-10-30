@@ -13,6 +13,10 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 	return staff, nil
 }
 
+func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
+	return ctx.Database.SetPubkey(id, pubkey)
+}
+
 // GetStaffs returns all of activities
 func (ctx *Context) GetStaffs(pageNo uint32) ([]*model.Staff, error) {
 	staffs, err := ctx.Database.GetStaffs(ctx.PageLimit, pageNo)
