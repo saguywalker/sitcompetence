@@ -107,6 +107,11 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			return
 		}
 
+		if err := session.Save(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		ctx.Logger.Infof("%+v\n", user)
 
 		ctx = ctx.WithUser(user)
