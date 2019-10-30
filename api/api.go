@@ -107,7 +107,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			return
 		}
 
-		if err := session.Save(); err != nil {
+		if err := session.Save(r, w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
