@@ -112,11 +112,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 
 	priv := make([]byte, 64)
 	c.Decrypt(priv, decb64)
-	ctx.Logger.Infof("decrypted: %x\n", priv)
-
-
-
-
+	ctx.Logger.Infof("decrypted: %s\n", priv)
 
 	// Sign
 	signature := ed25519.Sign(priv, params)
