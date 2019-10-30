@@ -13,6 +13,7 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 	return staff, nil
 }
 
+// SetPubkey set publickey
 func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
 	return ctx.Database.SetPubkey(id, pubkey)
 }

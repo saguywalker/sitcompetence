@@ -94,13 +94,8 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey []
 	*/
 
 	// Decrypt aes
-	hexPrivKey := make([]byte, len(privKey))
-	if _, err := hex.Decode(hexPrivKey, privKey); err != nil {
-		return nil, err
-	}
-
-	decb64 := make([]byte, len(hexPrivKey))
-	if _, err := base64.StdEncoding.Decode(decb64, hexPrivKey); err != nil {
+	decb64 := make([]byte, len(privKey))
+	if _, err := base64.StdEncoding.Decode(decb64, privKey); err != nil {
 		return nil, err
 	}
 
