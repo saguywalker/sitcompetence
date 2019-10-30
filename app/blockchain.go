@@ -93,7 +93,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 		return nil, err
 	}
 
-	ctx.Logger.Infof("decrypted base64 sk: %s", string(decb64))
+	ctx.Logger.Infof("decrypted base64 sk: %s (%d)", string(decb64), len(decb64))
 	/*
 	ctx.Logger.Infof("H(key): %x", key)
 
