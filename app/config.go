@@ -1,6 +1,7 @@
 package app
 
 import (
+	"crypto/sha256"
 	"errors"
 
 	"github.com/spf13/viper"
@@ -14,8 +15,9 @@ type Config struct {
 
 // InitConfig returns config struct
 func InitConfig() (*Config, error) {
+	secret := sha256.Sum256([]byte(viper.GetString("SecretKey")))
 	config := &Config{
-		SecretKey: []byte(viper.GetString("SecretKey")),
+		SecretKey: secret[:],
 	}
 	if len(config.SecretKey) == 0 {
 		return nil, errors.New("secretkey must not be empty")

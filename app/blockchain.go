@@ -2,7 +2,8 @@ package app
 
 import (
 	"bytes"
-	"encoding/base64"
+	// "encoding/base64"
+	"crypto/aes"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -18,7 +19,7 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string) (uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key []byte) (uint64, error) {
 	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
 
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
@@ -33,7 +34,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers)
+	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers, key)
 	if err != nil {
 		return index, err
 	}
@@ -50,7 +51,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string) (uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key []byte) (uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -63,7 +64,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers)
+	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers, key)
 	if err != nil {
 		return index, err
 	}
@@ -79,16 +80,27 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 	return index, nil
 }
 
-func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string) ([]byte, error) {
+func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string, key []byte) ([]byte, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
 
 	// Decode base64 private key
-	priv, err := base64.StdEncoding.DecodeString(privKey)
+	/*
+		priv, err := base64.StdEncoding.DecodeString(privKey)
+		if err != nil {
+			return nil, err
+		}
+	*/
+
+	// Decrypt aes
+	c, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
+
+	priv := make([]byte, len(privKey))
+	c.Decrypt(priv, []byte(privKey))
 
 	// Sign
 	signature := ed25519.Sign(priv, params)
