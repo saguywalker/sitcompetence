@@ -2,8 +2,8 @@ package app
 
 import (
 	"bytes"
-	"encoding/base64"
 	"crypto/aes"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -19,7 +19,7 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, string, index uint64, peers []string, key []byte) (uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key []byte) (uint64, error) {
 	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
 
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
@@ -51,7 +51,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, string, index ui
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk []byte, index uint64, peers []string, key []byte) (uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key []byte) (uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
