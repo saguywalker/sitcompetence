@@ -77,13 +77,14 @@ func (db *Database) GetStaffPublicKey(id string) ([]byte, error) {
 	return publicKey, nil
 }
 
+// SetPubkey update database
 func (db *Database) SetPubkey(id string, pubkey []byte) error {
 	stmt, err := db.Prepare("UPDATE staff set publicKey=$1 WHERE staffId=$2")
 	if err != nil {
 		return err
 	}
 
-	if _, err := stmt.Exec(id, pubkey); err != nil {
+	if _, err := stmt.Exec(pubkey, id); err != nil {
 		return err
 	}
 
