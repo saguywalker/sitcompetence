@@ -97,7 +97,9 @@
 					</div>
 				</template>
 				<template v-else>
-					<h1>No data</h1>
+					<div class="portfolio-content">
+						<h1>No data</h1>
+					</div>
 				</template>
 			</div>
 		</section>

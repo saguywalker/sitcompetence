@@ -1,6 +1,7 @@
 <template>
 	<div class="student-layout">
 		<vue-progress-bar />
+		<notification />
 		<navbar
 			:nav-close="mobileNavOpen"
 			@nav-open="handleNavOpen"
@@ -64,11 +65,13 @@
 </style>
 <script>
 import Navbar from "@/components/student/Navbar.vue";
+import Notification from "@/components/Notification.vue";
 import { widthSize } from "@/helpers/mixins";
 
 export default {
 	components: {
-		Navbar
+		Navbar,
+		Notification
 	},
 	mixins: [widthSize],
 	data() {

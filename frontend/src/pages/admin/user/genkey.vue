@@ -108,9 +108,12 @@
 					</li>
 					<li>
 						Add your public SSH key to your SIT-Competence account:
+						<span style="color: red">
+							* Cannot modify *
+						</span>
 						<b-form-group
 							description="For the security reasons the content of an SSH key cannot be modified once added."
-							label="Enter your public key"
+							label="Enter your copied public key"
 							label-for="public-key"
 							invalid-feedback="Please enter your public key"
 							class="mt-4"
@@ -121,6 +124,7 @@
 								:state="error"
 								placeholder="Enter your public key here ..."
 								class="mt-2"
+								rows="5"
 								@input="error = null"
 							/>
 						</b-form-group>
@@ -142,6 +146,7 @@
 </style>
 <script>
 import { getLoginUser } from "@/helpers";
+import { Base } from "@/services";
 
 export default {
 	data() {
@@ -153,16 +158,35 @@ export default {
 	computed: {
 		user() {
 			return getLoginUser();
+		},
+		formattedPbKey() {
+			const strings = this.pbKey.split(" ");
+			return strings.slice(1, strings.length - 1);
 		}
 	},
 	methods: {
-		submit() {
+		async submit() {
 			if (this.pbKey.length === 0) {
 				this.error = false;
 				return;
 			}
 
-			this.$router.push({ name: "give-badge" });
+			const response = await Base.postSetPublicKey(this.formattedPbKey);
+			if (response.status === 200) {
+				const notification = {
+					title: "Set Public key",
+					message: "Submit key successful",
+					variant: "success"
+				};
+				this.$store.dispatch("base/addNotification", notification);
+				this.$router.push({ name: "give-badge" });
+			} else {
+				this.$bvToast.toast("There was a problem submitting data", {
+					title: "Set Public key",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			}
 		}
 	}
 };
