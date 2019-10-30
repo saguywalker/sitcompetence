@@ -29,6 +29,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	var giveBadgeRequest *model.GiveBadgeRequest
 	// var listOfBadges []*model.CollectedCompetence
 	if err := json.Unmarshal(body, &giveBadgeRequest); err != nil {
+		ctx.Logger.Errorln("error while unmarshaling")
 		return err
 	}
 
