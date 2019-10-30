@@ -28,7 +28,6 @@
 					permanent and decentalized data storage. This
 					project also provides two web applications for staff
 					and students.
-					{{ pros }}
 				</p>
 			</div>
 		</div>
@@ -112,7 +111,7 @@ export default {
 						password: this.passWord
 					});
 				} catch (err) {
-					this.$bvToast.toast(`Problem: ${err.message}`, {
+					this.$bvToast.toast(`Problem: ${err}`, {
 						title: "Login error",
 						variant: "danger",
 						autoHideDelay: 1500

@@ -47,6 +47,9 @@ const Base = {
 	},
 	getUserDetail() {
 		return apiClient.get("/userDetail");
+	},
+	postSetPublicKey(data) {
+		return apiClient.post("/admin/setkey", data);
 	}
 };
 

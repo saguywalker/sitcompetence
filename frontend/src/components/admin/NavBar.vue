@@ -100,7 +100,7 @@ export default {
 	},
 	computed: {
 		userName() {
-			return getLoginUser();
+			return getLoginUser().username;
 		}
 	},
 	methods: {

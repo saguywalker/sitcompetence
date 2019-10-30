@@ -133,17 +133,23 @@ export default {
 			return this.$route.meta.step;
 		}
 	},
-	// beforeRouteEnter(to, from, next) {
-	// 	next((vm) => {
-	// 		if (!vm.steps.includes("selection")) {
-	// 			vm.$router.replace({ name: "give-badge" });
-	// 		}
-	// 	});
-	// },
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (!vm.steps.includes("selection")) {
+				vm.$router.replace({ name: "give-badge" });
+			}
+		});
+	},
 	created() {
 		this.selectStudent = this.selectedStudents;
 	},
 	methods: {
+		formattedKey() {
+			const lines = this.skKey.split("\n");
+			const mySk = lines.slice(1, lines.length - 2).join("");
+
+			return getCiphertext(mySk, getSHA256Message(process.env.VUE_APP_SKKEY).toString());
+		},
 		getBadgeImgById(id) {
 			return COMPETENCE[id].img;
 		},
@@ -169,7 +175,7 @@ export default {
 			// Trigger submit handler
 			this.handleSubmit();
 		},
-		handleSubmit() {
+		async handleSubmit() {
 			// Exit when the form isn't valid
 			if (!this.checkFormValidity()) {
 				this.$bvToast.toast("Please insert the secret key before submitting", {
@@ -179,21 +185,14 @@ export default {
 				});
 				return;
 			}
-			// Submit
-			this.submit();
-			// Hide the modal manually
-			this.$nextTick(() => {
-				this.hideModal();
-			});
-		},
-		async submit() {
 			loading.start();
+			const secret = this.formattedKey();
 
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
-					giver: getLoginUser(),
+					giver: getLoginUser().uid,
 					semester: getSemester(),
-					sk: getCiphertext(this.skKey, getSHA256Message(process.env.VUE_APP_SKKEY))
+					sk: secret
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });
@@ -206,6 +205,10 @@ export default {
 			} finally {
 				loading.stop();
 			}
+			// Hide the modal manually
+			this.$nextTick(() => {
+				this.hideModal();
+			});
 		},
 		async goBack() {
 			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);

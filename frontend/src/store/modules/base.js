@@ -1,17 +1,19 @@
 import router from "@/router";
-import { getCiphertext, clearCookies } from "@/helpers";
+import { getCiphertext, clearLoginCookie } from "@/helpers";
 import { Base, Login } from "@/services";
 import {
 	LOAD_LOGIN_DATA,
 	LOGOUT,
 	LOAD_BADGES,
-	LOAD_STUDENTS
+	LOAD_STUDENTS,
+	UPDATE_NOTIFICATION
 } from "../mutationTypes";
 
 const state = {
 	students: [],
 	badges: [],
-	user: {}
+	user: {},
+	notifications: []
 };
 
 const mutations = {
@@ -32,6 +34,11 @@ const mutations = {
 		stateData.user = {
 			...data
 		};
+	},
+	[UPDATE_NOTIFICATION](stateData, data) {
+		stateData.notifications = [
+			...data
+		];
 	}
 };
 
@@ -63,21 +70,31 @@ const actions = {
 
 		return response;
 	},
-	async doLogin({ commit }, data) {
+	async doLogin({ commit, dispatch }, data) {
 		if (data.username === "" && data.password === "") {
 			commit(LOGOUT);
 			return;
 		}
 		const response = await Login.login(data);
+
 		if (response.status !== 200) {
+			if (response.status === 403) {
+				const notification = {
+					title: "Set Public key",
+					message: "Submit key successful",
+					variant: "success"
+				};
+
+				dispatch("addNotification", notification);
+			}
 			return;
 		}
 
-		const loginDataString = JSON.stringify(response.data);
+		const loginDataString = JSON.stringify(response.data.user);
 		const encryptedLoginData = getCiphertext(loginDataString, process.env.VUE_APP_USER_DATA_KEY);
 		localStorage.setItem("user", encryptedLoginData);
 
-		if (response.data.group === "inst_group") {
+		if (response.data.user.group === "inst_group") {
 			if (response.data.first) {
 				router.push({ name: "user-genkey" });
 				return;
@@ -92,9 +109,19 @@ const actions = {
 	},
 	logout({ commit }) {
 		localStorage.removeItem("user");
-		clearCookies();
+		clearLoginCookie();
 		commit(LOGOUT);
 		router.push({ name: "login" });
+	},
+	addNotification({ commit, state: stateData }, data) {
+		const payload = [
+			...stateData.notifications,
+			{
+				...data
+			}
+		];
+
+		commit(UPDATE_NOTIFICATION, payload);
 	}
 };
 

@@ -203,7 +203,7 @@ export default {
 				await this.$store.dispatch("adminActivity/submitApprove", {
 					approvedStudents: this.selectedItems,
 					activityId: this.$route.params.id,
-					approver: this.loginUser
+					approver: this.loginUser.uid
 				});
 
 				this.$router.push({

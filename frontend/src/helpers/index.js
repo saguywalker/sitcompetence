@@ -11,6 +11,10 @@ export function clearCookies() {
 	});
 }
 
+export function clearLoginCookie() {
+	Cookies.remove("x-session-token", { path: "/api" });
+}
+
 export function getCookie(name) {
 	return Cookies.getJSON(name);
 }
@@ -119,7 +123,7 @@ export const getLoginUser = () => {
 	if (!loggedInData) {
 		return null;
 	}
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY)).username;
+	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY));
 };
 
 export const getLoginUserRole = () => {
