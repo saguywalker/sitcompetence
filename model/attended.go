@@ -9,7 +9,7 @@ import (
 // ApproveActivityRequest define activity approving request
 type ApproveActivityRequest struct {
 	Activities []AttendedActivity `json:"activities"`
-	PrivateKey []byte             `json:"sk"`
+	PrivateKey string             `json:"sk"`
 }
 
 // AttendedActivity table in postgres

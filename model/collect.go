@@ -9,7 +9,7 @@ import (
 // GiveBadgeRequest define givebadge request
 type GiveBadgeRequest struct {
 	Badges     []CollectedCompetence `json:"badges"`
-	PrivateKey []byte                `json:"sk"`
+	PrivateKey string                `json:"sk"`
 }
 
 // CollectedCompetence defines collected badges for corresponding student
