@@ -73,6 +73,8 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	mapResp["user"] = user
+
 	resp, err := json.Marshal(mapResp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
