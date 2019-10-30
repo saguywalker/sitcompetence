@@ -8,7 +8,7 @@ import {
 	CREATE_ACTIVITY_STEP,
 	EDIT_ACTIVITY_STEP
 } from "@/constants";
-import { getLoginUserRole } from "@/helpers";
+import { getLoginUserRole, clearLoginCookie } from "@/helpers";
 
 Vue.use(Router);
 
@@ -353,12 +353,16 @@ const router = new Router({
 		{
 			name: "error403",
 			path: "/notfound",
-			component: () => import("@/pages/error/403.vue")
-			// beforeEnter: (to, from, next) => {
-			// 	// Force user to login again when he/she try to access without authentication
-			// 	localStorage.removeItem("user");
-			// 	next();
-			// }
+			component: () => import("@/pages/error/403.vue"),
+			meta: {
+				rule: "isPublic"
+			},
+			beforeEnter: (to, from, next) => {
+				// Force user to login again when he/she try to access without authentication
+				localStorage.removeItem("user");
+				clearLoginCookie();
+				next();
+			}
 		}
 	]
 });

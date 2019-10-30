@@ -2,6 +2,7 @@ import CryptoJS from "crypto-js";
 import SHA256 from "crypto-js/sha256";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
+import fs from "fs";
 
 export function clearCookies() {
 	const cookies = Cookies.get();
@@ -101,10 +102,19 @@ export const getPlainTextToken = (cipher, key) => {
 
 // Encrypt
 export const getCiphertext = (message, key) => {
-	const b64 = CryptoJS.AES.encrypt(message, key).toString();
-	const e64 = CryptoJS.enc.Base64.parse(b64);
-	const eHex = e64.toString(CryptoJS.enc.Hex);
-	return eHex;
+	const base64 = CryptoJS.AES.encrypt(message, key).toString();
+	const encode64 = CryptoJS.enc.Base64.parse(base64);
+	const encodeHex = encode64.toString(CryptoJS.enc.Hex);
+	return encodeHex;
+};
+
+export const getCiphertextBase64 = (message, key) => {
+	const base64 = CryptoJS.AES.encrypt(message, key).toString();
+	return base64;
+};
+
+export const getSecretBase64 = (sk) => {
+	return btoa(sk);
 };
 
 export const getSHA256Message = (message) => SHA256(message);
@@ -133,4 +143,28 @@ export const getLoginUserRole = () => {
 	}
 
 	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY)).group;
+};
+
+export const readSecretKeyFile = (filePath) => {
+	return new Promise((resolve, reject) => {
+		fs.readFile(filePath, (err, data) => {
+			if (err) {
+				reject();
+			} else {
+				const lines = data.toString().split("\n");
+				resolve(lines.slice(1, lines.length - 2).join("\n"));
+			}
+		});
+	});
+};
+
+export const base64ToByteArray = (base64) => {
+	const binaryString = window.atob(base64);
+	const len = binaryString.length;
+	const bytes = new Uint8Array(len);
+	for (let i = 0; i < len; i++) {
+		bytes[i] = binaryString.charCodeAt(i);
+	}
+
+	return bytes;
 };

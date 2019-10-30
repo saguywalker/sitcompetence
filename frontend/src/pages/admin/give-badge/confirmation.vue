@@ -108,7 +108,7 @@
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
-import { getSemester, getLoginUser, getSHA256Message, getCiphertext } from "@/helpers";
+import { getSemester, getSecretBase64, readSecretKeyFile } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -117,6 +117,7 @@ export default {
 	},
 	data() {
 		return {
+			skfilePath: "",
 			skFile: null,
 			selectStudent: [],
 			skKey: "",
@@ -131,6 +132,9 @@ export default {
 		...mapState("base", ["user"]),
 		step() {
 			return this.$route.meta.step;
+		},
+		filePath() {
+			return URL.createObjectURL(this.skFile);
 		}
 	},
 	beforeRouteEnter(to, from, next) {
@@ -144,11 +148,11 @@ export default {
 		this.selectStudent = this.selectedStudents;
 	},
 	methods: {
-		formattedKey() {
+		base64() {
 			const lines = this.skKey.split("\n");
 			const mySk = lines.slice(1, lines.length - 2).join("");
 
-			return getCiphertext(mySk, getSHA256Message(process.env.VUE_APP_SKKEY).toString());
+			return getSecretBase64(mySk);
 		},
 		getBadgeImgById(id) {
 			return COMPETENCE[id].img;
@@ -186,11 +190,16 @@ export default {
 				return;
 			}
 			loading.start();
-			const secret = this.formattedKey();
+
+			let secret;
+			if (!this.skFile) {
+				secret = readSecretKeyFile(this.filePath);
+			} else {
+				secret = this.base64();
+			}
 
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
-					giver: getLoginUser().uid,
 					semester: getSemester(),
 					sk: secret
 				});

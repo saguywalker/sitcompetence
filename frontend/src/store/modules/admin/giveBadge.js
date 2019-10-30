@@ -79,7 +79,6 @@ const actions = {
 				return {
 					student_id: st.student_id,
 					competence_id: id,
-					giver: data.giver,
 					semester: data.semester
 				};
 			});
