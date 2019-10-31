@@ -1,5 +1,6 @@
 import CryptoJS from "crypto-js";
 import SHA256 from "crypto-js/sha256";
+import nacl from "tweetnacl";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
 import fs from "fs";
@@ -167,4 +168,8 @@ export const base64ToByteArray = (base64) => {
 	}
 
 	return bytes;
+};
+
+export const getED25519KeyPair = () => {
+	return nacl.sign.keyPair();
 };

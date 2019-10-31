@@ -60,42 +60,26 @@
 			@hidden="resetModal"
 			@ok="handleOk"
 		>
-			<b-form-file
-				v-model="skFile"
-				:state="Boolean(skFile)"
-				placeholder="Choose secret key file here..."
-			/>
-			<b-button
-				v-b-toggle="'text-collapse'"
-				class="my-3"
-				size="sm"
+			<form
+				ref="form"
+				@submit.stop.prevent="handleSubmit"
 			>
-				Use the copy way
-				<icon-arrow-dropdown />
-			</b-button>
-			<b-collapse id="text-collapse">
-				<form
-					ref="form"
-					@submit.stop.prevent="handleSubmit"
+				<b-form-group
+					:state="skKeyState"
+					label="Insert your Secret Key"
+					label-for="sk-input"
+					invalid-feedback="Secret key is required"
 				>
-					<b-form-group
+					<b-form-textarea
+						id="sk-input"
+						v-model="skKey"
 						:state="skKeyState"
-						label="Insert your Secret Key"
-						label-for="sk-input"
-						invalid-feedback="Secret key is required"
-					>
-						<b-form-textarea
-							id="sk-input"
-							v-model="skKey"
-							:state="skKeyState"
-							rows="5"
-							max-rows="10"
-							required
-							@input="skKeyState = null"
-						/>
-					</b-form-group>
-				</form>
-			</b-collapse>
+						rows="6"
+						required
+						@input="skKeyState = null"
+					/>
+				</b-form-group>
+			</form>
 		</b-modal>
 		<base-page-step
 			:step="step"
@@ -108,7 +92,7 @@
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
-import { getSemester, getSecretBase64, readSecretKeyFile } from "@/helpers";
+import { getSemester } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -117,8 +101,6 @@ export default {
 	},
 	data() {
 		return {
-			skfilePath: "",
-			skFile: null,
 			selectStudent: [],
 			skKey: "",
 			skKeyState: null
@@ -132,28 +114,19 @@ export default {
 		...mapState("base", ["user"]),
 		step() {
 			return this.$route.meta.step;
-		},
-		filePath() {
-			return URL.createObjectURL(this.skFile);
 		}
 	},
-	beforeRouteEnter(to, from, next) {
-		next((vm) => {
-			if (!vm.steps.includes("selection")) {
-				vm.$router.replace({ name: "give-badge" });
-			}
-		});
-	},
+	// beforeRouteEnter(to, from, next) {
+	// 	next((vm) => {
+	// 		if (!vm.steps.includes("selection")) {
+	// 			vm.$router.replace({ name: "give-badge" });
+	// 		}
+	// 	});
+	// },
 	created() {
 		this.selectStudent = this.selectedStudents;
 	},
 	methods: {
-		base64() {
-			const lines = this.skKey.split("\n");
-			const mySk = lines.slice(1, lines.length - 2).join("");
-
-			return getSecretBase64(mySk);
-		},
 		getBadgeImgById(id) {
 			return COMPETENCE[id].img;
 		},
@@ -161,7 +134,7 @@ export default {
 			const valid = this.$refs.form.checkValidity();
 			this.skKeyState = !!valid;
 
-			return valid || this.skFile;
+			return valid;
 		},
 		showModal() {
 			this.$refs.modal.show();
@@ -191,17 +164,10 @@ export default {
 			}
 			loading.start();
 
-			let secret;
-			if (!this.skFile) {
-				secret = readSecretKeyFile(this.filePath);
-			} else {
-				secret = this.base64();
-			}
-
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
 					semester: getSemester(),
-					sk: secret
+					sk: this.skKey
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });
