@@ -92,7 +92,7 @@
 import IconArrowDropdown from "@/components/icons/IconArrowDropdown.vue";
 import { COMPETENCE } from "@/constants";
 import loading from "@/plugin/loading";
-import { getSemester } from "@/helpers";
+import { getSemester, getSecretKey } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -114,6 +114,9 @@ export default {
 		...mapState("base", ["user"]),
 		step() {
 			return this.$route.meta.step;
+		},
+		secretKey() {
+			return getSecretKey();
 		}
 	},
 	// beforeRouteEnter(to, from, next) {
@@ -137,6 +140,10 @@ export default {
 			return valid;
 		},
 		showModal() {
+			if (this.secretKey) {
+				this.submit(this.secretKey);
+				return;
+			}
 			this.$refs.modal.show();
 		},
 		hideModal() {
@@ -152,7 +159,7 @@ export default {
 			// Trigger submit handler
 			this.handleSubmit();
 		},
-		async handleSubmit() {
+		handleSubmit() {
 			// Exit when the form isn't valid
 			if (!this.checkFormValidity()) {
 				this.$bvToast.toast("Please insert the secret key before submitting", {
@@ -162,12 +169,20 @@ export default {
 				});
 				return;
 			}
+			// Submit
+			this.submit(this.skKey);
+			// Hide the modal manually
+			this.$nextTick(() => {
+				this.hideModal();
+			});
+		},
+		async submit(secret) {
 			loading.start();
 
 			try {
 				await this.$store.dispatch("giveBadge/submitGiveBadge", {
 					semester: getSemester(),
-					sk: this.skKey
+					sk: secret
 				});
 				await this.$store.dispatch("giveBadge/addStep", this.step.step);
 				this.$router.push({ name: "give-badge-success" });
@@ -180,10 +195,6 @@ export default {
 			} finally {
 				loading.stop();
 			}
-			// Hide the modal manually
-			this.$nextTick(() => {
-				this.hideModal();
-			});
 		},
 		async goBack() {
 			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);

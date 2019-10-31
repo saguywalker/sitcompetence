@@ -80,9 +80,9 @@ const actions = {
 		if (response.status !== 200) {
 			if (response.status === 403) {
 				const notification = {
-					title: "Set Public key",
-					message: "Submit key successful",
-					variant: "success"
+					title: "Login",
+					message: "Invalid username or password",
+					variant: "danger"
 				};
 
 				dispatch("addNotification", notification);

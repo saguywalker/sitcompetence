@@ -49,16 +49,42 @@
 			<div class="mb-4">
 				<h2>Confirmation</h2>
 				<ol class="step-list">
-					<li>
+					<li id="confirm-pk">
 						Once the key pair is decided, you must keep the secret key with yourself.
 						<span style="color: red">
 							* Important ! Don't modify the key *
 						</span>
-						<p>To confirm, please copy the selected </p>
+						<br><br>
+						<p>To confirm, please copy the <strong>Public Key</strong> into this section</p>
+						<b-form-group
+							description="For the security reasons the content of a key cannot be modified once added."
+							label="Enter your copied public key"
+							label-for="public-key"
+							:invalid-feedback="errorMessage"
+							class="mt-4"
+						>
+							<b-form-textarea
+								id="public-key"
+								v-model="pbKey"
+								:state="errorStatus"
+								placeholder="Enter your public key here ..."
+								class="mt-2"
+								rows="5"
+							/>
+						</b-form-group>
 					</li>
 					<li>
 						(Optional) Keep the secret key in the browser local storage. It will be stored locally only on your device.
-						<br><br>
+						<b-form-checkbox
+							v-model="saveSkLocal"
+							:disabled="!errorStatus"
+							name="check-button"
+							class="my-3"
+							switch
+							@input="setSkLocal"
+						>
+							Save <strong>Secret Key</strong> on your local device <b>({{ yesNo }})</b>
+						</b-form-checkbox>
 						This is for the convenience. When you create a transaction in the blockchain (in our case, give badge),
 						you will not have to submit the secret key every time before you make a transaction to the blockchain.
 						You will see the example in next step.
@@ -77,6 +103,21 @@
 				>
 				<p>If you enable to keep the secret key in the local storage, you will not see this input prompt.</p>
 			</div>
+			<b-button
+				:disabled="!errorStatus"
+				variant="primary"
+				@click="submit"
+			>
+				Proceed to the website
+			</b-button>
+			<br>
+			<a
+				v-if="!errorStatus"
+				href="#confirm-pk"
+				class="description"
+			>
+				Please confirm the public key before proceed to the websited
+			</a>
 		</section>
 	</div>
 </template>
@@ -84,14 +125,16 @@
 @import "@/styles/pages/user/genkey.scss";
 </style>
 <script>
-import { getLoginUser, getED25519KeyPair } from "@/helpers";
-// import { Base } from "@/services";
+import { getLoginUser, getED25519KeyPair, getCiphertext, getSHA256Message } from "@/helpers";
+import { Base } from "@/services";
+import loading from "@/plugin/loading";
 
 export default {
 	data() {
 		return {
+			pbKey: "",
 			keyPair: {},
-			error: null
+			saveSkLocal: false
 		};
 	},
 	computed: {
@@ -111,29 +154,65 @@ export default {
 			}
 
 			return "";
+		},
+		errorMessage() {
+			if (this.pbKey.length === 0) {
+				return "Please enter your public key";
+			}
+
+			return "The generated public key and input public key are not the same";
+		},
+		errorStatus() {
+			if (this.pbKey.length === 0 || this.b64PublicKey !== this.pbKey) {
+				return false;
+			}
+			return true;
+		},
+		yesNo() {
+			if (this.saveSkLocal) {
+				return "Yes";
+			}
+			return "No";
+		}
+	},
+	watch: {
+		b64SecretKey() {
+			this.saveSkLocal = false;
+			localStorage.removeItem("sck");
 		}
 	},
 	methods: {
 		async submit() {
-			// const response = await Base.postSetPublicKey(this.formattedPbKey);
-			// if (response.status === 200) {
-			// 	const notification = {
-			// 		title: "Set Public key",
-			// 		message: "Submit key successful",
-			// 		variant: "success"
-			// 	};
-			// 	this.$store.dispatch("base/addNotification", notification);
-			// 	this.$router.push({ name: "give-badge" });
-			// } else {
-			// 	this.$bvToast.toast("There was a problem submitting data", {
-			// 		title: "Set Public key",
-			// 		variant: "danger",
-			// 		autoHideDelay: 1500
-			// 	});
-			// }
+			loading.start();
+			const response = await Base.postSetPublicKey(this.b64PublicKey);
+			if (response.status === 200) {
+				const notification = {
+					title: "Set Public key",
+					message: "Submit key successful",
+					variant: "success"
+				};
+				this.$store.dispatch("base/addNotification", notification);
+				this.$router.push({ name: "give-badge" });
+			} else {
+				this.$bvToast.toast("There was a problem submitting data", {
+					title: "Set Public key",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			}
+			loading.stop();
 		},
 		randomKeyPair() {
 			this.keyPair = getED25519KeyPair();
+		},
+		setSkLocal() {
+			if (this.saveSkLocal) {
+				const encypted = getCiphertext(this.b64SecretKey, getSHA256Message(process.env.VUE_APP_USER_SK_KEY));
+				localStorage.setItem("sck", encypted);
+				return;
+			}
+
+			localStorage.removeItem("sck");
 		}
 	}
 };

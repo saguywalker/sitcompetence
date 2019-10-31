@@ -3,7 +3,6 @@ import SHA256 from "crypto-js/sha256";
 import nacl from "tweetnacl";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
-import fs from "fs";
 
 export function clearCookies() {
 	const cookies = Cookies.get();
@@ -118,7 +117,7 @@ export const getSecretBase64 = (sk) => {
 	return btoa(sk);
 };
 
-export const getSHA256Message = (message) => SHA256(message);
+export const getSHA256Message = (message) => SHA256(message).toString();
 
 export const getLoginToken = () => {
 	const loggedInData = localStorage.getItem("user");
@@ -134,7 +133,7 @@ export const getLoginUser = () => {
 	if (!loggedInData) {
 		return null;
 	}
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY));
+	return JSON.parse(getPlainTextToken(loggedInData, process.env.VUE_APP_USER_DATA_KEY));
 };
 
 export const getLoginUserRole = () => {
@@ -143,20 +142,16 @@ export const getLoginUserRole = () => {
 		return null;
 	}
 
-	return JSON.parse(getPlainTextToken(localStorage.getItem("user"), process.env.VUE_APP_USER_DATA_KEY)).group;
+	return JSON.parse(getPlainTextToken(loggedInData, process.env.VUE_APP_USER_DATA_KEY)).group;
 };
 
-export const readSecretKeyFile = (filePath) => {
-	return new Promise((resolve, reject) => {
-		fs.readFile(filePath, (err, data) => {
-			if (err) {
-				reject();
-			} else {
-				const lines = data.toString().split("\n");
-				resolve(lines.slice(1, lines.length - 2).join("\n"));
-			}
-		});
-	});
+export const getSecretKey = () => {
+	const encryptedSk = localStorage.getItem("sck");
+	if (!encryptedSk) {
+		return null;
+	}
+
+	return getPlainTextToken(encryptedSk, getSHA256Message(process.env.VUE_APP_USER_SK_KEY));
 };
 
 export const base64ToByteArray = (base64) => {
