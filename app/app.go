@@ -53,6 +53,7 @@ func New() (app *App, err error) {
 	app.UserSession.Options = &sessions.Options{
 		MaxAge:   60 * 15,
 		HttpOnly: false,
+		Path:     "/",
 	}
 
 	app.CurrentPeerIndex = 0

@@ -13,7 +13,7 @@ export function clearCookies() {
 }
 
 export function clearLoginCookie() {
-	Cookies.remove("x-session-token", { path: "/api" });
+	Cookies.remove("x-session-token");
 }
 
 export function getCookie(name) {
@@ -167,4 +167,8 @@ export const base64ToByteArray = (base64) => {
 
 export const getED25519KeyPair = () => {
 	return nacl.sign.keyPair();
+};
+
+export const isLoggedIn = () => {
+	return !!Cookies.get("x-session-token");
 };

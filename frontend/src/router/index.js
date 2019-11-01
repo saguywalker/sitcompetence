@@ -8,7 +8,7 @@ import {
 	CREATE_ACTIVITY_STEP,
 	EDIT_ACTIVITY_STEP
 } from "@/constants";
-import { getLoginUserRole, clearLoginCookie } from "@/helpers";
+import { getLoginUserRole, clearLoginCookie, isLoggedIn } from "@/helpers";
 
 Vue.use(Router);
 
@@ -24,7 +24,7 @@ const router = new Router({
 			},
 			beforeEnter: (to, from, next) => {
 				// Prevent user go back to Login page when already logged in
-				const isLogin = localStorage.getItem("user");
+				const isLogin = isLoggedIn();
 				const role = getLoginUserRole();
 
 				if (isLogin && to.name === "login") {
@@ -369,7 +369,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
 	// Ignore login and error page
-	const isLogin = localStorage.getItem("user");
+	const isLogin = isLoggedIn();
 	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
 		next({
 			name: "login"
