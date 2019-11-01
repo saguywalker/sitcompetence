@@ -18,7 +18,7 @@ const router = new Router({
 		{
 			path: "/login",
 			name: "login",
-			component: () => import(/* webpackChunkName: "login" */ "@/pages/login.vue"),
+			component: () => import("@/pages/login.vue"),
 			meta: {
 				rule: "isPublic"
 			},
@@ -42,24 +42,30 @@ const router = new Router({
 		{
 			path: "/user/:id/portfolio",
 			name: "user_id-portfoilio",
-			component: () => import(/* webpackChunkName: "user-portfoilio" */ "@/pages/student/user/_id-portfolio.vue"),
+			component: () => import("@/pages/student/user/_id-portfolio.vue"),
 			meta: {
 				rule: "isPublic"
 			}
 		},
 		{
 			path: "/",
-			component: () => import(/* webpackChunkName: "student-layout" */"@/layouts/StudentLayout.vue"),
+			component: () => import("@/layouts/StudentLayout.vue"),
+			meta: {
+				rule: "isStudent"
+			},
 			children: [
 				{
 					path: "/",
 					name: "student",
-					redirect: { name: "dashboard" }
+					redirect: { name: "dashboard" },
+					meta: {
+						rule: "isStudent"
+					}
 				},
 				{
 					name: "dashboard",
 					path: "/dashboard",
-					component: () => import(/* webpackChunkName: "dashboard" */"@/pages/student/dashboard.vue"),
+					component: () => import("@/pages/student/dashboard.vue"),
 					meta: {
 						rule: "isStudent"
 					}
@@ -67,7 +73,7 @@ const router = new Router({
 				{
 					name: "activity",
 					path: "/activity",
-					component: () => import(/* webpackChunkName: "activity" */"@/pages/student/activity"),
+					component: () => import("@/pages/student/activity"),
 					meta: {
 						rule: "isStudent"
 					},
@@ -91,7 +97,7 @@ const router = new Router({
 				{
 					name: "activity-detail_id",
 					path: "/activity/detail/:id",
-					component: () => import(/* webpackChunkName: "activity-detail" */"@/pages/student/activity/detail.vue"),
+					component: () => import("@/pages/student/activity/detail.vue"),
 					meta: {
 						rule: "isStudent"
 					}
@@ -99,7 +105,7 @@ const router = new Router({
 				{
 					name: "portfolio",
 					path: "/portfolio",
-					component: () => import(/* webpackChunkName: "portfolio" */"@/pages/student/portfolio"),
+					component: () => import("@/pages/student/portfolio"),
 					meta: {
 						rule: "isStudent"
 					}
@@ -109,11 +115,17 @@ const router = new Router({
 		{
 			path: "/admin",
 			component: () => import("@/layouts/AdminLayoutDefault.vue"),
+			meta: {
+				rule: "isAdmin"
+			},
 			children: [
 				{
 					name: "admin",
 					path: "/",
-					redirect: { name: "give-badge" }
+					redirect: { name: "give-badge" },
+					meta: {
+						rule: "isAdmin"
+					}
 				},
 				{
 					name: "admin-activity",

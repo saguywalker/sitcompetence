@@ -41,6 +41,7 @@
 				<div class="code-block">
 					<code class="code">{{ b64SecretKey }}</code>
 				</div>
+				{{ decodeSecretKey }}
 				<p><strong>Public Key:</strong></p>
 				<div class="code-block">
 					<code class="code">{{ b64PublicKey }}</code>
@@ -142,18 +143,10 @@ export default {
 			return getLoginUser();
 		},
 		b64PublicKey() {
-			if (this.keyPair.publicKey) {
-				return btoa(this.keyPair.publicKey);
-			}
-
-			return "";
+			return this.keyPair.public;
 		},
 		b64SecretKey() {
-			if (this.keyPair.secretKey) {
-				return btoa(this.keyPair.secretKey);
-			}
-
-			return "";
+			return this.keyPair.secret;
 		},
 		errorMessage() {
 			if (this.pbKey.length === 0) {

@@ -4,6 +4,10 @@ import nacl from "tweetnacl";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
 
+nacl.util = require("tweetnacl-util");
+
+const enc = nacl.util.encodeBase64;
+
 export function clearCookies() {
 	const cookies = Cookies.get();
 
@@ -166,9 +170,13 @@ export const base64ToByteArray = (base64) => {
 };
 
 export const getED25519KeyPair = () => {
-	return nacl.sign.keyPair();
+	const key = nacl.sign.keyPair();
+	return {
+		public: enc(key.publicKey),
+		secret: enc(key.secretKey)
+	};
 };
 
 export const isLoggedIn = () => {
-	return !!Cookies.get("x-session-token");
+	return !!Cookies.get("x-session-token") && !!localStorage.getItem("user");
 };

@@ -7,7 +7,7 @@ Vue.use(AclInstaller);
 
 export default new AclCreate({
 	notfound: {
-		path: "unknown"
+		path: "notfound"
 	},
 	router,
 	acceptLocalRules: true,
@@ -18,6 +18,7 @@ export default new AclCreate({
 	},
 	middleware: async (acl) => {
 		const userRole = getLoginUserRole();
+		console.log(userRole);
 		await acl.change(userRole);
 	}
 });

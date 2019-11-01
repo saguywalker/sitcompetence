@@ -33,6 +33,7 @@
     "read-yaml": "^1.1.0",
     "sass-loader": "^8.0.0",
     "tweetnacl": "^1.0.1",
+    "tweetnacl-util": "^0.15.0",
     "vue-acl": "^4.1.5",
     "vue-progressbar": "^0.7.5",
     "vue-template-compiler": "^2.6.10"
