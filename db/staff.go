@@ -106,7 +106,7 @@ func (db *Database) CheckKey(id string) (bool, error) {
 		}
 	}
 
-	return keyLength == 0, nil
+	return keyLength != 0, nil
 }
 
 // CreateStaff inserts a new staff

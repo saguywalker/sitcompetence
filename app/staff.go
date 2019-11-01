@@ -20,7 +20,13 @@ func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
 
 // CheckKey check publickey
 func (ctx *Context) CheckKey(id string) (bool, error) {
-	return ctx.Database.CheckKey(id)
+	ok, err := ctx.Database.CheckKey(id)
+	if err != nil {
+		return false, err
+	}
+
+	ctx.Logger.Infoln(ok)
+	return ok, nil
 }
 
 // GetStaffs returns all of activities

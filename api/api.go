@@ -70,7 +70,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/admin/setkey", a.handler(a.SetPubkey)).Methods("POST")
 	r.Handle("/admin/checkKey", a.handler(a.CheckKey)).Methods("GET")
 
-	r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
+	// r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
 	r.HandleFunc("/login", a.Login).Methods("POST")
 	r.Handle("/logout", a.handler(a.Logout)).Methods("GET")
 
@@ -98,7 +98,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		}
 
 		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
-
+		ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
 		user := model.User{}
 		var ok bool
 		userInterface := session.Values["user"]
@@ -113,7 +113,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			return
 		}
 
-		if user.Group == "inst_group" {
+		if r.RequestURI != "/api/admin/setkey" && user.Group == "inst_group" {
 			ok, err := ctx.CheckKey(user.UserID)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
