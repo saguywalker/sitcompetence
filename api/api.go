@@ -68,6 +68,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
 	r.Handle("/admin/setkey", a.handler(a.SetPubkey)).Methods("POST")
+	r.Handle("/admin/checkKey", a.handler(a.CheckKey)).Methods("GET")
 
 	r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
 	r.HandleFunc("/login", a.Login).Methods("POST")
@@ -110,6 +111,18 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		if err := session.Save(r, w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
+		}
+
+		if user.Group == "inst_group" {
+			ok, err := ctx.CheckKey(user.UserID)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			if !ok {
+				http.Error(w, "Publickey is unset", http.StatusUnavailableForLegalReasons)
+				return
+			}
 		}
 
 		ctx.Logger.Infof("%+v\n", user)

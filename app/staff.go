@@ -18,6 +18,11 @@ func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
 	return ctx.Database.SetPubkey(id, pubkey)
 }
 
+// CheckKey check publickey
+func (ctx *Context) CheckKey(id string) (bool, error) {
+	return ctx.Database.CheckKey(id)
+}
+
 // GetStaffs returns all of activities
 func (ctx *Context) GetStaffs(pageNo uint32) ([]*model.Staff, error) {
 	staffs, err := ctx.Database.GetStaffs(ctx.PageLimit, pageNo)

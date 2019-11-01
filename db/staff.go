@@ -91,6 +91,24 @@ func (db *Database) SetPubkey(id string, pubkey []byte) error {
 	return nil
 }
 
+// CheckKey check publickey
+func (db *Database) CheckKey(id string) (bool, error) {
+	row, err := db.Query("SELECT LENGTH(publickKey) FROM staff WHERE staffId = $1", id)
+	if err != nil {
+		return false, err
+	}
+
+	var keyLength uint
+
+	for row.Next() {
+		if err := row.Scan(&keyLength); err != nil {
+			return false, err
+		}
+	}
+
+	return keyLength == 0, nil
+}
+
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(s *model.Staff) (string, error) {
 	var id string

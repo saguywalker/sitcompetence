@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 
@@ -59,6 +60,21 @@ func (a *API) SetPubkey(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	defer r.Body.Close()
 
 	if err := ctx.SetPubkey(staffID, body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CheckKey check whether staff has already set the key or not
+func (a *API) CheckKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	staffID := ctx.User.UserID
+	ok, err := ctx.CheckKey(staffID)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write([]byte(strconv.FormatBool(ok))); err != nil {
 		return err
 	}
 
