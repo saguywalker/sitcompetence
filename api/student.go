@@ -64,11 +64,12 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	for i := range students {
-		collected, err := ctx.GetCollectedWithDetail(students[i].StudentID, 0)
+		collected, index, err := ctx.GetCollectedWithDetail(students[i].StudentID, a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			return err
 		}
 		students[i].Collected = collected
+		a.App.CurrentPeerIndex = index
 	}
 
 	data, err := json.Marshal(students)

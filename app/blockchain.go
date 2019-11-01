@@ -39,11 +39,11 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 	}
 
 	badge.TxID = txID
-
-	if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
-		return index, err
-	}
-
+	/*
+		if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
+			return index, err
+		}
+	*/
 	index = (index + 1) % uint64(len(peers))
 
 	return index, nil

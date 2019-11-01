@@ -1,6 +1,7 @@
 package app
 
 import (
+	"encoding/json"
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -21,7 +22,7 @@ func (ctx *Context) GetCollectedByCompetenceID(id uint16) ([]model.Student, erro
 	return competence, fmt.Errorf("unimplemented")
 }
 */
-
+/*
 // GetCollectedByStudentID returns all of activities
 func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint32) ([]model.Competence, error) {
 	competencesID, err := ctx.Database.GetCompetencesIDByStudentID(id, ctx.PageLimit, pageNo)
@@ -41,18 +42,25 @@ func (ctx *Context) GetCollectedByStudentID(id string, pageNo uint32) ([]model.C
 
 	return competences, nil
 }
+*/
 
 // GetCollectedWithDetail return list of collected competence from student id
-func (ctx *Context) GetCollectedWithDetail(id string, pageNo uint32) ([]model.CollectedCompetence, error) {
-	collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
-	// collected, err := ctx.BlockchainQueryWithKey(id)
+func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []string) ([]model.CollectedCompetence, uint64, error) {
+	// collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
+	collected, returnIndex, err := ctx.BlockchainQueryWithParams(id, index, peers)
 	if err != nil {
-		return nil, err
+		return nil, returnIndex, err
 	}
 
-	return collected, nil
+	var returnCollected []model.CollectedCompetence
+	if err := json.Unmarshal(collected, &returnCollected); err != nil {
+		return nil, returnIndex, err
+	}
+
+	return returnCollected, returnIndex, nil
 }
 
+/*
 // CreateCollectedCompetence update new competence and its transactionID to a corresponding studentID
 func (ctx *Context) CreateCollectedCompetence(badges []*model.CollectedCompetence, txID []byte) error {
 	for _, badge := range badges {
@@ -62,3 +70,4 @@ func (ctx *Context) CreateCollectedCompetence(badges []*model.CollectedCompetenc
 	}
 	return nil
 }
+*/
