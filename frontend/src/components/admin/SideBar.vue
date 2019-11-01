@@ -17,7 +17,7 @@
 			<div class="user-panel">
 				<div class="user-panel-info">
 					<p class="name">
-						dsds
+						{{ userName }}
 					</p>
 					<p class="role">
 						Staff

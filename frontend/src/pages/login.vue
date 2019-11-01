@@ -111,7 +111,7 @@ export default {
 						password: this.passWord
 					});
 				} catch (err) {
-					this.$bvToast.toast(`Problem: ${err}`, {
+					this.$bvToast.toast("Invalid username or password", {
 						title: "Login error",
 						variant: "danger",
 						autoHideDelay: 1500

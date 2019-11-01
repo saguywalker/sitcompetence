@@ -70,7 +70,7 @@ const actions = {
 
 		return response;
 	},
-	async doLogin({ commit, dispatch }, data) {
+	async doLogin({ commit }, data) {
 		if (data.username === "" && data.password === "") {
 			commit(LOGOUT);
 			return;
@@ -78,15 +78,6 @@ const actions = {
 		const response = await Login.login(data);
 
 		if (response.status !== 200) {
-			if (response.status === 403) {
-				const notification = {
-					title: "Login",
-					message: "Invalid username or password",
-					variant: "danger"
-				};
-
-				dispatch("addNotification", notification);
-			}
 			return;
 		}
 

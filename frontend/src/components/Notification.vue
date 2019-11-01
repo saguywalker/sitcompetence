@@ -6,8 +6,6 @@
 			:key="`${notification}${index}`"
 			:variant="notification.variant"
 			solid
-			visible
-			no-auto-hide
 		>
 			<template v-slot:toast-title>
 				<strong>{{ notification.title }}</strong>

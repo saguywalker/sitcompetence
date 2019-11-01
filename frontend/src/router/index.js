@@ -367,15 +367,15 @@ const router = new Router({
 	]
 });
 
-// router.beforeEach((to, from, next) => {
-// 	// Ignore login and error page
-// 	const isLogin = localStorage.getItem("user");
-// 	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
-// 		next({
-// 			name: "login"
-// 		});
-// 	}
-// 	next();
-// });
+router.beforeEach((to, from, next) => {
+	// Ignore login and error page
+	const isLogin = localStorage.getItem("user");
+	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
+		next({
+			name: "login"
+		});
+	}
+	next();
+});
 
 export default router;

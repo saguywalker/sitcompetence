@@ -37,7 +37,7 @@
 			>
 				<icon-user-cog />
 				<p class="profile-name">
-					ssddsds
+					{{ userName }}
 				</p>
 			</button>
 			<div
@@ -52,7 +52,7 @@
 			>
 				<div class="profile-dropdown-detail">
 					<h4 class="name">
-						ssddsds
+						{{ userName }}
 					</h4>
 					<p class="role">
 						Staff
