@@ -93,7 +93,7 @@ func (db *Database) SetPubkey(id string, pubkey []byte) error {
 
 // CheckKey check publickey
 func (db *Database) CheckKey(id string) (bool, error) {
-	row, err := db.Query("SELECT LENGTH(publickKey) FROM staff WHERE staffId = $1", id)
+	row, err := db.Query("SELECT LENGTH(publicKey) FROM staff WHERE staffId = $1", id)
 	if err != nil {
 		return false, err
 	}
