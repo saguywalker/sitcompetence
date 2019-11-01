@@ -57,6 +57,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 	}
 
 	activity.Approver = approverPK
+	ctx.Logger.Infof("Publickey: %x\n", approverPK)
 
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
@@ -93,7 +94,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 		return nil, err
 	}
 
-	ctx.Logger.Infof("decrypted base64 sk: %s (%d)", string(decb64), len(decb64))
+	ctx.Logger.Infof("decrypted base64 sk: %x (%d)", string(decb64), len(decb64))
 	/*
 		ctx.Logger.Infof("H(key): %x", key)
 

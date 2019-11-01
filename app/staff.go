@@ -1,6 +1,10 @@
 package app
 
-import "github.com/saguywalker/sitcompetence/model"
+import (
+	"encoding/base64"
+
+	"github.com/saguywalker/sitcompetence/model"
+)
 
 // GetStaffByID returns staff struct from staff id
 func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
@@ -15,7 +19,12 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 
 // SetPubkey set publickey
 func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
-	return ctx.Database.SetPubkey(id, pubkey)
+	decPk := make([]byte, base64.StdEncoding.DecodedLen(len(pubkey)))
+	if _, err := base64.StdEncoding.Decode(decPk, pubkey); err != nil {
+		return err
+	}
+	ctx.Logger.Infof("decode pk: %x\n", decPk)	
+	return ctx.Database.SetPubkey(id, decPk)
 }
 
 // CheckKey check publickey

@@ -65,6 +65,9 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 
 	for i := range students {
 		collected, index, err := ctx.GetCollectedWithDetail(students[i].StudentID, a.App.CurrentPeerIndex, a.Config.Peers)
+		if err.Error() == "not exists" {
+			continue
+		}
 		if err != nil {
 			return err
 		}
