@@ -182,11 +182,9 @@ export default {
 		testVerify() {
 			this.statePortfolios.reduce(async (previousPromise, competence) => {
 				const payload = {
-					data: {
-						competence_id: competence.competence_id,
-						semester: competence.semester,
-						student_id: competence.student_id
-					}
+					competence_id: competence.competence_id,
+					semester: competence.semester,
+					student_id: competence.student_id
 				};
 				this.forceReRender++;
 				await previousPromise;
