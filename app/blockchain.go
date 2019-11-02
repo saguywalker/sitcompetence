@@ -18,35 +18,36 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key []byte) (uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key []byte) ([]byte, uint64, error) {
 	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
 
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
-		return index, err
+		return nil, index, err
 	}
 	ctx.Logger.Infof("GetStaffPubKey: %x\n", giverPK)
 	badge.Giver = giverPK
 
 	badgeBytes, err := json.Marshal(badge)
 	if err != nil {
-		return index, err
+		return nil, index, err
 	}
 
 	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers, key)
 	if err != nil {
-		return index, err
+		return txID, index, err
 	}
 
-	badge.TxID = txID
 	/*
+		badge.TxID = txID
+
 		if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
 			return index, err
 		}
 	*/
 	index = (index + 1) % uint64(len(peers))
 
-	return index, nil
+	return txID, index, nil
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database

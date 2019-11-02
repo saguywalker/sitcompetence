@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -35,16 +36,24 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 	ctx.Logger.Infof("%+v", giveBadgeRequest)
 
+	txs := make([]string, 0)
+
 	for _, badge := range giveBadgeRequest.Badges {
-		currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
+		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
 		if err != nil {
 			return err
 		}
 
+		txs = append(txs, hex.EncodeToString(txID))
 		a.App.CurrentPeerIndex = currentIndex
 	}
 
-	w.Write([]byte("give badge successfully"))
+	txsBytes, err := json.Marshal(txs)
+	if err != nil {
+		return err
+	}
+
+	w.Write(txsBytes)
 
 	return nil
 }
