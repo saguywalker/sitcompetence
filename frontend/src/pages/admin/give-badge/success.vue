@@ -118,9 +118,9 @@ export default {
 		testVerify() {
 			this.success.reduce(async (previousPromise, student) => {
 				const payload = {
-					data: {
-						...student
-					}
+					competence_id: student.competence_id,
+					semester: student.semester,
+					student_id: student.student_id
 				};
 				this.rerender++;
 				await previousPromise;
