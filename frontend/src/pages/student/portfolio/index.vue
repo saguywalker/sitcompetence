@@ -39,11 +39,11 @@
 						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="statePortfolios.collected_competence">
+				<template v-if="statePortfolios">
 					<div class="portfolio-content">
 						<b-row>
 							<b-col
-								v-for="(com, index) in ports"
+								v-for="(com, index) in statePortfolios"
 								:key="`${com.competence_id}${forceReRender}`"
 								cols="6"
 								class="competence-wrapper"
@@ -158,7 +158,6 @@ export default {
 
 		try {
 			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
-			this.setupPortfolio();
 		} catch (err) {
 			this.$Progress.fail();
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
@@ -177,18 +176,14 @@ export default {
 		getCompetenceImgById(id) {
 			return COMPETENCE[id].img;
 		},
-		setupPortfolio() {
-			this.ports = this.statePortfolios.collected_competence;
-		},
 		verifyText(id) {
 			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			this.statePortfolios.collected_competence.reduce(async (previousPromise, competence) => {
+			this.statePortfolios.reduce(async (previousPromise, competence) => {
 				const payload = {
 					data: {
 						competence_id: competence.competence_id,
-						giver: competence.giver,
 						semester: competence.semester,
 						student_id: competence.student_id
 					}
