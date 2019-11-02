@@ -244,9 +244,14 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 		return nil, index, errors.New(string(respData))
 	}
 
-	if isExist := respResult["exists"] == "exists"; !isExist {
+	if isExist := respResult["log"] == "exists"; !isExist {
 		return nil, index, errors.New("not exists")
 	}
 
-	return respResult["value"].([]byte), index, nil
+	dec64, err := base64.StdEncoding.DecodeString(respResult["value"].(string))
+	if err != nil {
+		return nil, index, err
+	}
+
+	return dec64, index, nil
 }
