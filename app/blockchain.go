@@ -25,7 +25,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 	if err != nil {
 		return index, err
 	}
-
+	ctx.Logger.Infof("GetStaffPubKey: %x\n", giverPK)
 	badge.Giver = giverPK
 
 	badgeBytes, err := json.Marshal(badge)
@@ -119,9 +119,11 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 	// Sign
 	signature := ed25519.Sign(decb64, params)
 
+	ctx.Logger.Infof("Sign: %s\nWith sk: 0x%x\nSignature: 0x%x\nTest: %v\n", params, decb64, signature, ed25519.Verify(pubKey, params, signature))
+
 	payload := protoTm.Payload{
 		Method: method,
-		Params: string(params),
+		Params: params,
 	}
 
 	tx := protoTm.Tx{
