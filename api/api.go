@@ -18,13 +18,6 @@ type statusCodeRecorder struct {
 	StatusCode int
 }
 
-/*
-func (r *statusCodeRecorder) WriteHeader(statusCode int) {
-	r.StatusCode = statusCode
-	r.ResponseWriter.WriteHeader(statusCode)
-}
-*/
-
 // API struct
 type API struct {
 	App    *app.App
@@ -62,13 +55,18 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/student", a.handler(a.CreateStudent)).Methods("POST")
 	r.Handle("/student", a.handler(a.UpdateStudent)).Methods("PUT")
 	r.Handle("/student/{id:[0-9]+}", a.handler(a.DeleteStudent)).Methods("DELETE")
+	r.Handle("/student/shareProfile", a.handler(a.ShareProfile)).Methods("GET")
 
 	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
 	r.Handle("/staff", a.handler(a.UpdateStaff)).Methods("PUT")
 	r.Handle("/staff/{id:[0-9]+}", a.handler(a.DeleteStaff)).Methods("DELETE")
-	r.Handle("/admin/setkey", a.handler(a.SetPubkey)).Methods("POST")
-	r.Handle("/admin/checkKey", a.handler(a.CheckKey)).Methods("GET")
+
+	adminRoute := r.PathPrefix("/admin").Subrouter()
+	adminRoute.Handle("/setkey", a.handler(a.SetPubkey)).Methods("POST")
+	adminRoute.Handle("/checkKey", a.handler(a.CheckKey)).Methods("GET")
+	adminRoute.Handle("/resetKey", a.handler(a.ResetKey)).Methods("GET")
+	adminRoute.Handle("/comfirmResetKey", a.handler(a.ConfirmResetKey)).Methods("GET")
 
 	// r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
 	r.HandleFunc("/login", a.Login).Methods("POST")
@@ -128,32 +126,7 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		ctx.Logger.Infof("%+v\n", user)
 
 		ctx = ctx.WithUser(user)
-		//ctx = ctx.WithLogger(ctx.Logger.WithField("request_id", base64.RawURLEncoding.EncodeToString(model.NewId())))
-		/*
-			defer func() {
-				statusCode := w.(*statusCodeRecorder).StatusCode
-				if statusCode == 0 {
-					statusCode = 200
-				}
-				duration := time.Since(beginTime)
 
-				logger := ctx.Logger.WithFields(logrus.Fields{
-					"duration":    duration,
-					"status_code": statusCode,
-					"remote":      ctx.RemoteAddress,
-				})
-				logger.Info(r.Method + " " + r.URL.RequestURI())
-			}()
-
-			defer func() {
-				if r := recover(); r != nil {
-					ctx.Logger.Error(fmt.Errorf("%v: %s", r, debug.Stack()))
-					http.Error(w, "internal server error", http.StatusInternalServerError)
-				}
-			}()
-		*/
-		// w.Header().Set("Allow", "http://localhost:8082")
-		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, private")
 		w.Header().Set("Pragma", "no-cache")
 
