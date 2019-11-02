@@ -6,9 +6,10 @@ import {
 	CREATE_ACTIVITY_BREADCRUMB,
 	GIVE_BADGE_STEP,
 	CREATE_ACTIVITY_STEP,
-	EDIT_ACTIVITY_STEP
+	EDIT_ACTIVITY_STEP,
+	STUDENT_ROUTE_NAMES
 } from "@/constants";
-import { getLoginUserRole, clearLoginCookie, isLoggedIn } from "@/helpers";
+import { getLoginUserRole, clearLoginState, isLoggedIn } from "@/helpers";
 
 Vue.use(Router);
 
@@ -36,6 +37,8 @@ const router = new Router({
 
 					return;
 				}
+
+				clearLoginState();
 				next();
 			}
 		},
@@ -371,8 +374,7 @@ const router = new Router({
 			},
 			beforeEnter: (to, from, next) => {
 				// Force user to login again when he/she try to access without authentication
-				localStorage.removeItem("user");
-				clearLoginCookie();
+				clearLoginState();
 				next();
 			}
 		}
@@ -382,12 +384,15 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
 	// Ignore login and error page
 	const isLogin = isLoggedIn();
+	const role = getLoginUserRole();
+
 	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
-		next({
-			name: "login"
-		});
+		next({ name: "login" });
+	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
+		next({ name: "admin" });
+	} else {
+		next();
 	}
-	next();
 });
 
 export default router;

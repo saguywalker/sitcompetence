@@ -20,6 +20,11 @@ export function clearLoginCookie() {
 	Cookies.remove("x-session-token");
 }
 
+export function clearLoginState() {
+	Cookies.remove("x-session-token");
+	localStorage.removeItem("user");
+}
+
 export function getCookie(name) {
 	return Cookies.getJSON(name);
 }

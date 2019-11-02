@@ -76,6 +76,8 @@
 @import "@/styles/pages/login.scss";
 </style>
 <script>
+import loading from "@/plugin/loading";
+
 export default {
 	data() {
 		return {
@@ -105,6 +107,8 @@ export default {
 			this.validateSubmit();
 
 			if (!this.isError) {
+				loading.start();
+
 				try {
 					await this.$store.dispatch("base/doLogin", {
 						username: this.userName,
@@ -116,6 +120,8 @@ export default {
 						variant: "danger",
 						autoHideDelay: 1500
 					});
+				} finally {
+					loading.stop();
 				}
 			}
 		},

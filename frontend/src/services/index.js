@@ -4,9 +4,12 @@ import router from "@/router";
 axios.defaults.withCredentials = true;
 // Handlers
 const handleResponse = (response) => response;
-const handle403 = (error) => {
+
+const handleErrors = (error) => {
 	if (error.response.status === 403) {
 		router.push({ name: "error403" });
+	} else if (error.response.status === 451) {
+		router.push({ name: "user-genkey" });
 	}
 };
 
@@ -19,8 +22,7 @@ const apiClientLogin = axios.create({
 });
 
 // ------- Interceptors --------
-// Handle response status error 403
-apiClient.interceptors.response.use(handleResponse, handle403);
+apiClient.interceptors.response.use(handleResponse, handleErrors);
 // -----------------------------
 
 const Login = {

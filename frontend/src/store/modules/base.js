@@ -1,5 +1,5 @@
 import router from "@/router";
-import { getCiphertext, clearLoginCookie } from "@/helpers";
+import { getCiphertext, clearLoginState } from "@/helpers";
 import { Base, Login } from "@/services";
 import {
 	LOAD_LOGIN_DATA,
@@ -99,8 +99,7 @@ const actions = {
 		router.push({ name: "student" });
 	},
 	logout({ commit }) {
-		localStorage.removeItem("user");
-		clearLoginCookie();
+		clearLoginState();
 		commit(LOGOUT);
 		router.push({ name: "login" });
 	},

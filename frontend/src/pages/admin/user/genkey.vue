@@ -41,7 +41,6 @@
 				<div class="code-block">
 					<code class="code">{{ b64SecretKey }}</code>
 				</div>
-				{{ decodeSecretKey }}
 				<p><strong>Public Key:</strong></p>
 				<div class="code-block">
 					<code class="code">{{ b64PublicKey }}</code>

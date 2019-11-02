@@ -1,4 +1,5 @@
 export const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export const STUDENT_ROUTE_NAMES = ["dashboard", "activity", "activity-detail_id", "portfolio"];
 /* eslint-disable quote-props */
 export const COMPETENCE = Object.freeze({
 	"30001": {
