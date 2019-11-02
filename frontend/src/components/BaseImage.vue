@@ -1,18 +1,17 @@
 <template>
 	<div
 		:style="{
-			width: imageWidth,
-			height: height === '' ? 'auto' : `${height}px`
+			width: `${size}px`,
+			height: `${size}px`,
+			borderRadius: imageRounded
 		}"
 		class="base-image"
 	>
 		<img
 			:style="{
-				height: '100%',
 				borderRadius: imageRounded
 			}"
 			:src="imageSrc"
-			alt="Image"
 		>
 	</div>
 </template>
