@@ -1,9 +1,9 @@
 package api
 
 import (
+	// "crypto/sha256"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -161,7 +161,7 @@ func (a *API) DeleteStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 
 // ShareProfile generate a shareable link for student porfolio
 func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	if ctx.User.Group != "std_group" {
+	if ctx.User.Group != "st_group" {
 		return errors.New("only students are allowed")
 	}
 
@@ -178,9 +178,9 @@ func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 		return err
 	}
 
-	fullURL := fmt.Sprintf("%s://%s/%s", r.URL.Scheme, r.URL.Host, []byte(session.ID)[:32])
+	ctx.Logger.Printf("RequestedURL: %s\n", r.RequestURI)
 
-	w.Write([]byte(fullURL))
+	// w.Write([]byte(fullURL))
 
 	return nil
 }
