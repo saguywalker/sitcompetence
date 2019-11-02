@@ -19,10 +19,11 @@ func (ctx *Context) GetStaffByID(id string) (*model.Staff, error) {
 
 // SetPubkey set publickey
 func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
-	decPk := make([]byte, base64.StdEncoding.DecodedLen(len(pubkey)))
-	if _, err := base64.StdEncoding.Decode(decPk, pubkey); err != nil {
+	decPk, err := base64.StdEncoding.DecodeString(string(pubkey))
+	if err != nil {
 		return err
 	}
+
 	ctx.Logger.Infof("decode pk: %x\n", decPk)
 	return ctx.Database.SetPubkey(id, decPk)
 }
