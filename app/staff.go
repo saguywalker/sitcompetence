@@ -23,7 +23,7 @@ func (ctx *Context) SetPubkey(id string, pubkey []byte) error {
 	if _, err := base64.StdEncoding.Decode(decPk, pubkey); err != nil {
 		return err
 	}
-	ctx.Logger.Infof("decode pk: %x\n", decPk)	
+	ctx.Logger.Infof("decode pk: %x\n", decPk)
 	return ctx.Database.SetPubkey(id, decPk)
 }
 
