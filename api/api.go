@@ -55,7 +55,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/student", a.handler(a.CreateStudent)).Methods("POST")
 	r.Handle("/student", a.handler(a.UpdateStudent)).Methods("PUT")
 	r.Handle("/student/{id:[0-9]+}", a.handler(a.DeleteStudent)).Methods("DELETE")
-	r.Handle("/student/shareProfile", a.handler(a.ShareProfile)).Methods("GET")
+	r.Handle("/student/shareProfile/{id:[0-9]+}", a.handler(a.ShareProfile)).Methods("GET")
 
 	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
@@ -73,6 +73,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/logout", a.handler(a.Logout)).Methods("GET")
 
 	r.Handle("/userDetail", a.handler(a.GetUserDetail)).Methods("GET")
+	r.HandleFunc("/profile", a.ViewProfile).Methods("GET")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")

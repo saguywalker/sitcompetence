@@ -15,6 +15,7 @@ import (
 type App struct {
 	Config           *Config
 	Database         *db.Database
+	ProfileSession   *sessions.CookieStore
 	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
 }
@@ -54,6 +55,12 @@ func New() (app *App, err error) {
 		MaxAge:   60 * 15,
 		HttpOnly: false,
 		Path:     "/",
+	}
+
+	app.ProfileSession = sessions.NewCookieStore(keyHash[:])
+	app.ProfileSession.Options = &sessions.Options{
+		MaxAge:   60 * 60 * 24 * 7,
+		HttpOnly: true,
 	}
 
 	app.CurrentPeerIndex = 0

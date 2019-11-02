@@ -18,35 +18,7 @@ import (
 	"github.com/saguywalker/sitcompetence/app"
 )
 
-/*
-type authenMiddleware struct {
-	tokenUsers map[string]*model.User
-}
-
-func (amw *authenMiddleware) Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("X-Session-Token")
-		token = strings.TrimSpace(token)
-
-		if len(token) == 0 {
-			http.Error(w, "Missing auth token", http.StatusForbidden)
-			return
-		}
-
-		if user, found := amw.tokenUsers[token]; found {
-			log.Printf("Authenticated user %s\n", user.User)
-			next.ServeHTTP(w, r)
-		} else {
-			http.Error(w, "No user in session", http.StatusForbidden)
-			return
-		}
-	})
-}
-*/
 func serveAPI(ctx context.Context, api *api.API) {
-	// var adminEntry = "ui/admin-sc/dist/admin/index.html"
-	// var adminStatic = "ui/admin-sc/dist/"
-
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
@@ -54,7 +26,6 @@ func serveAPI(ctx context.Context, api *api.API) {
 	// router.PathPrefix("/admin").HandlerFunc(IndexHandler(adminEntry))
 
 	// CORS middleware
-
 	c := cors.New(cors.Options{
 		// AllowedOrigins: []string{"*"},
 		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},

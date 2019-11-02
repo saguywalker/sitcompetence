@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -159,5 +161,58 @@ func (a *API) DeleteStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 
 // ShareProfile generate a shareable link for student porfolio
 func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	if ctx.User.Group != "std_group" {
+		return errors.New("only students are allowed")
+	}
+
+	session, err := a.App.ProfileSession.Get(r, "url-session")
+	if err != nil {
+		return err
+	}
+
+	if _, ok := session.Values["studentid"]; !ok {
+		session.Values["studentid"] = ctx.User.UserID
+	}
+
+	if err := session.Save(r, w); err != nil {
+		return err
+	}
+
+	fullURL := fmt.Sprintf("%s://%s/%s", r.URL.Scheme, r.URL.Host, []byte(session.ID)[:32])
+
+	w.Write([]byte(fullURL))
+
 	return nil
+}
+
+// ViewProfile view a specific student's profile
+func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
+	ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+	ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
+
+	session, err := a.App.ProfileSession.Get(r, "url-session")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	studentID, ok := session.Values["studentid"]
+	if !ok {
+		http.Error(w, "incorrect url", http.StatusNotFound)
+		return
+	}
+
+	collected, index, err := ctx.GetCollectedWithDetail(studentID.(string), a.App.CurrentPeerIndex, a.Config.Peers)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	a.App.CurrentPeerIndex = index
+
+	collectedBytes, err := json.Marshal(collected)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Write(collectedBytes)
 }

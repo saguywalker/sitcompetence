@@ -10,7 +10,6 @@ import (
 func (ctx *Context) GetStudentByID(id string) (*model.Student, error) {
 	student, err := ctx.Database.GetStudentByID(id)
 	if err != nil {
-		//ctx.Logger.Errorln(err.Error())
 		return student, err
 	}
 

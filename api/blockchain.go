@@ -95,7 +95,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 		return err
 	}
 	defer r.Body.Close()
-	
+
 	ctx.Logger.Infof("json data: %s\n", body)
 
 	isExists, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)

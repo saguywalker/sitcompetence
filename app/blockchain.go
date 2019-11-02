@@ -87,7 +87,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 	}
 
 	ctx.Logger.Infof("decrypted base64 sk: %x (%d)", string(decb64), len(decb64))
-	
+
 	// Sign
 	signature := ed25519.Sign(decb64, params)
 
