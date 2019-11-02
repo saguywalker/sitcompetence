@@ -66,6 +66,16 @@ func (a *API) SetPubkey(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	return nil
 }
 
+// ResetKey send comfirmation request to email
+func (a *API) ResetKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+// ConfirmResetKey reset public key in database
+func (a *API) ConfirmResetKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
 // CheckKey check whether staff has already set the key or not
 func (a *API) CheckKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	staffID := ctx.User.UserID

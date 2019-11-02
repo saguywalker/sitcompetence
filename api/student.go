@@ -156,3 +156,8 @@ func (a *API) DeleteStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 	id := getIDFromRequest("id", r)
 	return ctx.DeleteStudent(id)
 }
+
+// ShareProfile generate a shareable link for student porfolio
+func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
