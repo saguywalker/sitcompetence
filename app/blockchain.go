@@ -38,13 +38,6 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 		return txID, index, err
 	}
 
-	/*
-		badge.TxID = txID
-
-		if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
-			return index, err
-		}
-	*/
 	index = (index + 1) % uint64(len(peers))
 
 	return txID, index, nil
@@ -86,8 +79,6 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 		Timeout: 3 * time.Second,
 	}
 
-	// Decrypt aes
-
 	ctx.Logger.Infof("encrypted base64 sk: %s", privKey)
 
 	decb64, err := base64.StdEncoding.DecodeString(privKey)
@@ -96,27 +87,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 	}
 
 	ctx.Logger.Infof("decrypted base64 sk: %x (%d)", string(decb64), len(decb64))
-	/*
-		ctx.Logger.Infof("H(key): %x", key)
-
-		c, err := aes.NewCipher(key)
-		if err != nil {
-			return nil, err
-		}
-
-		gcm, err := cipher.NewGCM(c)
-		if err != nil {
-			return nil, err
-		}
-
-		nonce := make([]byte, gcm.NonceSize())
-		if _, err := io.ReadFull(rand.Reader, nonce)
-
-		priv := make([]byte, 64)
-		c.Decrypt(priv, []byte(privKey))
-		ctx.Logger.Infof("decrypted: %s\n", string(priv))
-		ctx.Logger.Infof("private key: %v", priv)
-	*/
+	
 	// Sign
 	signature := ed25519.Sign(decb64, params)
 

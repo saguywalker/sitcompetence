@@ -95,18 +95,7 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 		return err
 	}
 	defer r.Body.Close()
-	/*
-		var bodyMap map[string]interface{}
-		if err := json.Unmarshal(body, &bodyMap); err != nil {
-			return nil
-		}
-
-		rawData, err := json.Marshal(bodyMap["data"])
-		if err != nil {
-			return err
-		}
-		ctx.Logger.Infof("json data: %s\n", rawData)
-	*/
+	
 	ctx.Logger.Infof("json data: %s\n", body)
 
 	isExists, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
