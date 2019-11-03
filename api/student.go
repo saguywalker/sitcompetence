@@ -4,6 +4,7 @@ import (
 	// "crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -202,16 +203,25 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	collected, index, err := ctx.GetCollectedWithDetail(studentID.(string), a.App.CurrentPeerIndex, a.Config.Peers)
+	student, err := ctx.GetStudentByID(studentID.(string))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", studentID.(string)), a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	a.App.CurrentPeerIndex = index
 
-	collectedBytes, err := json.Marshal(collected)
+	student.Collected = collected
+
+	collectedBytes, err := json.Marshal(student)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Write(collectedBytes)

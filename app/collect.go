@@ -1,7 +1,9 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
+
 	"github.com/saguywalker/sitcompetence/model"
 )
 
@@ -54,7 +56,15 @@ func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []stri
 
 	var returnCollected []model.CollectedCompetence
 	if err := json.Unmarshal(collected, &returnCollected); err != nil {
-		return nil, returnIndex, err
+		parts := bytes.Split(collected, []byte("|"))
+		for _, x := range parts {
+			var tmp model.CollectedCompetence
+			if err := json.Unmarshal(x, &tmp); err != nil {
+				return nil, returnIndex, err
+			}
+
+			returnCollected = append(returnCollected, tmp)
+		}
 	}
 
 	return returnCollected, returnIndex, nil
