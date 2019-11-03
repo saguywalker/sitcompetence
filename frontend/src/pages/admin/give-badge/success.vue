@@ -74,8 +74,6 @@
 </style>
 <script>
 import SuccessLogo from "@/components/admin/SuccessLogo.vue";
-// import loading from "@/plugin/loading";
-// import { base64ToHex } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -107,12 +105,6 @@ export default {
 		...mapState("adminVerify", [
 			"verifyData"
 		])
-		// hexTransactionId() {
-		// 	return base64ToHex(this.success.transaction_id);
-		// },
-		// hexMerkle() {
-		// 	return base64ToHex(this.success.merkleroot);
-		// }
 	},
 	methods: {
 		testVerify() {

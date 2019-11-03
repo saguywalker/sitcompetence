@@ -28,6 +28,7 @@
 		width: 100%;
 		box-shadow: 0 rem(3) rem(12) 0 rgba(0, 0, 0, 0.2), 0 rem(1) rem(15) 0 rgba(0, 0, 0, 0.19);
 		margin-bottom: rem(50);
+		background-color: $white;
 		position: relative;
 
 		.profile-bar {
@@ -62,7 +63,6 @@
 		}
 
 		.portfolio-content {
-			background-color: $white;
 			margin: rem(10) 0;
 			padding: 4%;
 

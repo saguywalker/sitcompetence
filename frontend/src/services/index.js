@@ -55,6 +55,15 @@ const Base = {
 	}
 };
 
+const Portfolio = {
+	getBadgeWithToken() {
+		return apiClient.get("/profile");
+	},
+	getShareLink() {
+		return apiClient.get("/student/shareProfile");
+	}
+};
+
 const Verify = {
 	postVerifyTransaction(data) {
 		return apiClient.post("/verify", data);
@@ -111,5 +120,6 @@ export {
 	Verify,
 	GiveBadge,
 	AdminActivity,
-	Activity
+	Activity,
+	Portfolio
 };

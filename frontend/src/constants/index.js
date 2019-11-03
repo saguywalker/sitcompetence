@@ -4,43 +4,43 @@ export const STUDENT_ROUTE_NAMES = ["dashboard", "activity", "activity-detail_id
 export const COMPETENCE = Object.freeze({
 	"30001": {
 		name: "Growth MindSet",
-		img: "https://i.imgur.com/jwCaW48.png"
+		img: require("../assets/images/badges/growth.png")
 	},
 	"30002": {
 		name: "Communicating",
-		img: "https://i.imgur.com/rWnjhc8.png"
+		img: require("../assets/images/badges/communicating.png")
 	},
 	"30003": {
 		name: "Problem Solving",
-		img: "https://i.imgur.com/XrbVhU6.png"
+		img: require("../assets/images/badges/problemsolving.png")
 	},
 	"30004": {
 		name: "Managing",
-		img: "https://i.imgur.com/Rw3EFrb.png"
+		img: require("../assets/images/badges/mananing.png")
 	},
 	"30005": {
 		name: "Innovating",
-		img: "https://i.imgur.com/GJvefbC.png"
+		img: require("../assets/images/badges/innovating.png")
 	},
 	"30006": {
 		name: "Leading",
-		img: "https://i.imgur.com/Yk8W5oH.png"
+		img: require("../assets/images/badges/leading.png")
 	},
 	"30007": {
 		name: "Collaborative Mindset",
-		img: "https://i.imgur.com/odqvcrT.png"
+		img: require("../assets/images/badges/collab.png")
 	},
 	"30008": {
 		name: "Professional Mindset",
-		img: "https://i.imgur.com/4aDyHkA.png"
+		img: require("../assets/images/badges/professional.png")
 	},
 	"30009": {
 		name: "Entreprenuer Mindset",
-		img: "https://i.imgur.com/gfBL4Db.png"
+		img: require("../assets/images/badges/entrepreneur.png")
 	},
 	"30010": {
 		name: "Global Mindset",
-		img: "https://i.imgur.com/diUdFOv.png"
+		img: require("../assets/images/badges/global.png")
 	}
 });
 export * from "./breadcrumb";

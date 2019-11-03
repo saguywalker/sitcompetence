@@ -7,20 +7,12 @@
 				</h2>
 			</div>
 		</div>
-		<div
-			v-if="false"
-			class="portfolio-actions"
-		>
+		<div class="portfolio-actions">
 			<div class="right">
 				<b-button
 					variant="primary"
 					class="item"
-				>
-					Edit
-				</b-button>
-				<b-button
-					variant="primary"
-					class="item"
+					@click="sharePortfolio"
 				>
 					Share
 				</b-button>
@@ -39,7 +31,7 @@
 						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="statePortfolios">
+				<template v-if="statePortfolios.length !== 0">
 					<div class="portfolio-content">
 						<b-row class="portfolio-container">
 							<b-col
@@ -111,6 +103,7 @@
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
+import loading from "@/plugin/loading";
 import { widthSize } from "@/helpers/mixins";
 import { getLoginUser } from "@/helpers";
 import { COMPETENCE } from "@/constants";
@@ -124,9 +117,7 @@ export default {
 	mixins: [widthSize],
 	data() {
 		return {
-			fullName: "Tindanai Wongpipattanopas",
-			forceReRender: 0,
-			ports: []
+			forceReRender: 0
 		};
 	},
 	computed: {
@@ -170,6 +161,21 @@ export default {
 		}
 	},
 	methods: {
+		async sharePortfolio() {
+			loading.start();
+
+			try {
+				await this.$store.dispatch("portfolio/loadShareLink");
+			} catch (err) {
+				this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+					title: "Fetching competences error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			} finally {
+				loading.stop();
+			}
+		},
 		getCompetenceNameById(id) {
 			return COMPETENCE[id].name;
 		},

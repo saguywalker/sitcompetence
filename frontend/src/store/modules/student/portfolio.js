@@ -1,4 +1,4 @@
-import { Base, Verify } from "@/services";
+import { Base, Verify, Portfolio } from "@/services";
 import {
 	LOAD_PORTFOLIO,
 	UPDATE_PORTFOLIO,
@@ -39,6 +39,14 @@ const actions = {
 		const	response = await Base.getBadgesByStudentId(id);
 		if (response.status === 200) {
 			commit(LOAD_PORTFOLIO, response.data);
+		}
+
+		return response;
+	},
+	async loadShareLink({ commit }) {
+		const	response = await Portfolio.getShareLink();
+		if (response.status === 200) {
+			commit(UPDATE_PORTFOLIO_LINK, response.data);
 		}
 
 		return response;

@@ -5,30 +5,15 @@
 
 	&::before {
 		content: "";
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: rem(35);
-		height: rem(35);
+		width: inherit;
+		height: inherit;
 		border-radius: inherit;
-		border: rem(3) solid $admin-main-blue;
-		border-color: transparent $admin-main-blue transparent $admin-main-blue;
-		border-radius: 50%;
-		animation: loader 1s linear infinite;
+		background-color: $gray-4;
 	}
 
 	img {
 		position: absolute;
 		width: 100%;
 		object-fit: cover;
-	}
-}
-
-@keyframes loader {
-	0% {
-		transform: translate(-50%, -50%) rotate(0deg);
-	}
-	100% {
-		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }

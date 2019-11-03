@@ -20,72 +20,75 @@
 					<div class="profile-header">
 						<base-image :size="resizeImage" />
 						<div class="name">
-							<h5
-								v-for="(name, index) in splitedFullname"
-								:key="`${name}${index}`"
-							>
-								{{ name }}
-							</h5>
+							<h5>Username</h5>
 						</div>
 					</div>
 					<p class="profile-description">
 						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<div class="portfolio-content">
-					<b-row class="portfolio-container">
-						<b-col
-							v-for="(com, index) in portfolio"
-							:key="`${com.competence_id}${forceReRender}`"
-							cols="6"
-							class="competence-wrapper"
-						>
-							<base-image
-								:size="resizeImage"
-								class="sitcom-badge"
-							/>
-							<p class="name">
-								{{ com.competence_name }}
-							</p>
-							<transition
-								:key="`${com.competence_id}${index}`"
-								name="fade"
-								mode="out-in"
+				<template v-if="portfolios">
+					<div class="portfolio-content">
+						<b-row class="portfolio-container">
+							<b-col
+								v-for="(com, index) in portfolios"
+								:key="`${com.competence_id}${forceReRender}`"
+								cols="6"
+								class="competence-wrapper"
 							>
-								<p
-									v-if="com.verify_show"
-									class="verify-status"
-								>
-									<span class="icon">
-										<icon-check-circle v-if="com.verify_status" />
-										<icon-time-circle v-else />
-									</span>
-									Verified
+								<base-image
+									:src="getCompetenceImgById(com.competence_id)"
+									:size="resizeImage"
+									class="sitcom-badge"
+								/>
+								<p class="name">
+									{{ getCompetenceNameById(com.competence_id) }}
 								</p>
-							</transition>
-						</b-col>
-					</b-row>
-					<div class="portfolio-footer">
-						<b-button
-							:block="resizeVerifyButton"
-							variant="primary"
-							size="sm"
-							class="action-item"
-							@click="testVerify"
-						>
-							Verify by Blockchain
-						</b-button>
-						<b-button
-							v-if="portfolio[0].verify_show"
-							size="sm"
-							class="action-item"
-							variant="outline-primary"
-							@click="clearVerified"
-						>
-							Clear Verified
-						</b-button>
+								<transition
+									:key="`${com.competence_id}${index}`"
+									name="fade"
+									mode="out-in"
+								>
+									<p
+										v-if="show"
+										class="verify-status"
+									>
+										<span class="icon">
+											<icon-check-circle v-if="verify[index]" />
+											<icon-time-circle v-else />
+										</span>
+										{{ verifyText(index) }}
+									</p>
+								</transition>
+							</b-col>
+						</b-row>
+						<div class="portfolio-footer">
+							<b-button
+								:block="resizeVerifyButton"
+								variant="primary"
+								size="sm"
+								class="action-item"
+								@click="testVerify"
+							>
+								Verify by Blockchain
+							</b-button>
+							<b-button
+								v-if="show"
+								variant="outline"
+								size="sm"
+								class="action-item"
+								@click="clearVerify"
+							>
+								Clear verify
+							</b-button>
+						</div>
 					</div>
-				</div>
+				</template>
+				<template v-else>
+					<div class="portfolio-content">
+						<h1>No competence record.</h1>
+					</div>
+				</template>
 			</div>
 		</section>
 		<footer class="page-footer">
@@ -102,6 +105,8 @@
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
+import { COMPETENCE } from "@/constants";
+import { Portfolio, Verify } from "@/services";
 
 export default {
 	components: {
@@ -111,42 +116,14 @@ export default {
 	mixins: [widthSize],
 	data() {
 		return {
-			fullName: "Tindanai Wongpipattanopas",
+			verify: [],
+			show: false,
 			forceReRender: 0,
-			portfolio: [
-				{
-					competence_id: "234",
-					competence_name: "Flexible",
-					competence_img: "link"
-				},
-				{
-					competence_id: "111",
-					competence_name: "Communicaiton",
-					competence_img: "link"
-				},
-				{
-					competence_id: "334",
-					competence_name: "Growth mindset",
-					competence_img: "link"
-				},
-				{
-					competence_id: "994",
-					competence_name: "Leadership",
-					competence_img: "link"
-				},
-				{
-					competence_id: "667",
-					competence_name: "Team working",
-					competence_img: "link"
-				}
-			],
-			verify: false
+			user: "",
+			portfolios: null
 		};
 	},
 	computed: {
-		splitedFullname() {
-			return this.fullName.split(" ");
-		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
 				return false;
@@ -162,42 +139,57 @@ export default {
 			return "70";
 		}
 	},
+	beforeRouteEnter(to, from, next) {
+		next(async (vm) => {
+			vm.$Progress.start();
+
+			try {
+				const response = await Portfolio.getBadgeWithToken();
+				vm.portfolios = response.data.collected_competence;
+				vm.user = response.data.firstname;
+			} catch (err) {
+				this.$Progress.fail();
+				this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+					title: "Fetching competences error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			} finally {
+				vm.$Progress.finish();
+			}
+		});
+	},
 	methods: {
-		methodThatReturnsAPromise(id) {
-			/* eslint-disable */
-			return new Promise((resolve, reject) => {
-				setTimeout(() => {
-					console.log(`Resolve! ${id}`);
-					this.setVerifyStatusById(id, false);
-					++this.forceReRender;
-					resolve();
-				}, Math.random() * 1000);
-			});
+		getCompetenceNameById(id) {
+			return COMPETENCE[id].name;
 		},
-		clearVerified() {
-			this.portfolio.map((p) => {
-				delete p.verify_show;
-				delete p.verify_status;
-
-				return p;
-			});
-
-			++this.forceReRender;
+		getCompetenceImgById(id) {
+			return COMPETENCE[id].img;
+		},
+		verifyText(id) {
+			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			this.portfolio.reduce(async (previousPromise, port, index) => {
-				console.log(`Loop: ${index}`);
-				if (port.verify_show) {
-					port.verify_status = null;
-					port.verify_show = false;
-				}
+			this.portfolios.reduce(async (previousPromise, competence) => {
+				const payload = {
+					competence_id: competence.competence_id,
+					semester: competence.semester,
+					student_id: competence.student_id
+				};
+				this.forceReRender++;
 				await previousPromise;
-				return this.methodThatReturnsAPromise(index);
+				const response = await Verify.postVerifyTransaction(payload);
+				this.verify.push(response.data);
+				this.show = true;
+				return response;
 			}, Promise.resolve());
 		},
-		setVerifyStatusById(id, status) {
-			this.portfolio[id].verify_status = status;
-			this.portfolio[id].verify_show = true;
+		getBadgeImgById(id) {
+			return COMPETENCE[id].img;
+		},
+		clearVerify() {
+			this.verify = [];
+			this.show = false;
 		}
 	}
 };
