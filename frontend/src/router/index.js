@@ -43,9 +43,9 @@ const router = new Router({
 			}
 		},
 		{
-			path: "/user/:id/portfolio",
-			name: "user_id-portfoilio",
-			component: () => import("@/pages/student/user/_id-portfolio.vue"),
+			path: "/viewProfile",
+			name: "share-portfolio",
+			component: () => import("@/pages/_id-portfolio.vue"),
 			meta: {
 				rule: "isPublic"
 			}
@@ -386,7 +386,7 @@ router.beforeEach((to, from, next) => {
 	const isLogin = isLoggedIn();
 	const role = getLoginUserRole();
 
-	if (to.name !== "login" && to.name !== "error404" && !isLogin) {
+	if (to.name !== "login" && to.name !== "error404" && to.name !== "share-portfolio" && !isLogin) {
 		next({ name: "login" });
 	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
 		next({ name: "admin" });

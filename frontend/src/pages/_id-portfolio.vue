@@ -1,12 +1,17 @@
 <template>
-	<div class="portfolio">
+	<div
+		:style="{
+			backgroundImage: `url('${require('@/assets/images/port-bg.svg')}')`,
+			backgroundSize: '320px',
+			backgroundAttachment: 'fixed',
+			backgroundPosition: 'center',
+			backgroundRepeat: 'repeat',
+		}"
+		class="portfolio"
+	>
 		<header class="page-header port-id">
 			<div class="title wrapper">
-				<base-sitcom-logo
-					:size="96"
-					class="logo"
-				/>
-				<h2>SIT-Competence Portfolio</h2>
+				<h2>Portfolio</h2>
 			</div>
 		</header>
 		<section class="wrapper">
@@ -28,7 +33,7 @@
 					</p>
 				</aside>
 				<div class="portfolio-content">
-					<b-row>
+					<b-row class="portfolio-container">
 						<b-col
 							v-for="(com, index) in portfolio"
 							:key="`${com.competence_id}${forceReRender}`"
@@ -91,7 +96,7 @@
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/student/portfolio.scss";
+@import "@/styles/portfolio.scss";
 </style>
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
