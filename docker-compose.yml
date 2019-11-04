@@ -1,0 +1,7 @@
+version: '2'
+services:
+    server:
+            image: nginx:1.17
+            volumes:
+                   - /etc/nginx/my-site.com.crt:/etc/nginx/my-site.com.crt
+                   - /etc/nginx/my-site.com.key:/etc/nginx/my-site.com.key
