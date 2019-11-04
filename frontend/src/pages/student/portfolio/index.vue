@@ -7,18 +7,60 @@
 				</h2>
 			</div>
 		</div>
-		<div class="portfolio-actions">
-			<div class="right">
-				<b-button
-					variant="primary"
-					class="item"
-					@click="sharePortfolio"
-				>
-					Share
-				</b-button>
-			</div>
-		</div>
 		<section class="wrapper">
+			<div class="portfolio-actions">
+				<div class="right">
+					<b-button
+						id="popover-share-port"
+						ref="shareButton"
+						variant="primary"
+						class="item"
+						@click="sharePortfolio"
+					>
+						Share
+					</b-button>
+				</div>
+				<b-popover
+					ref="portPopover"
+					target="popover-share-port"
+					triggers="manual"
+					:show.sync="popoverShow"
+					@hidden="onHidden"
+				>
+					<template v-slot:title>
+						<button
+							:style="{
+								position: 'absolute',
+								top: '7px',
+								right: '10px'
+							}"
+							class="close-popover"
+							aria-label="Close"
+							@click="onClose"
+						>
+							<icon-cross-circle />
+						</button>
+						Share portfolio link
+					</template>
+					<b-button-group class="my-2">
+						<b-input
+							id="shareUrl"
+							ref="shareUrlInput"
+							size="sm"
+							value="hello my name is"
+						/>
+						<b-button
+							ref="copyBtn"
+							class="copy-btn"
+							size="sm"
+							variant="primary"
+							@click="onCopyUrl"
+						>
+							Copy
+						</b-button>
+					</b-button-group>
+				</b-popover>
+			</div>
 			<div class="portfolio-section">
 				<aside class="profile-bar">
 					<div class="profile-header">
@@ -103,6 +145,7 @@
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
+import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
 import { widthSize } from "@/helpers/mixins";
 import { getLoginUser } from "@/helpers";
@@ -112,11 +155,13 @@ import { mapState } from "vuex";
 export default {
 	components: {
 		IconCheckCircle,
-		IconTimeCircle
+		IconTimeCircle,
+		IconCrossCircle
 	},
 	mixins: [widthSize],
 	data() {
 		return {
+			popoverShow: false,
 			forceReRender: 0
 		};
 	},
@@ -161,14 +206,59 @@ export default {
 		}
 	},
 	methods: {
+		onOpen() {
+			this.$refs.portPopover.$emit("open");
+		},
+		onClose() {
+			this.popoverShow = false;
+		},
+		onHidden() {
+			// Called just after the popover has finished hiding
+			// Bring focus back to the button
+			this.focusRef(this.$refs.shareButton);
+		},
+		onCopyUrl() {
+			const testingCodeToCopy = document.querySelector("#shareUrl");
+			testingCodeToCopy.select();
+
+			try {
+				document.execCommand("copy");
+
+				this.$bvToast.toast("Copy successful", {
+					title: "Share portfolio link",
+					variant: "success",
+					autoHideDelay: 1500
+				});
+			} catch (err) {
+				this.$bvToast.toast("Oops, cannot copy link", {
+					title: "Share portfolio link",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			}
+
+			window.getSelection().removeAllRanges();
+		},
+		focusRef(ref) {
+			// Some references may be a component, functional component, or plain element
+			// This handles that check before focusing, assuming a `focus()` method exists
+			// We do this in a double `$nextTick()` to ensure components have
+			// updated & popover positioned first
+			this.$nextTick(() => {
+				this.$nextTick(() => {
+					(ref.$el || ref).focus();
+				});
+			});
+		},
 		async sharePortfolio() {
 			loading.start();
 
 			try {
 				await this.$store.dispatch("portfolio/loadShareLink");
+				this.onOpen();
 			} catch (err) {
-				this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
-					title: "Fetching competences error",
+				this.$bvToast.toast(`Get share portfolio link error problem: ${err.message}`, {
+					title: "Share portfolio link",
 					variant: "danger",
 					autoHideDelay: 1500
 				});

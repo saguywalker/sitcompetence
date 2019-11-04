@@ -5,11 +5,11 @@
 				403 - Forbidden
 			</h1>
 			<p class="description">
-				Don't worry there is a way to go back home.
+				If you got this status error, we are sorry that we going to force you to login again.
 			</p>
-			<router-link :to="{ name: 'admin' }">
+			<router-link :to="{ name: 'login' }">
 				<b-button variant="primary">
-					Back home
+					Back to login
 				</b-button>
 			</router-link>
 		</div>
