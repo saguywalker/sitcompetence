@@ -1,3 +1,3 @@
-https://github.com/saguywalker/sitcompetence/workflows/go/badge.svg
+![](https://github.com/saguywalker/sitcompetence/workflows/.github/workflows/go.yml/badge.svg)
 
 Welcome
