@@ -2,9 +2,11 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -12,6 +14,22 @@ import (
 
 // Login authenticate user with LDAP
 func (a *API) Login(w http.ResponseWriter, r *http.Request) {
+	session, err := a.App.UserSession.Get(r, "x-session-token")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	user := model.User{}
+	var ok bool
+	userInterface := session.Values["user"]
+	user, ok = userInterface.(model.User)
+	if ok && user.Authenticated {
+		if err := session.Save(r, w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
 	var input model.Login
 
 	defer r.Body.Close()
@@ -26,61 +44,94 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("%+v\n", input)
+	input.Username = strings.TrimSpace(input.Username)
+	input.Password = strings.TrimSpace(input.Password)
 
 	if len(input.Username) == 0 || len(input.Password) == 0 {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		http.Error(w, "username and password must not be empty", http.StatusForbidden)
 		return
 	}
-	/*
-		if utf8.ValidString(input.Username) || utf8.ValidString(input.Password) {
-			http.Error(w, "Invalid username or password", http.StatusMethodNotAllowed)
-		}
-	*/
-	respStruct, err := a.App.CheckPassword(input.Username, input.Password)
+
+	user, err = a.App.CheckPassword(input.Username, input.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 
 	ctx := a.App.NewContext()
-	ctx.WithUser(respStruct.User)
+	ctx.WithUser(user)
 
-	resp, err := json.Marshal(respStruct)
+	mapResp := make(map[string]interface{})
+
+	if user.Group == "inst_group" {
+		pubkey, err := ctx.Database.GetStaffPublicKey(user.UserID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if len(pubkey) == 0 {
+			mapResp["first"] = true
+		} else {
+			mapResp["first"] = false
+		}
+	}
+
+	mapResp["user"] = user
+
+	resp, err := json.Marshal(mapResp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	session.Values["user"] = user
+
+	mapResp["user"] = user
+
+	ctx.Logger.Infof("%+v\n", session.Values["user"])
+	ctx.Logger.Infoln(string(resp))
+
+	err = session.Save(r, w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Write(resp)
-
 }
 
 // Logout remove session toke from particular token
 func (a *API) Logout(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	token := r.Header.Get("X-Session-Token")
+	session, err := a.App.UserSession.Get(r, "x-session-token")
+	if err != nil {
+		return err
+	}
 
-	a.App.TokenUser[token] = nil
+	val := session.Values["user"]
+	user, ok := val.(model.User)
+	if !ok {
+		return errors.New("user is not found")
+	}
 
-	w.Write([]byte(fmt.Sprintf("%s has been logged out.", token)))
+	session.Values["user"] = model.User{}
+	session.Options.MaxAge = -1
+
+	w.Write([]byte(fmt.Sprintf("%s has been logged out.", user.UserID)))
 
 	return nil
 }
 
 // GetUserDetail return user detail from token
 func (a *API) GetUserDetail(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	token := r.Header.Get("X-Session-Token")
+	user := ctx.User
 
-	if val, ok := a.App.TokenUser[token]; ok {
-		data, err := json.Marshal(val)
-		if err != nil {
-			return err
-		}
-
-		w.Write(data)
-		return nil
+	userBytes, err := json.Marshal(user)
+	if err != nil {
+		return err
 	}
 
-	w.Write([]byte("Token not found"))
-	return fmt.Errorf("Token not found")
+	w.Write(userBytes)
+
+	return nil
 }

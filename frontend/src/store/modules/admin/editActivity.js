@@ -1,4 +1,4 @@
-import { Activity } from "@/services/admin";
+import { AdminActivity } from "@/services";
 import {
 	EDIT_ACTIVITY_STEP,
 	EDIT_ACTIVITY_DETAIL,
@@ -69,7 +69,7 @@ const actions = {
 		commit(EDIT_ACTIVITY_COMPETENCE, data);
 	},
 	async loadActivityById({ commit }, id) {
-		const	response = await Activity.getActivityById(id);
+		const	response = await AdminActivity.getActivityById(id);
 		if (response.status === 200) {
 			commit(EDIT_ACTIVITY_DETAIL, response.data[0]);
 		}
@@ -84,7 +84,7 @@ const actions = {
 			competences: competenceIds
 		};
 
-		const	response = await Activity.editActivityById(payload);
+		const	response = await AdminActivity.editActivityById(payload);
 		if (response.status === 200) {
 			commit(EDIT_ACTIVITY_SUBMIT);
 		}

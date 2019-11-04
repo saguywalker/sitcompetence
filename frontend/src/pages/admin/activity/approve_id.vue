@@ -21,7 +21,7 @@
 										size="sm"
 									/>
 									<b-button
-										variant="primary"
+										variant="admin-primary"
 										size="sm"
 									>
 										Search
@@ -34,7 +34,7 @@
 								:fields="fields"
 								selectable
 								select-mode="multi"
-								selected-variant="primary"
+								selected-variant="admin-primary"
 								responsive="sm"
 								@row-selected="onRowSelected"
 							>
@@ -55,14 +55,14 @@
 								<div class="text-center">
 									<b-button
 										class="mr-2"
-										variant="primary"
+										variant="admin-primary"
 										size="sm"
 										@click="selectAllRows"
 									>
 										Select all
 									</b-button>
 									<b-button
-										variant="outline-primary"
+										variant="outline-admin-primary"
 										size="sm"
 										@click="clearSelected"
 									>
@@ -123,6 +123,7 @@
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
+import { getLoginUser } from "@/helpers";
 import { mapGetters } from "vuex";
 
 export default {
@@ -152,7 +153,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters("activity", [
+		...mapGetters("adminActivity", [
 			"getActivityById"
 		]),
 		activityDetail() {
@@ -169,7 +170,7 @@ export default {
 			return this.items.length;
 		},
 		loginUser() {
-			return sessionStorage.getItem("user");
+			return getLoginUser();
 		}
 	},
 	watch: {
@@ -199,10 +200,10 @@ export default {
 		async submit() {
 			loading.start();
 			try {
-				await this.$store.dispatch("activity/submitApprove", {
+				await this.$store.dispatch("adminActivity/submitApprove", {
 					approvedStudents: this.selectedItems,
 					activityId: this.$route.params.id,
-					approver: this.loginUser
+					approver: this.loginUser.uid
 				});
 
 				this.$router.push({

@@ -36,7 +36,7 @@
 				<h4 class="title">
 					Login
 				</h4>
-				<div class="login-form">
+				<form @submit.prevent="submit">
 					<base-input-text
 						v-model="userName"
 						:error-message="error.userName ? 'Please enter a username' : ''"
@@ -53,13 +53,12 @@
 						name="kmutt-password"
 						@input="error.passWord = false"
 					/>
-					<b-button
-						variant="primary"
-						@click="submit"
+					<input
+						class="btn btn-primary"
+						type="submit"
+						value="Login"
 					>
-						Login
-					</b-button>
-				</div>
+				</form>
 			</div>
 		</div>
 		<button
@@ -77,6 +76,8 @@
 @import "@/styles/pages/login.scss";
 </style>
 <script>
+import loading from "@/plugin/loading";
+
 export default {
 	data() {
 		return {
@@ -106,17 +107,21 @@ export default {
 			this.validateSubmit();
 
 			if (!this.isError) {
+				loading.start();
+
 				try {
-					await this.$store.dispatch("authentication/doLogin", {
+					await this.$store.dispatch("base/doLogin", {
 						username: this.userName,
 						password: this.passWord
 					});
 				} catch (err) {
-					this.$bvToast.toast(`Problem: ${err.message}`, {
+					this.$bvToast.toast("Invalid username or password", {
 						title: "Login error",
 						variant: "danger",
 						autoHideDelay: 1500
 					});
+				} finally {
+					loading.stop();
 				}
 			}
 		},

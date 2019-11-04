@@ -9,7 +9,7 @@
 		>
 			<span class="detail">
 				<base-sitcom-logo
-					:size="30"
+					:size="40"
 					class="img"
 				/>
 				<p>
@@ -37,7 +37,7 @@
 			>
 				<icon-user-cog />
 				<p class="profile-name">
-					{{ loginUser }}
+					{{ userName }}
 				</p>
 			</button>
 			<div
@@ -52,14 +52,14 @@
 			>
 				<div class="profile-dropdown-detail">
 					<h4 class="name">
-						{{ loginUser }}
+						{{ userName }}
 					</h4>
 					<p class="role">
 						Staff
 					</p>
 				</div>
 				<div class="profile-dropdown-footer">
-					<router-link :to="{ name: 'setting' }">
+					<router-link :to="{ name: 'user-setting' }">
 						<b-button size="sm">
 							Setting
 						</b-button>
@@ -82,6 +82,7 @@
 import IconHamburger from "@/components/icons/IconHamburger.vue";
 import IconUserCog from "@/components/icons/IconUserCog.vue";
 import { clickOutside } from "@/helpers/directives/clickOutside";
+import { getLoginUser } from "@/helpers";
 
 export default {
 	components: {
@@ -98,8 +99,8 @@ export default {
 		};
 	},
 	computed: {
-		loginUser() {
-			return sessionStorage.getItem("user");
+		userName() {
+			return getLoginUser().username;
 		}
 	},
 	methods: {

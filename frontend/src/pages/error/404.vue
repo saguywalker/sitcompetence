@@ -5,13 +5,10 @@
 				404 - Notfound
 			</h1>
 			<p class="description">
-				Don't worry there is a way to go back home.
+				Not found what you are looking for. Don't worry there is a way to go back.
+				<br>
+				Please click back on your browser.
 			</p>
-			<router-link :to="{ name: 'admin' }">
-				<b-button variant="primary">
-					Back home
-				</b-button>
-			</router-link>
 		</div>
 	</div>
 </template>

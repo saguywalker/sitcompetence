@@ -7,26 +7,61 @@
 				</h2>
 			</div>
 		</div>
-		<div
-			v-if="false"
-			class="portfolio-actions"
-		>
-			<div class="right">
-				<b-button
-					variant="primary"
-					class="item"
-				>
-					Edit
-				</b-button>
-				<b-button
-					variant="primary"
-					class="item"
-				>
-					Share
-				</b-button>
-			</div>
-		</div>
 		<section class="wrapper">
+			<div class="portfolio-actions">
+				<div class="right">
+					<b-button
+						id="popover-share-port"
+						ref="shareButton"
+						:disabled="!hasNoCompetence"
+						variant="primary"
+						class="item"
+						@click="sharePortfolio"
+					>
+						Share
+					</b-button>
+				</div>
+				<b-popover
+					ref="portPopover"
+					target="popover-share-port"
+					triggers="manual"
+					:show.sync="popoverShow"
+					@hidden="onHidden"
+				>
+					<template v-slot:title>
+						<button
+							:style="{
+								position: 'absolute',
+								top: '7px',
+								right: '10px'
+							}"
+							class="close-popover"
+							aria-label="Close"
+							@click="onClose"
+						>
+							<icon-cross-circle />
+						</button>
+						Share portfolio link
+					</template>
+					<b-button-group class="my-2">
+						<b-input
+							id="shareUrl"
+							ref="shareUrlInput"
+							size="sm"
+							:value="`http://localhost:8080/viewProfile/${link}`"
+						/>
+						<b-button
+							ref="copyBtn"
+							class="copy-btn"
+							size="sm"
+							variant="primary"
+							@click="onCopyUrl"
+						>
+							Copy
+						</b-button>
+					</b-button-group>
+				</b-popover>
+			</div>
 			<div class="portfolio-section">
 				<aside class="profile-bar">
 					<div class="profile-header">
@@ -39,11 +74,11 @@
 						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="statePortfolios.collected_competence">
+				<template v-if="hasNoCompetence">
 					<div class="portfolio-content">
-						<b-row>
+						<b-row class="portfolio-container">
 							<b-col
-								v-for="(com, index) in ports"
+								v-for="(com, index) in statePortfolios"
 								:key="`${com.competence_id}${forceReRender}`"
 								cols="6"
 								class="competence-wrapper"
@@ -97,44 +132,53 @@
 					</div>
 				</template>
 				<template v-else>
-					<h1>No data</h1>
+					<div class="portfolio-content">
+						<h1>No competence record.</h1>
+					</div>
 				</template>
 			</div>
 		</section>
 	</div>
 </template>
 <style lang="scss">
-@import "@/styles/pages/student/portfolio.scss";
+@import "@/styles/portfolio.scss";
 </style>
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
+import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
+import loading from "@/plugin/loading";
 import { widthSize } from "@/helpers/mixins";
+import { getLoginUser } from "@/helpers";
 import { COMPETENCE } from "@/constants";
 import { mapState } from "vuex";
 
 export default {
 	components: {
 		IconCheckCircle,
-		IconTimeCircle
+		IconTimeCircle,
+		IconCrossCircle
 	},
 	mixins: [widthSize],
 	data() {
 		return {
-			fullName: "Tindanai Wongpipattanopas",
-			forceReRender: 0,
-			ports: []
+			popoverShow: false,
+			forceReRender: 0
 		};
 	},
 	computed: {
 		...mapState("portfolio", {
 			statePortfolios: "portfolios",
 			verify: "verify",
-			show: "show"
+			show: "show",
+			link: "link"
 		}),
-		...mapState("base", [
-			"user"
-		]),
+		user() {
+			return getLoginUser();
+		},
+		hasNoCompetence() {
+			return this.statePortfolios.length !== 0;
+		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
 				return false;
@@ -154,9 +198,7 @@ export default {
 		this.$Progress.start();
 
 		try {
-			await this.$store.dispatch("base/loadUserDetail");
 			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
-			this.setupPortfolio();
 		} catch (err) {
 			this.$Progress.fail();
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
@@ -169,27 +211,81 @@ export default {
 		}
 	},
 	methods: {
+		onOpen() {
+			this.$refs.portPopover.$emit("open");
+		},
+		onClose() {
+			this.popoverShow = false;
+		},
+		onHidden() {
+			// Called just after the popover has finished hiding
+			// Bring focus back to the button
+			this.focusRef(this.$refs.shareButton);
+		},
+		onCopyUrl() {
+			const testingCodeToCopy = document.querySelector("#shareUrl");
+			testingCodeToCopy.select();
+
+			try {
+				document.execCommand("copy");
+
+				this.$bvToast.toast("Copy successful", {
+					title: "Share portfolio link",
+					variant: "success",
+					autoHideDelay: 1500
+				});
+			} catch (err) {
+				this.$bvToast.toast("Oops, cannot copy link", {
+					title: "Share portfolio link",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			}
+
+			window.getSelection().removeAllRanges();
+		},
+		focusRef(ref) {
+			// Some references may be a component, functional component, or plain element
+			// This handles that check before focusing, assuming a `focus()` method exists
+			// We do this in a double `$nextTick()` to ensure components have
+			// updated & popover positioned first
+			this.$nextTick(() => {
+				this.$nextTick(() => {
+					(ref.$el || ref).focus();
+				});
+			});
+		},
+		async sharePortfolio() {
+			loading.start();
+
+			try {
+				await this.$store.dispatch("portfolio/loadShareLink");
+				this.onOpen();
+			} catch (err) {
+				this.$bvToast.toast(`Get share portfolio link error problem: ${err.message}`, {
+					title: "Share portfolio link",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			} finally {
+				loading.stop();
+			}
+		},
 		getCompetenceNameById(id) {
 			return COMPETENCE[id].name;
 		},
 		getCompetenceImgById(id) {
 			return COMPETENCE[id].img;
 		},
-		setupPortfolio() {
-			this.ports = this.statePortfolios.collected_competence;
-		},
 		verifyText(id) {
 			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			this.statePortfolios.collected_competence.reduce(async (previousPromise, competence) => {
+			this.statePortfolios.reduce(async (previousPromise, competence) => {
 				const payload = {
-					data: {
-						competence_id: competence.competence_id,
-						giver: competence.giver,
-						semester: competence.semester,
-						student_id: competence.student_id
-					}
+					competence_id: competence.competence_id,
+					semester: competence.semester,
+					student_id: competence.student_id
 				};
 				this.forceReRender++;
 				await previousPromise;

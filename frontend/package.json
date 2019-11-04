@@ -19,34 +19,88 @@
     "@vue/cli-plugin-eslint": "^4.0.0",
     "@vue/cli-plugin-pwa": "^4.0.0",
     "@vue/cli-service": "^4.0.0",
+    "axios": "^0.19.0",
     "babel-eslint": "^10.0.1",
+    "bootstrap-vue": "^2.0.2",
+    "clipboard": "^2.0.4",
+    "crypto-js": "^3.1.9-1",
     "dotenv": "^8.2.0",
     "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.6.10",
-    "axios": "^0.19.0",
-    "bootstrap-vue": "^2.0.2",
-    "crypto-js": "^3.1.9-1",
     "eslint-config-maqe": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-vue": "^5.0.0",
     "js-cookie": "^2.2.1",
     "node-sass": "^4.12.0",
+    "read-yaml": "^1.1.0",
     "sass-loader": "^8.0.0",
-    "vue-progressbar": "^0.7.5"
+    "tweetnacl": "^1.0.1",
+    "tweetnacl-util": "^0.15.0",
+    "vue-acl": "^4.1.5",
+    "vue-progressbar": "^0.7.5",
+    "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
     "root": true,
     "env": {
       "node": true
     },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "rules": {},
     "parserOptions": {
       "parser": "babel-eslint"
-    }
+    },
+    "extends": [
+      "plugin:vue/recommended",
+      "plugin:vue/base",
+      "maqe"
+    ],
+    "plugins": [
+      "vue"
+    ],
+    "overrides": [
+      {
+        "files": "**/*.vue",
+        "rules": {
+          "quotes": [
+            "error",
+            "double"
+          ],
+          "vue/html-indent": [
+            "error",
+            "tab"
+          ],
+          "import/extensions": [
+            "error",
+            "never",
+            {
+              "vue": "always"
+            }
+          ]
+        }
+      },
+      {
+        "files": "**/*",
+        "rules": {
+          "linebreak-style": "off",
+          "import/extensions": 0,
+          "import/prefer-default-export": "off",
+          "quotes": [
+            "error",
+            "double"
+          ],
+          "indent": [
+            "error",
+            "tab"
+          ]
+        }
+      },
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)"
+        ],
+        "env": {
+          "mocha": true
+        }
+      }
+    ]
   },
   "postcss": {
     "plugins": {

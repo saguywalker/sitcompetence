@@ -33,6 +33,7 @@ func (ctx *Context) WithRemoteAddress(address string) *Context {
 	return &ret
 }
 
+// WithUser set user to a context
 func (ctx *Context) WithUser(user model.User) *Context {
 	ret := *ctx
 	ret.User = user

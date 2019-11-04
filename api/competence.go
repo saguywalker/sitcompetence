@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -58,7 +59,7 @@ func (a *API) CreateCompetence(ctx *app.Context, w http.ResponseWriter, r *http.
 }
 
 // SearchCompetences search competence from key
-func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	params := r.URL.Query()
 
 	var competences []model.Competence
@@ -75,42 +76,48 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 		competences = append(competences, *competence)
 	} else {
+		if len(params) != 0 {
+			params.Del("page")
+
+			ctx.Logger.Printf("params: %s\n", params.Encode())
+
+			collectedBytes, returnIndex, err := ctx.BlockchainQueryWithParams(params.Encode(), a.App.CurrentPeerIndex, a.Config.Peers)
+			if err != nil {
+				return err
+			}
+
+			a.App.CurrentPeerIndex = returnIndex
+
+			sepCollected := bytes.Split(collectedBytes, []byte("|"))
+			collected := make([]model.CollectedCompetence, 0)
+			for _, c := range sepCollected {
+				if len(c) == 0 {
+					continue
+				}
+
+				var tmp model.CollectedCompetence
+				if err := json.Unmarshal(c, &tmp); err != nil {
+					return err
+				}
+				collected = append(collected, tmp)
+			}
+
+			resp, err := json.Marshal(collected)
+			if err != nil {
+				return err
+			}
+
+			w.Write(resp)
+			return nil
+
+		}
+
 		page, err := getPageParam(r)
 		if err != nil {
 			return err
 		}
 
-		if params.Get("activity_id") != "" {
-			activityID, err := strconv.ParseUint(params.Get("activity_id"), 10, 32)
-			if err != nil {
-				return err
-			}
-			competences, err = ctx.GetCompetencesByActivityID(uint32(activityID), page)
-		} else if params.Get("student_id") != "" {
-			studentID := params.Get("student_id")
-			collected, err := ctx.GetCollectedWithDetail(studentID, page)
-			if err != nil {
-				return err
-			}
-
-			student, err := ctx.GetStudentByID(studentID)
-			if err != nil {
-				return err
-			}
-
-			student.Collected = collected
-			data, err := json.Marshal(student)
-			if err != nil {
-				return err
-			}
-
-			w.Write(data)
-
-			return nil
-
-		} else {
-			competences, err = ctx.GetCompetences(page)
-		}
+		competences, err = ctx.GetCompetences(page)
 
 		if err != nil {
 			return err

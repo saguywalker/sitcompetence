@@ -1,10 +1,11 @@
-import { Base, Verify } from "@/services";
+import { Base, Verify, Portfolio } from "@/services";
 import {
 	LOAD_PORTFOLIO,
 	UPDATE_PORTFOLIO,
 	UPDATE_PORTFOLIO_LINK,
 	UPDATE_VERIFY_DATA,
-	CLEAR_VERIFY_DATA
+	CLEAR_VERIFY_DATA,
+	CLEAR_PORTFOLIO_DATA
 } from "../../mutationTypes";
 
 const state = {
@@ -31,14 +32,28 @@ const mutations = {
 	[CLEAR_VERIFY_DATA](stateData) {
 		stateData.verify = [];
 		stateData.show = false;
+	},
+	[CLEAR_PORTFOLIO_DATA](stateData) {
+		stateData.portfolios = [];
+		stateData.verify = [];
+		stateData.show = false;
 	}
 };
 
 const actions = {
-	async loadPortfolio({ commit }, id) {
+	async loadPortfolio({ commit, dispatch }, id) {
+		dispatch("clearPortfolio");
 		const	response = await Base.getBadgesByStudentId(id);
 		if (response.status === 200) {
 			commit(LOAD_PORTFOLIO, response.data);
+		}
+
+		return response;
+	},
+	async loadShareLink({ commit }) {
+		const	response = await Portfolio.getShareLink();
+		if (response.status === 200) {
+			commit(UPDATE_PORTFOLIO_LINK, response.data);
 		}
 
 		return response;
@@ -51,6 +66,9 @@ const actions = {
 		}
 
 		return response.data;
+	},
+	clearPortfolio({ commit }) {
+		commit(CLEAR_PORTFOLIO_DATA);
 	},
 	clearVerify({ commit }) {
 		commit(CLEAR_VERIFY_DATA);

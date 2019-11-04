@@ -2,7 +2,7 @@
 	<div class="dashboard">
 		<div class="page-header">
 			<h1 class="wrapper title">
-				Welcome {{ loginUser }}
+				Welcome {{ loginUser.username }}
 			</h1>
 		</div>
 		<section class="wrapper">
@@ -22,6 +22,7 @@
 <script>
 import DashboardContent from "@/components/student/DashboardContent.vue";
 import DashboardProfile from "@/components/student/DashboardProfile.vue";
+import { getLoginUser } from "@/helpers";
 
 export default {
 	components: {
@@ -39,7 +40,7 @@ export default {
 			return `dashboard-${this.tabs[this.selectedTab]}`;
 		},
 		loginUser() {
-			return sessionStorage.getItem("user");
+			return getLoginUser();
 		}
 	}
 };

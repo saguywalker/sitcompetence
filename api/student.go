@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -32,6 +34,19 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		students, err = ctx.GetStudents(page, params.Get("dp"), params.Get("year"))
 		if err != nil {
 			return err
+		}
+
+		for i := range students {
+			collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+			if err != nil {
+				if err.Error() == "does not exists" {
+					continue
+				}
+				return err
+			}
+
+			students[i].Collected = collected
+			a.App.CurrentPeerIndex = index
 		}
 	}
 
@@ -64,11 +79,18 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	for i := range students {
-		collected, err := ctx.GetCollectedWithDetail(students[i].StudentID, 0)
+		collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
+			if err.Error() == "does not exists" {
+				continue
+			}
 			return err
 		}
+
+		ctx.Logger.Printf("student[%d]: %+v\n", i, collected)
+
 		students[i].Collected = collected
+		a.App.CurrentPeerIndex = index
 	}
 
 	data, err := json.Marshal(students)
@@ -151,4 +173,49 @@ func (a *API) UpdateStudent(ctx *app.Context, w http.ResponseWriter, r *http.Req
 func (a *API) DeleteStudent(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	id := getIDFromRequest("id", r)
 	return ctx.DeleteStudent(id)
+}
+
+// ShareProfile generate a shareable link for student porfolio
+func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	if ctx.User.Group != "st_group" {
+		return errors.New("only students are allowed")
+	}
+
+	url, err := ctx.ShareProfile(ctx.User.UserID)
+	if err != nil {
+		return err
+	}
+
+	w.Write([]byte(url))
+	
+	return nil
+}
+
+// ViewProfile view a specific student's profile
+func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
+	ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+	ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
+
+	vars := mux.Vars(r)
+	url, ok := vars["url"]
+	if !ok {
+		http.Error(w, "incorrect url", http.StatusNotFound)
+		return
+	}
+
+	ctx.Logger.Printf("url: %s", url)
+
+	collected, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if collected == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(collected)
 }

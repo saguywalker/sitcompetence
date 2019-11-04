@@ -1,7 +1,9 @@
 package api
 
 import (
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -14,7 +16,7 @@ import (
 func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Logger.Infoln(ctx.User.Group)
 	if ctx.User.Group != "inst_group" {
-		return fmt.Errorf("giveBadge must be called by admin only")
+		return errors.New("giveBadge must be called by admin only")
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -22,21 +24,34 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 	defer r.Body.Close()
+	ctx.Logger.Infof("%s\n", body)
 
-	// Struct of objects
-	var listOfBadges []*model.CollectedCompetence
-	if err := json.Unmarshal(body, &listOfBadges); err != nil {
+	var giveBadgeRequest *model.GiveBadgeRequest
+	if err := json.Unmarshal(body, &giveBadgeRequest); err != nil {
+		ctx.Logger.Errorln("error while unmarshaling")
 		return err
 	}
 
-	for _, badge := range listOfBadges {
-		currentIndex, err := ctx.GiveBadge(badge, w, a.App.CurrentPeerIndex, a.Config.Peers)
+	ctx.Logger.Infof("%+v", giveBadgeRequest)
+
+	txs := make([]string, 0)
+
+	for _, badge := range giveBadgeRequest.Badges {
+		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
 		if err != nil {
 			return err
 		}
 
+		txs = append(txs, hex.EncodeToString(txID))
 		a.App.CurrentPeerIndex = currentIndex
 	}
+
+	txsBytes, err := json.Marshal(txs)
+	if err != nil {
+		return err
+	}
+
+	w.Write(txsBytes)
 
 	return nil
 }
@@ -53,13 +68,13 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 	defer r.Body.Close()
 
-	var listOfActivities []*model.AttendedActivity
-	if err := json.Unmarshal(body, &listOfActivities); err != nil {
+	var activityRequest *model.ApproveActivityRequest
+	if err := json.Unmarshal(body, &activityRequest); err != nil {
 		return err
 	}
 
-	for _, activity := range listOfActivities {
-		currentIndex, err := ctx.ApproveActivity(activity, w, a.App.CurrentPeerIndex, a.Config.Peers)
+	for _, activity := range activityRequest.Activities {
+		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
 		if err != nil {
 			return err
 		}
@@ -78,18 +93,9 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	}
 	defer r.Body.Close()
 
-	var bodyMap map[string]interface{}
-	if err := json.Unmarshal(body, &bodyMap); err != nil {
-		return nil
-	}
+	ctx.Logger.Infof("json data: %s\n", body)
 
-	rawData, err := json.Marshal(bodyMap["data"])
-	if err != nil {
-		return err
-	}
-	ctx.Logger.Infof("json data\n%s\n", rawData)
-
-	isExists, currentIndex, _, err := ctx.VerifyTX(rawData, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-import { GiveBadge } from "@/services/admin";
+import { GiveBadge } from "@/services";
 import {
 	GIVE_BADGE_SELECT_STUDENT,
 	GIVE_BADGE_STEP,
@@ -71,7 +71,7 @@ const actions = {
 	updateSelectedBadge({ commit }, data) {
 		commit(GIVE_BADGE_SELECT_BADGE, data);
 	},
-	async submitGiveBadge({ commit, state: stateData }, data) {
+	async submitGiveBadge({ commit, dispatch, state: stateData }, data) {
 		const filterData = stateData.selectedStudents.map((st) => {
 			const idBadges = st.badges.map((badge) => badge.competence_id);
 
@@ -79,7 +79,6 @@ const actions = {
 				return {
 					student_id: st.student_id,
 					competence_id: id,
-					giver: data.giver,
 					semester: data.semester
 				};
 			});
@@ -87,17 +86,29 @@ const actions = {
 			return separateBadge;
 		});
 
-		const payload = [];
+		const payloadBadges = [];
 
 		filterData.forEach((student) => {
 			student.forEach((x) => {
-				payload.push(x);
+				payloadBadges.push(x);
 			});
 		});
 
+		const payload = {
+			sk: data.sk,
+			badges: payloadBadges
+		};
+
 		const	response = await GiveBadge.postGiveBadge(payload);
 		if (response.status === 200) {
-			commit(GIVE_BADGE_SUCCESS, payload);
+			commit(GIVE_BADGE_SUCCESS, payloadBadges);
+		} else if (response.status === 500) {
+			const notification = {
+				title: "Submit secret key",
+				message: "Secret key is incorrect",
+				variant: "danger"
+			};
+			dispatch("base/addNotification", notification, { root: true });
 		}
 
 		return response;

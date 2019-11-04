@@ -17,7 +17,7 @@
 			<div class="user-panel">
 				<div class="user-panel-info">
 					<p class="name">
-						{{ loginUser }}
+						{{ userName }}
 					</p>
 					<p class="role">
 						Staff
@@ -71,6 +71,7 @@ import IconActivity from "@/components/icons/IconActivity.vue";
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import { widthSize } from "@/helpers/mixins";
 import { clickOutside } from "@/helpers/directives/clickOutside";
+import { getLoginUser } from "@/helpers";
 
 export default {
 	components: {
@@ -102,8 +103,8 @@ export default {
 		};
 	},
 	computed: {
-		loginUser() {
-			return sessionStorage.getItem("user");
+		userName() {
+			return getLoginUser().username;
 		}
 	},
 	methods: {

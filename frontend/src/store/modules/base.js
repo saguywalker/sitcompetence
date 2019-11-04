@@ -1,18 +1,19 @@
-import { getPlainTextToken } from "@/helpers";
-import { Base } from "@/services";
+import router from "@/router";
+import { getCiphertext, clearLoginState } from "@/helpers";
+import { Base, Login } from "@/services";
 import {
-	LOAD_LOGIN_USER,
+	LOAD_LOGIN_DATA,
 	LOGOUT,
-	NOTHING,
 	LOAD_BADGES,
-	LOAD_STUDENTS
+	LOAD_STUDENTS,
+	UPDATE_NOTIFICATION
 } from "../mutationTypes";
 
 const state = {
 	students: [],
 	badges: [],
 	user: {},
-	nothing: ""
+	notifications: []
 };
 
 const mutations = {
@@ -26,32 +27,24 @@ const mutations = {
 			...data
 		];
 	},
-	[NOTHING](stateData) {
-		stateData.nothing = "";
-	},
 	[LOGOUT](stateData) {
 		stateData.user = {};
 	},
-	[LOAD_LOGIN_USER](stateData, data) {
+	[LOAD_LOGIN_DATA](stateData, data) {
 		stateData.user = {
 			...data
 		};
+	},
+	[UPDATE_NOTIFICATION](stateData, data) {
+		stateData.notifications = [
+			...data
+		];
 	}
 };
 
 const actions = {
-	async loadUserDetail({ commit }) {
-		const response = await Base.getUserDetail();
-
-		if (response.status === 200) {
-			sessionStorage.setItem("user", response.data.uid);
-			commit(LOAD_LOGIN_USER, response.data);
-		}
-
-		return response;
-	},
 	async loadStudentData({ commit }) {
-		const response = await Base.getAllStudents();
+		const response = await Base.getStudents();
 
 		if (response.status === 200) {
 			commit(LOAD_STUDENTS, response.data);
@@ -69,7 +62,7 @@ const actions = {
 		return response.data;
 	},
 	async loadBadgeData({ commit }) {
-		const response = await Base.getAllBadges();
+		const response = await Base.getBadges();
 
 		if (response.status === 200) {
 			commit(LOAD_BADGES, response.data);
@@ -78,15 +71,47 @@ const actions = {
 		return response;
 	},
 	async doLogin({ commit }, data) {
-		const token = getPlainTextToken(data);
-		sessionStorage.setItem("inlog", token);
-		commit(NOTHING);
-		location.href = "http://localhost:8080/admin/dashboard";
+		if (data.username === "" && data.password === "") {
+			commit(LOGOUT);
+			return;
+		}
+		const response = await Login.login(data);
+
+		if (response.status !== 200) {
+			return;
+		}
+
+		const loginDataString = JSON.stringify(response.data.user);
+		const encryptedLoginData = getCiphertext(loginDataString, process.env.VUE_APP_USER_DATA_KEY);
+		localStorage.setItem("user", encryptedLoginData);
+
+		if (response.data.user.group === "inst_group") {
+			if (response.data.first) {
+				router.push({ name: "user-genkey" });
+				return;
+			}
+
+			router.push({ name: "admin" });
+			return;
+		}
+
+		commit(LOAD_LOGIN_DATA, response.data);
+		router.push({ name: "student" });
 	},
 	logout({ commit }) {
-		sessionStorage.clear();
+		clearLoginState();
 		commit(LOGOUT);
-		location.href = "http://localhost:8082/login";
+		router.push({ name: "login" });
+	},
+	addNotification({ commit, state: stateData }, data) {
+		const payload = [
+			...stateData.notifications,
+			{
+				...data
+			}
+		];
+
+		commit(UPDATE_NOTIFICATION, payload);
 	}
 };
 

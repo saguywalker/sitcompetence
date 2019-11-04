@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 
@@ -42,6 +43,48 @@ func (a *API) SearchStaffs(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 	}
 
 	if _, err := w.Write(data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SetPubkey set pubkey from corresponding staff
+func (a *API) SetPubkey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	staffID := ctx.User.UserID
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	if err := ctx.SetPubkey(staffID, body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ResetKey send comfirmation request to email
+func (a *API) ResetKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+// ConfirmResetKey reset public key in database
+func (a *API) ConfirmResetKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+// CheckKey check whether staff has already set the key or not
+func (a *API) CheckKey(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	staffID := ctx.User.UserID
+	ok, err := ctx.CheckKey(staffID)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write([]byte(strconv.FormatBool(ok))); err != nil {
 		return err
 	}
 

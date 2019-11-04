@@ -1,4 +1,4 @@
-import { Activity } from "@/services/admin";
+import { AdminActivity } from "@/services";
 import {
 	LOAD_POST_ACTIVITIES,
 	LOAD_SAVE_ACTIVITIES,
@@ -62,7 +62,7 @@ const actions = {
 		commit(LOAD_SAVE_ACTIVITIES, data);
 	},
 	async loadActivity({ commit }) {
-		const response = await Activity.getActivities();
+		const response = await AdminActivity.getActivities();
 
 		if (response.status === 200) {
 			commit(LOAD_ACTIVITIES, response.data);
@@ -71,7 +71,7 @@ const actions = {
 		return response;
 	},
 	async loadActivityById({ commit }, id) {
-		const response = await Activity.getActivityById(id);
+		const response = await AdminActivity.getActivityById(id);
 
 		if (response.status === 200) {
 			commit(LOAD_ACTIVITY, response.data[0]);
@@ -80,7 +80,7 @@ const actions = {
 		return response;
 	},
 	async deleteActivityById({ commit }, id) {
-		const response = await Activity.deleteActivityById(id);
+		const response = await AdminActivity.deleteActivityById(id);
 
 		if (response.status === 200) {
 			commit(DELETE_ACTIVITY);
@@ -97,7 +97,7 @@ const actions = {
 			};
 		});
 
-		const	response = await Activity.postApproveActivity(payload);
+		const	response = await AdminActivity.postApproveActivity(payload);
 		if (response.status === 200) {
 			commit(APPROVE_ACTIVITY, response.data);
 		}

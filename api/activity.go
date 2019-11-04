@@ -153,6 +153,7 @@ func (a *API) DeleteActivity(ctx *app.Context, w http.ResponseWriter, r *http.Re
 	return nil
 }
 
+// JoinActivity update attendee
 func (a *API) JoinActivity(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
 	var input model.AttendedActivity
 

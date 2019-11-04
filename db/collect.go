@@ -1,5 +1,6 @@
 package db
 
+/*
 import (
 	"database/sql"
 	"fmt"
@@ -65,10 +66,6 @@ func (db *Database) GetCompetencesByStudentID(id string, pageLimit, pageNo uint3
 		rows, err = db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
 			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, pageLimit, (pageNo-1)*pageLimit)
 	}
-	/*
-		rows, err := db.Query("SELECT studentId, competenceId, semester, giver, transactionId FROM collectedCompetence WHERE studentId=$1 "+
-			"ORDER BY competenceId LIMIT $2 OFFSET $3", id, uint32(pageLimit), uint32((pageNo-1)*pageLimit))
-	*/
 	if err != nil {
 		return nil, err
 	}
@@ -132,3 +129,4 @@ func (db *Database) DeleteCollectedByStudentID(studentID string, competenceID, s
 
 	return nil
 }
+*/

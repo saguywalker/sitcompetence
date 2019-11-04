@@ -2,48 +2,63 @@ package app
 
 import (
 	"bytes"
-	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/saguywalker/sitcompetence/model"
+	protoTm "github.com/saguywalker/sitcompetence/proto/tendermint"
+	"golang.org/x/crypto/ed25519"
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
-	badgeHash, err := badge.CalculateHash()
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key []byte) ([]byte, uint64, error) {
+	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
+
+	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
-		return index, err
+		return nil, index, err
+	}
+	ctx.Logger.Infof("GetStaffPubKey: %x\n", giverPK)
+	badge.Giver = giverPK
+
+	badgeBytes, err := json.Marshal(badge)
+	if err != nil {
+		return nil, index, err
 	}
 
-	txID, err := ctx.broadcastTX(badgeHash, index, peers)
+	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers, key)
 	if err != nil {
-		return index, err
-	}
-
-	badge.TxID = txID
-
-	if err := ctx.Database.CreateCollectedCompetence(badge); err != nil {
-		return index, err
+		return txID, index, err
 	}
 
 	index = (index + 1) % uint64(len(peers))
 
-	return index, nil
+	return txID, index, nil
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.ResponseWriter, index uint64, peers []string) (uint64, error) {
-	activityHash, err := activity.CalculateHash()
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key []byte) (uint64, error) {
+	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX(activityHash, index, peers)
+	activity.Approver = approverPK
+	ctx.Logger.Infof("Publickey: %x\n", approverPK)
+
+	approveBytes, err := json.Marshal(activity)
+	if err != nil {
+		return index, err
+	}
+
+	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers, key)
 	if err != nil {
 		return index, err
 	}
@@ -59,14 +74,44 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, w http.Res
 	return index, nil
 }
 
-func (ctx *Context) broadcastTX(hash []byte, index uint64, peers []string) ([]byte, error) {
+func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string, key []byte) ([]byte, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
 
+	ctx.Logger.Infof("encrypted base64 sk: %s", privKey)
+
+	decb64, err := base64.StdEncoding.DecodeString(privKey)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.Logger.Infof("decrypted base64 sk: %x (%d)", string(decb64), len(decb64))
+
+	// Sign
+	signature := ed25519.Sign(decb64, params)
+
+	ctx.Logger.Infof("Sign: %s\nWith sk: 0x%x\nSignature: 0x%x\nTest: %v\n", params, decb64, signature, ed25519.Verify(pubKey, params, signature))
+
+	payload := protoTm.Payload{
+		Method: method,
+		Params: params,
+	}
+
+	tx := protoTm.Tx{
+		Payload:   &payload,
+		PublicKey: pubKey,
+		Signature: signature,
+	}
+
+	txBytes, err := proto.Marshal(&tx)
+	if err != nil {
+		return nil, err
+	}
+
 	data := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], hash)
+		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], txBytes)
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -104,21 +149,39 @@ func (ctx *Context) broadcastTX(hash []byte, index uint64, peers []string) ([]by
 }
 
 // VerifyTX verify data with a given merkle root
-func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, []byte, error) {
+func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {
-		return false, index, nil, err
+		return false, index, err
 	}
-	hashData := sha256.Sum256(trimData.Bytes())
-	ctx.Logger.Infof("H(data): %x\n", hashData)
+	ctx.Logger.Infof("data: %s\n", trimData.String())
 
+	_, returnIndex, err := ctx.BlockchainQueryWithParams(trimData.String(), index, peers)
+	if err != nil {
+		if err.Error() == "does not exists" {
+			return false, returnIndex, nil
+		}
+
+		return false, returnIndex, err
+	}
+
+	return true, returnIndex, nil
+}
+
+// GetBadgeFromStudent return all of collected badges from corresponding studentId from in blockchain
+func (ctx *Context) GetBadgeFromStudent(id string, index uint64, peers []string) ([]model.CollectedCompetence, error) {
+	return nil, nil
+}
+
+// BlockchainQueryWithParams return []byte from corresponding parameters
+func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers []string) ([]byte, uint64, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
 
 	respData := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
-		url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], hashData)
+		url := fmt.Sprintf("http://%s/abci_query?data=0x%x", peers[index], []byte(params))
 		ctx.Logger.Infoln(url)
 		resp, err := httpClient.Get(url)
 		index = uint64((index + 1)) % uint64(len(peers))
@@ -137,23 +200,30 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(respData, &fullData); err != nil {
-		ctx.Logger.Errorf("%v", respData)
-		return false, index, hashData[:], err
+		ctx.Logger.Errorf("%s", respData)
+		return nil, index, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
-		ctx.Logger.Errorf("%v", fullData)
-		return false, index, hashData[:], fmt.Errorf(string(respData))
+		ctx.Logger.Errorf("%s", fullData)
+		return nil, index, errors.New(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
-		ctx.Logger.Errorf("%v", respResult)
-		return false, index, hashData[:], fmt.Errorf(string(respData))
+		ctx.Logger.Errorf("%s", respResult)
+		return nil, index, errors.New(string(respData))
 	}
 
-	isExist := respResult["log"] == "exists"
+	if isExist := respResult["log"] == "exists"; !isExist {
+		return nil, index, errors.New("does not exists")
+	}
 
-	return isExist, index, hashData[:], nil
+	dec64, err := base64.StdEncoding.DecodeString(respResult["value"].(string))
+	if err != nil {
+		return nil, index, err
+	}
+
+	return dec64, index, nil
 }

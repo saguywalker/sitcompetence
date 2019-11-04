@@ -21,7 +21,7 @@
 					</p>
 				</div> -->
 				<b-button
-					variant="primary"
+					variant="admin-primary"
 					class="mt-3"
 					size="sm"
 					@click="testVerify"
@@ -74,8 +74,6 @@
 </style>
 <script>
 import SuccessLogo from "@/components/admin/SuccessLogo.vue";
-// import loading from "@/plugin/loading";
-// import { base64ToHex } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -107,20 +105,14 @@ export default {
 		...mapState("adminVerify", [
 			"verifyData"
 		])
-		// hexTransactionId() {
-		// 	return base64ToHex(this.success.transaction_id);
-		// },
-		// hexMerkle() {
-		// 	return base64ToHex(this.success.merkleroot);
-		// }
 	},
 	methods: {
 		testVerify() {
 			this.success.reduce(async (previousPromise, student) => {
 				const payload = {
-					data: {
-						...student
-					}
+					competence_id: student.competence_id,
+					semester: student.semester,
+					student_id: student.student_id
 				};
 				this.rerender++;
 				await previousPromise;

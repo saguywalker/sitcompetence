@@ -59,6 +59,56 @@ func (db *Database) GetStaffs(pageLimit uint32, pageNo uint32) ([]*model.Staff, 
 	return staffs, nil
 }
 
+// GetStaffPublicKey return staff public key from staff id
+func (db *Database) GetStaffPublicKey(id string) ([]byte, error) {
+	row, err := db.Query("SELECT publicKey FROM staff WHERE staffId = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	publicKey := make([]byte, 32)
+
+	for row.Next() {
+		if err := row.Scan(&publicKey); err != nil {
+			return nil, err
+		}
+	}
+
+	return publicKey, nil
+}
+
+// SetPubkey update database
+func (db *Database) SetPubkey(id string, pubkey []byte) error {
+	stmt, err := db.Prepare("UPDATE staff set publicKey=$1 WHERE staffId=$2")
+	if err != nil {
+		return err
+	}
+
+	if _, err := stmt.Exec(pubkey, id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CheckKey check publickey
+func (db *Database) CheckKey(id string) (bool, error) {
+	row, err := db.Query("SELECT LENGTH(publicKey) FROM staff WHERE staffId = $1", id)
+	if err != nil {
+		return false, err
+	}
+
+	var keyLength uint
+
+	for row.Next() {
+		if err := row.Scan(&keyLength); err != nil {
+			return false, err
+		}
+	}
+
+	return keyLength != 0, nil
+}
+
 // CreateStaff inserts a new staff
 func (db *Database) CreateStaff(s *model.Staff) (string, error) {
 	var id string

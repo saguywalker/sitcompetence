@@ -20,7 +20,7 @@
 					>
 						<b-button
 							size="sm"
-							variant="primary"
+							variant="admin-primary"
 						>
 							Approve Student
 						</b-button>
@@ -130,11 +130,11 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("activity", [
+		...mapState("adminActivity", [
 			"activities",
 			"activity"
 		]),
-		...mapGetters("activity", [
+		...mapGetters("adminActivity", [
 			"getActivityById"
 		]),
 		eyebrowContent() {
@@ -170,7 +170,7 @@ export default {
 		}
 
 		try {
-			await this.$store.dispatch("activity/loadActivityById", this.activityId);
+			await this.$store.dispatch("adminActivity/loadActivityById", this.activityId);
 		} catch (err) {
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
 				title: "Fetching activity error",

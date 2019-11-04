@@ -21,6 +21,7 @@
 					Dashboard
 				</router-link>
 				<router-link
+					v-if="false"
 					:to="{ name: 'activity' }"
 					class="item-link"
 				>
@@ -33,9 +34,19 @@
 					Portfolio
 				</router-link>
 			</div>
-			<router-link :to="{ name: 'dashboard' }">
-				<icon-user />
-			</router-link>
+			<div>
+				<b-button
+					variant="primary"
+					class="mr-4"
+					pill
+					@click="logout"
+				>
+					Sign out
+				</b-button>
+				<router-link :to="{ name: 'dashboard' }">
+					<icon-user fill="#3578ed" />
+				</router-link>
+			</div>
 		</div>
 		<hamburger
 			:is-open="isNavMobileOpen"
@@ -80,6 +91,9 @@ export default {
 			}
 
 			this.$emit("nav-open", this.isNavMobileOpen);
+		},
+		logout() {
+			this.$store.dispatch("base/logout");
 		}
 	}
 };

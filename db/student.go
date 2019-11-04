@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -34,15 +35,13 @@ func (db *Database) GetStudentByID(id string) (*model.Student, error) {
 func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year uint16) ([]*model.Student, error) {
 	commands := make([]string, 1)
 	commands[0] = "SELECT studentId, firstname, department FROM student "
-	params := make([]interface{}, 0)
 
 	if dp != "" {
-		params = append(params, dp)
-		commands = append(commands, "WHERE LOWER(department)=LOWER($1) ")
+		commands = append(commands, fmt.Sprintf("WHERE LOWER(department)=LOWER(%s) ", dp))
 	}
 
 	if year != 0 {
-		if len(params) == 0 {
+		if dp == "" {
 			commands = append(commands, "WHERE ")
 		} else {
 			commands = append(commands, "AND ")
@@ -51,23 +50,14 @@ func (db *Database) GetStudents(pageLimit uint32, pageNo uint32, dp string, year
 	}
 
 	if pageLimit != 0 && pageNo != 0 {
-		params = append(params, string(pageLimit))
-		params = append(params, string((pageNo-1)*pageLimit))
-		var paramsLen int = len(params)
-		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT $%d OFFSET $%d", paramsLen-1, paramsLen))
+		commands = append(commands, fmt.Sprintf("ORDER BY studentId LIMIT %d OFFSET %d", pageLimit, (pageNo-1)*pageLimit))
 	}
 
 	command := strings.Join(commands, " ")
 
-	log.Println(command, ":", params)
+	log.Println("command: ", command)
 
-	var rows *sql.Rows
-	var err error
-	if len(params) == 0 {
-		rows, err = db.Query(command)
-	} else {
-		rows, err = db.Query(command, params...)
-	}
+	rows, err := db.Query(command)
 	if err != nil {
 		return nil, err
 	}
@@ -123,6 +113,40 @@ func (db *Database) DeleteStudent(studentID string) error {
 
 	_, err = stmt.Exec(studentID)
 	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateShareProfile update url and expired date
+func (db *Database) UpdateShareProfile(studentID string, expire time.Time, url string) error {
+	stmt, err := db.Prepare("UPDATE student SET url=$1, expire=$2 WHERE studentId=$3")
+	if err != nil {
+		return err
+	}
+
+	if _, err := stmt.Exec(url, expire, studentID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetStudentURL return student detail from url
+func (db *Database) GetStudentURL(url string) (*model.Student, error) {
+	var s model.Student
+	row := db.QueryRow("SELECT studentId, firstname, lastname, department FROM student WHERE url=$1 AND CURRENT_TIMESTAMP < expire;", url)
+	if err := row.Scan(&s.StudentID, &s.FirstName, &s.LastName, &s.Department); err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	return &s, nil
+}
+
+// CheckExpire reset url when expired
+func (db *Database) CheckExpire(url string) error {
+	if _, err := db.Exec("UPDATE student SET url='' WHERE url=$1 AND CURRENT_TIMESTAMP > expire", url); err != nil {
 		return err
 	}
 

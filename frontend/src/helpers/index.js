@@ -1,5 +1,37 @@
 import CryptoJS from "crypto-js";
+import SHA256 from "crypto-js/sha256";
+import nacl from "tweetnacl";
+import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
+
+nacl.util = require("tweetnacl-util");
+
+const enc = nacl.util.encodeBase64;
+
+export function clearCookies() {
+	const cookies = Cookies.get();
+
+	Object.keys(cookies).forEach((item) => {
+		Cookies.remove(item);
+	});
+}
+
+export function clearLoginCookie() {
+	Cookies.remove("x-session-token");
+}
+
+export function clearLoginState() {
+	Cookies.remove("x-session-token");
+	localStorage.removeItem("user");
+}
+
+export function getCookie(name) {
+	return Cookies.getJSON(name);
+}
+
+export function setCookie(name, value) {
+	return Cookies.set(name, value);
+}
 
 export const takeFileName = (path) => {
 	if (!path) {
@@ -69,21 +101,87 @@ export const getEditDateFormat = (format) => {
 };
 
 // Decrypt
-export const getPlainTextToken = (cipher) => {
+export const getPlainTextToken = (cipher, key) => {
 	const reb64 = CryptoJS.enc.Hex.parse(cipher);
 	const bytes = reb64.toString(CryptoJS.enc.Base64);
-	const decrypt = CryptoJS.AES.decrypt(bytes, "8NQMHLNx61Xr67u75b");
+	const decrypt = CryptoJS.AES.decrypt(bytes, key);
 	const plain = decrypt.toString(CryptoJS.enc.Utf8);
 	return plain;
 };
 
-export const getCiphertext = (message) => {
-	const b64 = CryptoJS.AES.encrypt(message, "8NQMHLNx61Xr67u75b").toString();
-	const e64 = CryptoJS.enc.Base64.parse(b64);
-	const eHex = e64.toString(CryptoJS.enc.Hex);
-	return eHex;
+// Encrypt
+export const getCiphertext = (message, key) => {
+	const base64 = CryptoJS.AES.encrypt(message, key).toString();
+	const encode64 = CryptoJS.enc.Base64.parse(base64);
+	const encodeHex = encode64.toString(CryptoJS.enc.Hex);
+	return encodeHex;
 };
 
-export const getLoginToken = sessionStorage.getItem("inlog");
+export const getCiphertextBase64 = (message, key) => {
+	const base64 = CryptoJS.AES.encrypt(message, key).toString();
+	return base64;
+};
 
-export const getLoginUser = sessionStorage.getItem("user");
+export const getSecretBase64 = (sk) => {
+	return btoa(sk);
+};
+
+export const getSHA256Message = (message) => SHA256(message).toString();
+
+export const getLoginToken = () => {
+	const loggedInData = localStorage.getItem("user");
+	if (!loggedInData) {
+		return null;
+	}
+
+	return JSON.parse(getPlainTextToken(loggedInData, process.env.VUE_APP_USER_DATA_KEY)).token;
+};
+
+export const getLoginUser = () => {
+	const loggedInData = localStorage.getItem("user");
+	if (!loggedInData) {
+		return null;
+	}
+	return JSON.parse(getPlainTextToken(loggedInData, process.env.VUE_APP_USER_DATA_KEY));
+};
+
+export const getLoginUserRole = () => {
+	const loggedInData = localStorage.getItem("user");
+	if (!loggedInData) {
+		return null;
+	}
+
+	return JSON.parse(getPlainTextToken(loggedInData, process.env.VUE_APP_USER_DATA_KEY)).group;
+};
+
+export const getSecretKey = () => {
+	const encryptedSk = localStorage.getItem("sck");
+	if (!encryptedSk) {
+		return null;
+	}
+
+	return getPlainTextToken(encryptedSk, getSHA256Message(process.env.VUE_APP_USER_SK_KEY));
+};
+
+export const base64ToByteArray = (base64) => {
+	const binaryString = window.atob(base64);
+	const len = binaryString.length;
+	const bytes = new Uint8Array(len);
+	for (let i = 0; i < len; i++) {
+		bytes[i] = binaryString.charCodeAt(i);
+	}
+
+	return bytes;
+};
+
+export const getED25519KeyPair = () => {
+	const key = nacl.sign.keyPair();
+	return {
+		public: enc(key.publicKey),
+		secret: enc(key.secretKey)
+	};
+};
+
+export const isLoggedIn = () => {
+	return !!Cookies.get("x-session-token") && !!localStorage.getItem("user");
+};

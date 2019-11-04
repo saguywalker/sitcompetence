@@ -5,6 +5,7 @@
 			isSidebarOpen ? 'sidebar-open' : ''
 		]"
 	>
+		<notification />
 		<nav-bar
 			ref="navbar"
 			@is-toggle="handleSidebar"
@@ -22,12 +23,14 @@
 <script>
 import SideBar from "@/components/admin/SideBar.vue";
 import NavBar from "@/components/admin/NavBar.vue";
+import Notification from "@/components/Notification.vue";
 import { widthSize } from "@/helpers/mixins";
 
 export default {
 	components: {
 		NavBar,
-		SideBar
+		SideBar,
+		Notification
 	},
 	mixins: [widthSize],
 	data() {
