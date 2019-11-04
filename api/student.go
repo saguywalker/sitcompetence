@@ -203,9 +203,16 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ctx.Logger.Printf("url: %s", url)
+
 	collected, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if collected == nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

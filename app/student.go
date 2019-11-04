@@ -95,6 +95,12 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 		return nil, err
 	}
 
+	ctx.Logger.Infof("after queried: %+v\n", student)
+
+	if len(student.StudentID) == 0 {
+		return nil, nil
+	}
+
 	collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", student.StudentID), index, peers)
 	if err != nil {
 		return nil, err

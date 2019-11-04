@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"strings"
@@ -135,8 +136,8 @@ func (db *Database) UpdateShareProfile(studentID string, expire time.Time, url s
 // GetStudentURL return student detail from url
 func (db *Database) GetStudentURL(url string) (*model.Student, error) {
 	var s model.Student
-	row := db.QueryRow("SELECT studentId, firstname, lastname, department FROM student WHERE url != '' AND CURRENT_TIMESTAMP < expire;")
-	if err := row.Scan(&s.StudentID, &s.FirstName, &s.LastName, &s.Department); err != nil {
+	row := db.QueryRow("SELECT studentId, firstname, lastname, department FROM student WHERE url=$1 AND CURRENT_TIMESTAMP < expire;", url)
+	if err := row.Scan(&s.StudentID, &s.FirstName, &s.LastName, &s.Department); err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
