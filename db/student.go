@@ -1,10 +1,10 @@
 package db
 
 import (
-	// "database/sql"
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/saguywalker/sitcompetence/model"
 )
@@ -112,6 +112,40 @@ func (db *Database) DeleteStudent(studentID string) error {
 
 	_, err = stmt.Exec(studentID)
 	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateShareProfile update url and expired date
+func (db *Database) UpdateShareProfile(studentID string, expire time.Time, url string) error {
+	stmt, err := db.Prepare("UPDATE student SET url=$1, expire=$2 WHERE studentId=$3")
+	if err != nil {
+		return err
+	}
+
+	if _, err := stmt.Exec(url, expire, studentID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetStudentURL return student detail from url
+func (db *Database) GetStudentURL(url string) (*model.Student, error) {
+	var s model.Student
+	row := db.QueryRow("SELECT studentId, firstname, lastname, department FROM student WHERE url != '' AND CURRENT_TIMESTAMP < expire;")
+	if err := row.Scan(&s.StudentID, &s.FirstName, &s.LastName, &s.Department); err != nil {
+		return nil, err
+	}
+
+	return &s, nil
+}
+
+// CheckExpire reset url when expired
+func (db *Database) CheckExpire(url string) error {
+	if _, err := db.Exec("UPDATE student SET url='' WHERE url=$1 AND CURRENT_TIMESTAMP > expire", url); err != nil {
 		return err
 	}
 

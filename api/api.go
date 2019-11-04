@@ -73,7 +73,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/logout", a.handler(a.Logout)).Methods("GET")
 
 	r.Handle("/userDetail", a.handler(a.GetUserDetail)).Methods("GET")
-	r.HandleFunc("/profile", a.ViewProfile).Methods("GET")
+	r.HandleFunc("/profile/{url}", a.ViewProfile).Methods("GET")
 
 	searchRoute := r.PathPrefix("/search").Subrouter()
 	searchRoute.Handle("/competence", a.handler(a.SearchCompetences)).Methods("GET")

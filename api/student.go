@@ -1,10 +1,8 @@
 package api
 
 import (
-	// "crypto/sha256"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -166,23 +164,30 @@ func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 		return errors.New("only students are allowed")
 	}
 
-	session, err := a.App.ProfileSession.Get(r, "url-session")
+	url, err := ctx.ShareProfile(ctx.User.UserID)
 	if err != nil {
 		return err
 	}
 
-	if _, ok := session.Values["studentid"]; !ok {
-		session.Values["studentid"] = ctx.User.UserID
-	}
+	w.Write([]byte(url))
+	/*
+		session, err := a.App.ProfileSession.Get(r, "url-session")
+		if err != nil {
+			return err
+		}
 
-	if err := session.Save(r, w); err != nil {
-		return err
-	}
+		if _, ok := session.Values["studentid"]; !ok {
+			session.Values["studentid"] = ctx.User.UserID
+		}
 
-	ctx.Logger.Printf("RequestedURL: %s\n", r.RequestURI)
+		if err := session.Save(r, w); err != nil {
+			return err
+		}
 
-	// w.Write([]byte(fullURL))
+		ctx.Logger.Printf("RequestedURL: %s\n", r.RequestURI)
 
+		w.Write([]byte(url))
+	*/
 	return nil
 }
 
@@ -191,38 +196,19 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
 	ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
 
-	session, err := a.App.ProfileSession.Get(r, "url-session")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	studentID, ok := session.Values["studentid"]
+	vars := mux.Vars(r)
+	url, ok := vars["url"]
 	if !ok {
 		http.Error(w, "incorrect url", http.StatusNotFound)
 		return
 	}
 
-	student, err := ctx.GetStudentByID(studentID.(string))
+	collected, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", studentID.(string)), a.App.CurrentPeerIndex, a.Config.Peers)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	a.App.CurrentPeerIndex = index
-
-	student.Collected = collected
-
-	collectedBytes, err := json.Marshal(student)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Write(collectedBytes)
+	w.WriteHeader(http.StatusOK)
+	w.Write(collected)
 }
