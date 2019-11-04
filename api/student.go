@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -33,6 +34,20 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		students, err = ctx.GetStudents(page, params.Get("dp"), params.Get("year"))
 		if err != nil {
 			return err
+		}
+
+		for i := range students {
+			collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+			ctx.Logger.Printf("student %+v: badge: %+v\n", students[i], collected)
+			if err != nil {
+				if err.Error() == "does not exists" {
+					continue
+				}
+				return err
+			}
+
+			students[i].Collected = collected
+			a.App.CurrentPeerIndex = index
 		}
 	}
 
@@ -65,13 +80,16 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	for i := range students {
-		collected, index, err := ctx.GetCollectedWithDetail(students[i].StudentID, a.App.CurrentPeerIndex, a.Config.Peers)
-		if err.Error() == "not exists" {
+		collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+		if err.Error() == "does not exists" {
 			continue
 		}
 		if err != nil {
 			return err
 		}
+
+		ctx.Logger.Printf("student[%d]: %+v\n", i, collected)
+
 		students[i].Collected = collected
 		a.App.CurrentPeerIndex = index
 	}

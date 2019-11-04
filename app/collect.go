@@ -67,6 +67,8 @@ func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []stri
 		}
 	}
 
+	ctx.Logger.Infof("from blockchain: %+v\n", returnCollected)
+
 	return returnCollected, returnIndex, nil
 }
 
