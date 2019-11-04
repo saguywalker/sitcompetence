@@ -12,12 +12,16 @@ export default new AclCreate({
 	router,
 	acceptLocalRules: true,
 	globalRules: {
-		isAdmin: new AclRule("inst_group").generate(),
+		isAdmin: new AclRule("admin").generate(),
 		isStudent: new AclRule("st_group").generate(),
 		isPublic: new AclRule("*").generate()
 	},
 	middleware: async (acl) => {
 		const userRole = getLoginUserRole();
-		await acl.change(userRole);
+		if (userRole === "inst_group") {
+			await acl.change("admin");
+		} else {
+			await acl.change(userRole);
+		}
 	}
 });

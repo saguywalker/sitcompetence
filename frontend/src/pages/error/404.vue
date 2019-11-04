@@ -6,12 +6,9 @@
 			</h1>
 			<p class="description">
 				Don't worry there is a way to go back home.
+				<br>
+				Just click back on your browser.
 			</p>
-			<router-link :to="{ name: 'admin' }">
-				<b-button variant="primary">
-					Back home
-				</b-button>
-			</router-link>
 		</div>
 	</div>
 </template>
