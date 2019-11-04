@@ -26,9 +26,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	defer r.Body.Close()
 	ctx.Logger.Infof("%s\n", body)
 
-	// Struct of objects
 	var giveBadgeRequest *model.GiveBadgeRequest
-	// var listOfBadges []*model.CollectedCompetence
 	if err := json.Unmarshal(body, &giveBadgeRequest); err != nil {
 		ctx.Logger.Errorln("error while unmarshaling")
 		return err
@@ -71,7 +69,6 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	defer r.Body.Close()
 
 	var activityRequest *model.ApproveActivityRequest
-	// var listOfActivities []*model.AttendedActivity
 	if err := json.Unmarshal(body, &activityRequest); err != nil {
 		return err
 	}
