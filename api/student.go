@@ -38,7 +38,6 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 
 		for i := range students {
 			collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
-			ctx.Logger.Printf("student %+v: badge: %+v\n", students[i], collected)
 			if err != nil {
 				if err.Error() == "does not exists" {
 					continue

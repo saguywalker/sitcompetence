@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -36,7 +35,6 @@ func New(a *app.App) (api *API, err error) {
 
 // Init routes api with handler
 func (a *API) Init(r *mux.Router) {
-	// user methods
 	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
 	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
 	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("POST")
@@ -132,32 +130,10 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 		w.Header().Set("Pragma", "no-cache")
 
 		if err := f(ctx, w, r); err != nil {
-			if verr, ok := err.(*app.ValidationError); ok {
-				data, err := json.Marshal(verr)
-				if err == nil {
-					// w.WriteHeader(http.StatusBadRequest)
-					_, err = w.Write(data)
-				}
-
-				if err != nil {
-					ctx.Logger.Error(err)
-					http.Error(w, "internal server error", http.StatusInternalServerError)
-				}
-			} else if uerr, ok := err.(*app.UserError); ok {
-				data, err := json.Marshal(uerr)
-				if err == nil {
-					// w.WriteHeader(uerr.StatusCode)
-					_, err = w.Write(data)
-				}
-
-				if err != nil {
-					ctx.Logger.Error(err)
-					// w.WriteHeader(http.StatusInternalServerError)
-					http.Error(w, "internal server error", http.StatusInternalServerError)
-				}
+			if err.Error() == "does not exists" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("false"))
 			} else {
-				ctx.Logger.Error(err)
-				// w.WriteHeader(http.StatusInternalServerError)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
 		}
