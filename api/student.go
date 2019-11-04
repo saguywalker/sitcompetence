@@ -81,10 +81,10 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 
 	for i := range students {
 		collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
-		if err.Error() == "does not exists" {
-			continue
-		}
 		if err != nil {
+			if err.Error() == "does not exists" {
+				continue
+			}
 			return err
 		}
 
