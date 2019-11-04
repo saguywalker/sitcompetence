@@ -15,7 +15,6 @@ import (
 type App struct {
 	Config   *Config
 	Database *db.Database
-	// ProfileSession   *sessions.CookieStore
 	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
 }
@@ -47,7 +46,6 @@ func New() (app *App, err error) {
 		return nil, err
 	}
 
-	// app.TokenUser = make(map[string]*model.User, 0)
 	gob.Register(model.User{})
 	keyHash := sha256.Sum256(app.Config.SecretKey)
 	app.UserSession = sessions.NewCookieStore(keyHash[:])

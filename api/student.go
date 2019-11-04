@@ -187,24 +187,7 @@ func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 	}
 
 	w.Write([]byte(url))
-	/*
-		session, err := a.App.ProfileSession.Get(r, "url-session")
-		if err != nil {
-			return err
-		}
-
-		if _, ok := session.Values["studentid"]; !ok {
-			session.Values["studentid"] = ctx.User.UserID
-		}
-
-		if err := session.Save(r, w); err != nil {
-			return err
-		}
-
-		ctx.Logger.Printf("RequestedURL: %s\n", r.RequestURI)
-
-		w.Write([]byte(url))
-	*/
+	
 	return nil
 }
 

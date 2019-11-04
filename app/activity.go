@@ -88,18 +88,6 @@ func (ctx *Context) GetActivitiesByStudent(id string, pageNo uint32) ([]*model.A
 	return activites, nil
 }
 
-/*
-// ApproveActivity append activity and student to attended table iteratively
-func (ctx *Context) ApproveActivity(activities []*model.ApproveActivity, txID []byte) error {
-	for _, activity := range activities {
-		if err := ctx.Database.ApproveAttended(activity.ActivityID, activity.StudentID, txID); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-*/
-
 // CreateActivity creates new activity
 func (ctx *Context) CreateActivity(activity *model.Activity) (uint32, error) {
 	activityID, err := ctx.Database.CreateActivity(activity)
