@@ -5,9 +5,9 @@
 				404 - Notfound
 			</h1>
 			<p class="description">
-				Don't worry there is a way to go back home.
+				Not found what you are looking for. Don't worry there is a way to go back.
 				<br>
-				Just click back on your browser.
+				Please click back on your browser.
 			</p>
 		</div>
 	</div>

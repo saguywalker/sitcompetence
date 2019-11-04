@@ -13,6 +13,7 @@
 					<b-button
 						id="popover-share-port"
 						ref="shareButton"
+						:disabled="!hasNoCompetence"
 						variant="primary"
 						class="item"
 						@click="sharePortfolio"
@@ -47,7 +48,7 @@
 							id="shareUrl"
 							ref="shareUrlInput"
 							size="sm"
-							value="hello my name is"
+							:value="`http://localhost:8080/viewProfile/${link}`"
 						/>
 						<b-button
 							ref="copyBtn"
@@ -73,7 +74,7 @@
 						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="statePortfolios.length !== 0">
+				<template v-if="hasNoCompetence">
 					<div class="portfolio-content">
 						<b-row class="portfolio-container">
 							<b-col
@@ -169,10 +170,14 @@ export default {
 		...mapState("portfolio", {
 			statePortfolios: "portfolios",
 			verify: "verify",
-			show: "show"
+			show: "show",
+			link: "link"
 		}),
 		user() {
 			return getLoginUser();
+		},
+		hasNoCompetence() {
+			return this.statePortfolios.length !== 0;
 		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {

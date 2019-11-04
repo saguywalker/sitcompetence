@@ -10,6 +10,8 @@ const handleErrors = (error) => {
 		router.push({ name: "error403" });
 	} else if (error.response.status === 451) {
 		router.push({ name: "user-genkey" });
+	} else if (error.response.status === 404) {
+		router.push({ name: "error404" });
 	}
 };
 
@@ -56,8 +58,8 @@ const Base = {
 };
 
 const Portfolio = {
-	getBadgeWithToken() {
-		return apiClient.get("/profile");
+	getBadgeWithToken(key) {
+		return apiClient.get(`/profile/${key}`);
 	},
 	getShareLink() {
 		return apiClient.get("/student/shareProfile");

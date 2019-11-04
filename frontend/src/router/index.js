@@ -43,11 +43,12 @@ const router = new Router({
 			}
 		},
 		{
-			path: "/viewProfile",
+			path: "/viewProfile/:urlkey",
 			name: "share-portfolio",
 			component: () => import("@/pages/_id-portfolio.vue"),
 			meta: {
-				rule: "isPublic"
+				rule: "isPublic",
+				title: "Portfolio - SIT-Competence"
 			}
 		},
 		{
