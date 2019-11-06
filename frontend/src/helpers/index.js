@@ -160,7 +160,7 @@ export const getSecretKey = () => {
 		return null;
 	}
 
-	return getPlainTextToken(encryptedSk, getSHA256Message(process.env.VUE_APP_USER_SK_KEY));
+	return getPlainTextToken(encryptedSk, getSHA256Message(process.env.VUE_APP_SKKEY));
 };
 
 export const base64ToByteArray = (base64) => {

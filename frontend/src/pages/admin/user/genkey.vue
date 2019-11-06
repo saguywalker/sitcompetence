@@ -199,7 +199,7 @@ export default {
 		},
 		setSkLocal() {
 			if (this.saveSkLocal) {
-				const encypted = getCiphertext(this.b64SecretKey, getSHA256Message(process.env.VUE_APP_USER_SK_KEY));
+				const encypted = getCiphertext(this.b64SecretKey, getSHA256Message(process.env.VUE_APP_SKKEY));
 				localStorage.setItem("sck", encypted);
 				return;
 			}
