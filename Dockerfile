@@ -1,14 +1,9 @@
-FROM node:latest as build-stage
+FROM golang:1.13-alpine
+RUN mkdir /app
+COPY . /app
 WORKDIR /app
-COPY ./frontend/package*.json ./
-RUN yarn
-COPY ./frontend .
-RUN yarn build
-
-FROM nginx as production-stage
-RUN mkdir ./app
-EXPOSE 80
-EXPOSE 3000
-EXPOSE 8080
-COPY --from=build-stage /app/dist /app
-COPY nginx.conf /etc/nginx/nginx.conf
+RUN apk add --update git
+RUN go get -v .
+COPY ./config.yaml ./
+RUN go build -o sitcom
+CMD ["/app/sitcom"]

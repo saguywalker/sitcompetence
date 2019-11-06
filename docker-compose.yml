@@ -1,7 +1,12 @@
-version: '2'
+version: '2.2'
 services:
     server:
-            image: nginx:1.17
+            image: golang:1.13-alpine
             volumes:
-                   - /etc/nginx/my-site.com.crt:/etc/nginx/my-site.com.crt
-                   - /etc/nginx/my-site.com.key:/etc/nginx/my-site.com.key
+                    - .:/go/src/github.com/saguywalker/sitcompetence
+            working_dir: /go/src/github.com/saguywalker/sitcompetence
+            build:
+                    context: ./
+            ports:
+                    -  3000
+            container_name: go-server

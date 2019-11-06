@@ -1,0 +1,12 @@
+FROM node:latest
+WORKDIR /web
+COPY . .
+RUN echo $PWD && \
+	ls -a && \
+	cd frontend && \
+	yarn install && \
+	yarn && \
+	yarn build
+EXPOSE 8080
+ENTRYPOINT yarn serve
+
