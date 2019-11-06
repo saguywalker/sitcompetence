@@ -52,6 +52,15 @@ const actions = {
 
 		return response;
 	},
+	async loadSearchTable({ commit }, data) {
+		const response = await Base.getStudentsBySearch(data.key, data.value);
+
+		if (response.status === 200) {
+			commit(LOAD_STUDENTS, response.data);
+		}
+
+		return response;
+	},
 	async loadStudentDataByPage({ commit }, page) {
 		const response = await Base.getStudentsPage(page);
 

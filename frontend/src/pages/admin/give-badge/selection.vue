@@ -162,7 +162,7 @@ export default {
 			this.$router.push({ name: "give-badge-confirmation" });
 		},
 		async goBack() {
-			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
+			// await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
 			this.$router.push({ name: "give-badge" });
 		},
 		removeError(index) {

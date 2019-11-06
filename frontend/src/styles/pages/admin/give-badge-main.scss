@@ -7,13 +7,19 @@
 		color: $black;
 
 		.header {
+			position: relative;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			margin-bottom: rem(10);
+			margin-bottom: rem(35);
 
 			.search {
 				margin-bottom: rem(10);
+			}
+
+			.dp-radio {
+				position: absolute;
+				bottom: rem(-30);
 			}
 		}
 

@@ -119,13 +119,13 @@ export default {
 			return getSecretKey();
 		}
 	},
-	// beforeRouteEnter(to, from, next) {
-	// 	next((vm) => {
-	// 		if (!vm.steps.includes("selection")) {
-	// 			vm.$router.replace({ name: "give-badge" });
-	// 		}
-	// 	});
-	// },
+	beforeRouteEnter(to, from, next) {
+		next((vm) => {
+			if (!vm.steps.includes("selection")) {
+				vm.$router.replace({ name: "give-badge" });
+			}
+		});
+	},
 	created() {
 		this.selectStudent = this.selectedStudents;
 	},
@@ -197,7 +197,7 @@ export default {
 			}
 		},
 		async goBack() {
-			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
+			// await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
 			this.$router.push({ name: "give-badge-selection" });
 		}
 	}

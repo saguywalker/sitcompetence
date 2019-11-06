@@ -12,29 +12,40 @@
 						Student list
 					</h2>
 					<div class="table">
-						<div
-							v-if="false"
-							class="header"
-						>
-							<b-button-group class="search">
+						<div class="header">
+							<b-button-group class="search-header">
+								<b-form-select
+									v-model="selectedSearchBy"
+									:options="searchByOptions"
+									size="sm"
+								/>
 								<b-form-input
-									v-model="search"
+									v-model="searchValue"
 									placeholder="Search here"
 									size="sm"
 								/>
 								<b-button
 									variant="admin-primary"
 									size="sm"
+									@click="handleSearch"
 								>
 									Search
 								</b-button>
 							</b-button-group>
+							<b-form-radio-group
+								v-if="selectedSearchBy === 'dp'"
+								v-model="selectedDepartment"
+								:options="departmentOptions"
+								class="dp-radio"
+								name="department-options"
+							/>
 						</div>
 						<b-table
 							ref="selectableTable"
 							:items="items"
 							:fields="fields"
 							:per-page="perPage"
+							:current-page="currentPage"
 							selectable
 							select-mode="multi"
 							selected-variant="admin-primary"
@@ -95,7 +106,7 @@
 					<div class="box-content scrollable">
 						<ul class="selected">
 							<li
-								v-for="(item, index) in selectedItems"
+								v-for="(item, index) in selectedStudents"
 								:key="`${item}${index}`"
 								class="item"
 							>
@@ -123,20 +134,34 @@
 </style>
 <script>
 import loading from "@/plugin/loading";
-import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
+import IconCheck from "@/components/icons/IconCheck.vue";
 import { mapState } from "vuex";
 
 export default {
 	components: {
-		IconCheck,
-		IconCrossCircle
+		IconCrossCircle,
+		IconCheck
 	},
 	data() {
 		return {
+			searchValue: "",
+			selectedSearchBy: "",
+			selectedDepartment: "",
+			searchByOptions: [
+				{ value: "", text: "All" },
+				{ value: "student_id", text: "ID" },
+				{ value: "dp", text: "DP" }
+			],
+			departmentOptions: [
+				{ text: "IT", value: "IT" },
+				{ text: "CS", value: "CS" },
+				{ text: "DSI", value: "DSI" }
+			],
+
+			// Table
 			currentPage: 1,
 			perPage: 10,
-			search: "",
 			fields: [
 				{
 					key: "selected"
@@ -187,9 +212,10 @@ export default {
 		}
 	},
 	async created() {
-		if (this.students.length === 0) {
+		if (this.steps.length === 0) {
+			loading.start();
+
 			try {
-				loading.start();
 				await this.$store.dispatch("base/loadStudentData");
 			} catch (err) {
 				this.$bvToast.toast(`There was a problem loading student data: ${err.message}`, {
@@ -201,31 +227,26 @@ export default {
 				loading.stop();
 			}
 		}
-
 		this.items = this.students;
 		this.selectedItems = this.selectedStudents;
-		if (this.steps.includes("selection")) {
-			this.setUpSelectedItems();
-		}
+		this.setupSelection();
 	},
 	mounted() {
-		this.selectedItems.forEach((item) => {
-			const index = this.items.findIndex((i) => i.student_id === item.student_id);
-			this.$refs.selectableTable.selectRow(index);
-		});
+		this.setupSelection();
+	},
+	updated() {
+		this.setupSelection();
 	},
 	methods: {
-		setUpSelectedItems() {
-			this.items.forEach((item, index) => {
-				this.selectedStudents.forEach((student) => {
-					if (item.student_id === student.student_id) {
-						this.items[index] = student;
-					}
-				});
+		setupSelection() {
+			this.selectedStudents.forEach((item) => {
+				const index = this.items.findIndex((i) => i.student_id === item.student_id);
+				this.$refs.selectableTable.selectRow(index);
 			});
 		},
-		onRowSelected(items) {
+		async onRowSelected(items) {
 			this.selectedItems = items;
+			await this.$store.dispatch("giveBadge/updateSelectedStudents", items);
 		},
 		selectAllRows() {
 			this.$refs.selectableTable.selectAllRows();
@@ -233,8 +254,17 @@ export default {
 		clearSelected() {
 			this.$refs.selectableTable.clearSelected();
 		},
+		handleSearch() {
+			const searchOption = {
+				key: this.selectedSearchBy,
+				value: this.searchValue
+			};
+
+			this.$emit("searched", searchOption);
+			this.currentPage = 1;
+		},
 		deleteSelectedRow(id) {
-			const index = this.items.findIndex((item) => item.student_id === id);
+			const index = this.students.findIndex((item) => item.student_id === id);
 			this.$refs.selectableTable.unselectRow(index);
 		},
 		async submit() {
@@ -252,12 +282,14 @@ export default {
 			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-selection" });
 		}
-		// async tableItemProvider() {
-		// 	let items;
+		// async onSearched(e) {
+		// 	loading.start();
+
 		// 	try {
-		// 		items = await this.$store.dispatch("base/loadStudentDataByPage", this.currentPage);
+		// 		await this.$store.dispatch("base/loadSearchTable", e);
+		// 		this.currentPage = 1;
 		// 	} catch (err) {
-		// 		this.$bvToast.toast(`There was a problem fetchin student table: ${err.message}`, {
+		// 		this.$bvToast.toast(`There was a problem loading student data: ${err.message}`, {
 		// 			title: "Student Table Error",
 		// 			variant: "danger",
 		// 			autoHideDelay: 1500
@@ -265,8 +297,6 @@ export default {
 		// 	} finally {
 		// 		loading.stop();
 		// 	}
-
-		// 	return items;
 		// }
 	}
 };

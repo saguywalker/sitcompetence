@@ -1,10 +1,16 @@
 import axios from "axios";
 import router from "@/router";
 
+let apiUrl;
+if (process.env.NODE_ENV === "production") {
+	apiUrl = process.env.VUE_APP_API_URL_PROD;
+} else {
+	apiUrl = process.env.VUE_APP_API_URL;
+}
+
 axios.defaults.withCredentials = true;
 // Handlers
 const handleResponse = (response) => response;
-
 const handleErrors = (error) => {
 	if (error.response.status === 403) {
 		router.push({ name: "error403" });
@@ -16,11 +22,11 @@ const handleErrors = (error) => {
 };
 
 const apiClient = axios.create({
-	baseURL: process.env.VUE_APP_API_URL
+	baseURL: apiUrl
 });
 
 const apiClientLogin = axios.create({
-	baseURL: process.env.VUE_APP_API_URL
+	baseURL: apiUrl
 });
 
 // ------- Interceptors --------
@@ -42,6 +48,9 @@ const Base = {
 	},
 	getStudents() {
 		return apiClient.get("/student");
+	},
+	getStudentsBySearch(key, value) {
+		return apiClient.get(`/search/student?${key}=${value}`);
 	},
 	getStudentsPage(page) {
 		return apiClient.get(`/search/student?page=${page}`);
