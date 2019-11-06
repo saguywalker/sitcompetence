@@ -7,7 +7,6 @@ import (
 	"github.com/saguywalker/sitcompetence/model"
 )
 
-
 // GetCollectedWithDetail return list of collected competence from student id
 func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []string) ([]model.CollectedCompetence, uint64, error) {
 	// collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)

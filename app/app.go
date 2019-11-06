@@ -13,8 +13,8 @@ import (
 
 // App contains Config and Database
 type App struct {
-	Config   *Config
-	Database *db.Database
+	Config           *Config
+	Database         *db.Database
 	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
 }

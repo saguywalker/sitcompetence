@@ -49,8 +49,8 @@ func serveAPI(ctx context.Context, api *api.API) {
 		close(done)
 	}()
 
-	logrus.Infof("serving api at http://127.0.0.1:%d", api.Config.Port)
-	if err := s.ListenAndServe(); err != http.ErrServerClosed {
+	logrus.Infof("serving api at https://127.0.0.1:%d", api.Config.Port)
+	if err := s.ListenAndServeTLS("../nginx.crt", "../nginx.key"); err != http.ErrServerClosed {
 		logrus.Error(err)
 	}
 	<-done

@@ -187,7 +187,7 @@ func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 	}
 
 	w.Write([]byte(url))
-	
+
 	return nil
 }
 
