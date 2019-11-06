@@ -6,8 +6,8 @@ import {
 	CREATE_ACTIVITY_BREADCRUMB,
 	GIVE_BADGE_STEP,
 	CREATE_ACTIVITY_STEP,
-	EDIT_ACTIVITY_STEP
-	// STUDENT_ROUTE_NAMES
+	EDIT_ACTIVITY_STEP,
+	STUDENT_ROUTE_NAMES
 } from "@/constants";
 import { getLoginUserRole, clearLoginState, isLoggedIn } from "@/helpers";
 
@@ -381,18 +381,18 @@ const router = new Router({
 	]
 });
 
-// router.beforeEach((to, from, next) => {
-// 	// Ignore login and error page
-// 	const isLogin = isLoggedIn();
-// 	const role = getLoginUserRole();
+router.beforeEach((to, from, next) => {
+	// Ignore login and error page
+	const isLogin = isLoggedIn();
+	const role = getLoginUserRole();
 
-// 	if (to.name !== "login" && to.name !== "error404" && to.name !== "share-portfolio" && !isLogin) {
-// 		next({ name: "login" });
-// 	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
-// 		next({ name: "admin" });
-// 	} else {
-// 		next();
-// 	}
-// });
+	if (to.name !== "login" && to.name !== "error404" && to.name !== "share-portfolio" && !isLogin) {
+		next({ name: "login" });
+	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
+		next({ name: "admin" });
+	} else {
+		next();
+	}
+});
 
 export default router;
