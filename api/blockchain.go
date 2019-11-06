@@ -38,7 +38,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 	for _, badge := range giveBadgeRequest.Badges {
 		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
-			a.App.CurrentPeerIndex = currentIndex
+		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
 		}
