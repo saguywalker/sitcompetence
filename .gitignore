@@ -24,3 +24,7 @@ logs
 .log
 *.env
 .DS_Store
+
+# key
+*.crt
+*.key
