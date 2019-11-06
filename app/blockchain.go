@@ -158,7 +158,7 @@ func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, u
 
 	_, returnIndex, err := ctx.BlockchainQueryWithParams(trimData.String(), index, peers)
 	if err != nil {
-		if err.Error() == "not exists" {
+		if err.Error() == "does not exists" {
 			return false, returnIndex, nil
 		}
 
@@ -217,7 +217,7 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 	}
 
 	if isExist := respResult["log"] == "exists"; !isExist {
-		return nil, index, errors.New("not exists")
+		return nil, index, errors.New("does not exists")
 	}
 
 	dec64, err := base64.StdEncoding.DecodeString(respResult["value"].(string))

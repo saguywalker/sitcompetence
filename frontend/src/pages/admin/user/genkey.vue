@@ -50,7 +50,7 @@
 				<h2>Confirmation</h2>
 				<ol class="step-list">
 					<li id="confirm-pk">
-						Once the key pair is decided, you must keep the secret key with yourself.
+						Once the key pair is decided, you must <strong><u>keep the secret key with yourself.</u></strong>
 						<span style="color: red">
 							* Important ! Don't modify the key *
 						</span>
@@ -116,7 +116,7 @@
 				href="#confirm-pk"
 				class="description"
 			>
-				Please confirm the public key before proceed to the websited
+				Please confirm the public key before proceed to the website
 			</a>
 		</section>
 	</div>
@@ -199,7 +199,7 @@ export default {
 		},
 		setSkLocal() {
 			if (this.saveSkLocal) {
-				const encypted = getCiphertext(this.b64SecretKey, getSHA256Message(process.env.VUE_APP_USER_SK_KEY));
+				const encypted = getCiphertext(this.b64SecretKey, getSHA256Message(process.env.VUE_APP_SKKEY));
 				localStorage.setItem("sck", encypted);
 				return;
 			}

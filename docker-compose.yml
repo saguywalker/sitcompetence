@@ -1,12 +1,13 @@
-version: '2.2'
+version: "3.3"
 services:
-    server:
-            image: golang:1.13-alpine
-            volumes:
-                    - .:/go/src/github.com/saguywalker/sitcompetence
-            working_dir: /go/src/github.com/saguywalker/sitcompetence
-            build:
-                    context: ./
-            ports:
-                    -  3000
-            container_name: go-server
+  goservice:
+    build: "."
+    ports:
+      - "3000"
+  nginx:
+    build: "."
+    ports:
+      - "80:80"
+    depends_on:
+      - "goservice"
+

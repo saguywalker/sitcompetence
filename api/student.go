@@ -1,7 +1,6 @@
 package api
 
 import (
-	// "crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -36,6 +35,19 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		if err != nil {
 			return err
 		}
+
+		for i := range students {
+			collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+			if err != nil {
+				if err.Error() == "does not exists" {
+					continue
+				}
+				return err
+			}
+
+			students[i].Collected = collected
+			a.App.CurrentPeerIndex = index
+		}
 	}
 
 	data, err := json.Marshal(students)
@@ -67,13 +79,16 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	for i := range students {
-		collected, index, err := ctx.GetCollectedWithDetail(students[i].StudentID, a.App.CurrentPeerIndex, a.Config.Peers)
-		if err.Error() == "not exists" {
-			continue
-		}
+		collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
+			if err.Error() == "does not exists" {
+				continue
+			}
 			return err
 		}
+
+		ctx.Logger.Printf("student[%d]: %+v\n", i, collected)
+
 		students[i].Collected = collected
 		a.App.CurrentPeerIndex = index
 	}
@@ -166,23 +181,13 @@ func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 		return errors.New("only students are allowed")
 	}
 
-	session, err := a.App.ProfileSession.Get(r, "url-session")
+	url, err := ctx.ShareProfile(ctx.User.UserID)
 	if err != nil {
 		return err
 	}
 
-	if _, ok := session.Values["studentid"]; !ok {
-		session.Values["studentid"] = ctx.User.UserID
-	}
-
-	if err := session.Save(r, w); err != nil {
-		return err
-	}
-
-	ctx.Logger.Printf("RequestedURL: %s\n", r.RequestURI)
-
-	// w.Write([]byte(fullURL))
-
+	w.Write([]byte(url))
+	
 	return nil
 }
 
@@ -191,38 +196,26 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
 	ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
 
-	session, err := a.App.ProfileSession.Get(r, "url-session")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	studentID, ok := session.Values["studentid"]
+	vars := mux.Vars(r)
+	url, ok := vars["url"]
 	if !ok {
 		http.Error(w, "incorrect url", http.StatusNotFound)
 		return
 	}
 
-	student, err := ctx.GetStudentByID(studentID.(string))
+	ctx.Logger.Printf("url: %s", url)
+
+	collected, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", studentID.(string)), a.App.CurrentPeerIndex, a.Config.Peers)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	a.App.CurrentPeerIndex = index
-
-	student.Collected = collected
-
-	collectedBytes, err := json.Marshal(student)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if collected == nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	w.Write(collectedBytes)
+	w.WriteHeader(http.StatusOK)
+	w.Write(collected)
 }

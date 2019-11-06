@@ -3,6 +3,7 @@ ui/node_modules
 ui/admin-sc/node_modules
 ui/student/node_modules
 yarn.lock
+go.sum
 
 #for configuration
 config.yaml

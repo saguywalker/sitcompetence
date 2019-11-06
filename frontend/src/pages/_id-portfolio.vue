@@ -20,75 +20,68 @@
 					<div class="profile-header">
 						<base-image :size="resizeImage" />
 						<div class="name">
-							<h5>Username</h5>
+							<h5>{{ user }}</h5>
 						</div>
 					</div>
 					<p class="profile-description">
 						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="portfolios">
-					<div class="portfolio-content">
-						<b-row class="portfolio-container">
-							<b-col
-								v-for="(com, index) in portfolios"
-								:key="`${com.competence_id}${forceReRender}`"
-								cols="6"
-								class="competence-wrapper"
+				<div class="portfolio-content">
+					<b-row class="portfolio-container">
+						<b-col
+							v-for="(com, index) in portfolios"
+							:key="`${com.competence_id}${forceReRender}`"
+							cols="6"
+							class="competence-wrapper"
+						>
+							<base-image
+								:src="getCompetenceImgById(com.competence_id)"
+								:size="resizeImage"
+								class="sitcom-badge"
+							/>
+							<p class="name">
+								{{ getCompetenceNameById(com.competence_id) }}
+							</p>
+							<transition
+								:key="`${com.competence_id}${index}`"
+								name="fade"
+								mode="out-in"
 							>
-								<base-image
-									:src="getCompetenceImgById(com.competence_id)"
-									:size="resizeImage"
-									class="sitcom-badge"
-								/>
-								<p class="name">
-									{{ getCompetenceNameById(com.competence_id) }}
-								</p>
-								<transition
-									:key="`${com.competence_id}${index}`"
-									name="fade"
-									mode="out-in"
+								<p
+									v-if="show"
+									class="verify-status"
 								>
-									<p
-										v-if="show"
-										class="verify-status"
-									>
-										<span class="icon">
-											<icon-check-circle v-if="verify[index]" />
-											<icon-time-circle v-else />
-										</span>
-										{{ verifyText(index) }}
-									</p>
-								</transition>
-							</b-col>
-						</b-row>
-						<div class="portfolio-footer">
-							<b-button
-								:block="resizeVerifyButton"
-								variant="primary"
-								size="sm"
-								class="action-item"
-								@click="testVerify"
-							>
-								Verify by Blockchain
-							</b-button>
-							<b-button
-								v-if="show"
-								variant="outline"
-								size="sm"
-								class="action-item"
-								@click="clearVerify"
-							>
-								Clear verify
-							</b-button>
-						</div>
+									<span class="icon">
+										<icon-check-circle v-if="verify[index]" />
+										<icon-time-circle v-else />
+									</span>
+									{{ verifyText(index) }}
+								</p>
+							</transition>
+						</b-col>
+					</b-row>
+					<div class="portfolio-footer">
+						<b-button
+							:block="resizeVerifyButton"
+							variant="primary"
+							size="sm"
+							class="action-item"
+							@click="testVerify"
+						>
+							Verify by Blockchain
+						</b-button>
+						<b-button
+							v-if="show"
+							variant="outline"
+							size="sm"
+							class="action-item"
+							@click="clearVerify"
+						>
+							Clear verify
+						</b-button>
 					</div>
-				</template>
-				<template v-else>
-					<div class="portfolio-content">
-						<h1>No competence record.</h1>
-					</div>
-				</template>
+				</div>
 			</div>
 		</section>
 		<footer class="page-footer">
@@ -104,6 +97,7 @@
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
+import loading from "@/plugin/loading";
 import { widthSize } from "@/helpers/mixins";
 import { COMPETENCE } from "@/constants";
 import { Portfolio, Verify } from "@/services";
@@ -124,6 +118,9 @@ export default {
 		};
 	},
 	computed: {
+		urlKey() {
+			return this.$route.params.urlkey;
+		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
 				return false;
@@ -139,25 +136,23 @@ export default {
 			return "70";
 		}
 	},
-	beforeRouteEnter(to, from, next) {
-		next(async (vm) => {
-			vm.$Progress.start();
+	async created() {
+		loading.start();
 
-			try {
-				const response = await Portfolio.getBadgeWithToken();
-				vm.portfolios = response.data.collected_competence;
-				vm.user = response.data.firstname;
-			} catch (err) {
-				this.$Progress.fail();
-				this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
-					title: "Fetching competences error",
-					variant: "danger",
-					autoHideDelay: 1500
-				});
-			} finally {
-				vm.$Progress.finish();
-			}
-		});
+		try {
+			const response = await Portfolio.getBadgeWithToken(this.urlKey);
+			this.portfolios = response.data.collected_competence;
+			this.user = response.data.firstname;
+		} catch (err) {
+			loading.stop();
+			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+				title: "Fetching competences error",
+				variant: "danger",
+				autoHideDelay: 1500
+			});
+		} finally {
+			loading.stop();
+		}
 	},
 	methods: {
 		getCompetenceNameById(id) {
