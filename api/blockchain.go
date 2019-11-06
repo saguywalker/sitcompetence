@@ -38,12 +38,12 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 	for _, badge := range giveBadgeRequest.Badges {
 		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
+			a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
 		}
 
 		txs = append(txs, hex.EncodeToString(txID))
-		a.App.CurrentPeerIndex = currentIndex
 	}
 
 	txsBytes, err := json.Marshal(txs)
@@ -75,11 +75,10 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 
 	for _, activity := range activityRequest.Activities {
 		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
+		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
 		}
-
-		a.App.CurrentPeerIndex = currentIndex
 	}
 
 	return nil
@@ -96,11 +95,10 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	ctx.Logger.Infof("json data: %s\n", body)
 
 	isExists, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
+	a.App.CurrentPeerIndex = currentIndex
 	if err != nil {
 		return err
 	}
-
-	a.App.CurrentPeerIndex = currentIndex
 
 	w.Write([]byte(fmt.Sprintf("%v", isExists)))
 
