@@ -18,7 +18,7 @@ import (
 	"github.com/saguywalker/sitcompetence/app"
 )
 
-func serveAPI(ctx context.Context, api *api.API) {
+func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
@@ -49,10 +49,18 @@ func serveAPI(ctx context.Context, api *api.API) {
 		close(done)
 	}()
 
-	logrus.Infof("serving api at https://127.0.0.1:%d", api.Config.Port)
-	if err := s.ListenAndServeTLS("../nginx.crt", "../nginx.key"); err != http.ErrServerClosed {
-		logrus.Error(err)
+	if dev {
+		logrus.Infof("serving api at http://127.0.0.1:%d", api.Config.Port)
+		if err := s.ListenAndServe(); err != http.ErrServerClosed {
+			logrus.Error(err)
+		}
+	} else {
+		logrus.Infof("serving api at https://127.0.0.1:%d", api.Config.Port)
+		if err := s.ListenAndServeTLS("nginx.crt", "nginx.key"); err != http.ErrServerClosed {
+			logrus.Error(err)
+		}
 	}
+
 	<-done
 }
 
@@ -87,7 +95,7 @@ var serveCmd = &cobra.Command{
 		go func() {
 			defer wg.Done()
 			defer cancel()
-			serveAPI(ctx, api)
+			serveAPI(ctx, api, false)
 		}()
 
 		wg.Wait()
