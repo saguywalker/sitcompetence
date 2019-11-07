@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -81,9 +82,9 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 			ctx.Logger.Printf("params: %s\n", params.Encode())
 
-			collectedBytes, returnIndex, err := ctx.BlockchainQueryWithParams(params.Encode(), a.App.CurrentPeerIndex, a.Config.Peers)
+			collectedBytes, evidence, returnIndex, err := ctx.BlockchainQueryWithParams(params.Encode(), a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
-				return err
+				return errors.New(string(evidence))
 			}
 
 			a.App.CurrentPeerIndex = returnIndex
@@ -129,9 +130,11 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 		return err
 	}
 
-	_, err = w.Write(data)
+	if _, err = w.Write(data); err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 // GetCompetenceByID response a competence from requested competenceID

@@ -149,23 +149,23 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 }
 
 // VerifyTX verify data with a given merkle root
-func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, uint64, error) {
+func (ctx *Context) VerifyTX(data []byte, index uint64, peers []string) (bool, []byte, uint64, error) {
 	var trimData bytes.Buffer
 	if err := json.Compact(&trimData, data); err != nil {
-		return false, index, err
+		return false, nil, index, err
 	}
 	ctx.Logger.Infof("data: %s\n", trimData.String())
 
-	_, returnIndex, err := ctx.BlockchainQueryWithParams(trimData.String(), index, peers)
+	_, evidence, returnIndex, err := ctx.BlockchainQueryWithParams(trimData.String(), index, peers)
 	if err != nil {
 		if err.Error() == "does not exists" {
-			return false, returnIndex, nil
+			return false, evidence, returnIndex, nil
 		}
 
-		return false, returnIndex, err
+		return false, evidence, returnIndex, err
 	}
 
-	return true, returnIndex, nil
+	return true, evidence, returnIndex, nil
 }
 
 // GetBadgeFromStudent return all of collected badges from corresponding studentId from in blockchain
@@ -174,7 +174,7 @@ func (ctx *Context) GetBadgeFromStudent(id string, index uint64, peers []string)
 }
 
 // BlockchainQueryWithParams return []byte from corresponding parameters
-func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers []string) ([]byte, uint64, error) {
+func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers []string) ([]byte, []byte, uint64, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
@@ -201,29 +201,29 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(respData, &fullData); err != nil {
 		ctx.Logger.Errorf("%s", respData)
-		return nil, index, err
+		return nil, respData, index, err
 	}
 
 	respResult, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%s", fullData)
-		return nil, index, errors.New(string(respData))
+		return nil, respData, index, errors.New(string(respData))
 	}
 
 	respResult, ok = respResult["response"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%s", respResult)
-		return nil, index, errors.New(string(respData))
+		return nil, respData, index, errors.New(string(respData))
 	}
 
 	if isExist := respResult["log"] == "exists"; !isExist {
-		return nil, index, errors.New("does not exists")
+		return nil, respData, index, errors.New("does not exists")
 	}
 
 	dec64, err := base64.StdEncoding.DecodeString(respResult["value"].(string))
 	if err != nil {
-		return nil, index, err
+		return nil, respData, index, err
 	}
 
-	return dec64, index, nil
+	return dec64, respData, index, nil
 }

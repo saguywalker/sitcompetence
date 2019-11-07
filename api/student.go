@@ -37,15 +37,16 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		}
 
 		for i := range students {
-			collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+			collected, evidence, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
 				if err.Error() == "does not exists" {
 					continue
 				}
-				return err
+				return errors.New(string(evidence))
 			}
 
 			students[i].Collected = collected
+			students[i].Evidence = evidence
 			a.App.CurrentPeerIndex = index
 		}
 	}
@@ -79,17 +80,18 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	for i := range students {
-		collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+		collected, evidence, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			if err.Error() == "does not exists" {
 				continue
 			}
-			return err
+			return errors.New(string(evidence))
 		}
 
 		ctx.Logger.Printf("student[%d]: %+v\n", i, collected)
 
 		students[i].Collected = collected
+		students[i].Evidence = evidence
 		a.App.CurrentPeerIndex = index
 	}
 
@@ -98,8 +100,11 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	_, err = w.Write(data)
-	return err
+	if _, err = w.Write(data); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CreateStudent creates a student from a request

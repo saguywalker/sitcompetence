@@ -8,11 +8,11 @@ import (
 )
 
 // GetCollectedWithDetail return list of collected competence from student id
-func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []string) ([]model.CollectedCompetence, uint64, error) {
+func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []string) ([]model.CollectedCompetence, []byte, uint64, error) {
 	// collected, err := ctx.Database.GetCompetencesByStudentID(id, ctx.PageLimit, pageNo)
-	collected, returnIndex, err := ctx.BlockchainQueryWithParams(id, index, peers)
+	collected, evidence, returnIndex, err := ctx.BlockchainQueryWithParams(id, index, peers)
 	if err != nil {
-		return nil, returnIndex, err
+		return nil, evidence, returnIndex, err
 	}
 
 	var returnCollected []model.CollectedCompetence
@@ -21,7 +21,7 @@ func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []stri
 		for _, x := range parts {
 			var tmp model.CollectedCompetence
 			if err := json.Unmarshal(x, &tmp); err != nil {
-				return nil, returnIndex, err
+				return nil, evidence, returnIndex, err
 			}
 
 			returnCollected = append(returnCollected, tmp)
@@ -30,5 +30,5 @@ func (ctx *Context) GetCollectedWithDetail(id string, index uint64, peers []stri
 
 	ctx.Logger.Infof("from blockchain: %+v\n", returnCollected)
 
-	return returnCollected, returnIndex, nil
+	return returnCollected, evidence, returnIndex, nil
 }

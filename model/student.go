@@ -7,6 +7,7 @@ type Student struct {
 	LastName   string                `json:"lastname"`
 	Department string                `json:"department"`
 	Collected  []CollectedCompetence `json:"collected_competence,omitempty"`
+	Evidence   []byte                `json:"evidence,omitempty"`
 }
 
 // NewStudent returns new Student struct
