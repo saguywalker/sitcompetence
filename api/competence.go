@@ -103,7 +103,11 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 				collected = append(collected, tmp)
 			}
 
-			resp, err := json.Marshal(collected)
+			mapper := make(map[string]interface{}, 0)
+			mapper["result"] = collected
+			mapper["evidence"] = evidence
+			
+			resp, err := json.Marshal(mapper)
 			if err != nil {
 				return err
 			}
