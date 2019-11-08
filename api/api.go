@@ -54,6 +54,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/student", a.handler(a.UpdateStudent)).Methods("PUT")
 	r.Handle("/student/{id:[0-9]+}", a.handler(a.DeleteStudent)).Methods("DELETE")
 	r.Handle("/student/shareProfile", a.handler(a.ShareProfile)).Methods("GET")
+	r.Handle("/student/edit", a.handler(a.EditProfile)).Methods("PUT")
 
 	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")

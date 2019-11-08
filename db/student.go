@@ -152,3 +152,11 @@ func (db *Database) CheckExpire(url string) error {
 
 	return nil
 }
+
+func (db *Database) UpdateProfilePicture(id, filePath string) error {
+	if _, err := db.Exec("UPDATE student SET profilePath=$1 WHERE studentId=$2", filePath, id); err != nil {
+		return err
+	}
+
+	return nil
+}

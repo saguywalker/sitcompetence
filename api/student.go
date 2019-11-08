@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 
@@ -223,4 +226,30 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(collected)
+}
+
+// EditProfile handle a editing student's information request
+func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	r.ParseMultipartForm(20 << 20)
+	if image, header, err := r.FormFile("profilePic"); err == nil {
+		ctx.Logger.Infof("Upload File: %+v\nFile size: %+v\nMIME Header: %+v\n", header.Filename, header.Size, header.Header)
+		fullname := filepath.Join(".", "static-images", header.Filename)
+
+		dst, err := os.Create(fullname)
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, image); err != nil {
+			return err
+		}
+
+		if err := ctx.UpdateProfilePicture(fullname); err != nil {
+			return err
+		}
+	}
+
+	return nil
+
 }
