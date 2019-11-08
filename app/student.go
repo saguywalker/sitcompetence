@@ -117,7 +117,7 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 	return collectedBytes, nil
 }
 
-// UpdateProfilePicture save an image into static-images directory
-func (ctx *Context) UpdateProfilePicture(filePath string) error {
-	return ctx.Database.UpdateProfilePicture(ctx.User.UserID, filePath)
+// UpdateStudentProfile save an image into static-images directory
+func (ctx *Context) UpdateStudentProfile(filePath, motto string) error {
+	return ctx.Database.UpdateStudentProfile(ctx.User.UserID, filePath, motto)
 }

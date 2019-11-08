@@ -134,6 +134,8 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			if err.Error() == "does not exists" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("false"))
+			} else if err.Error() == "unauthorization" {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 			} else {
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}

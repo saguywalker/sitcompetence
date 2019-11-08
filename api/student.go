@@ -230,12 +230,27 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 
 // EditProfile handle a editing student's information request
 func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	var student model.Student
+	if err := json.Unmarshal(body, &student); err != nil {
+		return err
+	}
+
+	if ctx.User.UserID != student.StudentID {
+		return errors.New("unauthorization")
+	}
+
+	fullpath := ""
 	r.ParseMultipartForm(20 << 20)
 	if image, header, err := r.FormFile("profilePic"); err == nil {
 		ctx.Logger.Infof("Upload File: %+v\nFile size: %+v\nMIME Header: %+v\n", header.Filename, header.Size, header.Header)
-		fullname := filepath.Join(".", "static-images", header.Filename)
+		fullpath = filepath.Join(".", "static-images", header.Filename)
 
-		dst, err := os.Create(fullname)
+		dst, err := os.Create(fullpath)
 		if err != nil {
 			return err
 		}
@@ -244,10 +259,10 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		if _, err = io.Copy(dst, image); err != nil {
 			return err
 		}
+	}
 
-		if err := ctx.UpdateProfilePicture(fullname); err != nil {
-			return err
-		}
+	if err := ctx.UpdateStudentProfile(fullpath, student.Motto); err != nil {
+		return err
 	}
 
 	return nil
