@@ -18,6 +18,7 @@ type CollectedCompetence struct {
 	CompetenceID uint32 `json:"competence_id"`
 	Semester     uint32 `json:"semester"`
 	Giver        []byte `json:"giver,omitempty"`
+	Evidence     []byte `json:"evidence,omitempty"`
 	// TxID         []byte `json:"transaction_id,omitempty"`
 	// PrivateKey   string `json:"sk,omitempty"`
 }

@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 
@@ -37,15 +40,16 @@ func (a *API) SearchStudents(ctx *app.Context, w http.ResponseWriter, r *http.Re
 		}
 
 		for i := range students {
-			collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+			collected, evidence, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
 				if err.Error() == "does not exists" {
 					continue
 				}
-				return err
+				return errors.New(string(evidence))
 			}
 
 			students[i].Collected = collected
+			students[i].Evidence = evidence
 			a.App.CurrentPeerIndex = index
 		}
 	}
@@ -79,17 +83,18 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	for i := range students {
-		collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
+		collected, evidence, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", students[i].StudentID), a.App.CurrentPeerIndex, a.Config.Peers)
 		if err != nil {
 			if err.Error() == "does not exists" {
 				continue
 			}
-			return err
+			return errors.New(string(evidence))
 		}
 
 		ctx.Logger.Printf("student[%d]: %+v\n", i, collected)
 
 		students[i].Collected = collected
+		students[i].Evidence = evidence
 		a.App.CurrentPeerIndex = index
 	}
 
@@ -98,8 +103,11 @@ func (a *API) GetStudents(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	_, err = w.Write(data)
-	return err
+	if _, err = w.Write(data); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CreateStudent creates a student from a request
@@ -218,4 +226,45 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(collected)
+}
+
+// EditProfile handle a editing student's information request
+func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	var student model.Student
+	if err := json.Unmarshal(body, &student); err != nil {
+		return err
+	}
+
+	if ctx.User.UserID != student.StudentID {
+		return errors.New("unauthorization")
+	}
+
+	fullpath := ""
+	r.ParseMultipartForm(20 << 20)
+	if image, header, err := r.FormFile("profilePic"); err == nil {
+		ctx.Logger.Infof("Upload File: %+v\nFile size: %+v\nMIME Header: %+v\n", header.Filename, header.Size, header.Header)
+		fullpath = filepath.Join(".", "static-images", header.Filename)
+
+		dst, err := os.Create(fullpath)
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, image); err != nil {
+			return err
+		}
+	}
+
+	if err := ctx.UpdateStudentProfile(fullpath, student.Motto); err != nil {
+		return err
+	}
+
+	return nil
+
 }

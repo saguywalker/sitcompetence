@@ -101,12 +101,13 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 		return nil, nil
 	}
 
-	collected, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", student.StudentID), index, peers)
+	collected, evidence, index, err := ctx.GetCollectedWithDetail(fmt.Sprintf("student_id=%s", student.StudentID), index, peers)
 	if err != nil {
 		return nil, err
 	}
 
 	student.Collected = collected
+	student.Evidence = evidence
 
 	collectedBytes, err := json.Marshal(student)
 	if err != nil {
@@ -114,4 +115,9 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 	}
 
 	return collectedBytes, nil
+}
+
+// UpdateStudentProfile save an image into static-images directory
+func (ctx *Context) UpdateStudentProfile(filePath, motto string) error {
+	return ctx.Database.UpdateStudentProfile(ctx.User.UserID, filePath, motto)
 }

@@ -94,13 +94,22 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 
 	ctx.Logger.Infof("json data: %s\n", body)
 
-	isExists, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
+	isExists, evidence, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
 	a.App.CurrentPeerIndex = currentIndex
 	if err != nil {
 		return err
 	}
 
-	w.Write([]byte(fmt.Sprintf("%v", isExists)))
+	mapper := make(map[string]interface{})
+	mapper["result"] = isExists
+	mapper["evidence"] = evidence
+
+	mapperBytes, err := json.Marshal(mapper)
+	if err != nil {
+		return err
+	}
+
+	w.Write(mapperBytes)
 
 	return nil
 }

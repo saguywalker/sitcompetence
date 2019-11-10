@@ -54,6 +54,7 @@ func (a *API) Init(r *mux.Router) {
 	r.Handle("/student", a.handler(a.UpdateStudent)).Methods("PUT")
 	r.Handle("/student/{id:[0-9]+}", a.handler(a.DeleteStudent)).Methods("DELETE")
 	r.Handle("/student/shareProfile", a.handler(a.ShareProfile)).Methods("GET")
+	r.Handle("/student/edit", a.handler(a.EditProfile)).Methods("PUT")
 
 	r.Handle("/staff", a.handler(a.GetStaffs)).Methods("GET")
 	r.Handle("/staff", a.handler(a.CreateStaff)).Methods("POST")
@@ -133,6 +134,8 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			if err.Error() == "does not exists" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("false"))
+			} else if err.Error() == "unauthorization" {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 			} else {
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
