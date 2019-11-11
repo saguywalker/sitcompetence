@@ -92,6 +92,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 		return nil, err
 	}
 
+	ctx.Logger.Infof("iv: %x (%d)\n", iv, len(iv))
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
