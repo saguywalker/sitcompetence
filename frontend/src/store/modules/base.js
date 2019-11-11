@@ -1,19 +1,21 @@
 import router from "@/router";
 import { getCiphertext, clearLoginState } from "@/helpers";
-import { Base, Login } from "@/services";
+import { Base, Login, Portfolio } from "@/services";
 import {
 	LOAD_LOGIN_DATA,
 	LOGOUT,
 	LOAD_BADGES,
 	LOAD_STUDENTS,
-	UPDATE_NOTIFICATION
+	UPDATE_NOTIFICATION,
+	LOAD_SHARE_PORTFOLIO
 } from "../mutationTypes";
 
 const state = {
 	students: [],
 	badges: [],
 	user: {},
-	notifications: []
+	notifications: [],
+	sharePortfolio: {}
 };
 
 const mutations = {
@@ -39,10 +41,24 @@ const mutations = {
 		stateData.notifications = [
 			...data
 		];
+	},
+	[LOAD_SHARE_PORTFOLIO](stateData, data) {
+		stateData.sharePortfolio = {
+			...data
+		};
 	}
 };
 
 const actions = {
+	async loadSharePortfolio({ commit }, urlKey) {
+		const response = await Portfolio.getBadgeWithToken(urlKey);
+
+		if (response.status === 200) {
+			commit(LOAD_SHARE_PORTFOLIO, response.data);
+		}
+
+		return response;
+	},
 	async loadStudentData({ commit }) {
 		const response = await Base.getStudents();
 

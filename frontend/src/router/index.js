@@ -48,6 +48,18 @@ const router = new Router({
 			meta: {
 				rule: "isPublic",
 				title: "Portfolio - SIT-Competence"
+			},
+			async beforeEnter(to, from, next) {
+				router.app.$Progress.start();
+
+				try {
+					await store.dispatch("base/loadSharePortfolio", to.params.urlkey);
+				} catch (err) {
+					router.app.$Progress.fail();
+				} finally {
+					router.app.$Progress.finish();
+					next();
+				}
 			}
 		},
 		{
@@ -81,8 +93,9 @@ const router = new Router({
 						rule: "isStudent"
 					},
 					beforeEnter: async (to, from, next) => {
+						router.app.$Progress.start();
+
 						try {
-							router.app.$Progress.start();
 							await store.dispatch("activity/loadActivities");
 						} catch (err) {
 							router.app.$Progress.fail();

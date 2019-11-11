@@ -4,7 +4,7 @@
 			<div class="form">
 				<success-logo text="Create" />
 				<router-link
-					:to="{ name: 'create-activity' }"
+					:to="{ name: 'admin-activity' }"
 					class="mt-3"
 				>
 					<b-button

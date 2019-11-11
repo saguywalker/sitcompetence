@@ -30,11 +30,34 @@
 			</div>
 			<div class="box">
 				<h2 class="box-header">
-					From API activity
+					Saved activity
 				</h2>
 				<div class="my-row">
 					<router-link
-						v-for="(activity, index) in activities"
+						v-for="(activity, index) in savedActivities"
+						:key="`${activity.activity_id}${index}`"
+						:to="{
+							name: 'activity-detail',
+							params: {
+								id: activity.activity_id
+							}
+						}"
+						class="activity-card-link"
+					>
+						<activity-card
+							:title="activity.activity_name"
+							:description="activity.description"
+						/>
+					</router-link>
+				</div>
+			</div>
+			<div class="box">
+				<h2 class="box-header">
+					On Student site activity
+				</h2>
+				<div class="my-row">
+					<router-link
+						v-for="(activity, index) in postedActivities"
 						:key="`${activity.activity_id}${index}`"
 						:to="{
 							name: 'activity-detail',
@@ -60,18 +83,16 @@
 <script>
 import ActivityCard from "@/components/admin/ActivityCard.vue";
 import loading from "@/plugin/loading";
-import { mapState } from "vuex";
-// TODO: GET list of activities
-// Saved Act, Posted Act
+import { mapGetters } from "vuex";
+
 export default {
 	components: {
 		ActivityCard
 	},
 	computed: {
-		...mapState("adminActivity", [
-			"postActivities",
-			"saveActivities",
-			"activities"
+		...mapGetters("adminActivity", [
+			"postedActivities",
+			"savedActivities"
 		])
 	},
 	async created() {

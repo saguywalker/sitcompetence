@@ -97,10 +97,10 @@
 <script>
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
-import loading from "@/plugin/loading";
 import { widthSize } from "@/helpers/mixins";
 import { COMPETENCE } from "@/constants";
-import { Portfolio, Verify } from "@/services";
+import { Verify } from "@/services";
+import { mapState } from "vuex";
 
 export default {
 	components: {
@@ -112,15 +112,13 @@ export default {
 		return {
 			verify: [],
 			show: false,
-			forceReRender: 0,
-			user: "",
-			portfolios: null
+			forceReRender: 0
 		};
 	},
 	computed: {
-		urlKey() {
-			return this.$route.params.urlkey;
-		},
+		...mapState("base", [
+			"sharePortfolio"
+		]),
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
 				return false;
@@ -134,24 +132,12 @@ export default {
 			}
 
 			return "70";
-		}
-	},
-	async created() {
-		loading.start();
-
-		try {
-			const response = await Portfolio.getBadgeWithToken(this.urlKey);
-			this.portfolios = response.data.collected_competence;
-			this.user = response.data.firstname;
-		} catch (err) {
-			loading.stop();
-			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
-				title: "Fetching competences error",
-				variant: "danger",
-				autoHideDelay: 1500
-			});
-		} finally {
-			loading.stop();
+		},
+		portfolios() {
+			return this.sharePortfolio.collected_competence;
+		},
+		user() {
+			return this.sharePortfolio.firstname;
 		}
 	},
 	methods: {

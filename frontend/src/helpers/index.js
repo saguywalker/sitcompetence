@@ -155,12 +155,12 @@ export const getLoginUserRole = () => {
 };
 
 export const getSecretKey = () => {
-	const encryptedSk = localStorage.getItem("sck");
-	if (!encryptedSk) {
+	const sk = localStorage.getItem("sck");
+	if (!sk) {
 		return null;
 	}
 
-	return getPlainTextToken(encryptedSk, getSHA256Message(process.env.VUE_APP_SKKEY));
+	return sk;
 };
 
 export const base64ToByteArray = (base64) => {
