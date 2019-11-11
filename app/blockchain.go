@@ -2,6 +2,8 @@ package app
 
 import (
 	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -79,19 +81,31 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 		Timeout: 3 * time.Second,
 	}
 
-	ctx.Logger.Infof("encrypted base64 sk: %s", privKey)
-
-	decb64, err := base64.StdEncoding.DecodeString(privKey)
+	// decrypting aes sk
+	decSK, err := hex.DecodeString(privKey)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx.Logger.Infof("decrypted base64 sk: %x (%d)", string(decb64), len(decb64))
+	iv, err := hex.DecodeString("00112233445566778899aabbccddee")
+	if err != nil {
+		return nil, err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	mode := cipher.NewCBCDecrypter(block, iv)
+	mode.CryptBlocks(decSK, decSK)
+
+	ctx.Logger.Infof("decrypted aes sk: %x (%d)", string(decSK), len(decSK))
 
 	// Sign
-	signature := ed25519.Sign(decb64, params)
+	signature := ed25519.Sign(decSK, params)
 
-	ctx.Logger.Infof("Sign: %s\nWith sk: 0x%x\nSignature: 0x%x\nTest: %v\n", params, decb64, signature, ed25519.Verify(pubKey, params, signature))
+	ctx.Logger.Infof("Sign: %s\nWith sk: 0x%x\nSignature: 0x%x\nTest: %v\n", params, decSK, signature, ed25519.Verify(pubKey, params, signature))
 
 	payload := protoTm.Payload{
 		Method: method,
