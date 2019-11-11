@@ -9,7 +9,7 @@
 					<div class="box-content scrollable">
 						<ul class="selected">
 							<li
-								v-for="(item, index) in selectedItems"
+								v-for="(item, index) in selectedStudents"
 								:key="`${item}${index}`"
 								class="item"
 							>
@@ -38,31 +38,19 @@
 					<div class="table">
 						<div class="header">
 							<b-button-group class="search-header">
-								<b-form-select
-									v-model="selectedSearchBy"
-									:options="searchByOptions"
-									size="sm"
-								/>
 								<b-form-input
 									v-model="searchValue"
 									placeholder="Search here"
 									size="sm"
 								/>
 								<b-button
-									variant="admin-primary"
+									:disabled="!searchValue"
 									size="sm"
-									@click="handleSearch"
+									@click="searchValue = ''"
 								>
-									Search
+									Clear
 								</b-button>
 							</b-button-group>
-							<b-form-radio-group
-								v-if="selectedSearchBy === 'dp'"
-								v-model="selectedDepartment"
-								:options="departmentOptions"
-								class="dp-radio"
-								name="department-options"
-							/>
 						</div>
 						<b-table
 							ref="selectableTable"
@@ -71,11 +59,13 @@
 							:per-page="perPage"
 							:current-page="currentPage"
 							:busy="isBusy"
+							:filter="searchValue"
 							selectable
 							select-mode="multi"
 							selected-variant="admin-primary"
 							responsive="sm"
 							@row-selected="onRowSelected"
+							@filtered="onSearched"
 						>
 							<template v-slot:table-busy>
 								<div class="text-center text-danger my-2">
@@ -142,9 +132,9 @@
 @import "@/styles/pages/admin/give-badge-main.scss";
 </style>
 <script>
-import loading from "@/plugin/loading";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import IconCheck from "@/components/icons/IconCheck.vue";
+import { getUnique } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -156,22 +146,11 @@ export default {
 		return {
 			isBusy: false,
 			searchValue: "",
-			selectedSearchBy: "",
-			selectedDepartment: "",
-			searchByOptions: [
-				{ value: "", text: "All" },
-				{ value: "student_id", text: "ID" },
-				{ value: "dp", text: "DP" }
-			],
-			departmentOptions: [
-				{ text: "IT", value: "IT" },
-				{ text: "CS", value: "CS" },
-				{ text: "DSI", value: "DSI" }
-			],
 
 			// Table
 			currentPage: 1,
 			perPage: 10,
+			rows: null,
 			fields: [
 				{
 					key: "selected"
@@ -203,7 +182,7 @@ export default {
 			"steps"
 		]),
 		hasSelectedItem() {
-			if (this.selectedItems.length > 0) {
+			if (this.selectedStudents.length > 0) {
 				return true;
 			}
 
@@ -211,9 +190,6 @@ export default {
 		},
 		step() {
 			return this.$route.meta.step;
-		},
-		rows() {
-			return this.items.length;
 		}
 	},
 	watch: {
@@ -223,10 +199,11 @@ export default {
 	},
 	async created() {
 		if (this.steps.length === 0) {
-			loading.start();
+			this.isBusy = true;
 
 			try {
 				await this.$store.dispatch("base/loadStudentData");
+				this.setupSelection();
 			} catch (err) {
 				this.$bvToast.toast(`There was a problem loading student data: ${err.message}`, {
 					title: "Student Table Error",
@@ -234,12 +211,12 @@ export default {
 					autoHideDelay: 1500
 				});
 			} finally {
-				loading.stop();
+				this.isBusy = false;
 			}
 		}
 		this.items = this.students;
+		this.rows = this.items.length;
 		this.selectedItems = this.selectedStudents;
-		this.setupSelection();
 	},
 	mounted() {
 		this.setupSelection();
@@ -252,7 +229,13 @@ export default {
 			});
 		},
 		async onRowSelected(items) {
-			this.selectedItems = items;
+			const arr = [
+				...this.selectedStudents,
+				...items
+			];
+
+			await this.$store.dispatch("giveBadge/updateSelectedStudents", getUnique(arr, "student_id"));
+			this.selectedItems = this.selectedStudents;
 		},
 		selectAllRows() {
 			this.$refs.selectableTable.selectAllRows();
@@ -269,8 +252,11 @@ export default {
 			this.$emit("searched", searchOption);
 			this.currentPage = 1;
 		},
-		deleteSelectedRow(id) {
-			const index = this.students.findIndex((item) => item.student_id === id);
+		async deleteSelectedRow(stdId) {
+			const index = this.items.findIndex((item) => item.student_id === stdId);
+			const arr = this.selectedStudents.filter((value) => value.student_id !== stdId);
+			await this.$store.dispatch("giveBadge/updateSelectedStudents", arr);
+			this.selectedItems = this.selectedStudents;
 			this.$refs.selectableTable.unselectRow(index);
 		},
 		async submit() {
@@ -284,26 +270,13 @@ export default {
 				return;
 			}
 
-			await this.$store.dispatch("giveBadge/updateSelectedStudents", this.selectedItems);
 			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-selection" });
+		},
+		onSearched(e) {
+			this.rows = e.length;
+			this.currentPage = 1;
 		}
-		// async onSearched(e) {
-		// 	loading.start();
-
-		// 	try {
-		// 		await this.$store.dispatch("base/loadSearchTable", e);
-		// 		this.currentPage = 1;
-		// 	} catch (err) {
-		// 		this.$bvToast.toast(`There was a problem loading student data: ${err.message}`, {
-		// 			title: "Student Table Error",
-		// 			variant: "danger",
-		// 			autoHideDelay: 1500
-		// 		});
-		// 	} finally {
-		// 		loading.stop();
-		// 	}
-		// }
 	}
 };
 </script>

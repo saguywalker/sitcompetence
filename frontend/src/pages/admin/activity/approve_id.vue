@@ -32,6 +32,7 @@
 								ref="selectableTable"
 								:items="items"
 								:fields="fields"
+								:busy="isBusy"
 								selectable
 								select-mode="multi"
 								selected-variant="admin-primary"
@@ -124,7 +125,7 @@ import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
 import { getLoginUser } from "@/helpers";
-import { mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
 	components: {
@@ -133,12 +134,14 @@ export default {
 	},
 	data() {
 		return {
+			isBusy: false,
 			currentPage: 1,
 			perPage: 3,
 			search: "",
 			fields: ["selected", "student_id", "firstname", "department"],
 			items: [],
 			selectedItems: [],
+			rows: null,
 			error: {
 				selectedItems: false
 			},
@@ -153,6 +156,9 @@ export default {
 		};
 	},
 	computed: {
+		...mapState("adminActivity", [
+			"activity"
+		]),
 		...mapGetters("adminActivity", [
 			"getActivityById"
 		]),
@@ -166,9 +172,6 @@ export default {
 
 			return false;
 		},
-		rows() {
-			return this.items.length;
-		},
 		loginUser() {
 			return getLoginUser();
 		}
@@ -178,25 +181,31 @@ export default {
 			this.error.selectedItems = false;
 		}
 	},
-	created() {
-		this.items = this.activityDetail.attendees;
-	},
-	mounted() {
-		this.selectedItems.forEach((item) => {
-			const index = this.items.findIndex((i) => i.student_id === item.student_id);
-			this.$refs.selectableTable.selectRow(index);
-		});
+	async created() {
+		this.isBusy = true;
+
+		if (this.activityDetail) {
+			this.isBusy = false;
+			this.items = this.activityDetail.attendees;
+			return;
+		}
+
+		try {
+			await this.$store.dispatch("adminActivity/loadActivityById", this.$route.params.id);
+		} catch (err) {
+			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+				title: "Fetching activity error",
+				variant: "danger",
+				autoHideDelay: 1500
+			});
+		} finally {
+			this.isBusy = false;
+		}
+
+		this.items = this.activity.attendees;
+		this.rows = this.items.length;
 	},
 	methods: {
-		setUpSelectedItems() {
-			this.items.forEach((item, index) => {
-				this.selectedStudents.forEach((student) => {
-					if (item.student_id === student.student_id) {
-						this.items[index] = student;
-					}
-				});
-			});
-		},
 		async submit() {
 			loading.start();
 			try {

@@ -19,6 +19,7 @@
 						}"
 					>
 						<b-button
+							:disabled="activityAttendeeNumber === 0"
 							size="sm"
 							variant="admin-primary"
 						>
@@ -157,9 +158,6 @@ export default {
 
 			return 0;
 		}
-		// activityAttendees() {
-		// 	return this.activityDetail.map((activity) => activity.attendees);
-		// }
 	},
 	async created() {
 		loading.start();

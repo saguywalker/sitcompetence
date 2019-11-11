@@ -206,6 +206,14 @@ export const getEncryptedHex = (text) => {
 	return encryptedHex;
 };
 
+export function getUnique(arr, comp) {
+	const unique = arr.map((e) => e[comp])
+		.map((e, i, final) => final.indexOf(e) === i && i)
+		.filter((e) => arr[e]).map((e) => arr[e]);
+
+	return unique;
+}
+
 export const isLoggedIn = () => {
 	return !!Cookies.get("x-session-token") && !!localStorage.getItem("user");
 };

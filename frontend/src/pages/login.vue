@@ -53,11 +53,12 @@
 						name="kmutt-password"
 						@input="error.passWord = false"
 					/>
-					<input
-						class="btn btn-primary"
+					<b-button
 						type="submit"
-						value="Login"
+						variant="primary"
 					>
+						Login
+					</b-button>
 				</form>
 			</div>
 		</div>
