@@ -125,7 +125,7 @@
 @import "@/styles/pages/user/genkey.scss";
 </style>
 <script>
-import { getLoginUser, getED25519KeyPair, getCiphertext, getSHA256Message } from "@/helpers";
+import { getLoginUser, getED25519KeyPair } from "@/helpers";
 import { Base } from "@/services";
 import loading from "@/plugin/loading";
 
@@ -199,8 +199,7 @@ export default {
 		},
 		setSkLocal() {
 			if (this.saveSkLocal) {
-				const encypted = getCiphertext(this.b64SecretKey, getSHA256Message(process.env.VUE_APP_SKKEY));
-				localStorage.setItem("sck", encypted);
+				localStorage.setItem("sck", this.b64SecretKey);
 				return;
 			}
 

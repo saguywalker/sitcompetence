@@ -3,7 +3,7 @@
 		<section class="section">
 			<div class="activity-detail-header">
 				<router-link
-					:to="{ name: 'activity' }"
+					:to="{ name: 'admin-activity' }"
 					class="back-btn"
 				>
 					<icon-arrow />

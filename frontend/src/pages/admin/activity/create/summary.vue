@@ -111,7 +111,7 @@
 <script>
 import IconPen from "@/components/icons/IconPen.vue";
 import loading from "@/plugin/loading";
-import { getSemester } from "@/helpers";
+import { getSemester, getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -162,7 +162,7 @@ export default {
 			return this.$route.meta.step;
 		},
 		loginUser() {
-			return sessionStorage.getItem("user");
+			return getLoginUser().uid;
 		}
 	},
 	created() {

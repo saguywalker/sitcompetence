@@ -1,6 +1,30 @@
 <template>
 	<div class="give-badge-main">
 		<b-row>
+			<b-col lg="3">
+				<div class="box scrollable">
+					<h2 class="box-header">
+						Selected student
+					</h2>
+					<div class="box-content scrollable">
+						<ul class="selected">
+							<li
+								v-for="(item, index) in selectedItems"
+								:key="`${item}${index}`"
+								class="item"
+							>
+								{{ item.student_id }}
+								<button
+									class="delete"
+									@click="deleteSelectedRow(item.student_id)"
+								>
+									<icon-cross-circle />
+								</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</b-col>
 			<b-col lg="9">
 				<div
 					:class="[
@@ -46,12 +70,21 @@
 							:fields="fields"
 							:per-page="perPage"
 							:current-page="currentPage"
+							:busy="isBusy"
 							selectable
 							select-mode="multi"
 							selected-variant="admin-primary"
 							responsive="sm"
 							@row-selected="onRowSelected"
 						>
+							<template v-slot:table-busy>
+								<div class="text-center text-danger my-2">
+									<b-spinner
+										variant="admin-primary"
+										class="align-middle"
+									/>
+								</div>
+							</template>
 							<template v-slot:cell(selected)="{ rowSelected }">
 								<template v-if="rowSelected">
 									<span aria-hidden="true">
@@ -98,30 +131,6 @@
 					</div>
 				</div>
 			</b-col>
-			<b-col lg="3">
-				<div class="box scrollable">
-					<h2 class="box-header">
-						Selected student
-					</h2>
-					<div class="box-content scrollable">
-						<ul class="selected">
-							<li
-								v-for="(item, index) in selectedStudents"
-								:key="`${item}${index}`"
-								class="item"
-							>
-								{{ item.student_id }}
-								<button
-									class="delete"
-									@click="deleteSelectedRow(item.student_id)"
-								>
-									<icon-cross-circle />
-								</button>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</b-col>
 		</b-row>
 		<base-page-step
 			:step="step"
@@ -145,6 +154,7 @@ export default {
 	},
 	data() {
 		return {
+			isBusy: false,
 			searchValue: "",
 			selectedSearchBy: "",
 			selectedDepartment: "",
@@ -234,9 +244,6 @@ export default {
 	mounted() {
 		this.setupSelection();
 	},
-	updated() {
-		this.setupSelection();
-	},
 	methods: {
 		setupSelection() {
 			this.selectedStudents.forEach((item) => {
@@ -246,7 +253,6 @@ export default {
 		},
 		async onRowSelected(items) {
 			this.selectedItems = items;
-			await this.$store.dispatch("giveBadge/updateSelectedStudents", items);
 		},
 		selectAllRows() {
 			this.$refs.selectableTable.selectAllRows();
