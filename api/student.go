@@ -235,13 +235,9 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	var student model.Student
-	if err := json.Unmarshal(body, &student); err != nil {
+	var edit model.EditProfile
+	if err := json.Unmarshal(body, &edit); err != nil {
 		return err
-	}
-
-	if ctx.User.UserID != student.StudentID {
-		return errors.New("unauthorization")
 	}
 
 	fullpath := ""
@@ -261,10 +257,9 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	if err := ctx.UpdateStudentProfile(fullpath, student.Motto); err != nil {
+	if err := ctx.UpdateStudentProfile(fullpath, edit.Motto); err != nil {
 		return err
 	}
 
 	return nil
-
 }
