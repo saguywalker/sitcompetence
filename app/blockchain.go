@@ -87,7 +87,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 		return nil, err
 	}
 
-	iv, err := hex.DecodeString("00112233445566778899aabbccddee")
+	iv, err := hex.DecodeString("00112233445566778899aabbccddeeff")
 	if err != nil {
 		return nil, err
 	}
