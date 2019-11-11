@@ -23,13 +23,20 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	api.Init(router.PathPrefix("/api").Subrouter())
 
 	// CORS middleware
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		// AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
-		// AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
-	})
+	var c *cors.Cors
+	if dev {
+		c = cors.New(cors.Options{
+			AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		})
+	} else {
+		c = cors.New(cors.Options{
+			AllowedOrigins:   []string{"*"},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		})
+	}
 
 	corsHandler := c.Handler(router)
 
