@@ -1,3 +1,4 @@
+import { getEncryptedHex } from "@/helpers";
 import { GiveBadge } from "@/services";
 import {
 	GIVE_BADGE_SELECT_STUDENT,
@@ -95,7 +96,7 @@ const actions = {
 		});
 
 		const payload = {
-			sk: data.sk,
+			sk: getEncryptedHex(data.sk),
 			badges: payloadBadges
 		};
 

@@ -1,12 +1,14 @@
 import CryptoJS from "crypto-js";
 import SHA256 from "crypto-js/sha256";
 import nacl from "tweetnacl";
+import aesjs from "aes-js";
 import Cookies from "js-cookie";
 import { MONTH_NAMES } from "@/constants";
 
 nacl.util = require("tweetnacl-util");
 
-const enc = nacl.util.encodeBase64;
+const encodeByteArrayToString = nacl.util.encodeBase64;
+const decodeBase64ToByteArray = nacl.util.decodeBase64;
 
 export function clearCookies() {
 	const cookies = Cookies.get();
@@ -177,9 +179,31 @@ export const base64ToByteArray = (base64) => {
 export const getED25519KeyPair = () => {
 	const key = nacl.sign.keyPair();
 	return {
-		public: enc(key.publicKey),
-		secret: enc(key.secretKey)
+		public: encodeByteArrayToString(key.publicKey),
+		secret: encodeByteArrayToString(key.secretKey)
 	};
+};
+
+export const parseHexString = (text) => {
+	const result = [];
+	let str = text;
+	while (str.length >= 2) {
+		result.push(parseInt(str.substring(0, 2), 16));
+		str = str.substring(2, str.length);
+	}
+
+	return result;
+};
+
+export const getEncryptedHex = (text) => {
+	const iv = parseHexString("00112233445566778899aabbccddeeff");
+	const key = parseHexString(getSHA256Message(process.env.VUE_APP_AES));
+	/* eslint-disable new-cap */
+	const aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
+	const encryptedBytes = aesCbc.encrypt(decodeBase64ToByteArray(text));
+	const encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+
+	return encryptedHex;
 };
 
 export const isLoggedIn = () => {
