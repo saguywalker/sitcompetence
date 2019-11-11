@@ -5,7 +5,7 @@ type Competence struct {
 	CompetenceID            uint16 `json:"competence_id"`
 	CompetenceName          string `json:"competence_name"`
 	BadgeIconURL            string `json:"badge_url"`
-	TotalActivitiesRequired uint16 `json:"activities_required"`
+	TotalActivitiesRequired uint16 `json:"activities_required,omitempty"`
 }
 
 // NewCompetence creates new Competence struct

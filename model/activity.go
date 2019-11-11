@@ -15,7 +15,7 @@ type Activity struct {
 	CompetencesID []uint16     `json:"competences_id,omitempty"` // For request
 	Competences   []Competence `json:"competences,omitempty"`    // For response
 	Attendees     []Student    `json:"attendees,omitempty"`
-	StudentSite   bool         `json:"student_site"`
+	StudentSite   bool         `json:"student_site,omitempty"`
 }
 
 // NewActivity creates new activity struct
