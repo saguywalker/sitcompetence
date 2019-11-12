@@ -174,8 +174,6 @@ func (db *Database) UpdateStudentProfile(id, filePath, motto string) error {
 		return err
 	}
 
-
-
 	if _, err := stmt.Exec(params...); err != nil {
 		return err
 	}

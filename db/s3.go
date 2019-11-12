@@ -2,12 +2,12 @@ package db
 
 import (
 	"bytes"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awsutil"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -17,6 +17,7 @@ import (
 type S3 struct {
 	s3     *s3.S3
 	bucket string
+	region string
 	path   string
 }
 
@@ -33,6 +34,7 @@ func NewS3(config *Config) (*S3, error) {
 	s3Struct := S3{
 		s3:     svc,
 		bucket: config.AwsBucket,
+		region: config.AwsRegion,
 		path:   config.AwsPath,
 	}
 
@@ -49,6 +51,7 @@ func (s *S3) UploadProfilePicture(file multipart.File, header *multipart.FileHea
 	path := s.path + studentID + filepath.Ext(header.Filename)
 
 	params := &s3.PutObjectInput{
+		ACL:           aws.String("public-read"),
 		Bucket:        aws.String(s.bucket),
 		Key:           aws.String(path),
 		Body:          fileBytes,
@@ -56,10 +59,11 @@ func (s *S3) UploadProfilePicture(file multipart.File, header *multipart.FileHea
 		ContentType:   aws.String(fileType),
 	}
 
-	resp, err := s.s3.PutObject(params)
-	if err != nil {
+	if _, err := s.s3.PutObject(params); err != nil {
 		return "", err
 	}
 
-	return awsutil.StringValue(resp), nil
+	url := fmt.Sprintf("https://%s.s3-%s.amazonaws.com%s", s.bucket, s.region, path)
+
+	return url, nil
 }
