@@ -155,7 +155,28 @@ func (db *Database) CheckExpire(url string) error {
 
 // UpdateStudentProfile update profile path and motto
 func (db *Database) UpdateStudentProfile(id, filePath, motto string) error {
-	if _, err := db.Exec("UPDATE student SET profilePath=$1, motto=$2 WHERE studentId=$3", filePath, motto, id); err != nil {
+	var command string
+	var err error
+	var params []interface{}
+	if filePath != "" && motto != "" {
+		command = "UPDATE student SET profilePath=$1, motto=$2 WHERE studentId=$3"
+		params = []interface{}{filePath, motto, id}
+	} else if filePath != "" {
+		command = "UPDATE student SET profilePath=$1 WHERE studentId=$2"
+		params = []interface{}{filePath, id}
+	} else {
+		command = "UPDATE student SET motto=$1 WHERE studentId=$2"
+		params = []interface{}{motto, id}
+	}
+
+	stmt, err := db.Prepare(command)
+	if err != nil {
+		return err
+	}
+
+
+
+	if _, err := stmt.Exec(params...); err != nil {
 		return err
 	}
 

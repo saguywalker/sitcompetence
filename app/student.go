@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -119,5 +120,9 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 
 // UpdateStudentProfile save an image into static-images directory
 func (ctx *Context) UpdateStudentProfile(filePath, motto string) error {
+	if filePath == "" && motto == "" {
+		return errors.New("empty url and motto")
+	}
+
 	return ctx.Database.UpdateStudentProfile(ctx.User.UserID, filePath, motto)
 }

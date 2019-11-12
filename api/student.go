@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 
@@ -240,26 +237,28 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	fullpath := ""
-	r.ParseMultipartForm(20 << 20)
+	if err := r.ParseMultipartForm(20 << 20); err != nil {
+		return err
+	}
+
 	if image, header, err := r.FormFile("profilePic"); err == nil {
 		ctx.Logger.Infof("Upload File: %+v\nFile size: %+v\nMIME Header: %+v\n", header.Filename, header.Size, header.Header)
-		fullpath = filepath.Join(".", "static-images", header.Filename)
-
-		dst, err := os.Create(fullpath)
+		edit.ProfilePicture, err = a.App.S3.UploadProfilePicture(image, header, ctx.User.UserID)
 		if err != nil {
 			return err
 		}
-		defer dst.Close()
-
-		if _, err = io.Copy(dst, image); err != nil {
-			return err
-		}
 	}
 
-	if err := ctx.UpdateStudentProfile(fullpath, edit.Motto); err != nil {
+	if err := ctx.UpdateStudentProfile(edit.ProfilePicture, edit.Motto); err != nil {
 		return err
 	}
+
+	editBytes, err := json.Marshal(edit)
+	if err != nil {
+		return err
+	}
+
+	w.Write(editBytes)
 
 	return nil
 }

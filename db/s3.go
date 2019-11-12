@@ -2,8 +2,8 @@ package db
 
 import (
 	"bytes"
+	"mime/multipart"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -40,14 +40,13 @@ func NewS3(config *Config) (*S3, error) {
 }
 
 // UploadProfilePicture push a new profile image to S3
-func (s *S3) UploadProfilePicture(file *os.File, studentID string) (string, error) {
-	fileInfo, _ := file.Stat()
-	size := fileInfo.Size()
+func (s *S3) UploadProfilePicture(file multipart.File, header *multipart.FileHeader, studentID string) (string, error) {
+	size := header.Size
 	buffer := make([]byte, size)
 	file.Read(buffer)
 	fileBytes := bytes.NewReader(buffer)
 	fileType := http.DetectContentType(buffer)
-	path := s.path + studentID + filepath.Ext(file.Name())
+	path := s.path + studentID + filepath.Ext(header.Filename)
 
 	params := &s3.PutObjectInput{
 		Bucket:        aws.String(s.bucket),
