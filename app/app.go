@@ -17,6 +17,7 @@ type App struct {
 	Database         *db.Database
 	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
+	S3               *db.S3
 }
 
 // NewContext returns reference to context struct
@@ -42,6 +43,11 @@ func New() (app *App, err error) {
 	}
 
 	app.Database, err = db.New(dbConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	app.S3, err = db.NewS3(dbConfig)
 	if err != nil {
 		return nil, err
 	}
