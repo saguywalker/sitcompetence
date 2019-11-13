@@ -102,6 +102,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 	mode.CryptBlocks(decSK, decSK)
 
 	ctx.Logger.Infof("decrypted aes sk: %x (%d)", string(decSK), len(decSK))
+	ctx.Logger.Infof("sk [bytes]: %v\n", decSK)
 
 	// Sign
 	signature := ed25519.Sign(decSK, params)
