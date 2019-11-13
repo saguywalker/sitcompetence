@@ -3,6 +3,12 @@
 		<div class="box dropdown">
 			<h2 class="box-header">
 				Select badge to give
+				<b-form-select
+					v-model="selectedSemester"
+					:options="semesters"
+					size="sm"
+					class="select-semester"
+				/>
 			</h2>
 			<div class="box-content">
 				<ul class="selected-student">
@@ -87,7 +93,15 @@ export default {
 		return {
 			selectStudent: [],
 			errors: [],
-			options: []
+			options: [],
+			selectedSemester: 12019,
+			semesters: [
+				{ value: 12019, text: "1/2019" },
+				{ value: 22018, text: "2/2018" },
+				{ value: 12018, text: "1/2018" },
+				{ value: 22017, text: "2/2017" },
+				{ value: 12017, text: "1/2017" }
+			]
 		};
 	},
 	computed: {
@@ -157,12 +171,19 @@ export default {
 				return;
 			}
 
-			await this.$store.dispatch("giveBadge/updateSelectedBadge", this.selectStudent);
+			const payload = this.selectStudent.map((student) => {
+				return {
+					...student,
+					semester: this.selectedSemester
+				};
+			});
+
+			await this.$store.dispatch("giveBadge/updateSelectedBadge", payload);
 			await this.$store.dispatch("giveBadge/addStep", this.step.step);
 			this.$router.push({ name: "give-badge-confirmation" });
 		},
 		async goBack() {
-			// await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
+			await this.$store.dispatch("giveBadge/deleteStep", this.step.step);
 			this.$router.push({ name: "give-badge" });
 		},
 		removeError(index) {

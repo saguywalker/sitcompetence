@@ -13,7 +13,7 @@
 					<b-button
 						id="popover-share-port"
 						ref="shareButton"
-						:disabled="!hasNoCompetence"
+						:disabled="!hasCompetence"
 						variant="primary"
 						class="item"
 						@click="sharePortfolio"
@@ -74,11 +74,11 @@
 						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="hasNoCompetence">
+				<template v-if="hasCompetence">
 					<div class="portfolio-content">
 						<b-row class="portfolio-container">
 							<b-col
-								v-for="(com, index) in statePortfolios"
+								v-for="(com, index) in statePortfolios.result"
 								:key="`${com.competence_id}${forceReRender}`"
 								cols="6"
 								class="competence-wrapper"
@@ -163,7 +163,8 @@ export default {
 	data() {
 		return {
 			popoverShow: false,
-			forceReRender: 0
+			forceReRender: 0,
+			hasCompetence: null
 		};
 	},
 	computed: {
@@ -175,9 +176,6 @@ export default {
 		}),
 		user() {
 			return getLoginUser();
-		},
-		hasNoCompetence() {
-			return this.statePortfolios.length !== 0;
 		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {
@@ -199,6 +197,7 @@ export default {
 
 		try {
 			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
+			this.hasCompetence = this.statePortfolios.result.length !== 0;
 		} catch (err) {
 			this.$Progress.fail();
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
@@ -281,7 +280,7 @@ export default {
 			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			this.statePortfolios.reduce(async (previousPromise, competence) => {
+			this.statePortfolios.result.reduce(async (previousPromise, competence) => {
 				const payload = {
 					competence_id: competence.competence_id,
 					semester: competence.semester,

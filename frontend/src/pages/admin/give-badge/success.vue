@@ -3,31 +3,6 @@
 		<div class="box">
 			<div class="form">
 				<success-logo />
-				<!-- <div class="form-group">
-					<label class="label">Transaction ID:</label>
-					<a
-						class="hash"
-						href="#"
-						@click="verifyHash"
-					>
-						{{ hexTransactionId }}
-					</a>
-					<p class="description">
-						Click the hash to verify
-					</p>
-					<label class="label">Merkle root:</label>
-					<p class="hash">
-						{{ hexMerkle }}
-					</p>
-				</div> -->
-				<b-button
-					variant="admin-primary"
-					class="mt-3"
-					size="sm"
-					@click="testVerify"
-				>
-					Verify
-				</b-button>
 				<router-link :to="{ name: 'give-badge' }">
 					<b-button
 						class="mt-2"
@@ -40,32 +15,8 @@
 		</div>
 		<div class="box">
 			<h2 class="box-header">
-				Verify Status
+				Blockchain Status Log
 			</h2>
-			<ul class="form">
-				<li
-					v-for="(s, index) in success"
-					:key="`${s}${index}${rerender}`"
-				>
-					<h1>Student ID: {{ s.student_id }}</h1>
-					<template v-if="verifyData[index]">
-						<p>
-							Recorded in the blockchain
-						</p>
-						<code>
-							{{ verifyData[index] }}
-						</code>
-					</template>
-					<template v-else>
-						<p>
-							Wait for verification
-						</p>
-						<code>
-							{{ verifyData[index] }}
-						</code>
-					</template>
-				</li>
-			</ul>
 		</div>
 	</div>
 </template>

@@ -118,6 +118,15 @@
 			>
 				Please confirm the public key before proceed to the website
 			</a>
+			<br>
+			<b-button
+				class="mt-2"
+				size="sm"
+				variant="danger"
+				@click="logout"
+			>
+				Logout
+			</b-button>
 		</section>
 	</div>
 </template>
@@ -125,7 +134,7 @@
 @import "@/styles/pages/user/genkey.scss";
 </style>
 <script>
-import { getLoginUser, getED25519KeyPair } from "@/helpers";
+import { getLoginUser, getED25519KeyPair, clearLoginState } from "@/helpers";
 import { Base } from "@/services";
 import loading from "@/plugin/loading";
 
@@ -204,6 +213,10 @@ export default {
 			}
 
 			localStorage.removeItem("sck");
+		},
+		logout() {
+			clearLoginState();
+			this.$router.push({ name: "login" });
 		}
 	}
 };

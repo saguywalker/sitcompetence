@@ -1,6 +1,11 @@
 @import "../../cores.scss";
 
 .give-badge-selection {
+	.select-semester {
+		max-width: rem(100);
+		margin-left: rem(15);
+	}
+
 	.selected-student {
 		display: flex;
 		flex-direction: column;

@@ -80,7 +80,7 @@ const actions = {
 				return {
 					student_id: st.student_id,
 					competence_id: id,
-					semester: data.semester
+					semester: st.semester
 				};
 			});
 

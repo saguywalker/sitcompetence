@@ -15,6 +15,9 @@
 			</div>
 		</header>
 		<section class="wrapper">
+			<div class="page-header-admin">
+				<h1>Hi</h1>
+			</div>
 			<div class="portfolio-section">
 				<aside class="profile-bar">
 					<div class="profile-header">
@@ -87,6 +90,7 @@
 		<footer class="page-footer">
 			<div class="wrapper">
 				This is a footer.<br>Made with heart by SIT-competence team 💖.
+				{{ eviden }}
 			</div>
 		</footer>
 	</div>
@@ -138,6 +142,9 @@ export default {
 		},
 		user() {
 			return this.sharePortfolio.firstname;
+		},
+		eviden() {
+			return atob(this.sharePortfolio.evidence);
 		}
 	},
 	methods: {

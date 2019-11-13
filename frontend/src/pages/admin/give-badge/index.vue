@@ -221,17 +221,33 @@ export default {
 	mounted() {
 		this.setupSelection();
 	},
+	updated() {
+		this.setupUpdateSelection();
+	},
 	methods: {
 		setupSelection() {
-			this.selectedStudents.forEach((item) => {
-				const index = this.items.findIndex((i) => i.student_id === item.student_id);
-				this.$refs.selectableTable.selectRow(index);
+			this.selectedStudents.forEach((student) => {
+				this.items.forEach((i, index) => {
+					if (i.student_id === student.student_id) {
+						this.$refs.selectableTable.selectRow(index);
+					}
+				});
+			});
+		},
+		setupUpdateSelection() {
+			this.selectedStudents.forEach((student) => {
+				this.items.forEach((i, index) => {
+					if (i.student_id === student.student_id) {
+						const id = this.$refs.selectableTable.$refs.itemRows[index].$el.attributes[2].value;
+						if (id) this.$refs.selectableTable.selectRow(id);
+					}
+				});
 			});
 		},
 		async onRowSelected(items) {
 			const arr = [
-				...this.selectedStudents,
-				...items
+				...items,
+				...this.selectedStudents
 			];
 
 			await this.$store.dispatch("giveBadge/updateSelectedStudents", getUnique(arr, "student_id"));
