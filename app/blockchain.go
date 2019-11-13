@@ -86,7 +86,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 	if err != nil {
 		return nil, err
 	}
-	
+	ctx.Logger.Infof("encrypted sk [bytes]: %v\n\t [string]: %s\n", decSK, decSK)
 
 	iv, err := hex.DecodeString("00112233445566778899aabbccddeeff")
 	if err != nil {
