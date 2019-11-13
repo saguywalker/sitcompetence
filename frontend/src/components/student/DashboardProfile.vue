@@ -7,21 +7,30 @@
 						Update Profile
 					</h1>
 					<div class="setting card">
+						<base-input-image
+							v-model="userData.profile_picture"
+							label="Upload Profile Image"
+						/>
 						<b-form-group
-							label="Edit your username"
-							label-for="input-1"
+							class="mt-3"
+							label="Enter your description"
+							label-for="input-2"
 						>
-							<b-form-input
-								id="input-1"
-								v-model="userData.username"
+							<b-form-textarea
+								id="input-2"
+								v-model="userData.motto"
+								placeholder="Describe yourself..."
+								rows="5"
 							/>
 						</b-form-group>
 					</div>
 					<b-button
+						:disabled="isError"
 						variant="primary"
-						@click="logout"
+						size="sm"
+						@click="submit"
 					>
-						Sign out
+						Submit
 					</b-button>
 				</b-col>
 			</b-row>
@@ -32,23 +41,46 @@
 @import "@/styles/pages/student/dashboard-profile.scss";
 </style>
 <script>
-import { getLoginUser } from "@/helpers";
+import BaseInputImage from "@/components/BaseInputImage.vue";
+import { mapState } from "vuex";
 
 export default {
+	components: {
+		BaseInputImage
+	},
 	data() {
 		return {
-			userData: {}
+			userData: {
+				profile_picture: null,
+				motto: ""
+			}
 		};
 	},
 	computed: {
-		user() {
-			return getLoginUser();
+		...mapState("dashboard", ["profile"]),
+		isNoData() {
+			return !this.profile.profile_picture && this.profile.motto.length === 0;
+		},
+		isError() {
+			return !this.userData.profile_picture && this.userData.motto.length === 0;
 		}
 	},
-	async created() {
-		this.userData = this.user;
-	},
 	methods: {
+		async submit() {
+			this.$Progress.start();
+			try {
+				await this.$store.dispatch("dashboard/updateProfile", this.userData);
+			} catch (err) {
+				this.$Progress.fail();
+				this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
+					title: "Fetching competences error",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+			} finally {
+				this.$Progress.finish();
+			}
+		},
 		logout() {
 			this.$store.dispatch("base/logout");
 		}

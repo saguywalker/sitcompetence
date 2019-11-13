@@ -115,6 +115,12 @@ const Activity = {
 		return apiClient.post("/joinActivity", data);
 	}
 };
+
+const Dashboard = {
+	editProfile(data) {
+		return apiClient.put("/student/edit", data);
+	}
+};
 // -------------------------------------
 
 
@@ -125,5 +131,6 @@ export {
 	GiveBadge,
 	AdminActivity,
 	Activity,
-	Portfolio
+	Portfolio,
+	Dashboard
 };

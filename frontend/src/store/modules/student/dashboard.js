@@ -1,20 +1,33 @@
+import { Dashboard } from "@/services";
 import {
-	UPDATE_DASHBOARD_TAB
+	UPDATE_PROFILE
 } from "../../mutationTypes";
 
 const state = {
-	tab: 0
+	profile: {
+		profile_picture: null,
+		motto: ""
+	}
 };
 
 const mutations = {
-	[UPDATE_DASHBOARD_TAB](stateData, data) {
-		stateData.tab = data;
+	[UPDATE_PROFILE](stateData, data) {
+		stateData.profile = {
+			...data
+		};
 	}
 };
 
 const actions = {
-	updateTab({ commit }, data) {
-		commit(UPDATE_DASHBOARD_TAB, data);
+	async updateProfile({ commit }, data) {
+		const formData = new FormData();
+		Object.keys(data).forEach((item) => {
+			formData.append(item, data[item]);
+		});
+		const response = await Dashboard.editProfile(formData);
+		if (response.status === 200) {
+			commit(UPDATE_PROFILE, response.data);
+		}
 	}
 };
 

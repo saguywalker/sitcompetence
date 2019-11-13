@@ -10,10 +10,16 @@
 		<section class="wrapper">
 			<div class="portfolio-actions">
 				<div class="right">
+					<b-form-select
+						v-model="selectedSemester"
+						:options="semesters"
+						class="select-semester"
+						@input="filterPortfolio"
+					/>
 					<b-button
 						id="popover-share-port"
 						ref="shareButton"
-						:disabled="!hasCompetence"
+						:disabled="hasNoDataAtAll"
 						variant="primary"
 						class="item"
 						@click="sharePortfolio"
@@ -74,11 +80,17 @@
 						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
 					</p>
 				</aside>
-				<template v-if="hasCompetence">
-					<div class="portfolio-content">
-						<b-row class="portfolio-container">
+				<div class="portfolio-content">
+					<transition
+						name="page"
+						mode="out-in"
+					>
+						<b-row
+							v-if="hasCompetence"
+							class="portfolio-container"
+						>
 							<b-col
-								v-for="(com, index) in statePortfolios.result"
+								v-for="(com, index) in portfolios"
 								:key="`${com.competence_id}${forceReRender}`"
 								cols="6"
 								class="competence-wrapper"
@@ -109,33 +121,40 @@
 								</transition>
 							</b-col>
 						</b-row>
-						<div class="portfolio-footer">
-							<b-button
-								:block="resizeVerifyButton"
-								variant="primary"
-								size="sm"
-								class="action-item"
-								@click="testVerify"
-							>
-								Verify by Blockchain
-							</b-button>
-							<b-button
-								v-if="show"
-								variant="outline"
-								size="sm"
-								class="action-item"
-								@click="clearVerify"
-							>
-								Clear verify
-							</b-button>
-						</div>
+					</transition>
+					<transition
+						name="fade"
+						mode="out-in"
+					>
+						<h1 v-if="!hasCompetence">
+							No competence record.
+						</h1>
+					</transition>
+
+					<div
+						v-if="hasCompetence"
+						class="portfolio-footer"
+					>
+						<b-button
+							:block="resizeVerifyButton"
+							variant="primary"
+							size="sm"
+							class="action-item"
+							@click="testVerify"
+						>
+							Verify by Blockchain
+						</b-button>
+						<b-button
+							v-if="show"
+							variant="outline"
+							size="sm"
+							class="action-item"
+							@click="clearVerify"
+						>
+							Clear verify
+						</b-button>
 					</div>
-				</template>
-				<template v-else>
-					<div class="portfolio-content">
-						<h1>No competence record.</h1>
-					</div>
-				</template>
+				</div>
 			</div>
 		</section>
 	</div>
@@ -149,7 +168,7 @@ import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
 import { widthSize } from "@/helpers/mixins";
-import { getLoginUser } from "@/helpers";
+import { getLoginUser, filterBySemester } from "@/helpers";
 import { COMPETENCE } from "@/constants";
 import { mapState } from "vuex";
 
@@ -164,7 +183,17 @@ export default {
 		return {
 			popoverShow: false,
 			forceReRender: 0,
-			hasCompetence: null
+			hasCompetence: null,
+			hasNoDataAtAll: null,
+			selectedSemester: 12019,
+			semesters: [
+				{ value: 12019, text: "1/2019" },
+				{ value: 22018, text: "2/2018" },
+				{ value: 12018, text: "1/2018" },
+				{ value: 22017, text: "2/2017" },
+				{ value: 12017, text: "1/2017" }
+			],
+			portfolios: []
 		};
 	},
 	computed: {
@@ -197,7 +226,8 @@ export default {
 
 		try {
 			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
-			this.hasCompetence = this.statePortfolios.result.length !== 0;
+			this.filterPortfolio();
+			this.hasNoDataAtAll = this.statePortfolios.result.length === 0;
 		} catch (err) {
 			this.$Progress.fail();
 			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
@@ -210,6 +240,11 @@ export default {
 		}
 	},
 	methods: {
+		filterBySemester,
+		filterPortfolio() {
+			this.portfolios = this.filterBySemester(this.statePortfolios.result, this.selectedSemester);
+			this.hasCompetence = this.portfolios.length !== 0;
+		},
 		onOpen() {
 			this.$refs.portPopover.$emit("open");
 		},
@@ -280,7 +315,7 @@ export default {
 			return this.verify[id] ? "Verified" : "Unverified";
 		},
 		testVerify() {
-			this.statePortfolios.result.reduce(async (previousPromise, competence) => {
+			this.portfolios.reduce(async (previousPromise, competence) => {
 				const payload = {
 					competence_id: competence.competence_id,
 					semester: competence.semester,

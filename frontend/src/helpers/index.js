@@ -197,16 +197,11 @@ export const parseHexString = (text) => {
 
 export const getEncryptedHex = (text) => {
 	const iv = parseHexString("00112233445566778899aabbccddeeff");
-	console.log("IV", iv);
 	const key = parseHexString(getSHA256Message(process.env.VUE_APP_AES));
-	console.log("HASH256SK", getSHA256Message(process.env.VUE_APP_AES));
 	/* eslint-disable new-cap */
 	const aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
-	console.log("DecodeB64ToByte", decodeBase64ToByteArray(text));
 	const encryptedBytes = aesCbc.encrypt(decodeBase64ToByteArray(text));
-	console.log("enc BYTE", encryptedBytes);
 	const encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
-	console.log("Enc hex", encryptedHex);
 	return encryptedHex;
 };
 
@@ -220,4 +215,8 @@ export function getUnique(arr, comp) {
 
 export const isLoggedIn = () => {
 	return !!Cookies.get("x-session-token") && !!localStorage.getItem("user");
+};
+
+export const filterBySemester = (badges, semester) => {
+	return badges.filter((badge) => badge.semester === semester);
 };

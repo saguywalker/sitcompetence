@@ -9,6 +9,7 @@
 	>
 		<img
 			:style="{
+				height: `${size}px`,
 				borderRadius: imageRounded
 			}"
 			:src="imageSrc"
@@ -22,7 +23,7 @@
 export default {
 	props: {
 		src: {
-			type: String,
+			type: [String, File],
 			default: ""
 		},
 		size: {

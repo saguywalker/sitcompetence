@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import base from "./modules/base";
+import dashboard from "./modules/student/dashboard";
 import giveBadge from "./modules/admin/giveBadge";
 import adminVerify from "./modules/admin/verify";
 import createActivity from "./modules/admin/createActivity";
@@ -20,6 +21,7 @@ export default new Vuex.Store({
 		editActivity,
 		adminVerify,
 		activity,
-		portfolio
+		portfolio,
+		dashboard
 	}
 });
