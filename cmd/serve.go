@@ -25,11 +25,14 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	// CORS middleware
 	var c *cors.Cors
 	if dev {
+		c = cors.AllowAll()
+		/*
 		c = cors.New(cors.Options{
 			AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
 			AllowedHeaders:   []string{"*"},
 			AllowCredentials: true,
 		})
+		*/
 	} else {
 		c = cors.New(cors.Options{
 			AllowedOrigins:   []string{"*"},
