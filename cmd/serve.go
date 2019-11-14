@@ -38,6 +38,9 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 			"https://sitcompetence.ilab.sit.kmutt.ac.th:80",
 			"https://sitcompetence.ilab.sit.kmutt.ac.th:443",
 			"https://sitcompetence.ilab.sit.kmutt.ac.th:3000",
+			"https://localhost:8080",
+			"https://localhost:3000",
+			"https://localhost:443",
 		}
 		c = cors.New(cors.Options{
 			AllowedOrigins:   origins,
