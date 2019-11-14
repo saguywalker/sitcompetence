@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+    "crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"

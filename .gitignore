@@ -28,3 +28,5 @@ logs
 # key
 *.crt
 *.key
+key
+key.pub

@@ -1,19 +1,24 @@
 package api
 
 import (
-	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/ed25519"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
+	protoTm "github.com/saguywalker/sitcompetence/proto/tendermint"
 )
 
 type statusCodeRecorder struct {
@@ -223,7 +228,7 @@ func (a *API) initKeyPair() error {
 		return err
 	}
 
-	api.App.SK = priv
+	a.App.SK = priv
 
 	params := []byte(fmt.Sprintf("sitcompetence=%s", pub64))
 
@@ -233,21 +238,24 @@ func (a *API) initKeyPair() error {
 	}
 
 	tx := protoTm.Tx{
-		Payload:   &payload,
-		Signature: signature,
+		Payload: &payload,
 	}
 
 	txBytes, err := proto.Marshal(&tx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	index := 0
+	httpClient := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+
+	var index uint64 = 0
 	for i := 0; i < len(a.Config.Peers); i++ {
 		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[index], txBytes)
 		log.Println(url)
 		resp, err := httpClient.Get(url)
-		index = uint64((index + 1)) % uint64(len(peers))
+		index = uint64((index + 1)) % uint64(len(a.Config.Peers))
 		if err != nil {
 			continue
 		} else {
