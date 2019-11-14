@@ -18,6 +18,7 @@ type App struct {
 	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
 	S3               *db.S3
+	SK               []byte
 }
 
 // NewContext returns reference to context struct

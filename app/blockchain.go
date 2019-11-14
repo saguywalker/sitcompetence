@@ -20,7 +20,7 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key []byte) ([]byte, uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key, webSK []byte) ([]byte, uint64, error) {
 	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
 
 	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
@@ -35,7 +35,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 		return nil, index, err
 	}
 
-	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers, key)
+	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers, key, webSK)
 	if err != nil {
 		return txID, index, err
 	}
@@ -46,7 +46,7 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key []byte) (uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key, webSK []byte) (uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return index, err
@@ -60,7 +60,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 		return index, err
 	}
 
-	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers, key)
+	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers, key, webSK)
 	if err != nil {
 		return index, err
 	}
@@ -76,7 +76,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 	return index, nil
 }
 
-func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string, key []byte) ([]byte, error) {
+func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string, key, webSK []byte) ([]byte, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
@@ -111,6 +111,13 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 
 	ctx.Logger.Infof("Sign: %s\nWith sk: 0x%x\nSignature: 0x%x\nTest: %v\n", params, decSK, signature, ed25519.Verify(pubKey, params, signature))
 
+	if !ed25519.Verify(pubKey, params, signature) {
+		return nil, errors.New("unauthorized")
+	}
+
+	hashParams := sha256.Sum256(params)
+	tmSignature := ed25519.Sign(webSK, hashParams[:])
+
 	payload := protoTm.Payload{
 		Method: method,
 		Params: params,
@@ -118,8 +125,7 @@ func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey st
 
 	tx := protoTm.Tx{
 		Payload:   &payload,
-		PublicKey: pubKey,
-		Signature: signature,
+		Signature: tmSignature,
 	}
 
 	txBytes, err := proto.Marshal(&tx)

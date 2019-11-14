@@ -1,6 +1,11 @@
 package api
 
 import (
+	"crypto/ed25519"
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -30,6 +35,11 @@ func New(a *app.App) (api *API, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if err := api.initKeyPair(); err != nil {
+		return nil, err
+	}
+
 	return api, nil
 }
 
@@ -182,4 +192,73 @@ func getPageParam(r *http.Request) (uint32, error) {
 	}
 
 	return uint32(page), nil
+}
+
+func (a *API) initKeyPair() error {
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("pub: %x\npriv: %x\n", pub, priv)
+
+	pub64 := base64.StdEncoding.EncodeToString([]byte(pub))
+	priv64 := base64.StdEncoding.EncodeToString([]byte(priv))
+
+	fmt.Printf("pub: %s\npriv: %s\n", pub64, priv64)
+	fPub, err := os.Create("key.pub")
+	if err != nil {
+		return err
+	}
+
+	fPriv, err := os.Create("key")
+	if err != nil {
+		return err
+	}
+
+	if _, err := fPub.Write([]byte(pub64)); err != nil {
+		return err
+	}
+
+	if _, err := fPriv.Write([]byte(priv64)); err != nil {
+		return err
+	}
+
+	api.App.SK = priv
+
+	params := []byte(fmt.Sprintf("sitcompetence=%s", pub64))
+
+	payload := protoTm.Payload{
+		Method: "AddNewService",
+		Params: params,
+	}
+
+	tx := protoTm.Tx{
+		Payload:   &payload,
+		Signature: signature,
+	}
+
+	txBytes, err := proto.Marshal(&tx)
+	if err != nil {
+		return nil, err
+	}
+
+	index := 0
+	for i := 0; i < len(a.Config.Peers); i++ {
+		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", a.Config.Peers[index], txBytes)
+		log.Println(url)
+		resp, err := httpClient.Get(url)
+		index = uint64((index + 1)) % uint64(len(peers))
+		if err != nil {
+			continue
+		} else {
+			_, err := ioutil.ReadAll(resp.Body)
+			defer resp.Body.Close()
+			if err != nil {
+				continue
+			}
+			return nil
+		}
+	}
+
+	return nil
 }

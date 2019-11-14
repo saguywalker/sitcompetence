@@ -37,7 +37,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	txs := make([]string, 0)
 
 	for _, badge := range giveBadgeRequest.Badges {
-		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
+		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
@@ -74,7 +74,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 
 	for _, activity := range activityRequest.Activities {
-		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey)
+		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
