@@ -27,9 +27,16 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	if dev {
 		// c = cors.AllowAll()
 		c = cors.New(cors.Options{
-			AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:3000"},
-			AllowedHeaders:   []string{"*"},
-			AllowedMethods:   []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"},
+			AllowedOrigins: []string{"http://localhost:8080", "http://localhost:3000"},
+			AllowedHeaders: []string{"*"},
+			AllowedMethods: []string{
+				http.MethodHead,
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPut,
+				http.MethodOptions,
+				http.MethodDelete,
+			},
 			AllowCredentials: true,
 		})
 
@@ -44,9 +51,16 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 			"https://localhost:443",
 		}
 		c = cors.New(cors.Options{
-			AllowedOrigins:   origins,
-			AllowedHeaders:   []string{"*"},
-			AllowedMethods:   []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"},
+			AllowedOrigins: origins,
+			AllowedHeaders: []string{"*"},
+			AllowedMethods: []string{
+				http.MethodHead,
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPut,
+				http.MethodOptions,
+				http.MethodDelete,
+			},
 			AllowCredentials: true,
 		})
 	}
