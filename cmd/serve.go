@@ -33,8 +33,14 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 		})
 
 	} else {
+		origins := []string{
+			"https://sitcompetence.ilab.sit.kmutt.ac.th:8080",
+			"https://sitcompetence.ilab.sit.kmutt.ac.th:80",
+			"https://sitcompetence.ilab.sit.kmutt.ac.th:443",
+			"https://sitcompetence.ilab.sit.kmutt.ac.th:3000",
+		}
 		c = cors.New(cors.Options{
-			AllowedOrigins:   []string{"*"},
+			AllowedOrigins:   origins,
 			AllowedHeaders:   []string{"*"},
 			AllowCredentials: true,
 		})
