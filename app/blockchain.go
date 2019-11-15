@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-    "crypto/sha256"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -47,10 +47,10 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key, webSK []byte) (uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key, webSK []byte) ([]byte, uint64, error) {
 	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
-		return index, err
+		return nil, index, err
 	}
 
 	activity.Approver = approverPK
@@ -58,23 +58,21 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
-		return index, err
+		return nil, index, err
 	}
 
 	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers, key, webSK)
 	if err != nil {
-		return index, err
+		return txID, index, err
 	}
-
-	activity.TransactionID = txID
-
-	if err := ctx.Database.ApproveAttended(activity); err != nil {
-		return index, err
-	}
-
+	/*
+		if err := ctx.Database.ApproveAttended(activity); err != nil {
+			return txID, index, err
+		}
+	*/
 	index = (index + 1) % uint64(len(peers))
 
-	return index, nil
+	return txID, index, nil
 }
 
 func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string, key, webSK []byte) ([]byte, error) {

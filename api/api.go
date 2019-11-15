@@ -82,7 +82,7 @@ func (a *API) Init(r *mux.Router) {
 	adminRoute.Handle("/resetKey", a.handler(a.ResetKey)).Methods("GET")
 	adminRoute.Handle("/comfirmResetKey", a.handler(a.ConfirmResetKey)).Methods("GET")
 
-	// r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
+	r.Handle("/joinActivity", a.handler(a.JoinActivity)).Methods("POST")
 	r.HandleFunc("/login", a.Login).Methods("POST")
 	r.Handle("/logout", a.handler(a.Logout)).Methods("GET")
 

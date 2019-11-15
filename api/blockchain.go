@@ -73,13 +73,24 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
+	txs := make([]string, 0)
+
 	for _, activity := range activityRequest.Activities {
-		currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
+		txID, currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
 		}
+
+		txs = append(txs, hex.EncodeToString(txID))
 	}
+
+	txsBytes, err := json.Marshal(txs)
+	if err != nil {
+		return err
+	}
+
+	w.Write(txsBytes)
 
 	return nil
 }
