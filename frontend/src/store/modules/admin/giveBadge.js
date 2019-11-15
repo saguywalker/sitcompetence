@@ -78,9 +78,9 @@ const actions = {
 
 			const separateBadge = idBadges.map((id) => {
 				return {
-					student_id: st.student_id,
 					competence_id: id,
-					semester: st.semester
+					semester: st.semester,
+					student_id: st.student_id
 				};
 			});
 
