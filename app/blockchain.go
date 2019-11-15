@@ -214,6 +214,8 @@ func (ctx *Context) VerifySignature(message []byte, signature, b64PubKey string)
 		return false, err
 	}
 
+	ctx.Logger.Infof("params: %s\nsha256: %x\nsignature: %x\n", message, hashed[:], sig)
+
 	isVerified := ed25519.Verify(pubKey, hashed[:], sig)
 
 	return isVerified, nil
