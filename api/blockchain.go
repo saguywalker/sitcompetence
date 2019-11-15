@@ -1,7 +1,6 @@
 package api
 
 import (
-	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -34,21 +33,12 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 	ctx.Logger.Infof("%+v", giveBadgeRequest)
 
-	var mapper map[string]interface{}
-	if err := json.Unmarshal(body, &mapper); err != nil {
-		ctx.Logger.Errorln(err.Error())
-		return err
-	}
-
-	messageBytes, err := json.Marshal(mapper["badges"])
+	messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
 	if err != nil {
 		ctx.Logger.Errorln("error when marshaling badges")
 		return err
 	}
 	ctx.Logger.Infof("payload: %s\n", messageBytes)
-
-	hashed := sha256.Sum256(messageBytes)
-	ctx.Logger.Infof("hashed: %x\n", hashed[:])
 
 	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
@@ -57,7 +47,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(hashed[:], giveBadgeRequest.Signature, publickey)
+	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, publickey)
 	if err != nil {
 		ctx.Logger.Errorln("unauthenticated in verifying")
 		return err
@@ -110,15 +100,13 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	hashed := sha256.Sum256(messageBytes)
-
 	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return err
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(hashed[:], activityRequest.Signature, publickey)
+	isVerified, err := ctx.VerifySignature(messageBytes, activityRequest.Signature, publickey)
 	if err != nil {
 		return err
 	}
