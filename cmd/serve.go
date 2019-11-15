@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	// "github.com/rs/cors"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
@@ -22,54 +22,52 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
-	/*
-		// CORS middleware
-		var c *cors.Cors
-		if dev {
-			// c = cors.AllowAll()
-			c = cors.New(cors.Options{
-				AllowedOrigins: []string{"http://localhost:8080", "http://localhost:3000"},
-				AllowedHeaders: []string{"*"},
-				AllowedMethods: []string{
-					http.MethodHead,
-					http.MethodGet,
-					http.MethodPost,
-					http.MethodPut,
-					http.MethodOptions,
-					http.MethodDelete,
-				},
-				AllowCredentials: true,
-			})
+	// CORS middleware
+	var c *cors.Cors
+	if dev {
+		// c = cors.AllowAll()
+		c = cors.New(cors.Options{
+			AllowedOrigins: []string{"http://localhost:8080", "http://localhost:3000"},
+			AllowedHeaders: []string{"*"},
+			AllowedMethods: []string{
+				http.MethodHead,
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPut,
+				http.MethodOptions,
+				http.MethodDelete,
+			},
+			AllowCredentials: true,
+		})
 
-		} else {
-			origins := []string{
-				"https://sitcompetence.ilab.sit.kmutt.ac.th",
-				"http://sitcompetence.ilab.sit.kmutt.ac.th",
-				"https://localhost",
-				"http://localhost",
-			}
-			c = cors.New(cors.Options{
-				AllowedOrigins: origins,
-				AllowedHeaders: []string{"*"},
-				AllowedMethods: []string{
-					http.MethodHead,
-					http.MethodGet,
-					http.MethodPost,
-					http.MethodPut,
-					http.MethodOptions,
-					http.MethodDelete,
-				},
-				AllowCredentials: true,
-			})
+	} else {
+		origins := []string{
+			"https://sitcompetence.ilab.sit.kmutt.ac.th",
+			"http://sitcompetence.ilab.sit.kmutt.ac.th",
+			"https://localhost",
+			"http://localhost",
 		}
+		c = cors.New(cors.Options{
+			AllowedOrigins: origins,
+			AllowedHeaders: []string{"*"},
+			AllowedMethods: []string{
+				http.MethodHead,
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPut,
+				http.MethodOptions,
+				http.MethodDelete,
+			},
+			AllowCredentials: true,
+		})
+	}
 
-		corsHandler := c.Handler(router)
-	*/
+	corsHandler := c.Handler(router)
 
 	s := &http.Server{
-		Addr: fmt.Sprintf(":%d", api.Config.Port),
-		// Handler: corsHandler,
-		Handler:     router,
+		Addr:    fmt.Sprintf(":%d", api.Config.Port),
+		Handler: corsHandler,
+		// Handler:     router,
 		ReadTimeout: 2 * time.Minute,
 	}
 
