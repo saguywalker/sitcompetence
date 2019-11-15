@@ -49,6 +49,7 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 			"https://localhost:8080",
 			"https://localhost:3000",
 			"https://localhost:443",
+			"http://localhost:3000",
 		}
 		c = cors.New(cors.Options{
 			AllowedOrigins: origins,
