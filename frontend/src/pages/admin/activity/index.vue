@@ -28,7 +28,10 @@
 					</router-link>
 				</div>
 			</div>
-			<div class="box">
+			<div
+				v-if="savedActivities.length !== 0"
+				class="box"
+			>
 				<h2 class="box-header">
 					Saved activity
 				</h2>
@@ -51,7 +54,10 @@
 					</router-link>
 				</div>
 			</div>
-			<div class="box">
+			<div
+				v-if="postedActivities.length !== 0"
+				class="box"
+			>
 				<h2 class="box-header">
 					On Student site activity
 				</h2>

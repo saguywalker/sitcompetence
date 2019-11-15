@@ -21,7 +21,6 @@
 					Dashboard
 				</router-link>
 				<router-link
-					v-if="false"
 					:to="{ name: 'activity' }"
 					class="item-link"
 				>
