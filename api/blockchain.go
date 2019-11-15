@@ -38,8 +38,13 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
+	b64PubKey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
+	if err != nil {
+		return err
+	}
+
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, ctx.User.UserID)
+	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, string(b64PubKey))
 	if err != nil {
 		return err
 	}
@@ -49,9 +54,8 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	txs := make([]string, 0)
-
 	for _, badge := range giveBadgeRequest.Badges {
-		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
+		txID, currentIndex, err := ctx.GiveBadge(&badge, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
@@ -87,10 +91,29 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	txs := make([]string, 0)
+	messageBytes, err := json.Marshal(activityRequest.Activities)
+	if err != nil {
+		return err
+	}
 
+	b64PubKey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
+	if err != nil {
+		return err
+	}
+
+	// Verify step
+	isVerified, err := ctx.VerifySignature(messageBytes, activityRequest.Signature, string(b64PubKey))
+	if err != nil {
+		return err
+	}
+
+	if !isVerified {
+		return errors.New("unauthenticated")
+	}
+
+	txs := make([]string, 0)
 	for _, activity := range activityRequest.Activities {
-		txID, currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
+		txID, currentIndex, err := ctx.ApproveActivity(&activity, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err

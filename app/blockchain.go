@@ -2,8 +2,6 @@ package app
 
 import (
 	"bytes"
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
@@ -21,22 +19,15 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index uint64, peers []string, key, webSK []byte) ([]byte, uint64, error) {
-	ctx.Logger.Infof("app/GiveBadge: %v, %s\n", *badge, sk)
-
-	giverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
-	if err != nil {
-		return nil, index, err
-	}
-	ctx.Logger.Infof("GetStaffPubKey: %x\n", giverPK)
-	badge.Giver = giverPK
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, peers []string, webSK []byte) ([]byte, uint64, error) {
+	ctx.Logger.Infof("app/GiveBadge: %v\n", *badge)
 
 	badgeBytes, err := json.Marshal(badge)
 	if err != nil {
 		return nil, index, err
 	}
 
-	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, giverPK, sk, index, peers, key, webSK)
+	txID, err := ctx.broadcastTX("GiveBadge", badgeBytes, index, peers, webSK)
 	if err != nil {
 		return txID, index, err
 	}
@@ -47,21 +38,13 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, sk string, index
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string, index uint64, peers []string, key, webSK []byte) ([]byte, uint64, error) {
-	approverPK, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
-	if err != nil {
-		return nil, index, err
-	}
-
-	activity.Approver = approverPK
-	ctx.Logger.Infof("Publickey: %x\n", approverPK)
-
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint64, peers []string, webSK []byte) ([]byte, uint64, error) {
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
 		return nil, index, err
 	}
 
-	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, approverPK, sk, index, peers, key, webSK)
+	txID, err := ctx.broadcastTX("ApproveActivity", approveBytes, index, peers, webSK)
 	if err != nil {
 		return txID, index, err
 	}
@@ -75,43 +58,9 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 	return txID, index, nil
 }
 
-func (ctx *Context) broadcastTX(method string, params, pubKey []byte, privKey string, index uint64, peers []string, key, webSK []byte) ([]byte, error) {
+func (ctx *Context) broadcastTX(method string, params []byte, index uint64, peers []string, webSK []byte) ([]byte, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
-	}
-
-	// decrypting aes sk
-	decSK, err := hex.DecodeString(privKey)
-	if err != nil {
-		return nil, err
-	}
-	ctx.Logger.Infof("encrypted sk [bytes]: %v\n", decSK)
-
-	iv, err := hex.DecodeString("00112233445566778899aabbccddeeff")
-	if err != nil {
-		return nil, err
-	}
-	ctx.Logger.Infof("iv [bytes]: %v\niv [hex]: %x", iv, iv)
-	ctx.Logger.Infof("key: %x\n", key)
-	ctx.Logger.Infof("iv: %x (%d)\n", iv, len(iv))
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
-	mode := cipher.NewCBCDecrypter(block, iv)
-	mode.CryptBlocks(decSK, decSK)
-
-	ctx.Logger.Infof("decrypted aes sk: %x (%d)", string(decSK), len(decSK))
-	ctx.Logger.Infof("sk [bytes]: %v\n", decSK)
-
-	// Sign
-	signature := ed25519.Sign(decSK, params)
-
-	ctx.Logger.Infof("Sign: %s\nWith sk: 0x%x\nSignature: 0x%x\nTest: %v\n", params, decSK, signature, ed25519.Verify(pubKey, params, signature))
-
-	if !ed25519.Verify(pubKey, params, signature) {
-		return nil, errors.New("unauthorized")
 	}
 
 	hashParams := sha256.Sum256(params)
@@ -252,6 +201,20 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 }
 
 // VerifySignature authenticate the user and its signature
-func (ctx *Context) VerifySignature(message []byte, signature, staffID string) (bool, error) {
-	return false, nil
+func (ctx *Context) VerifySignature(message []byte, signature, b64PubKey string) (bool, error) {
+	hashed := sha256.Sum256(message)
+
+	pubKey, err := base64.StdEncoding.DecodeString(b64PubKey)
+	if err != nil {
+		return false, err
+	}
+
+	sig, err := base64.StdEncoding.DecodeString(signature)
+	if err != nil {
+		return false, err
+	}
+
+	isVerified := ed25519.Verify(pubKey, hashed[:], sig)
+
+	return isVerified, nil
 }

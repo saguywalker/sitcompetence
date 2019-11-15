@@ -9,7 +9,7 @@ import (
 // ApproveActivityRequest define activity approving request
 type ApproveActivityRequest struct {
 	Activities []AttendedActivity `json:"activities"`
-	Signature string             `json:"signature"`
+	Signature  string             `json:"signature"`
 }
 
 // AttendedActivity table in postgres
