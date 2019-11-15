@@ -35,17 +35,20 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 
 	messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
 	if err != nil {
+		ctx.Logger.Errorln("error when marshaling badges")
 		return err
 	}
 
 	b64PubKey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
+		ctx.Logger.Errorln("error when requesting publickey")
 		return err
 	}
 
 	// Verify step
 	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, string(b64PubKey))
 	if err != nil {
+		ctx.Logger.Errorln("unauthenticated in verifying")
 		return err
 	}
 
