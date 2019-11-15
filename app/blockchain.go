@@ -65,11 +65,11 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, sk string,
 	if err != nil {
 		return txID, index, err
 	}
-	/*
-		if err := ctx.Database.ApproveAttended(activity); err != nil {
-			return txID, index, err
-		}
-	*/
+
+	if err := ctx.Database.ApproveAttended(activity); err != nil {
+		return txID, index, err
+	}
+
 	index = (index + 1) % uint64(len(peers))
 
 	return txID, index, nil
