@@ -1,0 +1,65 @@
+@import "../../cores.scss";
+
+.base-page-step {
+	display: flex;
+	align-items: center;
+	position: relative;
+	bottom: 0;
+	width: 100%;
+	margin-top: rem(10);
+
+	.link {
+		display: flex;
+		flex-direction: column;
+		width: 47%;
+		padding: rem(10);
+		background-color: $white;
+		box-shadow: 0 rem(1) rem(1) $gray-4;
+
+		&.next {
+			margin-left: auto;
+			align-items: flex-end;
+			padding-right: rem(20);
+		}
+
+		&.back {
+			display: flex;
+			align-items: flex-start;
+			padding-left: rem(20);
+		}
+
+		&:hover,
+		&:focus {
+			box-shadow: 0 rem(2) rem(1) $gray-4;
+		}
+	}
+
+	.next {
+		color: $black;
+
+		svg {
+			fill: $black;
+			margin-left: rem(10);
+		}
+
+		.name {
+			color: $navbar-logo-bg;
+			margin-top: rem(10);
+		}
+	}
+
+	.back {
+		color: $black;
+
+		svg {
+			transform: rotate(180deg);
+			margin-right: rem(10);
+			fill: $black;
+		}
+
+		.name {
+			color: $navbar-logo-bg;
+			margin-top: rem(10);
+		}
+	}
+}

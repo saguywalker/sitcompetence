@@ -1,0 +1,107 @@
+@import "../../cores.scss";
+
+.activity-card {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-column-gap: 0;
+	grid-template-areas:
+	"activity-card-heading activity-card-heading"
+	"activity-card-info activity-card-competences"
+	"activity-card-content activity-card-content";
+	padding: rem(20);
+	border-radius: rem(18);
+	margin-bottom: rem(24);
+	width: 100%;
+	transition: all 150ms ease;
+	cursor: pointer;
+	position: relative;
+
+	&:hover {
+		transform: scale(1.01);
+		box-shadow: 0 rem(3) rem(12) 0 rgba(0, 0, 0, 0.2), 0 rem(1) rem(15) 0 rgba(0, 0, 0, 0.19);
+	}
+
+	&.joined {
+		opacity: 0.4;
+		pointer-events: none;
+	}
+
+	.heading {
+		grid-area: activity-card-heading;
+		margin-bottom: rem(10);
+
+		.title {
+			font-size: rem(28);
+			font-weight: bold;
+		}
+	}
+
+	.info {
+		grid-area: activity-card-info;
+		display: flex;
+		flex-direction: column;
+		list-style: none;
+		margin: 0;
+
+		&-item {
+			display: flex;
+			align-items: center;
+			font-weight: 600;
+			margin-bottom: rem(10);
+
+			.icon {
+				margin-right: rem(9);
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.content {
+		grid-area: activity-card-content;
+		margin: rem(16) 0;
+	}
+
+	.competences {
+		grid-area: activity-card-competences;
+
+		.title {
+			font-size: rem(18);
+			font-weight: bold;
+			color: $blue-1;
+		}
+
+		&-list {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0;
+			max-height: rem(78);
+			overflow-y: auto;
+			list-style: none;
+
+			.item {
+				display: flex;
+				width: 100%;
+				font-size: rem(14);
+				font-weight: 600;
+				margin-right: rem(16);
+			}
+		}
+	}
+
+	@include desktop {
+		padding: rem(18);
+
+		.title {
+			font-size: rem(48);
+		}
+
+		.competences {
+			&-list {
+				max-height: rem(62);
+			}
+		}
+	}
+}

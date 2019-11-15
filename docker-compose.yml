@@ -3,11 +3,12 @@ services:
   goservice:
     build: "."
     ports:
-      - "3000"
+            - "3000:3000"
   nginx:
-    build: "."
+    build: "./nginx"
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - "goservice"
 
