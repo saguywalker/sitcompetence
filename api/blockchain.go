@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -33,11 +34,18 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 	ctx.Logger.Infof("%+v", giveBadgeRequest)
 
-	messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
-	if err != nil {
-		ctx.Logger.Errorln("error when marshaling badges")
-		return err
+	badges := make([]string, 0)
+	for _, b := range giveBadgeRequest.Badges {
+		badges = append(badges, fmt.Sprintf("%d%d%s", b.CompetenceID, b.Semester, b.StudentID))
 	}
+	messageBytes := strings.Join(badges, "")
+	/*
+		messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
+		if err != nil {
+			ctx.Logger.Errorln("error when marshaling badges")
+			return err
+		}
+	*/
 	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
 	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
@@ -47,7 +55,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, publickey)
+	isVerified, err := ctx.VerifySignature([]byte(messageBytes), giveBadgeRequest.Signature, publickey)
 	if err != nil {
 		ctx.Logger.Errorln("unauthenticated in verifying")
 		return err
