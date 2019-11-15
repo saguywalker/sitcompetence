@@ -93,6 +93,7 @@
 
 	@include desktop {
 		padding: rem(18);
+		max-height: rem(400);
 
 		.title {
 			font-size: rem(48);

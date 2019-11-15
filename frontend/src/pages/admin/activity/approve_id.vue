@@ -109,9 +109,38 @@
 					</div>
 				</b-col>
 			</b-row>
+			<b-modal
+				id="modal-prevent-closing"
+				ref="modal"
+				title="Submit Your Secret Key"
+				@show="resetModal"
+				@hidden="resetModal"
+				@ok="handleOk"
+			>
+				<form
+					ref="form"
+					@submit.stop.prevent="handleSubmit"
+				>
+					<b-form-group
+						:state="skKeyState"
+						label="Insert your Secret Key"
+						label-for="sk-input"
+						invalid-feedback="Secret key is required"
+					>
+						<b-form-textarea
+							id="sk-input"
+							v-model="skKey"
+							:state="skKeyState"
+							rows="6"
+							required
+							@input="skKeyState = null"
+						/>
+					</b-form-group>
+				</form>
+			</b-modal>
 			<base-page-step
 				:step="step"
-				@next="submit"
+				@next="showModal"
 				@back="goBack"
 			/>
 		</section>
@@ -124,7 +153,6 @@
 import IconCheck from "@/components/icons/IconCheck.vue";
 import IconCrossCircle from "@/components/icons/IconCrossCircle.vue";
 import loading from "@/plugin/loading";
-import { getLoginUser } from "@/helpers";
 import { mapState, mapGetters } from "vuex";
 
 export default {
@@ -152,7 +180,9 @@ export default {
 				back: Object.freeze({
 					name: "Back"
 				})
-			}
+			},
+			skKey: "",
+			skKeyState: null
 		};
 	},
 	computed: {
@@ -171,9 +201,6 @@ export default {
 			}
 
 			return false;
-		},
-		loginUser() {
-			return getLoginUser();
 		}
 	},
 	watch: {
@@ -206,13 +233,66 @@ export default {
 		this.rows = this.items.length;
 	},
 	methods: {
-		async submit() {
+		checkFormValidity() {
+			const valid = this.$refs.form.checkValidity();
+			this.skKeyState = !!valid;
+
+			return valid;
+		},
+		showModal() {
+			if (!this.hasSelectedItem) {
+				this.error.selectedItems = true;
+				this.$bvToast.toast("Please select at least one student", {
+					title: "Select Student",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+				return;
+			}
+
+			if (this.secretKey) {
+				this.submit(this.secretKey);
+				return;
+			}
+			this.$refs.modal.show();
+		},
+		hideModal() {
+			this.$refs.modal.hide();
+		},
+		resetModal() {
+			this.skKey = "";
+			this.skKeyState = null;
+		},
+		handleOk(bvModalEvt) {
+			// Prevent modal from closing
+			bvModalEvt.preventDefault();
+			// Trigger submit handler
+			this.handleSubmit();
+		},
+		handleSubmit() {
+			// Exit when the form isn't valid
+			if (!this.checkFormValidity()) {
+				this.$bvToast.toast("Please insert the secret key before submitting", {
+					title: "Secret key",
+					variant: "danger",
+					autoHideDelay: 1500
+				});
+				return;
+			}
+			// Submit
+			this.submit(this.skKey);
+			// Hide the modal manually
+			this.$nextTick(() => {
+				this.hideModal();
+			});
+		},
+		async submit(skkey) {
 			loading.start();
 			try {
 				await this.$store.dispatch("adminActivity/submitApprove", {
+					sk: skkey,
 					approvedStudents: this.selectedItems,
-					activityId: this.$route.params.id,
-					approver: this.loginUser.uid
+					activityId: this.$route.params.id
 				});
 
 				this.$router.push({

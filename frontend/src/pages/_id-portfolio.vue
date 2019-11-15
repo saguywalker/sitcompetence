@@ -15,8 +15,15 @@
 			</div>
 		</header>
 		<section class="wrapper">
-			<div class="page-header-admin">
-				<h1>Hi</h1>
+			<div class="portfolio-actions">
+				<div class="right">
+					<b-form-select
+						v-model="selectedSemester"
+						:options="semesters"
+						class="select-semester"
+						@input="filterPortfolio"
+					/>
+				</div>
 			</div>
 			<div class="portfolio-section">
 				<aside class="profile-bar">
@@ -31,40 +38,59 @@
 					</p>
 				</aside>
 				<div class="portfolio-content">
-					<b-row class="portfolio-container">
-						<b-col
-							v-for="(com, index) in portfolios"
-							:key="`${com.competence_id}${forceReRender}`"
-							cols="6"
-							class="competence-wrapper"
+					<transition
+						name="page"
+						mode="out-in"
+					>
+						<b-row
+							v-if="hasCompetence"
+							class="portfolio-container"
 						>
-							<base-image
-								:src="getCompetenceImgById(com.competence_id)"
-								:size="resizeImage"
-								class="sitcom-badge"
-							/>
-							<p class="name">
-								{{ getCompetenceNameById(com.competence_id) }}
-							</p>
-							<transition
-								:key="`${com.competence_id}${index}`"
-								name="fade"
-								mode="out-in"
+							<b-col
+								v-for="(com, index) in portfolios"
+								:key="`${com.competence_id}${forceReRender}`"
+								cols="6"
+								class="competence-wrapper"
 							>
-								<p
-									v-if="show"
-									class="verify-status"
-								>
-									<span class="icon">
-										<icon-check-circle v-if="verify[index]" />
-										<icon-time-circle v-else />
-									</span>
-									{{ verifyText(index) }}
+								<base-image
+									:src="getCompetenceImgById(com.competence_id)"
+									:size="resizeImage"
+									class="sitcom-badge"
+								/>
+								<p class="name">
+									{{ getCompetenceNameById(com.competence_id) }}
 								</p>
-							</transition>
-						</b-col>
-					</b-row>
-					<div class="portfolio-footer">
+								<transition
+									:key="`${com.competence_id}${index}`"
+									name="fade"
+									mode="out-in"
+								>
+									<p
+										v-if="show"
+										class="verify-status"
+									>
+										<span class="icon">
+											<icon-check-circle v-if="verify[index]" />
+											<icon-time-circle v-else />
+										</span>
+										{{ verifyText(index) }}
+									</p>
+								</transition>
+							</b-col>
+						</b-row>
+					</transition>
+					<transition
+						name="fade"
+						mode="out-in"
+					>
+						<h1 v-if="!hasCompetence">
+							No competence record on this semester.
+						</h1>
+					</transition>
+					<div
+						v-if="hasCompetence"
+						class="portfolio-footer"
+					>
 						<b-button
 							:block="resizeVerifyButton"
 							variant="primary"
@@ -102,6 +128,7 @@
 import IconCheckCircle from "@/components/icons/IconCheckCircle.vue";
 import IconTimeCircle from "@/components/icons/IconTimeCircle.vue";
 import { widthSize } from "@/helpers/mixins";
+import { filterBySemester } from "@/helpers";
 import { COMPETENCE } from "@/constants";
 import { Verify } from "@/services";
 import { mapState } from "vuex";
@@ -114,9 +141,19 @@ export default {
 	mixins: [widthSize],
 	data() {
 		return {
+			portfolios: [],
 			verify: [],
+			selectedSemester: 12019,
+			semesters: [
+				{ value: 12019, text: "1/2019" },
+				{ value: 22018, text: "2/2018" },
+				{ value: 12018, text: "1/2018" },
+				{ value: 22017, text: "2/2017" },
+				{ value: 12017, text: "1/2017" }
+			],
 			show: false,
-			forceReRender: 0
+			forceReRender: 0,
+			hasCompetence: null
 		};
 	},
 	computed: {
@@ -137,7 +174,7 @@ export default {
 
 			return "70";
 		},
-		portfolios() {
+		statePortfolios() {
 			return this.sharePortfolio.collected_competence;
 		},
 		user() {
@@ -148,6 +185,11 @@ export default {
 		}
 	},
 	methods: {
+		filterBySemester,
+		filterPortfolio() {
+			this.portfolios = this.filterBySemester(this.statePortfolios.result, this.selectedSemester);
+			this.hasCompetence = this.portfolios.length !== 0;
+		},
 		getCompetenceNameById(id) {
 			return COMPETENCE[id].name;
 		},

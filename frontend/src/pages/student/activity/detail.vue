@@ -49,7 +49,7 @@
 </style>
 <script>
 import IconArrow from "@/components/icons/IconArrow.vue";
-import { getMonthNameByDateFormat, getYearByDateFormat } from "@/helpers";
+import { getMonthNameByDateFormat, getYearByDateFormat, getLoginUser } from "@/helpers";
 import { mapState, mapGetters } from "vuex";
 
 export default {
@@ -87,7 +87,7 @@ export default {
 			return this.activity;
 		},
 		loginUser() {
-			return sessionStorage.getItem("user");
+			return getLoginUser().uid;
 		}
 	},
 	async created() {
