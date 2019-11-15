@@ -206,11 +206,13 @@ func (ctx *Context) VerifySignature(message []byte, signature, b64PubKey string)
 
 	pubKey, err := base64.StdEncoding.DecodeString(b64PubKey)
 	if err != nil {
+		ctx.Logger.Errorln("error when decoding publickey")
 		return false, err
 	}
 
 	sig, err := base64.StdEncoding.DecodeString(signature)
 	if err != nil {
+		ctx.Logger.Errorln("error when decoding signature")
 		return false, err
 	}
 
