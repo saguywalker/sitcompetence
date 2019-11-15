@@ -1,4 +1,4 @@
-import { getEncryptedHex } from "@/helpers";
+import { signMessage } from "@/helpers";
 import { GiveBadge } from "@/services";
 import {
 	GIVE_BADGE_SELECT_STUDENT,
@@ -96,7 +96,7 @@ const actions = {
 		});
 
 		const payload = {
-			sk: getEncryptedHex(data.sk),
+			signature: signMessage(payloadBadges, data.sk),
 			badges: payloadBadges
 		};
 

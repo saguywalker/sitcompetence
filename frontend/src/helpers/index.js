@@ -220,3 +220,9 @@ export const isLoggedIn = () => {
 export const filterBySemester = (badges, semester) => {
 	return badges.filter((badge) => badge.semester === semester);
 };
+
+export function signMessage(msg, secret) {
+	const signedMsg = nacl.sign.detached(decodeBase64ToByteArray(getSHA256Message(msg)), decodeBase64ToByteArray(secret));
+	console.log(signedMsg);
+	return encodeByteArrayToString(signedMsg);
+}

@@ -105,7 +105,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, activityRequest.Signature, string(b64PubKey))
+	isVerified, err := ctx.VerifySignature(messageBytes, activityRequest.Signature, b64PubKey)
 	if err != nil {
 		return err
 	}
