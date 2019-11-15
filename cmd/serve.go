@@ -41,6 +41,8 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 		})
 
 	} else {
+		c = cors.AllowAll()
+		/*
 		origins := []string{
 			"https://sitcompetence.ilab.sit.kmutt.ac.th",
 			"http://sitcompetence.ilab.sit.kmutt.ac.th",
@@ -59,7 +61,7 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 				http.MethodDelete,
 			},
 			AllowCredentials: true,
-		})
+		})*/
 	}
 
 	corsHandler := c.Handler(router)
