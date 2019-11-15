@@ -31,8 +31,22 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		ctx.Logger.Errorln("error while unmarshaling")
 		return err
 	}
-
 	ctx.Logger.Infof("%+v", giveBadgeRequest)
+
+	messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
+	if err != nil {
+		return err
+	}
+
+	// Verify step
+	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, ctx.User.UserID)
+	if err != nil {
+		return err
+	}
+
+	if !isVerified {
+		return errors.New("unauthenticated")
+	}
 
 	txs := make([]string, 0)
 

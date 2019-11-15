@@ -250,3 +250,8 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 
 	return dec64, respData, index, nil
 }
+
+// VerifySignature authenticate the user and its signature
+func (ctx *Context) VerifySignature(message []byte, signature, staffID string) (bool, error) {
+	return false, nil
+}
