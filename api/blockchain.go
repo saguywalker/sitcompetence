@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -48,6 +49,8 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	*/
 	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
+	hashed := sha256.Sum256([]byte(messageBytes))
+
 	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		ctx.Logger.Errorln("error when requesting publickey")
@@ -55,7 +58,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature([]byte(messageBytes), giveBadgeRequest.Signature, publickey)
+	isVerified, err := ctx.VerifySignature(hashed[:], giveBadgeRequest.Signature, publickey)
 	if err != nil {
 		ctx.Logger.Errorln("unauthenticated in verifying")
 		return err
@@ -103,18 +106,36 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	messageBytes, err := json.Marshal(activityRequest.Activities)
-	if err != nil {
-		return err
+	activities := make([]string, 0)
+	for _, a := range activityRequest.Activities {
+		activities = append(activities, fmt.Sprintf("%d%s", a.ActivityID, a.StudentID))
 	}
+	messageBytes := strings.Join(activities, "")
+	/*
+		messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
+		if err != nil {
+			ctx.Logger.Errorln("error when marshaling badges")
+			return err
+		}
+	*/
+	ctx.Logger.Infof("payload: %s\n", messageBytes)
+
+	hashed := sha256.Sum256([]byte(messageBytes))
 
 	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
+		ctx.Logger.Errorln("error when requesting publickey")
 		return err
 	}
+	/*
+		messageBytes, err := json.Marshal(activityRequest.Activities)
+		if err != nil {
+			return err
+		}
+	*/
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, activityRequest.Signature, publickey)
+	isVerified, err := ctx.VerifySignature(hashed[:], activityRequest.Signature, publickey)
 	if err != nil {
 		return err
 	}
