@@ -230,7 +230,7 @@ func (a *API) initKeyPair() error {
 
 	a.App.SK = priv
 
-	params := []byte(fmt.Sprintf("sitcompetence=%s", pub64))
+	params := []byte(fmt.Sprintf("sitcompetence:%s", pub64))
 
 	payload := protoTm.Payload{
 		Method: "AddNewService",
