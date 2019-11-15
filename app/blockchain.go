@@ -201,15 +201,7 @@ func (ctx *Context) BlockchainQueryWithParams(params string, index uint64, peers
 }
 
 // VerifySignature authenticate the user and its signature
-func (ctx *Context) VerifySignature(message []byte, signature string, pubKey []byte) (bool, error) {
-	hashed := sha256.Sum256(message)
-	/*
-		pubKey, err := base64.StdEncoding.DecodeString(string(b64PubKey))
-		if err != nil {
-			ctx.Logger.Errorf("error when decoding publickey: %s\n", b64PubKey)
-			return false, err
-		}
-	*/
+func (ctx *Context) VerifySignature(hashed []byte, signature string, pubKey []byte) (bool, error) {
 	sig, err := base64.StdEncoding.DecodeString(signature)
 	if err != nil {
 		ctx.Logger.Errorln("error when decoding signature")
@@ -218,7 +210,7 @@ func (ctx *Context) VerifySignature(message []byte, signature string, pubKey []b
 
 	isVerified := ed25519.Verify(pubKey, hashed[:], sig)
 
-	ctx.Logger.Infof("params: %s\nsha256: %x\nsignature: %x\nisVerified: %v\n", message, hashed[:], sig, isVerified)
+	ctx.Logger.Infof("IsVerified: %v\n", isVerified)
 
 	return isVerified, nil
 }

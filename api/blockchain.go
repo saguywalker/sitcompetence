@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -33,20 +34,30 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 	ctx.Logger.Infof("%+v", giveBadgeRequest)
 
-	messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
+	var mapper map[string]interface{}
+	if err := json.Unmarshal(body, &mapper); err != nil {
+		ctx.Logger.Errorln(err.Error())
+		return err
+	}
+
+	messageBytes, err := json.Marshal(mapper["badges"])
 	if err != nil {
 		ctx.Logger.Errorln("error when marshaling badges")
 		return err
 	}
+	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
-	b64PubKey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
+	hashed := sha256.Sum256(messageBytes)
+	ctx.Logger.Infof("hashed: %x\n", hashed[:])
+
+	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		ctx.Logger.Errorln("error when requesting publickey")
 		return err
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, b64PubKey)
+	isVerified, err := ctx.VerifySignature(hashed[:], giveBadgeRequest.Signature, publickey)
 	if err != nil {
 		ctx.Logger.Errorln("unauthenticated in verifying")
 		return err
@@ -99,13 +110,15 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	b64PubKey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
+	hashed := sha256.Sum256(messageBytes)
+
+	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
 	if err != nil {
 		return err
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, activityRequest.Signature, b64PubKey)
+	isVerified, err := ctx.VerifySignature(hashed[:], activityRequest.Signature, publickey)
 	if err != nil {
 		return err
 	}
