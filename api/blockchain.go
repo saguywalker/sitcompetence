@@ -46,7 +46,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	// Verify step
-	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, string(b64PubKey))
+	isVerified, err := ctx.VerifySignature(messageBytes, giveBadgeRequest.Signature, b64PubKey)
 	if err != nil {
 		ctx.Logger.Errorln("unauthenticated in verifying")
 		return err
