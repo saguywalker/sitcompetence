@@ -227,27 +227,33 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 
 // EditProfile handle a editing student's information request
 func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
+	/*
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+
+		var edit model.EditProfile
+		if err := json.Unmarshal(body, &edit); err != nil {
+			return err
+		}
+	*/
 
 	var edit model.EditProfile
-	if err := json.Unmarshal(body, &edit); err != nil {
-		return err
-	}
 
 	if err := r.ParseMultipartForm(20 << 20); err != nil {
 		return err
 	}
 
-	if image, header, err := r.FormFile("profilePic"); err == nil {
+	if image, header, err := r.FormFile("profile_picture"); err == nil {
 		ctx.Logger.Infof("Upload File: %+v\nFile size: %+v\nMIME Header: %+v\n", header.Filename, header.Size, header.Header)
 		edit.ProfilePicture, err = a.App.S3.UploadProfilePicture(image, header, ctx.User.UserID)
 		if err != nil {
 			return err
 		}
 	}
+
+	edit.Motto = r.FormValue("motto")
 
 	if err := ctx.UpdateStudentProfile(edit.ProfilePicture, edit.Motto); err != nil {
 		return err
