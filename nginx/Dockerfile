@@ -4,11 +4,12 @@ RUN ls
 RUN echo $PWD
 COPY ./frontend/package*.json ./                                                                                                                                                 
 RUN ls
-RUN npm install
-RUN ls
+EXPOSE 8080
 COPY ./frontend .
 RUN ls
-RUN npm run build
+RUN yarn
+RUN yarn build 
+RUN yarn serve
 
 FROM nginx:latest as production-stage
 RUN mkdir /app
