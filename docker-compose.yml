@@ -5,7 +5,7 @@ services:
     ports:
             - "3000:3000"
   nginx:
-    build: "./nginx"
+    build: "./frontend"
     image: shakyshane/nginx-cors-plus
     ports:
       - "80:80"
