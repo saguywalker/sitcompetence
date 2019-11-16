@@ -180,3 +180,21 @@ func (db *Database) UpdateStudentProfile(id, filePath, motto string) error {
 
 	return nil
 }
+
+// FetchStudentProfile fetch profile path and motto
+func (db *Database) FetchStudentProfile(studentID string) (*model.EditProfile, error) {
+	row, err := db.Query("SELECT profilePath, motto WHERE studentId=$1", studentID)
+	if err != nil {
+		return nil, err
+	}
+
+	var profile model.EditProfile
+
+	for row.Next() {
+		if err := row.Scan(&profile.ProfilePicture, &profile.Motto); err != nil {
+			return nil, err
+		}
+	}
+
+	return &profile, nil
+}

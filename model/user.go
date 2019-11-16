@@ -2,10 +2,11 @@ package model
 
 // User contains user information
 type User struct {
-	UserID        string `json:"uid"`
-	Name          string `json:"username"`
-	Group         string `json:"group"`
-	Authenticated bool   `json:"authenticated"`
+	UserID        string       `json:"uid"`
+	Name          string       `json:"username"`
+	Group         string       `json:"group"`
+	Authenticated bool         `json:"authenticated"`
+	Additional    *EditProfile `json:"additional"`
 }
 
 // NewUser return user struct

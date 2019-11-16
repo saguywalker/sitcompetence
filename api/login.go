@@ -75,6 +75,13 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 		} else {
 			mapResp["first"] = false
 		}
+	} else {
+		var err error
+		user.Additional, err = ctx.FetchStudentProfile(user.UserID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 	}
 
 	mapResp["user"] = user

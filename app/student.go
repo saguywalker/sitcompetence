@@ -126,3 +126,8 @@ func (ctx *Context) UpdateStudentProfile(filePath, motto string) error {
 
 	return ctx.Database.UpdateStudentProfile(ctx.User.UserID, filePath, motto)
 }
+
+// FetchStudentProfile fetch addtional information
+func (ctx *Context) FetchStudentProfile(studentID string) (*model.EditProfile, error) {
+	return ctx.Database.FetchStudentProfile(studentID)
+}
