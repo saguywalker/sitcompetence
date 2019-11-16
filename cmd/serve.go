@@ -42,10 +42,14 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 
 	} else {
 		origins := []string{
-			"https://sitcompetence.ilab.sit.kmutt.ac.th",
-			"http://sitcompetence.ilab.sit.kmutt.ac.th",
-			"https://localhost",
-			"http://localhost",
+            "https://sitcompetence.ilab.sit.kmutt.ac.th:3000",
+            "https://sitcompetence.ilab.sit.kmutt.ac.th:8080",
+            "http://sitcompetence.ilab.sit.kmutt.ac.th:3000",
+            "http://sitcompetence.ilab.sit.kmutt.ac.th:8080",
+            "https://localhost:3000",
+            "https://localhost:8080",
+            "http://localhost:3000",
+            "http://localhost:8080",
 		}
 		c = cors.New(cors.Options{
 			AllowedOrigins: origins,
@@ -88,7 +92,7 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	} else {
 		logrus.Infof("serving api at https://127.0.0.1:%d", api.Config.Port)
 		// if err := s.ListenAndServe(); err != http.ErrServerClosed {
-                if err := s.ListenAndServeTLS("nginx.crt", "nginx.key"); err != http.ErrServerClosed {
+		if err := s.ListenAndServeTLS("nginx.crt", "nginx.key"); err != http.ErrServerClosed {
 			logrus.Error(err)
 		}
 	}

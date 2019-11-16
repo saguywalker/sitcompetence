@@ -2,7 +2,6 @@ package api
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -40,13 +39,6 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		badges = append(badges, fmt.Sprintf("%d%d%s", b.CompetenceID, b.Semester, b.StudentID))
 	}
 	messageBytes := strings.Join(badges, "")
-	/*
-		messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
-		if err != nil {
-			ctx.Logger.Errorln("error when marshaling badges")
-			return err
-		}
-	*/
 	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
 	hashed := sha256.Sum256([]byte(messageBytes))
@@ -68,15 +60,16 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return errors.New("unauthenticated")
 	}
 
-	txs := make([]string, 0)
+	txs := make([]*model.TxResponse, 0)
 	for _, badge := range giveBadgeRequest.Badges {
-		txID, currentIndex, err := ctx.GiveBadge(&badge, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
+		badge.Giver = publickey
+		tx, currentIndex, err := ctx.GiveBadge(&badge, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
 		}
 
-		txs = append(txs, hex.EncodeToString(txID))
+		txs = append(txs, tx)
 	}
 
 	txsBytes, err := json.Marshal(txs)
@@ -111,13 +104,6 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		activities = append(activities, fmt.Sprintf("%d%s", a.ActivityID, a.StudentID))
 	}
 	messageBytes := strings.Join(activities, "")
-	/*
-		messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
-		if err != nil {
-			ctx.Logger.Errorln("error when marshaling badges")
-			return err
-		}
-	*/
 	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
 	hashed := sha256.Sum256([]byte(messageBytes))
@@ -127,12 +113,6 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		ctx.Logger.Errorln("error when requesting publickey")
 		return err
 	}
-	/*
-		messageBytes, err := json.Marshal(activityRequest.Activities)
-		if err != nil {
-			return err
-		}
-	*/
 
 	// Verify step
 	isVerified, err := ctx.VerifySignature(hashed[:], activityRequest.Signature, publickey)
@@ -144,15 +124,16 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return errors.New("unauthenticated")
 	}
 
-	txs := make([]string, 0)
+	txs := make([]*model.TxResponse, 0)
 	for _, activity := range activityRequest.Activities {
-		txID, currentIndex, err := ctx.ApproveActivity(&activity, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
+		activity.Approver = publickey
+		tx, currentIndex, err := ctx.ApproveActivity(&activity, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
 		}
 
-		txs = append(txs, hex.EncodeToString(txID))
+		txs = append(txs, tx)
 	}
 
 	txsBytes, err := json.Marshal(txs)
@@ -193,4 +174,8 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	w.Write(mapperBytes)
 
 	return nil
+}
+
+// TxResponse contains tx and its log
+type TxResponse struct {
 }
