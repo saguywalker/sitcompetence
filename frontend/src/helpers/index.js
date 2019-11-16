@@ -1,5 +1,6 @@
 import CryptoJS from "crypto-js";
 import SHA256 from "crypto-js/sha256";
+import { sha256 } from "js-sha256";
 import nacl from "tweetnacl";
 import aesjs from "aes-js";
 import Cookies from "js-cookie";
@@ -220,3 +221,14 @@ export const isLoggedIn = () => {
 export const filterBySemester = (badges, semester) => {
 	return badges.filter((badge) => badge.semester === semester);
 };
+
+export function signMessage(msg, secret) {
+	let result = "";
+	msg.forEach((m) => {
+		Object.values(m).forEach((value) => {
+			result += value;
+		});
+	});
+	const signedMsg = nacl.sign.detached(new Uint8Array(sha256.array(result)), decodeBase64ToByteArray(secret));
+	return encodeByteArrayToString(signedMsg);
+}

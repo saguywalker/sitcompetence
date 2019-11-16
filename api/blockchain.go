@@ -1,12 +1,14 @@
 package api
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -31,13 +33,44 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		ctx.Logger.Errorln("error while unmarshaling")
 		return err
 	}
-
 	ctx.Logger.Infof("%+v", giveBadgeRequest)
 
-	txs := make([]string, 0)
+	badges := make([]string, 0)
+	for _, b := range giveBadgeRequest.Badges {
+		badges = append(badges, fmt.Sprintf("%d%d%s", b.CompetenceID, b.Semester, b.StudentID))
+	}
+	messageBytes := strings.Join(badges, "")
+	/*
+		messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
+		if err != nil {
+			ctx.Logger.Errorln("error when marshaling badges")
+			return err
+		}
+	*/
+	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
+	hashed := sha256.Sum256([]byte(messageBytes))
+
+	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
+	if err != nil {
+		ctx.Logger.Errorln("error when requesting publickey")
+		return err
+	}
+
+	// Verify step
+	isVerified, err := ctx.VerifySignature(hashed[:], giveBadgeRequest.Signature, publickey)
+	if err != nil {
+		ctx.Logger.Errorln("unauthenticated in verifying")
+		return err
+	}
+
+	if !isVerified {
+		return errors.New("unauthenticated")
+	}
+
+	txs := make([]string, 0)
 	for _, badge := range giveBadgeRequest.Badges {
-		txID, currentIndex, err := ctx.GiveBadge(&badge, giveBadgeRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
+		txID, currentIndex, err := ctx.GiveBadge(&badge, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err
@@ -73,10 +106,47 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	txs := make([]string, 0)
+	activities := make([]string, 0)
+	for _, a := range activityRequest.Activities {
+		activities = append(activities, fmt.Sprintf("%d%s", a.ActivityID, a.StudentID))
+	}
+	messageBytes := strings.Join(activities, "")
+	/*
+		messageBytes, err := json.Marshal(giveBadgeRequest.Badges)
+		if err != nil {
+			ctx.Logger.Errorln("error when marshaling badges")
+			return err
+		}
+	*/
+	ctx.Logger.Infof("payload: %s\n", messageBytes)
 
+	hashed := sha256.Sum256([]byte(messageBytes))
+
+	publickey, err := ctx.Database.GetStaffPublicKey(ctx.User.UserID)
+	if err != nil {
+		ctx.Logger.Errorln("error when requesting publickey")
+		return err
+	}
+	/*
+		messageBytes, err := json.Marshal(activityRequest.Activities)
+		if err != nil {
+			return err
+		}
+	*/
+
+	// Verify step
+	isVerified, err := ctx.VerifySignature(hashed[:], activityRequest.Signature, publickey)
+	if err != nil {
+		return err
+	}
+
+	if !isVerified {
+		return errors.New("unauthenticated")
+	}
+
+	txs := make([]string, 0)
 	for _, activity := range activityRequest.Activities {
-		txID, currentIndex, err := ctx.ApproveActivity(&activity, activityRequest.PrivateKey, a.App.CurrentPeerIndex, a.Config.Peers, a.App.Config.SecretKey, a.App.SK)
+		txID, currentIndex, err := ctx.ApproveActivity(&activity, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
 		a.App.CurrentPeerIndex = currentIndex
 		if err != nil {
 			return err

@@ -8,17 +8,17 @@ import (
 
 // GiveBadgeRequest define givebadge request
 type GiveBadgeRequest struct {
-	Badges     []CollectedCompetence `json:"badges"`
-	PrivateKey string                `json:"sk"`
+	Badges    []CollectedCompetence `json:"badges"`
+	Signature string                `json:"signature"`
 }
 
 // CollectedCompetence defines collected badges for corresponding student
 type CollectedCompetence struct {
-	StudentID    string `json:"student_id"`
 	CompetenceID uint32 `json:"competence_id"`
-	Semester     uint32 `json:"semester"`
-	Giver        []byte `json:"giver,omitempty"`
 	Evidence     []byte `json:"evidence,omitempty"`
+	Giver        []byte `json:"giver,omitempty"`
+	Semester     uint32 `json:"semester"`
+	StudentID    string `json:"student_id"`
 	// TxID         []byte `json:"transaction_id,omitempty"`
 	// PrivateKey   string `json:"sk,omitempty"`
 }
