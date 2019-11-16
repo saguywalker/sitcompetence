@@ -3,7 +3,6 @@ package app
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -86,7 +85,7 @@ func (ctx *Context) ShareProfile(studentID string) (string, error) {
 }
 
 // ViewProfile view a profile from url
-func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64, peers []string) ([]byte, error) {
+func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64, peers []string) (*model.Student, error) {
 	if err := ctx.Database.CheckExpire(url); err != nil {
 		return nil, err
 	}
@@ -107,15 +106,21 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 		return nil, err
 	}
 
-	student.Collected = collected
-	student.Evidence = evidence
-
-	collectedBytes, err := json.Marshal(student)
+	profile, err := ctx.FetchStudentProfile(student.StudentID)
 	if err != nil {
 		return nil, err
 	}
 
-	return collectedBytes, nil
+	student.Additional = profile
+	student.Collected = collected
+	student.Evidence = evidence
+/*
+	collectedBytes, err := json.Marshal(student)
+	if err != nil {
+		return nil, err
+	}
+*/
+	return student, nil
 }
 
 // UpdateStudentProfile save an image into static-images directory

@@ -210,19 +210,25 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 
 	ctx.Logger.Printf("url: %s", url)
 
-	collected, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
+	student, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if collected == nil {
+	if student == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
+	studentBytes, err := json.Marshal(student)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write(collected)
+	w.Write(studentBytes)
 }
 
 // EditProfile handle a editing student's information request
