@@ -60,7 +60,7 @@ func (a *API) GiveBadge(ctx *app.Context, w http.ResponseWriter, r *http.Request
 		return errors.New("unauthenticated")
 	}
 
-	txs := make([]*model.TxResponse, 0)
+	txs := make([]string, 0)
 	for _, badge := range giveBadgeRequest.Badges {
 		badge.Giver = publickey
 		tx, currentIndex, err := ctx.GiveBadge(&badge, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)
@@ -124,7 +124,7 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 		return errors.New("unauthenticated")
 	}
 
-	txs := make([]*model.TxResponse, 0)
+	txs := make([]string, 0)
 	for _, activity := range activityRequest.Activities {
 		activity.Approver = publickey
 		tx, currentIndex, err := ctx.ApproveActivity(&activity, a.App.CurrentPeerIndex, a.Config.Peers, a.App.SK)

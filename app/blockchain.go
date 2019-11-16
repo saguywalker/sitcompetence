@@ -18,12 +18,12 @@ import (
 )
 
 // GiveBadge hashing badge, broadcast it and update to database
-func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, peers []string, webSK []byte) (*model.TxResponse, uint64, error) {
+func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, peers []string, webSK []byte) (string, uint64, error) {
 	ctx.Logger.Infof("app/GiveBadge: %v\n", *badge)
 
 	badgeBytes, err := json.Marshal(badge)
 	if err != nil {
-		return nil, index, err
+		return "", index, err
 	}
 
 	tx, err := ctx.broadcastTX("GiveBadge", badgeBytes, index, peers, webSK)
@@ -37,10 +37,10 @@ func (ctx *Context) GiveBadge(badge *model.CollectedCompetence, index uint64, pe
 }
 
 // ApproveActivity hashing activity, broadcast it and update to database
-func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint64, peers []string, webSK []byte) (*model.TxResponse, uint64, error) {
+func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint64, peers []string, webSK []byte) (string, uint64, error) {
 	approveBytes, err := json.Marshal(activity)
 	if err != nil {
-		return nil, index, err
+		return "", index, err
 	}
 
 	tx, err := ctx.broadcastTX("ApproveActivity", approveBytes, index, peers, webSK)
@@ -48,7 +48,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint
 		return tx, index, err
 	}
 
-	activity.TransactionID = tx.TxID
+	activity.TransactionID = tx
 
 	if err := ctx.Database.ApproveAttended(activity); err != nil {
 		return tx, index, err
@@ -87,7 +87,7 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint
 	return tx, index, nil
 }
 
-func (ctx *Context) broadcastTX(method string, params []byte, index uint64, peers []string, webSK []byte) (*model.TxResponse, error) {
+func (ctx *Context) broadcastTX(method string, params []byte, index uint64, peers []string, webSK []byte) (string, error) {
 	httpClient := &http.Client{
 		Timeout: 3 * time.Second,
 	}
@@ -107,10 +107,10 @@ func (ctx *Context) broadcastTX(method string, params []byte, index uint64, peer
 
 	txBytes, err := proto.Marshal(&tx)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	var txResp model.TxResponse
+	// var txResp model.TxResponse
 	data := make([]byte, 0)
 	for i := 0; i < len(peers); i++ {
 		url := fmt.Sprintf("http://%s/broadcast_tx_commit?tx=0x%x", peers[index], txBytes)
@@ -131,19 +131,19 @@ func (ctx *Context) broadcastTX(method string, params []byte, index uint64, peer
 
 	var fullData map[string]interface{}
 	if err := json.Unmarshal(data, &fullData); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	resultData, ok := fullData["result"].(map[string]interface{})
 	if !ok {
 		ctx.Logger.Errorf("%+v\n", fullData)
-		return nil, fmt.Errorf("error when asserting type from data[\"result\"]")
+		return "", fmt.Errorf("error when asserting type from data[\"result\"]")
 	}
 
-	txResp.TxID = resultData["hash"].(string)
-	txResp.Log = fullData
+	// txResp.TxID = resultData["hash"].(string)
+	// txResp.Log = fullData
 
-	return &txResp, err
+	return resultData["hash"].(string), err
 }
 
 // VerifyTX verify data with a given merkle root
