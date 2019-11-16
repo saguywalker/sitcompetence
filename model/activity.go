@@ -11,15 +11,15 @@ type Activity struct {
 	Organizer     string       `json:"organizer"`
 	Category      string       `json:"category"`
 	Location      string       `json:"location"`
-	Semester      uint16       `json:"semester"`
-	CompetencesID []uint16     `json:"competences_id,omitempty"` // For request
+	Semester      uint32       `json:"semester"`
+	CompetencesID []uint32     `json:"competences_id,omitempty"` // For request
 	Competences   []Competence `json:"competences,omitempty"`    // For response
 	Attendees     []Student    `json:"attendees,omitempty"`
 	StudentSite   bool         `json:"student_site,omitempty"`
 }
 
 // NewActivity creates new activity struct
-func NewActivity(activityID uint32, activityName, description, date, time, creator, organizer, category, location string, semester uint16, studentSite bool) *Activity {
+func NewActivity(activityID uint32, activityName, description, date, time, creator, organizer, category, location string, semester uint32, studentSite bool) *Activity {
 	return &Activity{
 		ActivityID:   activityID,
 		ActivityName: activityName,

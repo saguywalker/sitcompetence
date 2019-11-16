@@ -13,7 +13,7 @@ type Config struct {
 
 	// The number of proxies positioned in front of the API. This is used to interpret
 	// X-Forwarded-For headers.
-	ProxyCount int
+	// ProxyCount int
 
 	Peers []string
 }
@@ -22,7 +22,7 @@ type Config struct {
 func InitConfig() (*Config, error) {
 	config := &Config{
 		Port:       viper.GetInt("Port"),
-		ProxyCount: viper.GetInt("ProxyCount"),
+		// ProxyCount: viper.GetInt("ProxyCount"),
 		Peers:      viper.GetStringSlice("Peers"),
 	}
 	if config.Port == 0 {

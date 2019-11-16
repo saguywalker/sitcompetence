@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gogo/protobuf/proto"
@@ -110,7 +109,8 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 			Hijacker:       hijacker,
 		}
 
-		ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+		// ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+		ctx := a.App.NewContext().WithRemoteAddress(r.RemoteAddr)
 		ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
 		user := model.User{}
 		var ok bool
@@ -159,7 +159,8 @@ func (a *API) handler(f func(*app.Context, http.ResponseWriter, *http.Request) e
 	})
 }
 
-// IPAddressForRequest returns ip address from request
+/*
+IPAddressForRequest returns ip address from request
 func (a *API) IPAddressForRequest(r *http.Request) string {
 	addr := r.RemoteAddr
 	if a.Config.ProxyCount > 0 {
@@ -175,6 +176,7 @@ func (a *API) IPAddressForRequest(r *http.Request) string {
 	}
 	return strings.Split(strings.TrimSpace(addr), ":")[0]
 }
+*/
 
 // getIDFromRequest returnn id from request
 func getIDFromRequest(param string, r *http.Request) string {

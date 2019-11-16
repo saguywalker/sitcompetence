@@ -198,7 +198,7 @@ func (a *API) ShareProfile(ctx *app.Context, w http.ResponseWriter, r *http.Requ
 
 // ViewProfile view a specific student's profile
 func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
-	ctx := a.App.NewContext().WithRemoteAddress(a.IPAddressForRequest(r))
+	ctx := a.App.NewContext().WithRemoteAddress(r.RemoteAddr)
 	ctx.Logger.Infoln(r.RemoteAddr, r.RequestURI)
 
 	vars := mux.Vars(r)
