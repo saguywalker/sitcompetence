@@ -21,9 +21,9 @@ type Config struct {
 // InitConfig return config struct
 func InitConfig() (*Config, error) {
 	config := &Config{
-		Port:       viper.GetInt("Port"),
+		Port: viper.GetInt("Port"),
 		// ProxyCount: viper.GetInt("ProxyCount"),
-		Peers:      viper.GetStringSlice("Peers"),
+		Peers: viper.GetStringSlice("Peers"),
 	}
 	if config.Port == 0 {
 		config.Port = 3000
