@@ -17,7 +17,7 @@ type AttendedActivity struct {
 	ActivityID    uint32 `json:"activity_id"`
 	Approver      []byte `json:"approver,omitempty"`
 	StudentID     string `json:"student_id"`
-	TransactionID []byte `json:"transaction_id,omitempty"`
+	TransactionID string `json:"transaction_id,omitempty"`
 }
 
 /*
