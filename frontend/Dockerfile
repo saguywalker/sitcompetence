@@ -2,10 +2,10 @@ FROM node:10.15.3 as build-stage
 WORKDIR /app
 RUN ls
 RUN echo $PWD
-COPY ./frontend/package*.json ./                                                                                                                                                 
+COPY ./ ./                                                                                                                                                 
 RUN ls
 EXPOSE 8080
-COPY ./frontend .
+COPY ./ .
 RUN ls
 RUN yarn
 RUN yarn build 
