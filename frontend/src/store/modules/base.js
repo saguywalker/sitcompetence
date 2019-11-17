@@ -101,12 +101,10 @@ const actions = {
 			return;
 		}
 		const payload = {
-			username: data.userName,
-			password: getEncryptedHex(data.passWord)
+			username: data.username,
+			password: getEncryptedHex(data.password)
 		};
-
 		const response = await Login.login(payload);
-
 		if (response.status !== 200) {
 			return;
 		}

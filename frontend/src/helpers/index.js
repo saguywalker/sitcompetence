@@ -191,8 +191,9 @@ export const getEncryptedHex = (text) => {
 	const iv = parseHexString("00112233445566778899aabbccddeeff");
 	const key = parseHexString(getSHA256Message(process.env.VUE_APP_AES));
 	/* eslint-disable new-cap */
-	const aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
-	const encryptedBytes = aesCbc.encrypt(decodeBase64ToByteArray(text));
+	const aesCbc = new aesjs.ModeOfOperation.ofb(key, iv);
+	const textByte = aesjs.utils.utf8.toBytes(text);
+	const encryptedBytes = aesCbc.encrypt(textByte);
 	const encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
 	return encryptedHex;
 };
