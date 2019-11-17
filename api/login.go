@@ -74,8 +74,10 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mode := cipher.NewCBCDecrypter(block, iv)
-	mode.CryptBlocks(decPassword, decPassword)
+	// mode := cipher.NewCBCDecrypter(block, iv)
+	// mode.CryptBlocks(decPassword, decPassword)
+	mode := cipher.NewOFB(block, iv)
+	mode.XORKeyStream(decPassword, decPassword)
 
 	user, err = a.App.CheckPassword(input.Username, string(decPassword))
 	if err != nil {
