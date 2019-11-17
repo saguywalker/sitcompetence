@@ -1,6 +1,9 @@
 package api
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -52,7 +55,29 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err = a.App.CheckPassword(input.Username, input.Password)
+	decPassword, err := hex.DecodeString(input.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	iv, err := hex.DecodeString("00112233445566778899aabbccddeeff")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+
+	}
+
+	block, err := aes.NewCipher(a.App.Config.SecretKey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	mode := cipher.NewCBCDecrypter(block, iv)
+	mode.CryptBlocks(decPassword, decPassword)
+
+	user, err = a.App.CheckPassword(input.Username, string(decPassword))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return

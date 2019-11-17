@@ -1,8 +1,6 @@
 package app
 
 import (
-	// "crypto/sha256"
-	// "encoding/json"
 	"fmt"
 
 	"github.com/jtblin/go-ldap-client"
