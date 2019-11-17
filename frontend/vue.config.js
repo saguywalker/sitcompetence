@@ -4,7 +4,6 @@ if (process.env.NODE_ENV === "production") {
 } else {
 	process.env.VUE_APP_API_URL = "http://localhost:3000/api";
 }
-console.log(process.env.VUE_APP_API_URL);
 
 module.exports = {
 	configureWebpack: {

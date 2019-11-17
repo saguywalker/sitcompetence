@@ -120,15 +120,6 @@ export const getCiphertext = (message, key) => {
 	return encodeHex;
 };
 
-export const getCiphertextBase64 = (message, key) => {
-	const base64 = CryptoJS.AES.encrypt(message, key).toString();
-	return base64;
-};
-
-export const getSecretBase64 = (sk) => {
-	return btoa(sk);
-};
-
 export const getSHA256Message = (message) => SHA256(message).toString();
 
 export const getLoginToken = () => {
