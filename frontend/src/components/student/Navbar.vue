@@ -15,10 +15,11 @@
 		<div class="mynavbar-main">
 			<div>
 				<router-link
+					v-if="false"
 					:to="{ name: 'dashboard' }"
 					class="item-link"
 				>
-					Dashboard
+					Profile
 				</router-link>
 				<router-link
 					:to="{ name: 'activity' }"

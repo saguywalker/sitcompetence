@@ -28,13 +28,16 @@
 			<div class="portfolio-section">
 				<aside class="profile-bar">
 					<div class="profile-header">
-						<base-image :size="resizeImage" />
+						<base-image
+							:src="img"
+							:size="resizeImage"
+						/>
 						<div class="name">
 							<h5>{{ user }}</h5>
 						</div>
 					</div>
 					<p class="profile-description">
-						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
+						{{ motto }}
 					</p>
 				</aside>
 				<div class="portfolio-content">
@@ -116,7 +119,6 @@
 		<footer class="page-footer">
 			<div class="wrapper">
 				This is a footer.<br>Made with heart by SIT-competence team 💖.
-				{{ eviden }}
 			</div>
 		</footer>
 	</div>
@@ -180,14 +182,20 @@ export default {
 		user() {
 			return this.sharePortfolio.firstname;
 		},
-		eviden() {
-			return atob(this.sharePortfolio.evidence);
+		img() {
+			return this.sharePortfolio.addtional.profile_picture;
+		},
+		motto() {
+			return this.sharePortfolio.addtional.motto;
 		}
+	},
+	created() {
+		this.filterPortfolio();
 	},
 	methods: {
 		filterBySemester,
 		filterPortfolio() {
-			this.portfolios = this.filterBySemester(this.statePortfolios.result, this.selectedSemester);
+			this.portfolios = this.filterBySemester(this.statePortfolios, this.selectedSemester);
 			this.hasCompetence = this.portfolios.length !== 0;
 		},
 		getCompetenceNameById(id) {

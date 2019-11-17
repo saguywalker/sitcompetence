@@ -77,7 +77,7 @@
 						</div>
 					</div>
 					<p class="profile-description">
-						Lorem ipsum dolor, sit amet consectetur adipisicing fdfdelit. Voluptatum quidem hic sequi distinctio consectetur pariatur nostrum nesciunt, culpa quis quaerat saepe laborum officia! Impedit non suscipit consequuntur nostrum rerum temporibus?
+						{{ user.motto }}
 					</p>
 				</aside>
 				<div class="portfolio-content">
@@ -156,6 +156,16 @@
 					</div>
 				</div>
 			</div>
+			<div v-if="show">
+				<h4 class="mb-2">
+					Blockchain Response from SIT-Competence
+				</h4>
+				<highlight-code
+					lang="javascript"
+				>
+					{{ evidence }}
+				</highlight-code>
+			</div>
 		</section>
 	</div>
 </template>
@@ -219,6 +229,9 @@ export default {
 			}
 
 			return "70";
+		},
+		evidence() {
+			return atob(this.verify[0].evidence);
 		}
 	},
 	async created() {
@@ -244,6 +257,7 @@ export default {
 		filterPortfolio() {
 			this.portfolios = this.filterBySemester(this.statePortfolios.result, this.selectedSemester);
 			this.hasCompetence = this.portfolios.length !== 0;
+			this.$store.dispatch("portfolio/clearVerify");
 		},
 		onOpen() {
 			this.$refs.portPopover.$emit("open");

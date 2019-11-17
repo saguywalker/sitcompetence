@@ -1,5 +1,5 @@
 import { AdminActivity } from "@/services";
-import { getEncryptedHex } from "@/helpers";
+import { signMessage } from "@/helpers";
 import {
 	LOAD_POST_ACTIVITIES,
 	LOAD_SAVE_ACTIVITIES,
@@ -92,14 +92,14 @@ const actions = {
 	async submitApprove({ commit }, data) {
 		const payload = data.approvedStudents.map((student) => {
 			return {
-				student_id: student.student_id,
-				activity_id: data.activityId
+				activity_id: data.activityId,
+				student_id: student.student_id
 			};
 		});
 
 		const	response = await AdminActivity.postApproveActivity({
-			...payload,
-			sk: getEncryptedHex(data.sk)
+			signature: signMessage(payload, data.sk),
+			activities: payload
 		});
 		if (response.status === 200) {
 			commit(APPROVE_ACTIVITY, response.data);

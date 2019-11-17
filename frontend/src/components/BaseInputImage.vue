@@ -33,12 +33,23 @@ export default {
 		size: {
 			type: String,
 			default: "100"
+		},
+		src: {
+			type: String,
+			default: ""
 		}
 	},
 	data() {
 		return {
-			previewImageSrc: "https://via.placeholder.com/100"
+			previewImageSrc: ""
 		};
+	},
+	created() {
+		if (this.src.length !== 0) {
+			this.previewImageSrc = this.src;
+		} else {
+			this.previewImageSrc = "https://via.placeholder.com/100";
+		}
 	},
 	methods: {
 		handleUpload(e) {

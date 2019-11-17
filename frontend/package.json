@@ -30,6 +30,7 @@
     "eslint-config-maqe": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-vue": "^5.0.0",
+    "highlight.js": "^9.16.2",
     "js-cookie": "^2.2.1",
     "js-sha256": "^0.9.0",
     "node-sass": "^4.12.0",
@@ -39,6 +40,7 @@
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0",
     "vue-acl": "^4.1.5",
+    "vue-highlight.js": "^3.1.0",
     "vue-progressbar": "^0.7.5",
     "vue-template-compiler": "^2.6.10"
   },

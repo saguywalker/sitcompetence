@@ -10,7 +10,7 @@
 				v-model="selectedTab"
 				content-class="mt-3"
 			>
-				<b-tab title="Dashboard" />
+				<!-- <b-tab title="Dashboard" /> -->
 				<b-tab title="Profile" />
 			</b-tabs>
 			<keep-alive>
@@ -20,19 +20,19 @@
 	</div>
 </template>
 <script>
-import DashboardContent from "@/components/student/DashboardContent.vue";
+// import DashboardContent from "@/components/student/DashboardContent.vue";
 import DashboardProfile from "@/components/student/DashboardProfile.vue";
 import { getLoginUser } from "@/helpers";
 
 export default {
 	components: {
-		DashboardContent,
+		// DashboardContent,
 		DashboardProfile
 	},
 	data() {
 		return {
 			selectedTab: 0,
-			tabs: ["content", "profile"]
+			tabs: ["profile"]
 		};
 	},
 	computed: {

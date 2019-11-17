@@ -256,8 +256,9 @@ export default {
 		selectAllRows() {
 			this.$refs.selectableTable.selectAllRows();
 		},
-		clearSelected() {
+		async clearSelected() {
 			this.$refs.selectableTable.clearSelected();
+			await this.$store.dispatch("giveBadge/updateSelectedStudents", []);
 		},
 		handleSearch() {
 			const searchOption = {

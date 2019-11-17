@@ -9,11 +9,12 @@
 					<div class="setting card">
 						<base-input-image
 							v-model="userData.profile_picture"
-							label="Upload Profile Image"
+							:src="profilePic"
+							:label="inputImageLabel"
 						/>
 						<b-form-group
+							:label="inputDescLabel"
 							class="mt-3"
-							label="Enter your description"
 							label-for="input-2"
 						>
 							<b-form-textarea
@@ -42,6 +43,7 @@
 </style>
 <script>
 import BaseInputImage from "@/components/BaseInputImage.vue";
+import { getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -63,7 +65,22 @@ export default {
 		},
 		isError() {
 			return !this.userData.profile_picture && this.userData.motto.length === 0;
+		},
+		user() {
+			return getLoginUser();
+		},
+		profilePic() {
+			return this.user.additional.profile_picture;
+		},
+		inputImageLabel() {
+			return this.profilePic ? "Edit Profile Image" : "Upload Profile Image";
+		},
+		inputDescLabel() {
+			return this.userData.motto.length === 0 ? "Enter your description" : "Edit your description";
 		}
+	},
+	created() {
+		this.userData.motto = this.user.additional.motto;
 	},
 	methods: {
 		async submit() {
