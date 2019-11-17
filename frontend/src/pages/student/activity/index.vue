@@ -26,7 +26,7 @@
 					>
 						<activity-card
 							:activity="activity"
-							:join="hasJoinActivityId(activity,loginUser)"
+							:join="hasJoinActivityId(activity,loginUser.uid)"
 						/>
 					</router-link>
 				</b-col>
