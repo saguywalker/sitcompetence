@@ -84,6 +84,9 @@ func (a *API) SearchCompetences(ctx *app.Context, w http.ResponseWriter, r *http
 
 			collectedBytes, evidence, returnIndex, err := ctx.BlockchainQueryWithParams(params.Encode(), a.App.CurrentPeerIndex, a.Config.Peers)
 			if err != nil {
+				if err.Error() == "does not exists" {
+					return err
+				}
 				return errors.New(string(evidence))
 			}
 
