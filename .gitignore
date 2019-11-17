@@ -12,6 +12,7 @@ initdb.py
 querydb.py
 config2.yaml
 test.go
+docker-compose.yml
 
 #Executable file
 sitcom
