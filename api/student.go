@@ -212,6 +212,10 @@ func (a *API) ViewProfile(w http.ResponseWriter, r *http.Request) {
 
 	student, err := ctx.ViewProfile(w, url, a.App.CurrentPeerIndex, a.Config.Peers)
 	if err != nil {
+		if err.Error() == "does not exists" {
+			http.Error(w, err.Error(), http.StatusOK)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
