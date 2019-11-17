@@ -245,7 +245,7 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		}
 	*/
 
-	var edit model.EditProfile
+	var edit *model.EditProfile
 
 	if err := r.ParseMultipartForm(20 << 20); err != nil {
 		return err
@@ -262,6 +262,11 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 	edit.Motto = r.FormValue("motto")
 
 	if err := ctx.UpdateStudentProfile(edit.ProfilePicture, edit.Motto); err != nil {
+		return err
+	}
+
+	edit, err := ctx.FetchStudentProfile(ctx.User.UserID)
+	if err != nil {
 		return err
 	}
 
