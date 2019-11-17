@@ -1,9 +1,6 @@
 <template>
 	<nav class="mynavbar wrapper">
-		<router-link
-			:to="{ name: 'dashboard' }"
-			class="logo-wrapper"
-		>
+		<div class="logo-wrapper">
 			<base-sitcom-logo
 				:size="60"
 				class="logo"
@@ -11,7 +8,7 @@
 			<p class="text">
 				SIT-Competence
 			</p>
-		</router-link>
+		</div>
 		<div class="mynavbar-main">
 			<div>
 				<router-link
@@ -22,16 +19,16 @@
 					Profile
 				</router-link>
 				<router-link
-					:to="{ name: 'activity' }"
-					class="item-link"
-				>
-					Activity
-				</router-link>
-				<router-link
 					:to="{ name: 'portfolio' }"
 					class="item-link"
 				>
 					Portfolio
+				</router-link>
+				<router-link
+					:to="{ name: 'activity' }"
+					class="item-link"
+				>
+					Activity
 				</router-link>
 			</div>
 			<div>
