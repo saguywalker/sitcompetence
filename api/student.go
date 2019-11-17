@@ -245,7 +245,7 @@ func (a *API) EditProfile(ctx *app.Context, w http.ResponseWriter, r *http.Reque
 		}
 	*/
 
-	var edit model.EditProfile
+	edit := model.EditProfile{}
 
 	if err := r.ParseMultipartForm(20 << 20); err != nil {
 		return err
