@@ -114,12 +114,12 @@ func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64,
 	student.Additional = profile
 	student.Collected = collected
 	student.Evidence = evidence
-/*
-	collectedBytes, err := json.Marshal(student)
-	if err != nil {
-		return nil, err
-	}
-*/
+	/*
+		collectedBytes, err := json.Marshal(student)
+		if err != nil {
+			return nil, err
+		}
+	*/
 	return student, nil
 }
 

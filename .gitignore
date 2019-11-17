@@ -1,7 +1,4 @@
-/node_modules
-ui/node_modules
-ui/admin-sc/node_modules
-ui/student/node_modules
+frontend/node_modules
 yarn.lock
 genkey.go
 
@@ -13,6 +10,7 @@ querydb.py
 config2.yaml
 test.go
 docker-compose.yml
+init.sql
 
 #Executable file
 sitcom
