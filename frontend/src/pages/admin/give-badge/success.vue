@@ -13,11 +13,6 @@
 				</router-link>
 			</div>
 		</div>
-		<div class="box">
-			<h2 class="box-header">
-				Blockchain Status Log
-			</h2>
-		</div>
 	</div>
 </template>
 <style lang="scss">
@@ -52,24 +47,7 @@ export default {
 		...mapState("giveBadge", [
 			"success",
 			"steps"
-		]),
-		...mapState("adminVerify", [
-			"verifyData"
 		])
-	},
-	methods: {
-		testVerify() {
-			this.success.reduce(async (previousPromise, student) => {
-				const payload = {
-					competence_id: student.competence_id,
-					semester: student.semester,
-					student_id: student.student_id
-				};
-				this.rerender++;
-				await previousPromise;
-				return this.$store.dispatch("adminVerify/verifyTransaction", payload);
-			}, Promise.resolve());
-		}
 	}
 };
 </script>
