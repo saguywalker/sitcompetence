@@ -9,7 +9,7 @@ import {
 	EDIT_ACTIVITY_STEP,
 	STUDENT_ROUTE_NAMES
 } from "@/constants";
-import { getLoginUserRole, clearLoginState, isLoggedIn } from "@/helpers";
+import { getLoginUserRole, clearLoginState, isLoggedIn, getLoginUser } from "@/helpers";
 
 Vue.use(Router);
 
@@ -124,6 +124,23 @@ const router = new Router({
 					component: () => import("@/pages/student/portfolio"),
 					meta: {
 						rule: "isStudent"
+					},
+					beforeEnter: async (to, from, next) => {
+						router.app.$Progress.start();
+
+						try {
+							await store.dispatch("portfolio/loadPortfolio", getLoginUser().uid);
+						} catch (err) {
+							router.app.$Progress.fail();
+							router.app.$bvToast.toast(`Cannot load portfolio: ${err.message}`, {
+								title: "Fetching Portfolio Error",
+								variant: "danger",
+								autoHideDelay: 1500
+							});
+						} finally {
+							router.app.$Progress.finish();
+							next();
+						}
 					}
 				}
 			]

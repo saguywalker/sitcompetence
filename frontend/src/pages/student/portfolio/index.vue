@@ -246,27 +246,22 @@ export default {
 			return atob(this.verify[0].evidence);
 		}
 	},
-	async created() {
-		this.$Progress.start();
-
-		try {
-			await this.$store.dispatch("portfolio/loadPortfolio", this.user.uid);
+	created() {
+		// if there is no badge
+		if (this.statePortfolios === false) {
+			this.hasNoDataAtAll = true;
+		} else {
 			this.filterPortfolio();
-			this.hasNoDataAtAll = this.statePortfolios.result.length === 0;
-		} catch (err) {
-			this.$Progress.fail();
-			this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
-				title: "Fetching competences error",
-				variant: "danger",
-				autoHideDelay: 1500
-			});
-		} finally {
-			this.$Progress.finish();
+			this.hasNoDataAtAll = false;
 		}
 	},
 	methods: {
 		filterBySemester,
 		filterPortfolio() {
+			if (this.hasNoDataAtAll) {
+				return;
+			}
+
 			this.portfolios = this.filterBySemester(this.statePortfolios.result, this.selectedSemester);
 			this.hasCompetence = this.portfolios.length !== 0;
 			this.$store.dispatch("portfolio/clearVerify");
