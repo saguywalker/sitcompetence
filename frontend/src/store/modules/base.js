@@ -1,5 +1,5 @@
 import router from "@/router";
-import { getCiphertext, clearLoginState } from "@/helpers";
+import { getCiphertext, getEncryptedHex, clearLoginState } from "@/helpers";
 import { Base, Login, Portfolio } from "@/services";
 import {
 	LOAD_LOGIN_DATA,
@@ -100,8 +100,11 @@ const actions = {
 			commit(LOGOUT);
 			return;
 		}
-		const response = await Login.login(data);
-
+		const payload = {
+			username: data.username,
+			password: getEncryptedHex(data.password)
+		};
+		const response = await Login.login(payload);
 		if (response.status !== 200) {
 			return;
 		}

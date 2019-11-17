@@ -54,7 +54,7 @@
 							id="shareUrl"
 							ref="shareUrlInput"
 							size="sm"
-							:value="`http://localhost:8080/viewProfile/${link}`"
+							:value="`${urlConst}/viewProfile/${link}`"
 						/>
 						<b-button
 							ref="copyBtn"
@@ -159,7 +159,7 @@
 					</div>
 				</div>
 			</div>
-			<div v-if="show">
+			<div v-if="false">
 				<h4 class="mb-2">
 					Blockchain Response from SIT-Competence
 				</h4>
@@ -216,6 +216,9 @@ export default {
 			show: "show",
 			link: "link"
 		}),
+		urlConst() {
+			return process.env.VUE_APP_PROD_URL;
+		},
 		user() {
 			return getLoginUser();
 		},

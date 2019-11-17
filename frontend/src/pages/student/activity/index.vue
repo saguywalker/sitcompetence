@@ -12,7 +12,7 @@
 				<b-col
 					v-for="(activity, index) in activities"
 					:key="`${activity.activity_id}${index}`"
-					:class="[hasJoinActivityId(activity, loginUser) ? 'disable' : '']"
+					:class="[hasJoinActivityId(activity, loginUser.uid) ? 'disable' : '']"
 					lg="6"
 				>
 					<router-link
@@ -26,7 +26,7 @@
 					>
 						<activity-card
 							:activity="activity"
-							:join="hasJoinActivityId(activity,loginUser)"
+							:join="hasJoinActivityId(activity,loginUser.uid)"
 						/>
 					</router-link>
 				</b-col>
@@ -39,6 +39,7 @@
 </style>
 <script>
 import ActivityCard from "@/components/student/ActivityCard.vue";
+import { getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -50,7 +51,7 @@ export default {
 			"activities"
 		]),
 		loginUser() {
-			return sessionStorage.getItem("user");
+			return getLoginUser();
 		}
 	},
 	methods: {

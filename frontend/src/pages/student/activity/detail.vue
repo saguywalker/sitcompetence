@@ -37,6 +37,7 @@
 			</li>
 		</ul>
 		<b-button
+			:disabled="hasJoinActivityId(activityDetail, loginUser)"
 			variant="primary"
 			@click="joinActivity"
 		>
@@ -112,6 +113,13 @@ export default {
 		}
 	},
 	methods: {
+		hasJoinActivityId(activity, stdId) {
+			if (activity.attendees) {
+				return activity.attendees.some((student) => student.student_id === stdId);
+			}
+
+			return false;
+		},
 		async joinActivity() {
 			this.$Progress.start();
 

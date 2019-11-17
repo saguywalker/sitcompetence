@@ -72,7 +72,7 @@ const router = new Router({
 				{
 					path: "/",
 					name: "student",
-					redirect: { name: "dashboard" },
+					redirect: { name: "portfolio" },
 					meta: {
 						rule: "isStudent"
 					}
