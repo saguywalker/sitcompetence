@@ -34,7 +34,7 @@ const actions = {
 					...response.data
 				}
 			};
-			const encryptedUser = getCiphertext(userData, process.env.VUE_APP_USER_DATA_KEY);
+			const encryptedUser = getCiphertext(JSON.stringify(userData), process.env.VUE_APP_USER_DATA_KEY);
 			localStorage.setItem("user", encryptedUser);
 
 			commit(UPDATE_PROFILE, response.data);
