@@ -49,6 +49,7 @@ func New(a *app.App) (api *API, err error) {
 
 // Init routes api with handler
 func (a *API) Init(r *mux.Router) {
+	r.HandleFunc("/", a.Index).Methods("GET")
 	r.Handle("/giveBadge", a.handler(a.GiveBadge)).Methods("POST")
 	r.Handle("/approveActivity", a.handler(a.ApproveActivity)).Methods("POST")
 	r.Handle("/verify", a.handler(a.VerifyTX)).Methods("POST")
@@ -271,4 +272,9 @@ func (a *API) initKeyPair() error {
 	}
 
 	return nil
+}
+
+// Index return status 200
+func (a *API) Index(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }
