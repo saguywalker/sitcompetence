@@ -71,13 +71,16 @@
 			<div class="portfolio-section">
 				<aside class="profile-bar">
 					<div class="profile-header">
-						<base-image :size="resizeImage" />
+						<base-image
+							:src="profilePic"
+							:size="resizeImage"
+						/>
 						<div class="name">
 							<h5>{{ user.username }}</h5>
 						</div>
 					</div>
 					<p class="profile-description">
-						{{ user.motto }}
+						{{ motto }}
 					</p>
 				</aside>
 				<div class="portfolio-content">
@@ -215,6 +218,12 @@ export default {
 		}),
 		user() {
 			return getLoginUser();
+		},
+		profilePic() {
+			return this.user.additional.profile_picture;
+		},
+		motto() {
+			return this.user.additional.motto;
 		},
 		resizeVerifyButton() {
 			if (this.windowWidth >= 768) {

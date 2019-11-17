@@ -1,3 +1,4 @@
+import { getLoginUser, getCiphertext } from "@/helpers";
 import { Dashboard } from "@/services";
 import {
 	UPDATE_PROFILE
@@ -26,6 +27,16 @@ const actions = {
 		});
 		const response = await Dashboard.editProfile(formData);
 		if (response.status === 200) {
+			const user = getLoginUser();
+			const userData = {
+				...user,
+				additional: {
+					...response.data
+				}
+			};
+			const encryptedUser = getCiphertext(userData, process.env.VUE_APP_USER_DATA_KEY);
+			localStorage.setItem("user", encryptedUser);
+
 			commit(UPDATE_PROFILE, response.data);
 		}
 	}
