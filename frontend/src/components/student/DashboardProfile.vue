@@ -52,6 +52,7 @@ export default {
 	},
 	data() {
 		return {
+			profilePic: "",
 			userData: {
 				profile_picture: null,
 				motto: ""
@@ -69,9 +70,6 @@ export default {
 		user() {
 			return getLoginUser();
 		},
-		profilePic() {
-			return this.user.additional.profile_picture;
-		},
 		inputImageLabel() {
 			return this.profilePic ? "Edit Profile Image" : "Upload Profile Image";
 		},
@@ -80,21 +78,40 @@ export default {
 		}
 	},
 	created() {
+		this.profilePic = this.user.additional.profile_picture;
 		this.userData.motto = this.user.additional.motto;
 	},
 	methods: {
 		async submit() {
 			this.$Progress.start();
 			try {
-				await this.$store.dispatch("dashboard/updateProfile", this.userData);
+				let payload = {};
+				if (this.userData.profile_picture === null && this.profilePic.length !== 0) {
+					payload = {
+						profile_picture: this.profilePic,
+						motto: this.userData.motto
+					};
+				} else {
+					payload = {
+						...this.userData
+					};
+				}
+
+				await this.$store.dispatch("dashboard/updateProfile", payload);
+				this.$bvToast.toast("Edit successfully", {
+					title: "Edit Student Data",
+					variant: "success",
+					autoHideDelay: 1500
+				});
 			} catch (err) {
 				this.$Progress.fail();
-				this.$bvToast.toast(`Fetching data problem: ${err.message}`, {
-					title: "Fetching competences error",
+				this.$bvToast.toast(`Edit profile: ${err.message}`, {
+					title: "Edit profile error",
 					variant: "danger",
 					autoHideDelay: 1500
 				});
 			} finally {
+				this.userData.profile_picture = null;
 				this.$Progress.finish();
 			}
 		},

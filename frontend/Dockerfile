@@ -2,13 +2,13 @@ FROM node:10.15.3 as build-stage
 WORKDIR /app
 RUN ls
 RUN echo $PWD
-COPY ./ ./                                                                                                                                                 
+COPY ./ ./
 RUN ls
 EXPOSE 8080
 COPY ./ .
 RUN ls
 RUN yarn
-RUN yarn build 
+RUN yarn build
 
 FROM nginx:latest as production-stage
 RUN mkdir /app
