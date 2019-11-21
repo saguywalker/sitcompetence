@@ -24,7 +24,7 @@ export function clearLoginCookie() {
 }
 
 export function clearLoginState() {
-	Cookies.remove("x-session-token", { path: "/" });
+	Cookies.remove("x-session-token");
 	localStorage.removeItem("user");
 }
 
