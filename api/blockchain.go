@@ -147,10 +147,13 @@ func (a *API) ApproveActivity(ctx *app.Context, w http.ResponseWriter, r *http.R
 }
 
 // VerifyTX verifies whethear a corresponding
-func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request) error {
+func (a *API) VerifyTX(w http.ResponseWriter, r *http.Request) {
+	ctx := a.App.NewContext().WithRemoteAddress(r.RemoteAddr)
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	defer r.Body.Close()
 
@@ -159,7 +162,8 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 	isExists, evidence, currentIndex, err := ctx.VerifyTX(body, a.App.CurrentPeerIndex, a.Config.Peers)
 	a.App.CurrentPeerIndex = currentIndex
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	mapper := make(map[string]interface{})
@@ -168,12 +172,11 @@ func (a *API) VerifyTX(ctx *app.Context, w http.ResponseWriter, r *http.Request)
 
 	mapperBytes, err := json.Marshal(mapper)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	w.Write(mapperBytes)
-
-	return nil
 }
 
 // TxResponse contains tx and its log
