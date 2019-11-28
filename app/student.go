@@ -66,7 +66,7 @@ func (ctx *Context) DeleteStudent(studentID string) error {
 
 // ShareProfile generate url for a student's portfolio
 func (ctx *Context) ShareProfile(studentID string) (string, error) {
-	expire := time.Now().Add(time.Hour * 24 * 7)
+	expire := time.Now().UTC().Add(time.Minute)
 	expireBytes, err := expire.MarshalBinary()
 	if err != nil {
 		return "", err
@@ -86,6 +86,7 @@ func (ctx *Context) ShareProfile(studentID string) (string, error) {
 
 // ViewProfile view a profile from url
 func (ctx *Context) ViewProfile(w http.ResponseWriter, url string, index uint64, peers []string) (*model.Student, error) {
+	ctx.Logger.Infof("url: %s\n", url)
 	if err := ctx.Database.CheckExpire(url); err != nil {
 		return nil, err
 	}
