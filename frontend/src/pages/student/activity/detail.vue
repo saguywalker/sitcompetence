@@ -133,6 +133,7 @@ export default {
 					variant: "success",
 					autoHideDelay: 1500
 				});
+				await this.$store.dispatch("activity/loadActivities", true);
 				this.$router.push({ name: "activity" });
 			} catch (err) {
 				this.$bvToast.toast(`Join activity problem: ${err.message}`, {

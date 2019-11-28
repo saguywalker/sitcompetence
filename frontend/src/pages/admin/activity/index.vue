@@ -80,6 +80,14 @@
 					</router-link>
 				</div>
 			</div>
+			<div
+				v-if="approveActivities.length !== 0"
+				class="box"
+			>
+				<h2 class="box-header">
+					Approved activity
+				</h2>
+			</div>
 		</section>
 	</div>
 </template>
@@ -98,7 +106,8 @@ export default {
 	computed: {
 		...mapGetters("adminActivity", [
 			"postedActivities",
-			"savedActivities"
+			"savedActivities",
+			"approveActivities"
 		])
 	},
 	async created() {

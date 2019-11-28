@@ -6,7 +6,8 @@
 
 	.nav-mobile {
 		position: fixed;
-		top: rem(75);
+		top: 0;
+		padding-top: rem(75);
 		display: flex;
 		flex-direction: column;
 		align-items: center;

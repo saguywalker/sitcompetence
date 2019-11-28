@@ -19,7 +19,7 @@
 						}"
 					>
 						<b-button
-							:disabled="activityAttendeeNumber === 0"
+							:disabled="activityAttendeeNumber === 0 || activityDetail.organizer !== loginUserId"
 							size="sm"
 							variant="admin-primary"
 						>
@@ -40,6 +40,7 @@
 						</b-button>
 					</router-link>
 					<b-button
+						:disabled="activityDetail.organizer !== loginUserId"
 						size="sm"
 						variant="danger"
 						@click="deleteActivity"
@@ -109,7 +110,7 @@
 <script>
 import IconArrow from "@/components/icons/IconArrow.vue";
 import loading from "@/plugin/loading";
-import { getMonthNameByDateFormat, getYearByDateFormat } from "@/helpers";
+import { getMonthNameByDateFormat, getYearByDateFormat, getLoginUser } from "@/helpers";
 import { mapState, mapGetters } from "vuex";
 
 export default {
@@ -157,6 +158,9 @@ export default {
 			}
 
 			return 0;
+		},
+		loginUserId() {
+			return getLoginUser().uid;
 		}
 	},
 	async created() {

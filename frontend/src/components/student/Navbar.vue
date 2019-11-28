@@ -1,5 +1,11 @@
 <template>
-	<nav class="mynavbar wrapper">
+	<nav
+		:class="[
+			'mynavbar',
+			'wrapper',
+			isNavMobileOpen ? 'navopen' : ''
+		]"
+	>
 		<div class="logo-wrapper">
 			<base-sitcom-logo
 				:size="60"

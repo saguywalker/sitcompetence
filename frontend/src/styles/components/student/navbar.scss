@@ -1,12 +1,19 @@
 @import "../../cores.scss";
 
 .mynavbar {
+	position: relative;
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: space-between;
 	height: rem(75);
 	padding: rem(11) rem(16) rem(11) rem(4);
+	z-index: $navbar-z;
+
+	&.navopen {
+		position: fixed;
+		top: 0;
+	}
 
 	&-main {
 		display: none;

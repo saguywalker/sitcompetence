@@ -116,15 +116,15 @@ const getters = {
 	savedActivities: (stateData) => {
 		return stateData.activities.filter((activity) => !activity.student_site);
 	},
+	approveActivities: (stateData) => {
+		return stateData.activities.filter((activity) => activity.approved);
+	},
 	getActivityById: (stateData) => (id) => {
 		return stateData.activities.find((activity) => activity.activity_id === id);
 	},
 	// eslint-disable-next-line no-shadow
 	getApprovedActivitiesBySemester: (state, getters) => (semester) => {
 		return getters.getApprovedActivities.filter((activity) => activity.semester === semester);
-	},
-	getApprovedActivities: (stateData) => {
-		return stateData.activities.filter((activity) => activity.approved);
 	}
 };
 

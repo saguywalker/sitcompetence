@@ -12,7 +12,6 @@
 				<b-col
 					v-for="(activity, index) in activities"
 					:key="`${activity.activity_id}${index}`"
-					:class="[hasJoinActivityId(activity, loginUser.uid) ? 'disable' : '']"
 					lg="6"
 				>
 					<router-link
@@ -26,7 +25,7 @@
 					>
 						<activity-card
 							:activity="activity"
-							:join="hasJoinActivityId(activity,loginUser.uid)"
+							:join="hasJoinActivityId(activity,loginUserId)"
 						/>
 					</router-link>
 				</b-col>
@@ -50,8 +49,8 @@ export default {
 		...mapState("activity", [
 			"activities"
 		]),
-		loginUser() {
-			return getLoginUser();
+		loginUserId() {
+			return getLoginUser().uid;
 		}
 	},
 	methods: {

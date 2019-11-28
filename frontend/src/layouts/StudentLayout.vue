@@ -17,22 +17,16 @@
 				<div class="main-navigation">
 					<div class="link-group">
 						<router-link
-							:to="{ name: 'dashboard' }"
+							:to="{ name: 'portfolio' }"
 							class="item-link"
 						>
-							Dashboard
+							Portfolio
 						</router-link>
 						<router-link
 							:to="{ name: 'activity' }"
 							class="item-link"
 						>
 							Activity
-						</router-link>
-						<router-link
-							:to="{ name: 'portfolio' }"
-							class="item-link"
-						>
-							Portfolio
 						</router-link>
 					</div>
 					<div class="navigation-secondary">

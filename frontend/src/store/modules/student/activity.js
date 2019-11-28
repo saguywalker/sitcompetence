@@ -28,8 +28,8 @@ const mutations = {
 };
 
 const actions = {
-	async loadActivities({ commit, state: stateData }) {
-		if (stateData.activities.length > 0) {
+	async loadActivities({ commit, state: stateData }, data) {
+		if (stateData.activities.length > 0 && !data) {
 			return false;
 		}
 
