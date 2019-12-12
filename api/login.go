@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/saguywalker/sitcompetence/app"
 	"github.com/saguywalker/sitcompetence/model"
@@ -55,6 +56,15 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check for blocking login attempts
+	if loginLog, exists := a.App.FailedLogin[input.Username]; exists {
+		if loginLog.Counter > 5 && loginLog.LoginTime.Add(time.Minute*10).Local().Before(time.Now()) {
+			fmt.Println("blocking login attempts")
+			http.Error(w, "login attempt is blocked", http.StatusMethodNotAllowed)
+			return
+		}
+	}
+
 	decPassword, err := hex.DecodeString(input.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,8 +91,19 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err = a.App.CheckPassword(input.Username, string(decPassword))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		fmt.Println("invalid username or password")
+		if value, exists := a.App.FailedLogin[input.Username]; exists {
+			a.App.FailedLogin[input.Username].Counter = value.Counter + 1
+			a.App.FailedLogin[input.Username].LoginTime = time.Now()
+		} else {
+			a.App.FailedLogin[input.Username] = &model.LoginAttempt{Counter: 0, LoginTime: time.Now()}
+		}
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
+	}
+
+	if _, exists := a.App.FailedLogin[input.Username]; exists {
+		a.App.FailedLogin[input.Username] = nil
 	}
 
 	ctx := a.App.NewContext()

@@ -15,6 +15,7 @@ import (
 type App struct {
 	Config           *Config
 	Database         *db.Database
+	FailedLogin      map[string]*model.LoginAttempt
 	UserSession      *sessions.CookieStore
 	CurrentPeerIndex uint64
 	S3               *db.S3
@@ -63,6 +64,7 @@ func New() (app *App, err error) {
 	}
 
 	app.CurrentPeerIndex = 0
+	app.FailedLogin = make(map[string]*model.LoginAttempt)
 
 	return app, err
 }

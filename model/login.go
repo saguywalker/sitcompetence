@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 // Login contain username and password
 type Login struct {
 	Username string `json:"username"`
@@ -12,4 +14,10 @@ func NewLogin(username, password string) *Login {
 		Username: username,
 		Password: password,
 	}
+}
+
+// LoginAttempt log failed login attempts
+type LoginAttempt struct {
+	Counter   uint16 `json:"counter"`
+	LoginTime time.Time
 }
