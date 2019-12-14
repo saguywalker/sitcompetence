@@ -95,7 +95,7 @@ const actions = {
 
 		return response;
 	},
-	async doLogin({ commit }, data) {
+	async doLogin({ dispatch, commit }, data) {
 		if (data.username === "" && data.password === "") {
 			commit(LOGOUT);
 			return;
@@ -106,6 +106,21 @@ const actions = {
 		};
 		const response = await Login.login(payload);
 		if (response.status !== 200) {
+			if (response.status === 401) {
+				const notification = {
+					title: "Login Failed",
+					message: "Invalid username or password",
+					variant: "danger"
+				};
+				dispatch("addNotification", notification);
+			} else if (response.status === 403) {
+				const notification = {
+					title: "Login Blocked",
+					message: "You have been blocked for 3 minutes",
+					variant: "danger"
+				};
+				dispatch("addNotification", notification);
+			}
 			return;
 		}
 

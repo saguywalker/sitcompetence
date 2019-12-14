@@ -18,3 +18,16 @@
 <style lang="scss">
 @import "@/styles/pages/error/404.scss";
 </style>
+<script>
+import { clearLoginState } from "@/helpers";
+
+export default {
+	beforeRouteLeave(to, from, next) {
+		this.clearLoginState();
+		next();
+	},
+	methods: {
+		clearLoginState
+	}
+};
+</script>

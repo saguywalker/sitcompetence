@@ -5,6 +5,8 @@
 			isShowDetailMobile ? 'mobile-active' : ''
 		]"
 	>
+		<notification />
+
 		<div
 			class="detail"
 			lg="8"
@@ -77,9 +79,13 @@
 @import "@/styles/pages/login.scss";
 </style>
 <script>
+import Notification from "@/components/Notification.vue";
 import loading from "@/plugin/loading";
 
 export default {
+	components: {
+		Notification
+	},
 	data() {
 		return {
 			userName: "",

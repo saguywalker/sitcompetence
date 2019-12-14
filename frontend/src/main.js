@@ -11,6 +11,7 @@ import BaseSitcomLogo from "@/components/BaseSitcomLogo.vue";
 import BaseInputText from "@/components/BaseInputText.vue";
 import BasePageStep from "@/components/admin/BasePageStep.vue";
 import acl from "@/plugin/acl";
+import vSelectPage, { SelectPage } from "v-selectpage";
 import "@/styles/global.scss";
 import "highlight.js/styles/default.css";
 import "./registerServiceWorker";
@@ -29,7 +30,11 @@ Vue.use(VueHighlightJS, {
 		javascript
 	}
 });
+Vue.use(vSelectPage, {
+	language: "en"
+});
 
+Vue.component("v-select-page", SelectPage);
 Vue.component("base-input-text", BaseInputText);
 Vue.component("base-page-step", BasePageStep);
 Vue.component("base-image", BaseImage);

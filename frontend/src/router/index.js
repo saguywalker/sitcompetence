@@ -401,11 +401,6 @@ const router = new Router({
 			component: () => import("@/pages/error/403.vue"),
 			meta: {
 				rule: "isPublic"
-			},
-			beforeEnter: (to, from, next) => {
-				// Force user to login again when he/she try to access without authentication
-				clearLoginState();
-				next();
 			}
 		}
 	]
@@ -417,6 +412,12 @@ router.beforeEach((to, from, next) => {
 	const role = getLoginUserRole();
 
 	if (to.name !== "login" && to.name !== "error404" && to.name !== "share-portfolio" && !isLogin) {
+		const notification = {
+			title: "SESSION TIMEOUT",
+			message: "Please login again",
+			variant: "danger"
+		};
+		store.dispatch("base/addNotification", notification);
 		next({ name: "login" });
 	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
 		next({ name: "admin" });
