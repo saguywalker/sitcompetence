@@ -1,11 +1,17 @@
 <template>
 	<div class="activity-approve">
 		<section class="section">
+			<div class="page-header-admin">
+				<h2 class="title">
+					Select student to approve
+				</h2>
+			</div>
 			<v-select-page
 				v-model="select"
 				:data="items"
 				:tb-columns="columns"
 				:multiple="true"
+				:width="tableSize"
 				title="Select student to approve"
 				placeholder="Click here to select"
 				key-field="student_id"
@@ -55,8 +61,10 @@
 <script>
 import loading from "@/plugin/loading";
 import { mapState, mapGetters } from "vuex";
+import { widthSize } from "@/helpers/mixins";
 
 export default {
+	mixins: [widthSize],
 	data() {
 		return {
 			isBusy: false,
@@ -100,6 +108,13 @@ export default {
 			}
 
 			return false;
+		},
+		tableSize() {
+			if (this.windowWidth > 992) {
+				return 700;
+			}
+
+			return 300;
 		}
 	},
 	async created() {

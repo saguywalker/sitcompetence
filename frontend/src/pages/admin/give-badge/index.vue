@@ -5,6 +5,7 @@
 			:data="items"
 			:tb-columns="columns"
 			:multiple="true"
+			:width="tableSize"
 			title="Select student to give"
 			placeholder="Click here to select"
 			key-field="student_id"
@@ -21,9 +22,11 @@
 @import "@/styles/pages/admin/give-badge-main.scss";
 </style>
 <script>
+import { widthSize } from "@/helpers/mixins";
 import { mapState } from "vuex";
 
 export default {
+	mixins: [widthSize],
 	data() {
 		return {
 			columns: [
@@ -54,6 +57,13 @@ export default {
 		},
 		step() {
 			return this.$route.meta.step;
+		},
+		tableSize() {
+			if (this.windowWidth > 992) {
+				return 700;
+			}
+
+			return 300;
 		}
 	},
 	async created() {

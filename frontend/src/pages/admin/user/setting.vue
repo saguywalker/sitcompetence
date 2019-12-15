@@ -11,26 +11,22 @@
 						variant="admin-primary"
 						size="sm"
 					>
-						Save secret key
+						Save secret key in your local device
 					</b-button>
 					<b-collapse
 						id="saveSecret"
 						class="mt-2"
 					>
 						<b-card>
-							<p class="card-text">
-								Collapse contents Here
-							</p>
+							<h4>Save secret key in your device</h4>
 							<b-form-group
-								description="For the security reasons the content of a key cannot be modified once added."
+								description="This input has an auto save feature."
 								label-for="secret-key"
-								:invalid-feedback="errorMessage"
 								class="mt-4"
 							>
 								<b-form-textarea
 									id="secret-key"
 									v-model="skKey"
-									:state="errorStatus"
 									placeholder="Enter your secret key here ..."
 									class="mt-2"
 									rows="5"
@@ -43,3 +39,25 @@
 		</section>
 	</div>
 </template>
+<script>
+import { getSecretKey } from "@/helpers";
+
+export default {
+	data() {
+		return {
+			skKey: ""
+		};
+	},
+	watch: {
+		skKey() {
+			localStorage.setItem("sck", this.skKey);
+		}
+	},
+	created() {
+		this.skKey = this.getSecretKey();
+	},
+	methods: {
+		getSecretKey
+	}
+};
+</script>

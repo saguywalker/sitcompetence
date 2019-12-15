@@ -248,7 +248,7 @@ export default {
 	},
 	created() {
 		// if there is no badge
-		if (this.statePortfolios === false) {
+		if (this.statePortfolios.length === 0) {
 			this.hasNoDataAtAll = true;
 		} else {
 			this.filterPortfolio();

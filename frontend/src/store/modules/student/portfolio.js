@@ -45,6 +45,7 @@ const actions = {
 		dispatch("clearPortfolio");
 		const	response = await Base.getBadgesByStudentId(id);
 		if (response.status === 200) {
+			console.log(response.data);
 			commit(LOAD_PORTFOLIO, response.data);
 		}
 
