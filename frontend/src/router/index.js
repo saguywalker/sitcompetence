@@ -418,7 +418,6 @@ router.beforeEach((to, from, next) => {
 			variant: "danger"
 		};
 		store.dispatch("base/addNotification", notification, { root: true });
-		console.log("session time");
 		next({ name: "login" });
 	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
 		next({ name: "admin" });
