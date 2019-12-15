@@ -21,8 +21,9 @@ services:
       - postgres
 
   nginx:
-    context: .
-    build: "./frontend/local-dockerfile"
+    build:
+      context: .
+      dockerfile: "./frontend/local-dockerfile"
     ports:
       - "80:80"
       - "8080:8080"
