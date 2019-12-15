@@ -11,6 +11,7 @@ config2.yaml
 test.go
 docker-compose.yml
 init.sql
+initdb.sql
 
 #Executable file
 sitcom
