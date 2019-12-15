@@ -1,11 +1,8 @@
 FROM node:10.15.3 as build-stage
 WORKDIR /app
-RUN ls
 RUN echo $PWD
 COPY ./ ./
-RUN ls
+RUN ls && \
+    yarn && \
+    yarn build
 EXPOSE 8080
-COPY ./ .
-RUN ls
-RUN yarn
-RUN yarn build
