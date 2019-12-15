@@ -96,7 +96,7 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 			a.App.FailedLogin[input.Username].Counter = value.Counter + 1
 			a.App.FailedLogin[input.Username].LoginTime = time.Now()
 		} else {
-			a.App.FailedLogin[input.Username] = &model.LoginAttempt{Counter: 0, LoginTime: time.Now()}
+			a.App.FailedLogin[input.Username] = &model.LoginAttempt{Counter: 1, LoginTime: time.Now()}
 		}
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return

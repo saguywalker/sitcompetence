@@ -50,40 +50,41 @@ func (ctx *Context) ApproveActivity(activity *model.AttendedActivity, index uint
 
 	activity.TransactionID = tx
 
-	if err := ctx.Database.ApproveAttended(activity); err != nil {
+	// remove successful approved activity
+	if err := ctx.Database.DeleteAttendedActivityByStudentID(activity.ActivityID, activity.StudentID); err != nil {
 		return tx, index, err
 	}
 
 	index = (index + 1) % uint64(len(peers))
-	/*
-		badgesID, err := ctx.Database.GetCompetenceReward(activity.ActivityID)
+
+	badgesID, err := ctx.Database.GetCompetenceReward(activity.ActivityID)
+	if err != nil {
+		return tx, index, err
+	}
+
+	activityDetail, err := ctx.Database.GetActivityByID(activity.ActivityID)
+	if err != nil {
+		return tx, index, err
+	}
+
+	for _, badgeID := range badgesID {
+		badge := model.CollectedCompetence{
+			CompetenceID: badgeID,
+			Giver:        activity.Approver,
+			Semester:     activityDetail.Semester,
+			StudentID:    activity.StudentID,
+		}
+		badgeBytes, err := json.Marshal(badge)
+
 		if err != nil {
 			return tx, index, err
 		}
-
-		activityDetail, err := ctx.Database.GetActivityByID(activity.ActivityID)
-		if err != nil {
+		if _, err := ctx.broadcastTX("GiveBadge", badgeBytes, index, peers, webSK); err != nil {
 			return tx, index, err
 		}
+		index = (index + 1) % uint64(len(peers))
+	}
 
-		for _, badgeID := range badgesID {
-			badge := model.CollectedCompetence{
-				CompetenceID: badgeID,
-				Giver:        activity.Approver,
-				Semester:     activityDetail.Semester,
-				StudentID:    activity.StudentID,
-			}
-			badgeBytes, err := json.Marshal(badge)
-
-			if err != nil {
-				return tx, index, err
-			}
-			if _, err := ctx.broadcastTX("GiveBadge", badgeBytes, index, peers, webSK); err != nil {
-				return tx, index, err
-			}
-			index = (index + 1) % uint64(len(peers))
-		}
-	*/
 	return tx, index, nil
 }
 
