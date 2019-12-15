@@ -20,7 +20,7 @@ services:
     depends_on:
       - postgres
 
-  nginx:
+  fe:
     build:
       context: .
       dockerfile: "./frontend/local-dockerfile"

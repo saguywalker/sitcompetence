@@ -1,8 +1,8 @@
 FROM node:10.15.3 as build-stage
 WORKDIR /app
 RUN echo $PWD
-COPY ./ ./
+COPY ./frontend ./
 RUN ls && \
     yarn && \
-    yarn build
+    yarn serve
 EXPOSE 8080
