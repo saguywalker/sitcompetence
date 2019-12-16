@@ -1,8 +1,11 @@
 FROM node:10.15.3 as build-stage
 WORKDIR /app
-RUN echo $PWD
-COPY ./frontend ./
-RUN ls && \
-    yarn && \
-    yarn serve
-EXPOSE 8080
+COPY package*.json ./
+RUN yarn
+COPY ./frontend .
+RUN yarn build
+
+FROM nginx as production-stage
+RUN mkdir /app
+COPY --from=build-stage /app/dist /app
+COPY nginx.conf /etc/nginx/nginx.conf
