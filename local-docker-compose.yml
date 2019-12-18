@@ -29,7 +29,9 @@ services:
       - fullstack
     
   webservice:
-    build: "./frontend/local-dockerfile"
+    build: 
+      contxt: .
+      dockerfile: "./frontend/local-dockerfile"
     container_name: vue_web
     depends_on:
       - fullstack-postgres
