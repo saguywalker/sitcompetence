@@ -2,11 +2,15 @@ FROM node:10.15.3 as build-stage
 RUN npm install -g http-server
 WORKDIR /app
 COPY ./frontend/package*.json ./
-RUN ls -R
 RUN rm -rf node_modules
 RUN yarn add @vue/cli
 RUN yarn install
 RUN yarn
 COPY . .
-EXPOSE 8080
-CMD ["yarn", "serve"]
+# EXPOSE 8080
+RUN yarn build
+
+FROM nginx:1.16.0-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

@@ -37,10 +37,10 @@ services:
       - fullstack-postgres
       - goservice
     ports:
-      - "8080:8080"
-    volumes:
-      - "./frontend/:/app"
-    command: /bin/sh -c "yarn serve"
+      - "80:80"
+        #volumes:
+        #- "./frontend/:/app"
+        #    command: /bin/sh -c "yarn serve"
     networks:
       - fullstack
     restart: unless-stopped
