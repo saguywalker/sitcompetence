@@ -3,6 +3,10 @@ RUN npm install -g http-server
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN ls -R
+RUN rm -rf node_modules
+RUN yarn add @vue/cli
 RUN yarn install
 RUN yarn
 COPY . .
+EXPOSE 8080
+CMD ["yarn", "serve"]
