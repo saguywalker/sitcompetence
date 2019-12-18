@@ -98,7 +98,7 @@
 				<p>It will look like this:</p>
 				<img
 					class="img-example"
-					src="https://i.imgur.com/QbnC1rJ.png"
+					:src="require('../../../assets/images/genkeyex.png')"
 					alt="submit-skkey-example"
 				>
 				<p>If you enable to keep the secret key in the local storage, you will not see this input prompt.</p>
