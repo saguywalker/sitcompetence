@@ -1,7 +1,7 @@
-FROM golang:1.13-alpine3.10 AS build
+FROM golang:1.13-alpine3.10
 # Support CGO and SSL
-WORKDIR ./cmd
-RUN apk update && apk add --no-cache gcc g++ make postgresql-dev musl-dev git
+WORKDIR /cmd
+RUN apk update && apk add --no-cache gcc g++ make musl-dev git
 COPY . .
 RUN ls
 #RUN python3 initdb.py
