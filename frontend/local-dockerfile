@@ -4,4 +4,4 @@ COPY ./frontend ./
 RUN ls -R
 RUN yarn
 EXPOSE 8080
-RUN yarn serve
+RUN yarn build
