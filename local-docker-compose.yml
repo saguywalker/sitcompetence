@@ -38,6 +38,9 @@ services:
       - goservice
     ports:
       - "8080:8080"
+    volumes:
+      - "./frontend/:/app"
+    command: /bin/sh -c "yarn serve"
     networks:
       - fullstack
     restart: unless-stopped

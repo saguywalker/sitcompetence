@@ -1,9 +1,8 @@
 FROM node:10.15.3 as build-stage
 RUN npm install -g http-server
 WORKDIR /app
-COPY ./frontend ./
+COPY ./frontend/package*.json ./
 RUN ls -R
+RUN yarn install
 RUN yarn
-RUN yarn build
-EXPOSE 8080
-CMD [ "http-server", "dist" ]
+COPY . .
