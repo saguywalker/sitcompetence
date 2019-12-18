@@ -26,10 +26,4 @@ services:
       dockerfile: "./frontend/local-dockerfile"
     ports:
       - "80:80"
-      - "8080:8080"
-    environment:
-      - TARGET=localhost
-      # -  TARGET=https://sitcompetence.ilab.sit.kmutt.ac.th
-    depends_on:
-      - "goservice"
 

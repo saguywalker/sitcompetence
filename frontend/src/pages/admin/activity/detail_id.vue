@@ -27,7 +27,6 @@
 						</b-button>
 					</router-link>
 					<router-link
-						v-if="false"
 						:to="{
 							name: 'edit-activity',
 							params: {
@@ -35,7 +34,10 @@
 							}
 						}"
 					>
-						<b-button size="sm">
+						<b-button
+							:disabled="activityDetail.organizer !== loginUserId"
+							size="sm"
+						>
 							Edit
 						</b-button>
 					</router-link>
