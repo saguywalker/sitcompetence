@@ -30,7 +30,7 @@ services:
     
   webservice:
     build: 
-      contxt: .
+      context: .
       dockerfile: "./frontend/local-dockerfile"
     container_name: vue_web
     depends_on:
