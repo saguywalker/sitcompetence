@@ -1,7 +1,7 @@
 FROM node:10.15.3 as build-stage
 WORKDIR /app
-COPY package*.json ./
+COPY ./frontend ./
+RUN ls -R
 RUN yarn
-COPY ./frontend .
 EXPOSE 8080
 RUN yarn serve
