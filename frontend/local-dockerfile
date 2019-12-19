@@ -7,7 +7,7 @@ COPY ./frontend/package.json /app/package.json
 RUN ls -l
 RUN npm install
 COPY ./frontend /app
-RUN npm run build
+RUN npm run build --mode localproduction
 
 FROM nginx:latest as production-stage
 RUN mkdir /appp
