@@ -112,7 +112,7 @@
 <script>
 import IconPen from "@/components/icons/IconPen.vue";
 import loading from "@/plugin/loading";
-import { getSemester } from "@/helpers";
+import { getSemester, getLoginUser } from "@/helpers";
 import { mapState } from "vuex";
 
 export default {
@@ -160,6 +160,9 @@ export default {
 		},
 		step() {
 			return this.$route.meta.step;
+		},
+		loginUserId() {
+			return getLoginUser().uid;
 		}
 	},
 	created() {
@@ -171,7 +174,7 @@ export default {
 			try {
 				await this.$store.dispatch("editActivity/submitEditActivity", {
 					...this.summary,
-					creator: "st01", // TODO: Get from login user
+					creator: this.loginUserId, // TODO: Get from login user
 					semester: getSemester(),
 					student_site: this.student_site
 				});

@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sitcomadmin
+      POSTGRES_PASSWORD: thisispassword
+      POSTGRES_DB: sitcomdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data
+
+  goservice:
+    build: "."
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  nginx:
+    image: nginx
+    build:
+      context: .
+      dockerfile: "./frontend/local-dockerfile"
+    ports:
+      - "80:80"
+

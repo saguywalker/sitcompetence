@@ -81,6 +81,7 @@
 <script>
 import Notification from "@/components/Notification.vue";
 import loading from "@/plugin/loading";
+import { getErrorStatusString } from "@/helpers";
 
 export default {
 	components: {
@@ -106,6 +107,7 @@ export default {
 		}
 	},
 	methods: {
+		getErrorStatusString,
 		validateSubmit() {
 			this.error.userName = this.userName === "";
 			this.error.passWord = this.passWord === "";
@@ -122,11 +124,26 @@ export default {
 						password: this.passWord
 					});
 				} catch (err) {
-					this.$bvToast.toast("Invalid username or password", {
-						title: "Login error",
-						variant: "danger",
-						autoHideDelay: 1500
-					});
+					const status = getErrorStatusString(err.message);
+					if (status === "401") {
+						this.$bvToast.toast("Invalid username or password", {
+							title: "Login error",
+							variant: "danger",
+							autoHideDelay: 1500
+						});
+					} else if (status === "403") {
+						this.$bvToast.toast("You have been blocked for 3 minutes", {
+							title: "Login Blocked",
+							variant: "danger",
+							autoHideDelay: 1500
+						});
+					} else if (status === "500") {
+						this.$bvToast.toast("Something wrong", {
+							title: "Internal Server Error",
+							variant: "danger",
+							autoHideDelay: 1500
+						});
+					}
 				} finally {
 					loading.stop();
 				}

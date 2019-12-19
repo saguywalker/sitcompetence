@@ -157,6 +157,11 @@ export const getSecretKey = () => {
 	return sk;
 };
 
+export const getErrorStatusString = (errMsg) => {
+	const status = errMsg.slice(-3);
+	return status;
+};
+
 export const base64ToByteArray = (base64) => {
 	const binaryString = window.atob(base64);
 	const len = binaryString.length;
