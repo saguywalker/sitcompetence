@@ -10,6 +10,7 @@ COPY ./frontend /app
 RUN npm run build
 
 FROM nginx:latest as production-stage
+RUN rm -rf /appp
 RUN mkdir /appp
 COPY --from=build-stage /app/dist /appp
 COPY ./frontend/local-nginx.conf /etc/nginx/conf.d
