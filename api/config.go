@@ -8,6 +8,8 @@ import (
 
 // Config struct
 type Config struct {
+	IPAddress string
+
 	// The port to bind the web application server to
 	Port int
 
@@ -24,6 +26,7 @@ func InitConfig() (*Config, error) {
 		Port: viper.GetInt("Port"),
 		// ProxyCount: viper.GetInt("ProxyCount"),
 		Peers: viper.GetStringSlice("Peers"),
+		IPAddress: viper.GetString("BaseIP"),
 	}
 	if config.Port == 0 {
 		config.Port = 3000

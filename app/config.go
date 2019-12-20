@@ -19,6 +19,7 @@ func InitConfig() (*Config, error) {
 	config := &Config{
 		SecretKey: secret[:],
 	}
+
 	if len(config.SecretKey) == 0 {
 		return nil, errors.New("secretkey must not be empty")
 	}
