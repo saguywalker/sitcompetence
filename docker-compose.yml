@@ -20,8 +20,10 @@ services:
     depends_on:
       - postgres
 
-  theair-web:
-    image: abiosoft/caddy:latest
+  sitcom-web:
+    build:
+      context: .
+      dockerfile: "./frontend/Dockerfile"
     ports:
       - "80:80"
     volumes:
