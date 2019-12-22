@@ -26,4 +26,6 @@ services:
       dockerfile: "./frontend/Dockerfile-local"
     ports:
       - "80:80"
+    depends_on:
+      - goservice
 
