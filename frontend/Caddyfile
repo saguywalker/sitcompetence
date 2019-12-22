@@ -1,4 +1,4 @@
-localhost:8080 {
+0.0.0.0:80 {
     log stdout
-    root ./dist
+    root /app
 }

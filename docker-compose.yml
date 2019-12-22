@@ -21,14 +21,12 @@ services:
       - postgres
 
   sitcom-web:
+          # image: abiosoft/caddy:latest
     build:
       context: .
       dockerfile: "./frontend/Dockerfile"
     ports:
       - "80:80"
-    volumes:
-      - ./frontend/Caddyfile:/etc/Caddyfile
-      - ./frontend:/app
     restart: always
 
   # nginx:
