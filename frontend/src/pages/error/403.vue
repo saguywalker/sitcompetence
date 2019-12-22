@@ -7,11 +7,12 @@
 			<p class="description">
 				If you got this status error, we are sorry that we going to force you to login again.
 			</p>
-			<router-link :to="{ name: 'login' }">
-				<b-button variant="primary">
-					Back to login
-				</b-button>
-			</router-link>
+			<b-button
+				variant="primary"
+				@click="backToLogin"
+			>
+				Back to login
+			</b-button>
 		</div>
 	</div>
 </template>
@@ -27,7 +28,11 @@ export default {
 		next();
 	},
 	methods: {
-		clearLoginState
+		clearLoginState,
+		backToLogin() {
+			this.clearLoginState();
+			this.$router.push({ name: "login" });
+		}
 	}
 };
 </script>

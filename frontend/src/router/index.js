@@ -412,12 +412,6 @@ router.beforeEach((to, from, next) => {
 	const role = getLoginUserRole();
 
 	if (to.name !== "login" && to.name !== "error404" && to.name !== "share-portfolio" && !isLogin) {
-		const notification = {
-			title: "SESSION TIMEOUT",
-			message: "Please login again",
-			variant: "danger"
-		};
-		store.dispatch("base/addNotification", notification, { root: true });
 		next({ name: "login" });
 	} else if (role === "inst_group" && STUDENT_ROUTE_NAMES.includes(to.name)) {
 		next({ name: "admin" });
