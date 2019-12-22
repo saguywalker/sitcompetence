@@ -2,20 +2,19 @@ FROM node:10.15.3 as build-stage
 WORKDIR /app
 RUN ls
 RUN echo $PWD
-COPY ./ ./
-RUN ls
 EXPOSE 8080
-COPY ./ .
+COPY ./frontend .
 RUN ls
 RUN yarn
 RUN yarn build
 
-FROM nginx:latest as production-stage
-RUN mkdir /app
-RUN ls
+FROM abiosoft/caddy:latest as production-stage
+WORKDIR /app
+COPY ./frontend/Caddyfile /etc/Caddyfile
 COPY --from=build-stage ./app/dist /app
+RUN ls && pwd
 EXPOSE 80
-EXPOSE 443
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY nginx.crt /etc/nginx/nginx.crt
-COPY nginx.key /etc/nginx/nginx.key
+# EXPOSE 443
+# COPY nginx.conf /etc/nginx/nginx.conf
+# COPY nginx.crt /etc/nginx/nginx.crt
+# COPY nginx.key /etc/nginx/nginx.key

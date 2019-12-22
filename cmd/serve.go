@@ -27,7 +27,7 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	if dev {
 		// c = cors.AllowAll()
 		c = cors.New(cors.Options{
-			AllowedOrigins: []string{"http://localhost:8080", "http://localhost:3000"},
+			AllowedOrigins: []string{"http://localhost:8080", "http://localhost:3000", fmt.Sprintf("http://%s", api.Config.IPAddress)},
 			AllowedHeaders: []string{"*"},
 			AllowedMethods: []string{
 				http.MethodHead,

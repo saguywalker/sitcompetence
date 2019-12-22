@@ -20,24 +20,12 @@ services:
     depends_on:
       - postgres
 
-  sitcom-web:
-          # image: abiosoft/caddy:latest
+  sitweb:
     build:
       context: .
-      dockerfile: "./frontend/Dockerfile"
+      dockerfile: "./frontend/Dockerfile-local"
     ports:
       - "80:80"
-    restart: always
-
-  # nginx:
-  #   build: "./frontend"
-  #   image: shakyshane/nginx-cors-plus
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #     - "8080:8080"
-  #   environment:
-  #     -  TARGET=https://sitcompetence.ilab.sit.kmutt.ac.th
-  #   depends_on:
-  #     - "goservice"
+    depends_on:
+      - goservice
 

@@ -1,0 +1,9 @@
+FROM node:10.15.3 as build-stage
+WORKDIR /app
+COPY ./ .
+RUN ls
+RUN pwd
+RUN yarn
+RUN yarn install
+EXPOSE 80
+RUN yarn serve
