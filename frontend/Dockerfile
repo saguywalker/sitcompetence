@@ -1,4 +1,4 @@
-FROM node:10.15.3 as build-stage
+FROM node:alpine as build-stage
 WORKDIR /app
 RUN ls
 RUN echo $PWD
