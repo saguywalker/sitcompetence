@@ -1,0 +1,16 @@
+FROM node:alpine as build-stage
+WORKDIR /app
+RUN echo $PWD
+EXPOSE 8080
+COPY ./frontend .
+RUN ls -a
+RUN yarn
+RUN yarn build
+
+FROM abiosoft/caddy:latest as production-stage
+WORKDIR /app
+COPY ./frontend/Caddyfile /etc/Caddyfile
+COPY --from=build-stage ./app/dist /app
+RUN ls && pwd
+EXPOSE 80
+

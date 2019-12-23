@@ -1,0 +1,17 @@
+FROM node:12.2.0-alpine as build-stage
+WORKDIR /app
+COPY ./frontend /app
+RUN ls -l
+RUN npm install
+RUN npm run build
+
+FROM nginx:latest as production-stage
+RUN mkdir /app
+RUN ls
+COPY --from=build-stage ./app/dist /app
+RUN ls -l /app
+EXPOSE 80
+EXPOSE 443
+COPY ./frontend/local-nginx.conf /etc/nginx/nginx.conf
+COPY ./frontend/nginx.crt /etc/nginx/nginx.crt
+COPY ./frontend/nginx.key /etc/nginx/nginx.key
