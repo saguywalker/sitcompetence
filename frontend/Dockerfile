@@ -4,7 +4,7 @@ RUN ls
 RUN echo $PWD
 EXPOSE 8080
 COPY ./frontend .
-RUN ls
+RUN ls -a
 RUN yarn
 RUN yarn build
 
