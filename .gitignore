@@ -13,6 +13,7 @@ docker-compose.yml
 init.sql
 initdb.sql
 database_postgres
+b2062fbea1ba2e0d04f391301ccfcc1d
 
 #Executable file
 sitcom

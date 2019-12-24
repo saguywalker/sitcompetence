@@ -21,10 +21,12 @@ services:
       - postgres
 
   nginx:
-    image: nginx
     build:
       context: .
       dockerfile: "./frontend/local-dockerfile"
     ports:
       - "80:80"
+      - "443:443"
+    depends_on:
+      - goservice
 
