@@ -1,10 +1,8 @@
 FROM node:alpine as build-stage
 WORKDIR /app
-RUN ls
-RUN echo $PWD
 EXPOSE 8080
 COPY ./frontend .
-RUN ls -a
+RUN ls -a | grep .env
 RUN yarn
 RUN yarn build
 

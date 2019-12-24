@@ -1,25 +1,38 @@
-version: "3.3"
+version: '3'
 services:
-  postgres:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: sitcomadmin
-      POSTGRES_PASSWORD: thisispassword
-      POSTGRES_DB: sitcomdb
-    ports:
-      - "5432:5432"
+  sitcom-api:
+    container_name: sitcom-api
+    build: .
+    ports: 
+      - 8080:8080 
+    restart: on-failure
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data
-
-  goservice:
-    build: "."
-    ports:
-      - "3000:3000"
+      - api:/usr/src/app/api
+      - app:/usr/src/app/app
+      - cmd:/usr/src/app/cmd
+      - db:/usr/src/app/db
+      - model:/usr/src/app/model
+      - proto:/usr/src/app/proto
     depends_on:
-      - postgres
+      - sitcom-postgres          
+    networks:
+      - sitcom
 
+  sitcom-postgres:
+    image: postgres:latest
+    container_name: sitcom-postgres
+    environment:
+      - POSTGRES_USER=sitcomadmin
+      - POSTGRES_PASSWORD=thisispassword
+      - POSTGRES_DB=sitcomdb
+      - DATABASE_HOST=sitcom-postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - sitcom
+    
   sitcom-web:
           # image: abiosoft/caddy:latest
     build:
@@ -28,6 +41,28 @@ services:
     ports:
       - "80:80"
     restart: always
+
+volumes:
+  api:
+  app:
+  cmd:
+  db:
+  model:
+  proto:
+  database_postgres:                  
+
+networks:
+  sitcom:
+    driver: bridge
+
+  # sitcom-web:
+  #         # image: abiosoft/caddy:latest
+  #   build:
+  #     context: .
+  #     dockerfile: "./frontend/Dockerfile"
+  #   ports:
+  #     - "80:80"
+  #   restart: always
 
   # nginx:
   #   build: "./frontend"

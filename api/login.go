@@ -114,6 +114,7 @@ func (a *API) Login(w http.ResponseWriter, r *http.Request) {
 	if user.Group == "inst_group" {
 		pubkey, err := ctx.Database.GetStaffPublicKey(user.UserID)
 		if err != nil {
+			ctx.Logger.Infof("error pubkey: %x\n", pubkey)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

@@ -12,6 +12,7 @@ test.go
 docker-compose.yml
 init.sql
 initdb.sql
+database_postgres
 
 #Executable file
 sitcom
