@@ -22,12 +22,36 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	router := mux.NewRouter()
 	api.Init(router.PathPrefix("/api").Subrouter())
 
+	origins := []string{
+		"https://sitcompetence.ilab.sit.kmutt.ac.th:3000",
+		"https://sitcompetence.ilab.sit.kmutt.ac.th:443",
+		"https://sitcompetence.ilab.sit.kmutt.ac.th:443",
+		"http://sitcompetence.ilab.sit.kmutt.ac.th:3000",
+		"http://sitcompetence.ilab.sit.kmutt.ac.th:443",
+		"http://sitcompetence.ilab.sit.kmutt.ac.th:443",
+		"https://localhost:3000",
+		"https://localhost:443",
+		"https://localhost:443",
+		"http://localhost:3000",
+		"http://localhost:443",
+		"http://localhost:443",
+		"http://sitcompetence.ilab.sit.kmutt.ac.th",
+		"https://sitcompetence.ilab.sit.kmutt.ac.th",
+		"https://sitcompetence.ilab.sit.kmutt.ac.th",
+		"https://localhost",
+		"http://localhost",
+		"http://localhost",
+		fmt.Sprintf("http://%s:3000", api.Config.IPAddress),
+		fmt.Sprintf("http://%s:443", api.Config.IPAddress),
+		fmt.Sprintf("http://%s:80", api.Config.IPAddress),
+	}
+
 	// CORS middleware
 	var c *cors.Cors
 	if dev {
 		// c = cors.AllowAll()
 		c = cors.New(cors.Options{
-			AllowedOrigins: []string{"http://localhost:8080", "http://localhost:3000", fmt.Sprintf("http://%s", api.Config.IPAddress)},
+			AllowedOrigins: origins,
 			AllowedHeaders: []string{"*"},
 			AllowedMethods: []string{
 				http.MethodHead,
@@ -41,20 +65,6 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 		})
 
 	} else {
-		origins := []string{
-			"https://sitcompetence.ilab.sit.kmutt.ac.th:3000",
-			"https://sitcompetence.ilab.sit.kmutt.ac.th:443",
-			"http://sitcompetence.ilab.sit.kmutt.ac.th:3000",
-			"http://sitcompetence.ilab.sit.kmutt.ac.th:443",
-			"https://localhost:3000",
-			"https://localhost:443",
-			"http://localhost:3000",
-			"http://localhost:443",
-			"http://sitcompetence.ilab.sit.kmutt.ac.th",
-			"https://sitcompetence.ilab.sit.kmutt.ac.th",
-			"https://localhost",
-			"http://localhost",
-		}
 		c = cors.New(cors.Options{
 			AllowedOrigins: origins,
 			AllowedHeaders: []string{"*"},
@@ -88,17 +98,9 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 		close(done)
 	}()
 
-	if dev {
-		logrus.Infof("serving api at http://127.0.0.1:%d", api.Config.Port)
-		if err := s.ListenAndServe(); err != http.ErrServerClosed {
-			logrus.Error(err)
-		}
-	} else {
-		logrus.Infof("serving api at https://127.0.0.1:%d", api.Config.Port)
-		if err := s.ListenAndServe(); err != http.ErrServerClosed {
-			// if err := s.ListenAndServeTLS("nginx.crt", "nginx.key"); err != http.ErrServerClosed {
-			logrus.Error(err)
-		}
+	logrus.Infof("serving api at http://%s:%d", api.Config.IPAddress, api.Config.Port)
+	if err := s.ListenAndServe(); err != http.ErrServerClosed {
+		logrus.Error(err)
 	}
 
 	<-done
