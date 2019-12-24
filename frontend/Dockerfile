@@ -2,7 +2,7 @@ FROM node:10.15.3 as build-stage
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN yarn
-COPY . ./
+COPY ./frontend/ ./
 RUN yarn build
 
 FROM abiosoft/caddy:latest as production-stage

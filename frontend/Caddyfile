@@ -1,8 +1,17 @@
 0.0.0.0:80 {
     log stdout
     root /app
-    rewrite {
-        if {path} not /
-        to /
+    proxy /api/ http://10.4.56.21:3000/api/ {
+        transparent
     }
 }
+
+#0.0.0.0:80/api {
+#    proxy / localhost:3000/api {
+#        transparent
+#        #header_upstream Host {host}
+#        #header_upstream X-Real-IP {remote}
+#        #header_upstream X-Forwared-For {remote}
+#        #header_upstream X-Forwared-Proto {scheme}
+#    }
+#}

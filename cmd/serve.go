@@ -41,6 +41,7 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 		"https://localhost",
 		"http://localhost",
 		"http://localhost",
+		fmt.Sprintf("http://%s:3000/api", api.Config.IPAddress),
 		fmt.Sprintf("http://%s:3000", api.Config.IPAddress),
 		fmt.Sprintf("http://%s:443", api.Config.IPAddress),
 		fmt.Sprintf("http://%s:80", api.Config.IPAddress),
@@ -49,7 +50,7 @@ func serveAPI(ctx context.Context, api *api.API, dev bool) {
 	// CORS middleware
 	var c *cors.Cors
 	if dev {
-		// c = cors.AllowAll()
+		//c = cors.AllowAll()
 		c = cors.New(cors.Options{
 			AllowedOrigins: origins,
 			AllowedHeaders: []string{"*"},

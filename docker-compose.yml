@@ -35,13 +35,18 @@ services:
       - sitcom
     
   sitcom-web:
-          # image: abiosoft/caddy:latest
+    container_name: sitcom-web
     build:
       context: .
       dockerfile: "./frontend/local-dockerfile"
+      #dockerfile: "./frontend/Dockerfile"
     ports:
       - "80:80"
     restart: always
+    depends_on:
+      - sitcom-api
+    networks:
+      - sitcom
 
 volumes:
   api:
