@@ -2,8 +2,8 @@ FROM node:10.15.3 as build-stage
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN yarn
-RUN ls -l
 COPY ./frontend/ ./
+COPY ./ ./
 RUN yarn build
 
 FROM nginx:latest
@@ -12,7 +12,7 @@ COPY --from=build-stage /app/dist /app
 RUN ls -l /app 
 RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY ./frontend/nginx.conf /etc/nginx/nginx.conf
-COPY ./frontend/nginx.crt /etc/nginx/nginx.crt
-COPY ./frontend/nginx.key /etc/nginx/nginx.key
+#COPY ./frontend/nginx.crt /etc/nginx/nginx.crt
+#COPY ./frontend/nginx.key /etc/nginx/nginx.key
 EXPOSE 80
-EXPOSE 443
+#EXPOSE 443

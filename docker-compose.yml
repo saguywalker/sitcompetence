@@ -38,7 +38,7 @@ services:
           # image: abiosoft/caddy:latest
     build:
       context: .
-      dockerfile: "./frontend/."
+      dockerfile: "./frontend/local-dockerfile"
     ports:
       - "80:80"
     restart: always
