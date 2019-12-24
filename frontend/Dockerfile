@@ -1,9 +1,8 @@
-FROM node:alpine as build-stage
+FROM node:10.15.3 as build-stage
 WORKDIR /app
-EXPOSE 8080
-COPY ./frontend .
-RUN ls -a | grep .env
+COPY ./frontend/package*.json .
 RUN yarn
+COPY ./frontend .
 RUN yarn build
 
 FROM abiosoft/caddy:latest as production-stage
