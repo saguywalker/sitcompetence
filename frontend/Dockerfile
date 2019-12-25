@@ -5,13 +5,11 @@ RUN yarn
 COPY ./frontend/ ./
 RUN yarn build
 
-FROM abiosoft/caddy:latest as production-stage
-WORKDIR /app
-COPY --from=build-stage ./app/dist /app
-COPY ./frontend/Caddyfile /etc/Caddyfile
-RUN ls && pwd
+FROM nginx:latest
+RUN mkdir /app
+COPY --from=build-stage /app/dist /app
+RUN ls -l /app 
+RUN rm -rf /etc/nginx/conf.d/default.conf
+COPY ./frontend/default.conf /etc/nginx/conf.d
 EXPOSE 80
-# EXPOSE 443
-# COPY nginx.conf /etc/nginx/nginx.conf
-# COPY nginx.crt /etc/nginx/nginx.crt
-# COPY nginx.key /etc/nginx/nginx.key
+CMD ["nginx", "-g", "daemon off;"]
