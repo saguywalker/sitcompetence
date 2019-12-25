@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   sitcom-api:
     container_name: sitcom-api
@@ -14,9 +14,10 @@ services:
       - model:/usr/src/app/model
       - proto:/usr/src/app/proto
     depends_on:
-      - sitcom-postgres          
-    networks:
-      - sitcom
+      - sitcom-postgres
+    network_mode: host        
+    #networks:
+    #  - sitcom
 
   sitcom-postgres:
     image: postgres:latest
@@ -31,8 +32,9 @@ services:
     volumes:
       #- database_postgres:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - sitcom
+    network_mode: host
+        #networks:
+        #- sitcom
     
   sitcom-web:
     container_name: sitcom-web
@@ -43,10 +45,11 @@ services:
     ports:
       - "80:80"
     restart: always
+    network_mode: host
     depends_on:
       - sitcom-api
-    networks:
-      - sitcom
+        #networks:
+        #- sitcom
 
 volumes:
   api:
@@ -57,28 +60,6 @@ volumes:
   proto:
   database_postgres:                  
 
-networks:
-  sitcom:
-    driver: bridge
-
-  # sitcom-web:
-  #         # image: abiosoft/caddy:latest
-  #   build:
-  #     context: .
-  #     dockerfile: "./frontend/Dockerfile"
-  #   ports:
-  #     - "80:80"
-  #   restart: always
-
-  # nginx:
-  #   build: "./frontend"
-  #   image: shakyshane/nginx-cors-plus
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #     - "8080:8080"
-  #   environment:
-  #     -  TARGET=https://sitcompetence.ilab.sit.kmutt.ac.th
-  #   depends_on:
-  #     - "goservice"
-
+  #networks:
+    #  sitcom:
+      #    driver: bridge

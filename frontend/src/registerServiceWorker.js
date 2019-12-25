@@ -3,6 +3,8 @@
 import { register } from 'register-service-worker'
 
 if (process.env.NODE_ENV === 'production') {
+  console.log('do nothing')
+  /*
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready () {
       console.log(
@@ -29,4 +31,6 @@ if (process.env.NODE_ENV === 'production') {
       console.error('Error during service worker registration:', error)
     }
   })
+  */
 }
+
