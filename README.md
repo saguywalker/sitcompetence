@@ -142,14 +142,26 @@ $ sudo docker-compose up -d
 Check the result by visiting http://{machine-ip}
 
 ### After finish all installation above
-**To summarize**
+**To summarize** <br>
 1 Tab for tendermint (Blockchain)<br>
-To start `$ cd ~ && tendermint node`
-To stop `Ctrl + C`
+To start 
+```
+$ cd ~ && tendermint node
+```
+To stop
+```
+Ctrl + C
+```
 
 1 Tab for smart-contract (Blockchain)<br>
-To start `$ cd sitcomchain && ./sitcomchain`
-To stop `Ctrl + C`
+To start 
+```
+$ cd sitcomchain && ./sitcomchain
+```
+To stop
+```
+Ctrl + C
+```
 
 1 Tab for web application<br>
 To start
